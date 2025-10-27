@@ -1,7 +1,7 @@
 FG ENGINE SPECIALIZATION COURSE
 
 ================================
-DAY 1
+course plan
 ================================
 
 this year is new plan
@@ -21,6 +21,7 @@ RESOURCES
 ================================
 	BOOKS
 		Jason Gregory - Game Engine Architecture , should be third edition or later
+		Learning Modern 3d Graphics Programming https://paroj.github.io/gltut/
 
 	Glossary stuff for computer graphics
 
@@ -33,16 +34,23 @@ RESOURCES
 
 	GLAD
 		https://glad.dav1d.de/
+	IMGU
+		https://github.com/ocornut/imgui
+		ui etc will be with this, also check out imgui docking branch for actually modern dockable editor windows.
 		
 	OPENGL 
 		4.6 850 pages of specification https://registry.khronos.org/OpenGL-Refpages/gl4/
 		4.5 quick ref https://www.khronos.org/files/opengl45-quick-reference-card.pdf
 
 		LearnOpenGL https://learnopengl.com/Getting-started/OpenGL
+		Modern OpenGL Tutorials
 
 	VULKAN
+	https://docs.vulkan.org/tutorial/latest/00_Introduction.html
+
 	OTHER PPLS ENGINES
 	Zenith Engine has interesting structure for render passes https://github.com/gitbetter/Zenith/tree/master
+	hazel engine
 ================================
 DAY 1
 ================================
@@ -142,3 +150,6 @@ opengl
 	we will not be using this ultimately as it's obviously not extensible,
 	however the glBegin() and glEnd() wrapping the actual rendering is similar to what we will be doing
 
+================================
+DAY 2
+================================

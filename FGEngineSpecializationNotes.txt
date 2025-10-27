@@ -24,9 +24,15 @@ RESOURCES
 
 	Glossary stuff for computer graphics
 
-	GLEW 
+	GLFW 
 		api for opening windows on windows
 		https://www.glfw.org/documentation.html#example-code
+		https://www.glfw.org/docs/3.3/group__window.html#ga24e02fbfefbb81fc45320989f8140ab5
+		
+		buffers: GL_DEPTH_BUFFER_BIT, GL_COLOR_BUFFER_BIT
+
+	GLAD
+		https://glad.dav1d.de/
 		
 	OPENGL 
 		4.6 850 pages of specification https://registry.khronos.org/OpenGL-Refpages/gl4/
@@ -120,4 +126,19 @@ OpenGL
 	so first you bind the thing, and do the changes to it, then unbind
 
 Time to see some code
+
+opengl 
+	NORMALIZED DEVICE COORDINATES 0,0 is at the center of the window context
+
+	// messy oldfashiond bad way of rendering
+		glBegin(GL_TRIANGLES);
+
+		glVertex2f(0.5f, 0.0f);
+		glVertex2f(0.0f, 0.5f);
+		glVertex2f(-0.5f, 0.0f);
+
+		glEnd();
+
+	we will not be using this ultimately as it's obviously not extensible,
+	however the glBegin() and glEnd() wrapping the actual rendering is similar to what we will be doing
 

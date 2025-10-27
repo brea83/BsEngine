@@ -3,3 +3,121 @@ FG ENGINE SPECIALIZATION COURSE
 ================================
 DAY 1
 ================================
+
+this year is new plan
+
+3 weeks intro - Martin
+
+4 weeks ui - Emil
+	will do some asset manager stuff.
+4 weeks rendering - Emil
+
+1 week physics - Martin
+
+4 weeks make a game in engine! - Martin + Oscar
+
+================================
+RESOURCES
+================================
+	BOOKS
+		Jason Gregory - Game Engine Architecture , should be third edition or later
+
+	Glossary stuff for computer graphics
+
+	GLEW 
+		api for opening windows on windows
+		https://www.glfw.org/documentation.html#example-code
+		
+	OPENGL 
+		4.6 850 pages of specification https://registry.khronos.org/OpenGL-Refpages/gl4/
+		4.5 quick ref https://www.khronos.org/files/opengl45-quick-reference-card.pdf
+
+		LearnOpenGL https://learnopengl.com/Getting-started/OpenGL
+
+	VULKAN
+	OTHER PPLS ENGINES
+	Zenith Engine has interesting structure for render passes https://github.com/gitbetter/Zenith/tree/master
+================================
+DAY 1
+================================
+
+Intro
+- theory 
+- reading
+- choose a graphics api. 
+- goal is to have a solid base for the ui and rendering time with Emil to build from
+
+WEEK 1 triangle with vertex colors
+Week 2 3d with basic textures, hot reloading shaders
+WEEK 3 make sure there's a renderer and can rotate the cube, maybe some frame buffer stuff. parenting of objects. loading in an fbx.
+
+
+GRAPHICS API
+course focuses OpenGl but theory is applicable to all
+Vulkan is probably a good one if you already know openGL and is more futureproof.
+hazel code is worth reading about
+
+BE CURIOUS
+look things up as much as you want
+
+COLLABORATE
+ pls make a study group!
+ share progress, ask for help, inspire eachother
+
+ Martin will show his architecture and explain why he choses the architecture he does.
+
+
+ WHAT ARE GAME ENGINES
+ engines are for making games
+
+ for example unity's graphics engine uses a lot of apis because they want to run on a lot of platforms.
+
+ LAYERS LAYERS LAYERS
+
+ front end, editor, and final game
+ back end, engine, physics layer, graphics layer
+
+ abstraction and encapsulation is very important for engine development
+ there will be A LOT of layers before we're done
+
+ always think about how painful is a thing to change in the future
+ if it's very painful, should probably rethink the plan and change it to be more change friendly
+
+ WHY LEARN ENGINE
+ deeper understanding of back end - get very solid c++ skills
+ better understanding of hardware
+ deeper understanding of tools - one of students last year : the more advanced you become as a gameplay programer the more of a tools programmer you become.
+ better understanding of graphics
+ better understanding of optimization
+ potential for innovative games
+ sought after roles in the industry
+		even during layoffs engine devs are often the last to be cut
+
+
+openGL is more like a specification than an api, made by Khronos Group, who also make Vulkan
+	
+	it doesn't give a lot of classes, mostly functions and enum flags.
+	it's very bare bones way of sending comands to the gpu
+	is considered easy starting point for engine rendering
+
+	mostly functions with input and output.
+
+SPECIFICATION = long list of functions, a description of the functionality that a program is required to perform
+API = also has classes and structural things, often used to communicate with someone else's whole project
+
+OpenGL 
+	we call openGL functions, openGL then sends things to the gpu, and the gpu has libraries for different versions of openGL
+
+	on the topic of structure there's a book by Jason Gregory called Game Engine Architecture is very very good
+
+	works like a state machine
+
+	each state of openGL defined as context
+
+	we change to a specific context with variables and run functions.
+
+	eg want to make a change on a texture
+	so first you bind the thing, and do the changes to it, then unbind
+
+Time to see some code
+

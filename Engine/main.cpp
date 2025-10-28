@@ -1,6 +1,7 @@
+#pragma once
 #include <iostream>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 // MID GREEN DESATURATED (0.4, 0.5, 0.2, 1)
 
 int main()
@@ -33,13 +34,13 @@ int main()
 		glClearColor(0.4, 0.5, 0.2, 1);
 
 		// messy oldfashiond bad way of rendering
-		glBegin(GL_TRIANGLES);
+		/*glBegin(GL_TRIANGLES);
 
 		glVertex2f(0.5f, -0.5f);
 		glVertex2f(0.0f, 0.5f);
 		glVertex2f(-0.5f, -0.5f);
 
-		glEnd();
+		glEnd();*/
 
 		//swap front and back buffers
 		glfwSwapBuffers(window);

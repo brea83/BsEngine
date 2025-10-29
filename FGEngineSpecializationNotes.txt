@@ -153,3 +153,6 @@ opengl
 ================================
 DAY 2
 ================================
+
+going over core openGL set up and getting the triangle via shaders
+ installing glad 

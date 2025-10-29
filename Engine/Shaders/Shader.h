@@ -1,0 +1,28 @@
+#pragma once
+#include <string>
+
+class Shader
+{
+public:
+	//------------------ constructors and properties
+
+	Shader(const char* vertPath, const char* fragPath);
+	~Shader();
+
+	unsigned int ShaderProgram;
+
+	//--------------- methods
+	//add uniform setters here
+
+	unsigned int LoadVertexShader(const char* aPath);
+	unsigned int LoadFragmentShader(const char* aPath);
+
+	void RecompileShader();
+	void Use();
+	void EndUse();
+
+private:
+	std::string LoadFile(const char* aPath); // TODO: move this to asset loading later
+
+};
+

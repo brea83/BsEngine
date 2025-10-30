@@ -202,4 +202,6 @@ VERTEX COLOR THE TRIANGLE TIME
 ================================
 DAY 4 (week 2)
 ================================
+- SQUARE 
+	index buffer, and transforms
 - CUBE

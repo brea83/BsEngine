@@ -133,15 +133,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EngineContext.cpp" />
+    <ClCompile Include="ForwardRenderer.cpp" />
+    <ClCompile Include="ForwardRenderPass.cpp" />
     <ClCompile Include="GLAD\glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EngineContext.h" />
+    <ClInclude Include="ForwardRenderer.h" />
+    <ClInclude Include="ForwardRenderPass.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Triangle.h" />

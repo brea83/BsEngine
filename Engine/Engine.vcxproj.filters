@@ -16,7 +16,7 @@
     <Filter Include="Source Files\GLAD">
       <UniqueIdentifier>{d076c279-d71f-411f-b418-2d32dd3368ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Shaders">
+    <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{afa02a67-9285-435a-892d-cc8f0336511a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -28,7 +28,7 @@
       <Filter>Source Files\GLAD</Filter>
     </ClCompile>
     <ClCompile Include="Shaders\Shader.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Renderable.cpp">
       <Filter>Source Files</Filter>
@@ -38,6 +38,21 @@
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ForwardRenderPass.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,13 +68,28 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EngineContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ForwardRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\VertexShader.glsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </None>
     <None Include="Shaders\FragmentShader.glsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

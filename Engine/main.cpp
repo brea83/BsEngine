@@ -2,7 +2,9 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Shaders/Shader.h"
+//#include "Shaders/Shader.h"
+#include "EngineContext.h"
+#include "Scene.h"
 #include "Triangle.h"
 
 
@@ -50,10 +52,33 @@ int main()
 		return -1;
 	}
 
-	// build and compile shader program
-	Shader* triangleShader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+	// build and compile shader program day 2 method, not using full engine architecture yet
+	//Shader* triangleShader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
 	//create triangle object
-	Triangle* triangle = new Triangle();
+	//Triangle* triangle = new Triangle();
+
+	//new engine architecture method
+	EngineContext* engine = new EngineContext();
+	Scene* startingScene = engine->GetScene();
+	//Triangle* triangle1 = new Triangle();
+
+	std::vector<float> newVerticies = {
+		 -0.5f,  0.0f, 0.0,   /* top */   1.0, 0.0, 0.0,
+		-1.0f, -1.0f, 0.0f, /* left */  0.0, 1.0, 0.0,
+		 0.0f, -1.0f, 0.0f, /* right*/  0.0, 0.0, 1.0,
+	};
+	Triangle* triangle2 = new Triangle( newVerticies);
+
+	std::vector<float> newVerticies2 = {
+		  0.5f,  0.0f, 0.0,   /* top */   1.0, 0.0, 0.0,
+		  0.0f,  1.0f, 0.0f, /* left */  0.0, 1.0, 0.0,
+		  1.0f,  1.0f, 0.0f, /* right*/  0.0, 0.0, 1.0,
+	};
+	Triangle* triangle3 = new Triangle(newVerticies2);
+
+	//startingScene->AddRenderable(triangle1);
+	startingScene->AddRenderable(triangle2);
+	startingScene->AddRenderable(triangle3);
 
 	// uncomment this call to draw in wireframe polygons.
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -65,12 +90,15 @@ int main()
 		ProcessInput(window);
 
 		// render
-		glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT);
 
-		triangleShader->Use();
-		triangle->Render();
-		triangleShader->EndUse();
+		//this is where we do the engine context
+		engine->Draw();
+
+		//triangleShader->Use();
+		//triangle->Render(*triangleShader);
+		//triangleShader->EndUse();
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		glfwSwapBuffers(window);
@@ -78,8 +106,8 @@ int main()
 	}
 
 	// CLEAN UP
-	triangleShader->~Shader();
-	triangle->~Triangle();
+	//triangleShader->~Shader();
+	//triangle->~Triangle();
 
 	// clean up GLFW
 	glfwTerminate();

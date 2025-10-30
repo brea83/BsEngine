@@ -100,6 +100,21 @@ unsigned int Shader::LoadFragmentShader(const char* aPath)
 void Shader::RecompileShader()
 {}
 
+void Shader::SetUniformBool(const std::string & name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), static_cast<int> (value));
+}
+
+void Shader::SetUniformInt(const std::string & name, int value) const
+{
+	glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), value);
+}
+
+void Shader::SetUniformFloat(const std::string & name, float value) const
+{
+	glUniform1f(glGetUniformLocation(ShaderProgram, name.c_str()), value);
+}
+
 void Shader::Use()
 {
 	glUseProgram(ShaderProgram);

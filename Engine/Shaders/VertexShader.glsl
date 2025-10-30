@@ -1,6 +1,8 @@
 
 #version 330 core
 
+// OpenGL guarantees there are always at least 16 locations
+// for 4-component vertex attributes
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aColor;
 

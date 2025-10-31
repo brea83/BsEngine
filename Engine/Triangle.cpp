@@ -4,34 +4,42 @@
 
 Triangle::Triangle()
 {
-	std::vector<float> verticies = {
+	std::vector<float> verticiesOld = {
 		 0.0f,  0.5f, 0.0,   /* top */   1.0, 0.0, 0.0,
 		-0.5f, -0.5f, 0.0f, /* left */  0.0, 1.0, 0.0,
 		 0.5f, -0.5f, 0.0f, /* right*/  0.0, 0.0, 1.0,
 	};
 
+	std::vector<Vertex> verticies = {
+		Vertex{{0.0f,  0.5f, 0.0}, {1.0, 0.0, 0.0}},
+		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0, 1.0, 0.0}},
+		Vertex{{0.5f, -0.5f, 0.0f}, {0.0, 0.0, 1.0}},
+	};
+
 	Init(verticies);
 }
 
-Triangle::Triangle(std::vector<float>& newVerticies)
+Triangle::Triangle(std::vector<Vertex>& newVerticies)
 {
 	Init(newVerticies);
 }
 
-void Triangle::Init(std::vector<float>& verticies)
+void Triangle::Init(std::vector<Vertex>& verticies)
 {
 	// generate vert array and vert buffer
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 
+
 	//bind vert array first, then bind the buffer and tell it how ot traverse the array.
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER,  verticies.size() * sizeof(float), &verticies[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,  verticies.size() * sizeof(Vertex), &verticies[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)VetexDataOffsets[0]);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)VetexDataOffsets[1]);
 	glEnableVertexAttribArray(1);
 
 	// unbind so that other objects can be set up

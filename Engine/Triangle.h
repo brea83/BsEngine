@@ -6,7 +6,7 @@ class Triangle : public Renderable
 {
 public:
 	Triangle();
-	Triangle(std::vector<float>& newVerticies);
+	Triangle(std::vector<Vertex>& newVerticies);
 	~Triangle();
 
 	void Render(Shader& currentShader) override;
@@ -16,6 +16,6 @@ private:
 	unsigned int VBO;
 
 	// methods
-	void Init(std::vector<float>& verticies);
+	void Init(std::vector<Vertex>& verticies);
 };
 

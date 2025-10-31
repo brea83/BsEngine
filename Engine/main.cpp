@@ -62,17 +62,17 @@ int main()
 	Scene* startingScene = engine->GetScene();
 	//Triangle* triangle1 = new Triangle();
 
-	std::vector<float> newVerticies = {
-		 -0.5f,  0.0f, 0.0,   /* top */   1.0, 0.0, 0.0,
-		-1.0f, -1.0f, 0.0f, /* left */  0.0, 1.0, 0.0,
-		 0.0f, -1.0f, 0.0f, /* right*/  0.0, 0.0, 1.0,
+	std::vector<Renderable::Vertex> newVerticies = {
+		 Renderable::Vertex{{-0.5f,  0.0f, 0.0,},   /* top */   {1.0, 0.0, 0.0}},
+		Renderable::Vertex{{-1.0f, -1.0f, 0.0f, },/* left */  {0.0, 1.0, 0.0}},
+		Renderable::Vertex{{ 0.0f, -1.0f, 0.0f, },/* right*/  {0.0, 0.0, 1.0}},
 	};
 	Triangle* triangle2 = new Triangle( newVerticies);
 
-	std::vector<float> newVerticies2 = {
-		  0.5f,  0.0f, 0.0,   /* top */   1.0, 0.0, 0.0,
-		  0.0f,  1.0f, 0.0f, /* left */  0.0, 1.0, 0.0,
-		  1.0f,  1.0f, 0.0f, /* right*/  0.0, 0.0, 1.0,
+	std::vector< Renderable::Vertex> newVerticies2 = {
+		  Renderable::Vertex{{0.5f,  0.0f, 0.0},   /* top */   {1.0, 0.0, 0.0}},
+		  Renderable::Vertex{{0.0f,  1.0f, 0.0f}, /* left */  {0.0, 1.0, 0.0}},
+		  Renderable::Vertex{{1.0f,  1.0f, 0.0f}, /* right*/  {0.0, 0.0, 1.0}},
 	};
 	Triangle* triangle3 = new Triangle(newVerticies2);
 

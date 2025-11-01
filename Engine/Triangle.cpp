@@ -1,13 +1,13 @@
 #include "Triangle.h"
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
 
 Triangle::Triangle()
 {
 	std::vector<Vertex> verticies = {
-		Vertex{{0.0f,  0.5f, 0.0}, {1.0, 0.0, 0.0}},
-		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0, 1.0, 0.0}},
-		Vertex{{0.5f, -0.5f, 0.0f}, {0.0, 0.0, 1.0}},
+		Vertex{{ 0.0f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
 	};
 
 	Init(verticies);
@@ -49,8 +49,6 @@ Triangle::~Triangle()
 
 void Triangle::Render(Shader& currentShader)
 {
-	//shader.SetUniformMat4("u_Model", m_Transform);
-
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);

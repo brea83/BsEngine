@@ -1,5 +1,7 @@
 #include "Rectangle.h"
+#include "Transform.h"
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 Rectangle::Rectangle()
 {
@@ -15,17 +17,21 @@ Rectangle::Rectangle()
 		{1, 2, 3}   // second triangle
 	};
 
+	_transform = new Transform();
+
 	Init();
 }
 
 Rectangle::Rectangle(std::vector<Vertex>& newVerticies)
 {
 	_verticies = newVerticies;
+	_transform = new Transform();
 	Init();
 }
 
 void Rectangle::Init()
 {
+
 	// generate vert array and vert buffer
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -61,6 +67,10 @@ Rectangle::~Rectangle()
 
 void Rectangle::Render(Shader& currentShader)
 {
+	// send transform to shader
+	currentShader.SetUniformMat4("model", _transform->GetObjectToWorldMatrix());
+
+	//draw
 	glBindVertexArray(VAO);
 	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

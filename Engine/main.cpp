@@ -7,6 +7,7 @@
 #include "Scene.h"
 #include "Triangle.h"
 #include "Rectangle.h"
+#include "Transform.h"
 
 
 void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -76,9 +77,12 @@ int main()
 	//	  Renderable::Vertex{{1.0f,  1.0f, 0.0f}, /* right*/  {0.0, 0.0, 1.0}},
 	//};
 	Rectangle* rectangle = new Rectangle();
-
+	Transform* rectTransform = rectangle->GetTransform();
+	//rectTransform->Rotate(-55.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	rectTransform->Rotate(45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	//rectTransform->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 	//startingScene->AddRenderable(triangle1);
-	//startingScene->AddRenderable(triangle2);
+	startingScene->AddRenderable(triangle2);
 	startingScene->AddRenderable(rectangle);
 
 	// uncomment this call to draw in wireframe polygons.

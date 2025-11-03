@@ -106,14 +106,6 @@ Cube::Cube(bool useMinimalVerticies)
 
 	Init();
 }
-//
-//Cube::Cube(std::vector<Vertex>&newVerticies, std::vector<glm::uvec3>& newTriangleIndices)
-//{
-//	_verticies = newVerticies;
-//	_triangles = newTriangleIndices;
-//	_transform = new Transform();
-//	Init();
-//}
 
 void Cube::Init()
 {

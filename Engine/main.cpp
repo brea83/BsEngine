@@ -68,20 +68,23 @@ int main()
 	//new engine architecture method
 	EngineContext* engine = new EngineContext();
 	Scene* startingScene = engine->GetScene();
-	//Triangle* triangle1 = new Triangle();
+	Triangle* triangle1 = new Triangle();
+	Transform* triTransform = triangle1->GetTransform();
+	triTransform->SetPosition(glm::vec3 ( - 0.5f, -1.0f, 0.0f));
 
-	//Triangle* triangle2 = new Triangle( );
-
+	Triangle* triangle2 = new Triangle( );
+	triTransform = triangle2->GetTransform();
+	triTransform->Rotate(180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	triTransform->SetPosition(glm::vec3(0.0f, -1.0f, 0.0f));
 	
 
 	Cube* rectangle = new Cube(false);
 	Transform* rectTransform = rectangle->GetTransform();
-	//rectTransform->Rotate(-55.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-	//rectTransform->Rotate(45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	//rectTransform->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+	rectTransform->SetScale( glm::vec3(0.5f, 0.5f, 0.5f));
+	rectTransform->SetPosition(glm::vec3(1.0f, 0.5f, 0.0f));
 	
-	//startingScene->AddRenderable(triangle1);
-	//startingScene->AddRenderable(triangle2);
+	startingScene->AddRenderable(triangle1);
+	startingScene->AddRenderable(triangle2);
 	startingScene->AddRenderable(rectangle);
 
 	// uncomment this call to draw in wireframe polygons.

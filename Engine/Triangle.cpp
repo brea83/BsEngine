@@ -1,5 +1,6 @@
 #include "Triangle.h"
 #include <glad/glad.h>
+#include "Transform.h"
 //#include <GLFW/glfw3.h>
 
 Triangle::Triangle()
@@ -10,6 +11,7 @@ Triangle::Triangle()
 		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
 	};
 
+	_transform = new Transform();
 	Init();
 }
 
@@ -50,6 +52,9 @@ Triangle::~Triangle()
 
 void Triangle::Render(Shader& currentShader)
 {
+	// send transform to shader
+	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
+
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);

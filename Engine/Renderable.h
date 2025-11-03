@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 
+class Transform;
 
 class Renderable
 {
@@ -14,14 +15,24 @@ public:
 		glm::vec3 Color;
 	};
 
+
+	virtual Transform* GetTransform() { return _transform; }
 	virtual void Render(Shader& currentShader) = 0;
 protected:
 	//properties
+
+	Transform* _transform;
+
 	unsigned int VAO;
 	unsigned int VBO;
 	unsigned int EBO; //Element buffer object
 
 	std::vector<Vertex> _verticies;
 	std::vector<glm::uvec3> _triangles;
+
+	// methods
+
+	// methods
+	virtual void Init() = 0;
 };
 static const std::array<int, 2> VetexDataOffsets{ 0, sizeof(glm::vec3) };

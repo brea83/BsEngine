@@ -1,16 +1,14 @@
 #pragma once
 #include "Renderable.h"
-#include <vector>
-
-class Triangle : public Renderable
+class Cube :    public Renderable
 {
 public:
-	Triangle();
-	Triangle(std::vector<Vertex>& newVerticies);
-	~Triangle();
+	Cube();
+	Cube(std::vector<Vertex>& newVerticies);
+	~Cube();
 
+	// Inherited via Renderable
 	void Render(Shader& currentShader) override;
-
 protected:
 	void Init() override;
 };

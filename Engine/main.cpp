@@ -70,21 +70,13 @@ int main()
 	Scene* startingScene = engine->GetScene();
 	//Triangle* triangle1 = new Triangle();
 
-	//std::vector<Renderable::Vertex> newVerticies = {
-	//	 Renderable::Vertex{{-0.5f,  0.0f, 0.0,},   /* top */   {1.0, 0.0, 0.0}},
-	//	Renderable::Vertex{{-1.0f, -1.0f, 0.0f, },/* left */  {0.0, 1.0, 0.0}},
-	//	Renderable::Vertex{{ 0.0f, -1.0f, 0.0f, },/* right*/  {0.0, 0.0, 1.0}},
-	//};
-	//Triangle* triangle2 = new Triangle( newVerticies);
+	//Triangle* triangle2 = new Triangle( );
 
-	//std::vector< Renderable::Vertex> newVerticies2 = {
-	//	  Renderable::Vertex{{0.5f,  0.0f, 0.0},   /* top */   {1.0, 0.0, 0.0}},
-	//	  Renderable::Vertex{{0.0f,  1.0f, 0.0f}, /* left */  {0.0, 1.0, 0.0}},
-	//	  Renderable::Vertex{{1.0f,  1.0f, 0.0f}, /* right*/  {0.0, 0.0, 1.0}},
-	//};
-	Cube* rectangle = new Cube();
+	
+
+	Cube* rectangle = new Cube(false);
 	Transform* rectTransform = rectangle->GetTransform();
-	rectTransform->Rotate(-55.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	//rectTransform->Rotate(-55.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 	//rectTransform->Rotate(45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 	//rectTransform->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 	

@@ -204,4 +204,11 @@ DAY 4 (week 2)
 ================================
 - SQUARE 
 	index buffer, and transforms
+
+	first going over how to use an array of indicies to navigate the raw verticies collection 
+	and get all the unique triangles needed to make a square without duplicating two of the verts
+
+	brief intro to linear transformations
+
 - CUBE
+

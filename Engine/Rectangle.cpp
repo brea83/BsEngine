@@ -68,7 +68,7 @@ Rectangle::~Rectangle()
 void Rectangle::Render(Shader& currentShader)
 {
 	// send transform to shader
-	currentShader.SetUniformMat4("model", _transform->GetObjectToWorldMatrix());
+	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
 
 	//draw
 	glBindVertexArray(VAO);

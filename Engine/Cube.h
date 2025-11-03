@@ -3,8 +3,9 @@
 class Cube :    public Renderable
 {
 public:
-	Cube();
-	Cube(std::vector<Vertex>& newVerticies);
+	//Cube();
+	Cube(bool useMinimalVerticies = true);
+	//Cube(std::vector<Vertex>& newVerticies, std::vector<glm::uvec3>& newTriangleIndices);
 	~Cube();
 
 	// Inherited via Renderable

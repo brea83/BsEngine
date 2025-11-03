@@ -1,9 +1,11 @@
 #include "Transform.h"
 #include <glm/gtc/matrix_transform.hpp>
+//
 
 Transform::Transform()
 {
     _modelMatrix = glm::mat4(1.0f);
+    _orientation = glm::quat(_eulerRotation);
 }
 
 glm::vec3 Transform::GetPosition()
@@ -27,10 +29,10 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
     }
 }
 
-//glm::vec3 Transform::GetRotationEuler()
-//{
-//    return glm::vec3();
-//}
+glm::vec3 Transform::GetRotationEuler()
+{
+    return glm::vec3();
+}
 
 glm::vec3 Transform::GetScale()
 {
@@ -39,17 +41,27 @@ glm::vec3 Transform::GetScale()
 
 glm::mat4& Transform::GetObjectToWorldMatrix()
 {
-    if (_positionDirty)
+    if (_positionDirty || _scaleDirty || _rotationDirty)
     {
-        _modelMatrix = glm::translate(_modelMatrix, _position);
-        _positionDirty = false;
+        RecalculateModelMatrix();
     } 
     
-    if (_scaleDirty)
-    {
-        _modelMatrix = glm::scale(_modelMatrix, _scale);
-        _scaleDirty = false;
-    }
+
 
     return _modelMatrix;
+}
+
+void Transform::RecalculateModelMatrix()
+{
+    glm::mat4 identity = glm::mat4(1.0f);
+    glm::mat4 translation = glm::translate(identity, _position);
+
+    glm::mat4 rotation = glm::mat4_cast(glm::normalize(_orientation));
+
+    glm::mat4 scale = glm::scale(identity, _scale);
+
+    _modelMatrix = translation * rotation * scale;
+    _positionDirty = false;
+    _scaleDirty = false;
+    _rotationDirty = false;
 }

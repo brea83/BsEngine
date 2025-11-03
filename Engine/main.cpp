@@ -74,8 +74,8 @@ int main()
 
 	Triangle* triangle2 = new Triangle( );
 	triTransform = triangle2->GetTransform();
-	triTransform->Rotate(180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	triTransform->SetPosition(glm::vec3(0.0f, -1.0f, 0.0f));
+	triTransform->SetRotationEuler(glm::vec3(0.0f, 0.0f, 180.0f));
+	triTransform->SetPosition(glm::vec3(0.0f, 1.0f, 0.0f));
 	
 
 	Cube* rectangle = new Cube(false);

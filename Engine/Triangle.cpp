@@ -6,9 +6,9 @@
 Triangle::Triangle()
 {
 	_verticies = {
-		Vertex{{ 0.0f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+		Vertex{{ 0.0f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 0.5f, 1.0f }},
+		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
+		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
 	};
 
 	_transform = new Transform();
@@ -33,11 +33,15 @@ void Triangle::Init(/*std::vector<Vertex>& verticies*/)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER,  _verticies.size() * sizeof(Vertex), &_verticies[0], GL_STATIC_DRAW);
 
-	
+	// vertex positions
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
 	glEnableVertexAttribArray(0);
+	// vertex color
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 	glEnableVertexAttribArray(1);
+	//vertex uv
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
+	glEnableVertexAttribArray(3);
 
 	// unbind so that other objects can be set up
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

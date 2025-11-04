@@ -5,9 +5,12 @@
 #include "Scene.h"
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "Texture.h"
 
 ForwardRenderPass::ForwardRenderPass()
 {
+	_fallbackTexture = new Texture("Assets/Textures/ffxivSnowman1.png");
+
 	_shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
 	// TODO: determine right place to set up view and projection matrices
 	_shader->Use();
@@ -38,6 +41,10 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	std::vector<Renderable*>& objectsToRender = sceneToRender.GetRenderables();
 
 	_shader->Use();
+
+	_fallbackTexture->Bind(0);
+	_shader->SetUniformInt("Texture1", 0);
+
 	Camera* mainCam = sceneToRender.GetMainCamera();
 	_viewMatrix = mainCam->ViewMatrix();
 	_projectionMatrix = mainCam->ProjectionMatrix();

@@ -139,6 +139,7 @@
     <ClCompile Include="ForwardRenderer.cpp" />
     <ClCompile Include="ForwardRenderPass.cpp" />
     <ClCompile Include="GLAD\glad.c" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Renderable.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -156,12 +158,14 @@
     <ClInclude Include="EngineContext.h" />
     <ClInclude Include="ForwardRenderer.h" />
     <ClInclude Include="ForwardRenderPass.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders\Shader.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="Window.h" />

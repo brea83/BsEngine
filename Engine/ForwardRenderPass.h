@@ -4,6 +4,7 @@
 //#include <memory>
 
 class Shader;
+class Texture;
 
 class ForwardRenderPass : public RenderPass
 {
@@ -14,7 +15,7 @@ public:
 	void Execute(Scene& sceneToRender) override;
 private:
 	Shader* _shader;
-	// TODO: PUT THESE SOMEWHERE SMARTER
+	Texture* _fallbackTexture;
 
 	glm::mat4 _viewMatrix;
 	glm::mat4 _projectionMatrix;

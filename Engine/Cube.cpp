@@ -9,16 +9,16 @@ Cube::Cube(bool useMinimalVerticies)
 	{
 		_verticies = {
 			// back face
-			Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}}, // top left
-			Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}, // top right
-			Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}}, // bottom left
-			Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}}, // bottom right
+			Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }}, // top left
+			Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
+			Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }}, // bottom left
+			Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }}, // bottom right
 
 			// front face
-			Vertex{{-0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}}, // top left
-			Vertex{{ 0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}}, // top right
-			Vertex{{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}}, // bottom left
-			Vertex{{ 0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}, // bottom right
+			Vertex{{-0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }}, // top left
+			Vertex{{ 0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
+			Vertex{{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }}, // bottom left
+			Vertex{{ 0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }}, // bottom right
 		};
 
 		_triangles = {  //idicies of the vertexies list to use as points of a triangle
@@ -51,39 +51,39 @@ Cube::Cube(bool useMinimalVerticies)
 	{
 		_verticies = {
 			// front face
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
+			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }},
+			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }},
+			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }},
 			// back face
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}},
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}},
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}},
+			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 0.0f }},
+			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 0.0f }},
 
 			//bottom face 
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}},
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}},
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}},
+			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 0.0f }},
+			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 0.0f }},
 
 			//top face
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
+			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 0.0f }},
 
 			//left face
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}},
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}},
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}},
+			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
+			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
+			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
+			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
 
 			//right face
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}},
+			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
+			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
 		};
 
 		_triangles = {
@@ -125,11 +125,15 @@ void Cube::Init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _triangles.size() * sizeof(glm::uvec3), &_triangles[0], GL_STATIC_DRAW);
 
-
+	//position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,Position));
 	glEnableVertexAttribArray(0);
+	//vertex color
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,Color));
 	glEnableVertexAttribArray(1);
+	//vertex uv
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
+	glEnableVertexAttribArray(3);
 
 	// unbind so that other objects can be set up
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -146,7 +150,7 @@ Cube::~Cube()
 void Cube::Render(Shader& currentShader)
 {
 	// rotate transform on tick TEMP DO NOT LEAVE THIS IN
-	_transform->Rotate( 0.05f, glm::vec3(1.0f, 1.0f, 0.0f));
+	//_transform->Rotate( 0.02f, glm::vec3(0.0f, 0.0f, 1.0f));
 	// send transform to shader
 	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
 

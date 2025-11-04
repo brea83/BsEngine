@@ -146,7 +146,7 @@ Cube::~Cube()
 void Cube::Render(Shader& currentShader)
 {
 	// rotate transform on tick TEMP DO NOT LEAVE THIS IN
-	_transform->Rotate( 0.5f, glm::vec3(0.5f, 1.0f, 0.0f));
+	_transform->Rotate( 0.05f, glm::vec3(1.0f, 1.0f, 0.0f));
 	// send transform to shader
 	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
 

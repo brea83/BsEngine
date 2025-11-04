@@ -1,5 +1,6 @@
 #include "Transform.h"
 #include <glm/gtc/matrix_transform.hpp>
+
 //
 
 Transform::Transform()
@@ -27,6 +28,14 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
     {
         _modelMatrix = glm::rotate(_modelMatrix, angle, axis);
     }
+
+    _orientation = glm::quat_cast(_modelMatrix);
+    float yaw = glm::yaw(_orientation);
+    float pitch = glm::pitch(_orientation);
+    float roll = glm::roll(_orientation);
+
+    _eulerRotation = glm::vec3(yaw, pitch, roll);
+    _rotationDirty;
 }
 
 glm::vec3 Transform::GetRotationEuler()

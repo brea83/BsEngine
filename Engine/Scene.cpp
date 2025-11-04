@@ -1,8 +1,11 @@
 #include "Scene.h"
 #include "Renderable.h"
+#include "Camera.h"
 
 Scene::Scene()
-{ }
+{ 
+	_mainCamera = new Camera();
+}
 
 Scene::~Scene()
 {

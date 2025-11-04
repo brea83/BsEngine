@@ -48,9 +48,9 @@ void Rectangle::Init()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _triangles.size() * sizeof(glm::uvec3), &_triangles[0], GL_STATIC_DRAW);
 
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)VetexDataOffsets[0]);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)VetexDataOffsets[1]);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 	glEnableVertexAttribArray(1);
 
 	// unbind so that other objects can be set up

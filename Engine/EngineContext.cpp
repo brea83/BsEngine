@@ -1,5 +1,9 @@
 #include "EngineContext.h"
 #include "ForwardRenderer.h"
+#include "Camera.h"
+#include "Window.h"
+
+EngineContext* EngineContext::_engine = nullptr;
 
 EngineContext::EngineContext()
 {
@@ -9,9 +13,24 @@ EngineContext::EngineContext()
 	_renderer->Init();
 }
 
-EngineContext::EngineContext(Scene* scene, Renderer* renderer/*, DebugConsole* console*/)
-	: _activeScene( scene ), _renderer(renderer)
+//EngineContext::EngineContext(/*Scene* scene, Renderer* renderer,*/ Window* window/*, DebugConsole* console*/)
+///* _activeScene( scene ), _renderer(renderer),*/
+//{
+//	// get default scene and renderer from some kind of ini?
+//	_mainWindow =window;
+//	_activeScene = new Scene();
+//	_renderer = new ForwardRenderer(this);
+//
+//}
+
+EngineContext* EngineContext::GetEngine()
 {
+	if (!_engine)
+	{
+		_engine = new EngineContext();
+		return _engine;
+	}
+	return _engine;
 }
 
 void EngineContext::Draw()
@@ -22,4 +41,12 @@ void EngineContext::Draw()
 }
 
 void EngineContext::DrawConsole()
+{}
+
+void EngineContext::OnFrameBufferSize(int width, int height)
+{
+	_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
+}
+
+void EngineContext::OnGlfwInput(GLFWwindow* window)
 {}

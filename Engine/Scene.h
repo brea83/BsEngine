@@ -4,6 +4,7 @@
 //#include <memory>
 
 class Renderable;
+class Camera;
 
 class Scene
 {
@@ -13,10 +14,9 @@ public:
 	void AddRenderable(Renderable* newRenderable) { _objectsToRender.push_back(newRenderable); }
 	std::vector<Renderable*>& GetRenderables() { return _objectsToRender; }
 
-	//main camera
-	//frame buffer?
-	
+	Camera* GetMainCamera() { return _mainCamera; }
 private:
+	Camera* _mainCamera;
 	std::vector<Renderable*> _objectsToRender; 
 };
 

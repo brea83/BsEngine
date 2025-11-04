@@ -53,6 +53,9 @@ RESOURCES
 	OTHER PPLS ENGINES
 	Zenith Engine has interesting structure for render passes https://github.com/gitbetter/Zenith/tree/master
 	hazel engine
+	
+	VIDEOS
+	projection matrix https://www.youtube.com/watch?v=U0_ONQQ5ZNM
 ================================
 DAY 1
 ================================
@@ -211,4 +214,17 @@ DAY 4 (week 2)
 	brief intro to linear transformations
 
 - CUBE
+================================
+DAY 5 (week 2)
+================================
+CAMERA
+
+holds view and projection matrix in Martin's engine
+projection doesn't need to be on the camera, but does need to get field of view from the camera
+
+// note to look up what projection matrixes were for other consoles, 
+// ps1 for example doesn't do the the final divide be w step
+
+WALK THROUGH OF CAMERA AND SCENE of Martin's engine
+	reminder that can init glm:vec3 etc with a single number if all values are supposed to match
 

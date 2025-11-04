@@ -35,4 +35,4 @@ protected:
 	// methods
 	virtual void Init() = 0;
 };
-static const std::array<int, 2> VetexDataOffsets{ 0, sizeof(glm::vec3) };
+//static const std::array<int, 2> VetexDataOffsets{ 0, sizeof(glm::vec3) };

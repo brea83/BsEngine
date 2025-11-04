@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="EngineContext.cpp" />
     <ClCompile Include="ForwardRenderer.cpp" />
@@ -147,8 +148,10 @@
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="EngineContext.h" />
     <ClInclude Include="ForwardRenderer.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\FragmentShader.glsl" />

@@ -14,6 +14,7 @@ void ForwardRenderer::Init()
 	std::unique_ptr<ForwardRenderPass> pass = std::make_unique<ForwardRenderPass>();
 
 	_passes.push_back(std::move(pass));
+	glEnable(GL_DEPTH_TEST);
 }
 
 void ForwardRenderer::BeginFrame(Scene& scene)

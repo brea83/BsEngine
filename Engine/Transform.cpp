@@ -5,7 +5,7 @@
 
 Transform::Transform()
 {
-    _modelMatrix = glm::mat4(1.0f);
+    _localMatrix = glm::mat4(1.0f);
     _orientation = glm::quat(_eulerRotation);
 }
 
@@ -13,7 +13,7 @@ glm::vec3 Transform::GetPosition()
 {
     if(!_positionDirty) return _position;
 
-    _modelMatrix = glm::translate(_modelMatrix, _position);
+    _localMatrix = glm::translate(_localMatrix, _position);
     _positionDirty = false;
     return _position;
 }
@@ -22,14 +22,14 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
 {
     if (isDegrees)
     {
-        _modelMatrix = glm::rotate(_modelMatrix, glm::radians(angle), axis);
+        _localMatrix = glm::rotate(_localMatrix, glm::radians(angle), axis);
     }
     else
     {
-        _modelMatrix = glm::rotate(_modelMatrix, angle, axis);
+        _localMatrix = glm::rotate(_localMatrix, angle, axis);
     }
 
-    _orientation = glm::quat_cast(_modelMatrix);
+    _orientation = glm::quat_cast(_localMatrix);
     float yaw = glm::yaw(_orientation);
     float pitch = glm::pitch(_orientation);
     float roll = glm::roll(_orientation);
@@ -54,10 +54,8 @@ glm::mat4& Transform::GetObjectToWorldMatrix()
     {
         RecalculateModelMatrix();
     } 
-    
 
-
-    return _modelMatrix;
+    return _localMatrix;
 }
 
 void Transform::RecalculateModelMatrix()
@@ -69,7 +67,7 @@ void Transform::RecalculateModelMatrix()
 
     glm::mat4 scale = glm::scale(identity, _scale);
 
-    _modelMatrix = translation * rotation * scale;
+    _localMatrix = translation * rotation * scale;
     _positionDirty = false;
     _scaleDirty = false;
     _rotationDirty = false;

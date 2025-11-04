@@ -24,17 +24,19 @@ public:
 
 
 private:
-	glm::vec3 _position { 0.0f, 0.0f, 0.0f };
+	glm::vec3 _position { 0.0f };
 	bool _positionDirty { false };
 
-	glm::vec3 _eulerRotation { 0.0f, 0.0f, 0.0f };
+	glm::vec3 _eulerRotation { 0.0f };
 	glm::quat _orientation;
 	bool _rotationDirty { false };
 
-	glm::vec3 _scale { 1.0f, 1.0f, 1.0f };
+	glm::vec3 _scale { 1.0f };
 	bool _scaleDirty { false };
 	
 	void RecalculateModelMatrix();
-	glm::mat4 _modelMatrix;
+	glm::mat4 _localMatrix;
+
+	glm::mat4 _worldMatrix;
 };
 

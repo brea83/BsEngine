@@ -82,9 +82,15 @@ int main()
 	Transform* rectTransform = rectangle->GetTransform();
 	rectTransform->SetScale( glm::vec3(0.5f, 0.5f, 0.5f));
 	rectTransform->SetPosition(glm::vec3(1.0f, 0.5f, 0.0f));
+
+	Cube* cube2 = new Cube(false);
+	rectTransform = cube2->GetTransform();
+	rectTransform->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+	rectTransform->SetPosition(glm::vec3(-1.0f, -0.75f, -2.0f));
 	
 	startingScene->AddRenderable(triangle1);
 	startingScene->AddRenderable(triangle2);
+	startingScene->AddRenderable(cube2);
 	startingScene->AddRenderable(rectangle);
 
 	// uncomment this call to draw in wireframe polygons.

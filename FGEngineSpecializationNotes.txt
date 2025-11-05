@@ -237,7 +237,7 @@ MODULE ONE REQUIREMENTS
 	cube can be rotated, translated, and scaled with imgui
 PREP FOR IMGUI
 	object in scene is going to need functions to interact with its component parts via imgui
-	a toggle for whether to render imgui stuff (like entering play mode)
+	a toggle for whether to render imgui stuff (like ent≈ering play mode)
 IMGUI
 	docking will require framebuffering
 

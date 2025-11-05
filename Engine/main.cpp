@@ -26,6 +26,7 @@ int main()
 	}
 	GLFWwindow* glfw = mainWindow->GetGlfwWindow();
 	EngineContext* engine = EngineContext::GetEngine();
+	engine->SetMainWindow(mainWindow);
 
 #pragma region AddMeshesToStartScene
 	Scene* startingScene = engine->GetScene();

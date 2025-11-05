@@ -16,6 +16,9 @@ public:
 
 	static EngineContext* GetEngine();
 
+	//TODO: FIX HOW WINDOW AND ENGINE ARE CONNECTED THIS IS AN AWFUL FUNCTION TO JUST HAVE BE PUBLIC
+	void SetMainWindow(Window* window) { _mainWindow = window; }
+	Window* GetMainWindow() { return _mainWindow; }
 
 	void SetScene(Scene* newScene) { _activeScene = newScene; }
 	Scene* GetScene() { return _activeScene; }

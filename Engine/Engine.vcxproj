@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,12 +133,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Graphics\Camera.cpp" />
     <ClCompile Include="Graphics\Primitives\Cube.cpp" />
     <ClCompile Include="EngineContext.cpp" />
     <ClCompile Include="Graphics\Renderers\ForwardRenderer.cpp" />
     <ClCompile Include="Graphics\Renderers\ForwardRenderPass.cpp" />
     <ClCompile Include="GLAD\glad.c" />
+    <ClCompile Include="ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="ImGui\ImGuiBuild.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="LayerStack.cpp" />
     <ClCompile Include="StbImageWrapper.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Graphics\Primitives\Rectangle.cpp" />
@@ -153,11 +165,24 @@
     <ClCompile Include="GlfwWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imconfig.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imgui.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imgui_internal.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Graphics\Camera.h" />
     <ClInclude Include="Graphics\Primitives\Cube.h" />
     <ClInclude Include="EngineContext.h" />
     <ClInclude Include="Graphics\Renderers\ForwardRenderer.h" />
     <ClInclude Include="Graphics\Renderers\ForwardRenderPass.h" />
+    <ClInclude Include="ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="LayerStack.h" />
     <ClInclude Include="StbImageWrapper.h" />
     <ClInclude Include="Graphics\Primitives\Rectangle.h" />
     <ClInclude Include="Graphics\Primitives\Renderable.h" />

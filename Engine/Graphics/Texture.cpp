@@ -2,7 +2,7 @@
 #include<iostream>
 //#include <glad/glad.h>
 //#include <GLFW/glfw3.h>
-#include "Image.h"
+#include "../StbImageWrapper.h"
 
 
 Texture::Texture()

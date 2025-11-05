@@ -1,6 +1,6 @@
 #include "Scene.h"
-#include "Renderable.h"
-#include "Camera.h"
+#include "Graphics/Primitives/Renderable.h"
+#include "Graphics/Camera.h"
 
 Scene::Scene()
 { 

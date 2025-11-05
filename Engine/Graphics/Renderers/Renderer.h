@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Scene.h"
+#include "../../Scene.h"
 #include "RenderPass.h"
 
 class EngineContext;

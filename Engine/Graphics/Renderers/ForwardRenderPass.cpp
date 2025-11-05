@@ -1,17 +1,17 @@
 #include "ForwardRenderPass.h"
 #include <vector>
-#include "Shaders/Shader.h"
-#include "Renderable.h"
-#include "Scene.h"
-#include "Camera.h"
+#include "../Shaders/Shader.h"
+#include "../Primitives/Renderable.h"
+#include "../../Scene.h"
+#include "../Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "Texture.h"
+#include "../Texture.h"
 
 ForwardRenderPass::ForwardRenderPass()
 {
 	_fallbackTexture = new Texture("Assets/Textures/ffxivSnowman1.png");
 
-	_shader = new Shader("Shaders/VertexShader.glsl", "Shaders/FragmentShader.glsl");
+	_shader = new Shader("Graphics/Shaders/VertexShader.glsl", "Graphics/Shaders/FragmentShader.glsl");
 	// TODO: determine right place to set up view and projection matrices
 	_shader->Use();
 

@@ -2,13 +2,12 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Window.h"
+#include "GlfwWrapper.h"
 #include "EngineContext.h"
 #include "Scene.h"
-#include "Triangle.h"
-#include "Rectangle.h"
-#include "Cube.h"
-#include "Transform.h"
+#include "Graphics/Primitives/Triangle.h"
+#include "Graphics/Primitives/Cube.h"
+#include "Graphics/Primitives/Transform.h"
 
 
 //void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -44,7 +43,7 @@ int main()
 	Transform* rectTransform = cube->GetTransform();
 	//rectTransform->SetScale( glm::vec3(0.5f, 0.5f, 0.5f));
 	rectTransform->SetPosition(glm::vec3(1.0f, 0.5f, 0.0f));
-	rectTransform->SetRotationEuler(glm::vec3(0.0f, 45.0f, 0.0f));
+	//rectTransform->SetRotationEuler(glm::vec3(0.0f, 45.0f, 0.0f));
 	//Cube* cube2 = new Cube(false);
 	//rectTransform = cube2->GetTransform();
 	//rectTransform->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));

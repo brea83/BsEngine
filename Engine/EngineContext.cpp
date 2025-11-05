@@ -1,7 +1,7 @@
 #include "EngineContext.h"
-#include "ForwardRenderer.h"
-#include "Camera.h"
-#include "Window.h"
+#include "Graphics/Renderers/ForwardRenderer.h"
+#include "Graphics/Camera.h"
+#include "GlfwWrapper.h"
 
 EngineContext* EngineContext::_engine = nullptr;
 

@@ -133,46 +133,46 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Graphics\Camera.cpp" />
+    <ClCompile Include="Graphics\Primitives\Cube.cpp" />
     <ClCompile Include="EngineContext.cpp" />
-    <ClCompile Include="ForwardRenderer.cpp" />
-    <ClCompile Include="ForwardRenderPass.cpp" />
+    <ClCompile Include="Graphics\Renderers\ForwardRenderer.cpp" />
+    <ClCompile Include="Graphics\Renderers\ForwardRenderPass.cpp" />
     <ClCompile Include="GLAD\glad.c" />
-    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="StbImageWrapper.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="Renderable.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RenderPass.cpp" />
+    <ClCompile Include="Graphics\Primitives\Rectangle.cpp" />
+    <ClCompile Include="Graphics\Primitives\Renderable.cpp" />
+    <ClCompile Include="Graphics\Renderers\Renderer.cpp" />
+    <ClCompile Include="Graphics\Renderers\RenderPass.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shaders\Shader.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Graphics\Shaders\Shader.cpp" />
+    <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="Graphics\Primitives\Transform.cpp" />
+    <ClCompile Include="Graphics\Primitives\Triangle.cpp" />
+    <ClCompile Include="GlfwWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Graphics\Camera.h" />
+    <ClInclude Include="Graphics\Primitives\Cube.h" />
     <ClInclude Include="EngineContext.h" />
-    <ClInclude Include="ForwardRenderer.h" />
-    <ClInclude Include="ForwardRenderPass.h" />
-    <ClInclude Include="Image.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="Renderable.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RenderPass.h" />
+    <ClInclude Include="Graphics\Renderers\ForwardRenderer.h" />
+    <ClInclude Include="Graphics\Renderers\ForwardRenderPass.h" />
+    <ClInclude Include="StbImageWrapper.h" />
+    <ClInclude Include="Graphics\Primitives\Rectangle.h" />
+    <ClInclude Include="Graphics\Primitives\Renderable.h" />
+    <ClInclude Include="Graphics\Renderers\Renderer.h" />
+    <ClInclude Include="Graphics\Renderers\RenderPass.h" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shaders\Shader.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Graphics\Shaders\Shader.h" />
+    <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="Graphics\Primitives\Transform.h" />
+    <ClInclude Include="Graphics\Primitives\Triangle.h" />
+    <ClInclude Include="GlfwWrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentShader.glsl" />
-    <None Include="Shaders\VertexShader.glsl" />
+    <None Include="Graphics\Shaders\FragmentShader.glsl" />
+    <None Include="Graphics\Shaders\VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

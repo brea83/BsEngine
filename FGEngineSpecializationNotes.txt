@@ -228,3 +228,28 @@ projection doesn't need to be on the camera, but does need to get field of view 
 WALK THROUGH OF CAMERA AND SCENE of Martin's engine
 	reminder that can init glm:vec3 etc with a single number if all values are supposed to match
 
+================================
+DAY 6 (week 2)
+================================
+MODULE ONE REQUIREMENTS
+	a cube rendered in a window with perspective
+	cube is textured
+	cube can be rotated, translated, and scaled with imgui
+PREP FOR IMGUI
+	object in scene is going to need functions to interact with its component parts via imgui
+	a toggle for whether to render imgui stuff (like entering play mode)
+IMGUI
+	docking will require framebuffering
+
+	init glfwwindow first
+	then set up imgui
+
+	imgui programming goes between imgui::begin and imgui::end() calls
+
+	heirarchy class
+	class for object entry or something like inspector
+
+ABOUT FRAME BUFFER	
+	viewport has the framebuffer
+	
+

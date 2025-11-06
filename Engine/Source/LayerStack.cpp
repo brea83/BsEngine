@@ -1,9 +1,10 @@
+#include "BsPrecompileHeader.h"
 #include "LayerStack.h"
 #include "Layer.h"
 
 LayerStack::LayerStack()
 {
-	_layerInsert = _layers.begin();
+	
 }
 
 LayerStack::~LayerStack()
@@ -16,7 +17,8 @@ LayerStack::~LayerStack()
 
 void LayerStack::PushLayer(Layer * layer)
 {
-	_layerInsert = _layers.emplace(_layerInsert, layer);
+	_layers.emplace(_layers.begin() + _layerInsertIndex, layer);
+	_layerInsertIndex++;
 }
 
 void LayerStack::PushOverlay(Layer * overlay)
@@ -30,7 +32,7 @@ void LayerStack::PopLayer(Layer * layer)
 	if (itterator != _layers.end())
 	{
 		_layers.erase(itterator);
-		_layerInsert--;
+		_layerInsertIndex--;
 	}
 }
 

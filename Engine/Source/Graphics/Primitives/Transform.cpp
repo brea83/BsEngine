@@ -1,3 +1,4 @@
+#include "BsPrecompileHeader.h"
 #include "Transform.h"
 #include <glm/gtc/matrix_transform.hpp>
 

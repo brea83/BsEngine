@@ -1,3 +1,4 @@
+#include "BsPrecompileHeader.h"
 #include "EngineContext.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Graphics/Camera.h"
@@ -8,6 +9,7 @@ EngineContext* EngineContext::_engine = nullptr;
 EngineContext::EngineContext()
 {
 	// get default scene and renderer from some kind of ini?
+	_mainWindow = nullptr;
 	_activeScene = new Scene();
 	_renderer = new ForwardRenderer( this );
 	_renderer->Init();

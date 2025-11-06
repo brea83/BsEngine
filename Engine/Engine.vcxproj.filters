@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\GLAD">
-      <UniqueIdentifier>{d076c279-d71f-411f-b418-2d32dd3368ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{afa02a67-9285-435a-892d-cc8f0336511a}</UniqueIdentifier>
     </Filter>
@@ -28,193 +25,214 @@
     <Filter Include="Source Files\Primitives">
       <UniqueIdentifier>{46e23afc-4857-4862-a769-93804dbb4ead}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Dependancies">
+      <UniqueIdentifier>{d41cb015-593f-4bff-9778-7ddeb2d3b55d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dependancies\GLAD">
+      <UniqueIdentifier>{d076c279-d71f-411f-b418-2d32dd3368ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dependancies\imgui">
+      <UniqueIdentifier>{6756d545-6a9b-45ce-86c1-75e1c66d9b46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ImGui">
+      <UniqueIdentifier>{2b43dc74-12a2-437f-ba47-502feacfcd8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dependencies">
+      <UniqueIdentifier>{b3de4ae0-c138-461e-819e-b3ada68dec91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dependencies\imgui">
+      <UniqueIdentifier>{9ecb1c73-6519-470d-ae15-5faaf9d38b6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ImGui">
+      <UniqueIdentifier>{0e2a1340-6242-4f85-8b4f-6a512b8278de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GLAD\glad.c">
-      <Filter>Source Files\GLAD</Filter>
+      <Filter>Source Files\Dependancies\GLAD</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Shaders\Shader.cpp">
+    <ClCompile Include="Source\Graphics\Shaders\Shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="Source\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EngineContext.cpp">
+    <ClCompile Include="Source\EngineContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Renderers\Renderer.cpp">
+    <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Renderers\RenderPass.cpp">
+    <ClCompile Include="Source\Graphics\Renderers\RenderPass.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Renderers\ForwardRenderer.cpp">
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Renderers\ForwardRenderPass.cpp">
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderPass.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Primitives\Transform.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Primitives\Cube.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\Cube.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Primitives\Rectangle.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\Rectangle.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Primitives\Triangle.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Primitives\Renderable.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Camera.cpp">
+    <ClCompile Include="Source\GlfwWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GlfwWrapper.cpp">
+    <ClCompile Include="Source\Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StbImageWrapper.cpp">
+    <ClCompile Include="Source\StbImageWrapper.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\ImGuiBuild.cpp">
+    <ClCompile Include="Source\Layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImGui\ImGuiLayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LayerStack.cpp">
+    <ClCompile Include="Source\LayerStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp">
+      <Filter>Source Files\Dependancies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\Dependancies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ImGui\ImGuiLayer.cpp">
+      <Filter>Source Files\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Dependancies\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="Source\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineContext.h">
+    <ClInclude Include="Source\EngineContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Renderers\ForwardRenderer.h">
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Renderers\ForwardRenderPass.h">
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Renderers\Renderer.h">
+    <ClInclude Include="Source\Graphics\Renderers\Renderer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Renderers\RenderPass.h">
+    <ClInclude Include="Source\Graphics\Renderers\RenderPass.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Shaders\Shader.h">
+    <ClInclude Include="Source\Graphics\Shaders\Shader.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Primitives\Transform.h">
+    <ClInclude Include="Source\Graphics\Primitives\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Primitives\Cube.h">
+    <ClInclude Include="Source\Graphics\Primitives\Cube.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Primitives\Rectangle.h">
+    <ClInclude Include="Source\Graphics\Primitives\Rectangle.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Primitives\Triangle.h">
+    <ClInclude Include="Source\Graphics\Primitives\Triangle.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Primitives\Renderable.h">
+    <ClInclude Include="Source\Graphics\Primitives\Renderable.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Camera.h">
+    <ClInclude Include="Source\GlfwWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GlfwWrapper.h">
+    <ClInclude Include="Source\Graphics\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Graphics\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StbImageWrapper.h">
+    <ClInclude Include="Source\StbImageWrapper.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="ImGui\ImGuiLayer.h">
+    <ClInclude Include="Source\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LayerStack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imconfig.h">
+    <ClInclude Include="Source\LayerStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\includes\imgui\imgui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\dependencies\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\dependencies\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\dependencies\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\imgui_internal.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_rectpack.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ImGui\ImGuiLayer.h">
+      <Filter>Header Files\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Camera.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependencies\includes\imgui\imconfig.h">
+      <Filter>Header Files\dependencies\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BsPrecompileHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Graphics\Shaders\VertexShader.glsl">
+    <None Include="Source\Graphics\Shaders\VertexShader.glsl">
       <Filter>Source Files\Rendering</Filter>
     </None>
-    <None Include="Graphics\Shaders\FragmentShader.glsl">
+    <None Include="Source\Graphics\Shaders\FragmentShader.glsl">
       <Filter>Source Files\Rendering</Filter>
     </None>
   </ItemGroup>

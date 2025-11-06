@@ -1,3 +1,4 @@
+#include "BsPrecompileHeader.h"
 #include "Scene.h"
 #include "Graphics/Primitives/Renderable.h"
 #include "Graphics/Camera.h"

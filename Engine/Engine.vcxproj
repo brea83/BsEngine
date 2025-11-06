@@ -104,7 +104,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Source;$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>BsPrecompileHeader.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +123,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Source;$(SolutionDir)Dependencies\includes\imgui;C:\glm;$(SolutionDir)Dependencies\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>BsPrecompileHeader.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -133,36 +137,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_demo.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_draw.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="Graphics\Camera.cpp" />
-    <ClCompile Include="Graphics\Primitives\Cube.cpp" />
-    <ClCompile Include="EngineContext.cpp" />
-    <ClCompile Include="Graphics\Renderers\ForwardRenderer.cpp" />
-    <ClCompile Include="Graphics\Renderers\ForwardRenderPass.cpp" />
-    <ClCompile Include="GLAD\glad.c" />
-    <ClCompile Include="ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="ImGui\ImGuiBuild.cpp" />
-    <ClCompile Include="Layer.cpp" />
-    <ClCompile Include="LayerStack.cpp" />
-    <ClCompile Include="StbImageWrapper.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Graphics\Primitives\Rectangle.cpp" />
-    <ClCompile Include="Graphics\Primitives\Renderable.cpp" />
-    <ClCompile Include="Graphics\Renderers\Renderer.cpp" />
-    <ClCompile Include="Graphics\Renderers\RenderPass.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Graphics\Shaders\Shader.cpp" />
-    <ClCompile Include="Graphics\Texture.cpp" />
-    <ClCompile Include="Graphics\Primitives\Transform.cpp" />
-    <ClCompile Include="Graphics\Primitives\Triangle.cpp" />
-    <ClCompile Include="GlfwWrapper.cpp" />
+    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\Graphics\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Cube.cpp" />
+    <ClCompile Include="Source\EngineContext.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderPass.cpp" />
+    <ClCompile Include="GLAD\glad.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Source\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Layer.cpp" />
+    <ClCompile Include="Source\LayerStack.cpp" />
+    <ClCompile Include="Source\StbImageWrapper.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Rectangle.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\RenderPass.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Transform.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
+    <ClCompile Include="Source\GlfwWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.h" />
@@ -175,29 +205,30 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="Graphics\Camera.h" />
-    <ClInclude Include="Graphics\Primitives\Cube.h" />
-    <ClInclude Include="EngineContext.h" />
-    <ClInclude Include="Graphics\Renderers\ForwardRenderer.h" />
-    <ClInclude Include="Graphics\Renderers\ForwardRenderPass.h" />
-    <ClInclude Include="ImGui\ImGuiLayer.h" />
-    <ClInclude Include="Layer.h" />
-    <ClInclude Include="LayerStack.h" />
-    <ClInclude Include="StbImageWrapper.h" />
-    <ClInclude Include="Graphics\Primitives\Rectangle.h" />
-    <ClInclude Include="Graphics\Primitives\Renderable.h" />
-    <ClInclude Include="Graphics\Renderers\Renderer.h" />
-    <ClInclude Include="Graphics\Renderers\RenderPass.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Graphics\Shaders\Shader.h" />
-    <ClInclude Include="Graphics\Texture.h" />
-    <ClInclude Include="Graphics\Primitives\Transform.h" />
-    <ClInclude Include="Graphics\Primitives\Triangle.h" />
-    <ClInclude Include="GlfwWrapper.h" />
+    <ClInclude Include="Source\Graphics\Camera.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Cube.h" />
+    <ClInclude Include="Source\EngineContext.h" />
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h" />
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h" />
+    <ClInclude Include="Source\BsPrecompileHeader.h" />
+    <ClInclude Include="Source\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Source\Layer.h" />
+    <ClInclude Include="Source\LayerStack.h" />
+    <ClInclude Include="Source\StbImageWrapper.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Rectangle.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Renderable.h" />
+    <ClInclude Include="Source\Graphics\Renderers\Renderer.h" />
+    <ClInclude Include="Source\Graphics\Renderers\RenderPass.h" />
+    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\Graphics\Shaders\Shader.h" />
+    <ClInclude Include="Source\Graphics\Texture.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Transform.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
+    <ClInclude Include="Source\GlfwWrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Graphics\Shaders\FragmentShader.glsl" />
-    <None Include="Graphics\Shaders\VertexShader.glsl" />
+    <None Include="Source\Graphics\Shaders\FragmentShader.glsl" />
+    <None Include="Source\Graphics\Shaders\VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

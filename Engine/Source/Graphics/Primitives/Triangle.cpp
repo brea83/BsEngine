@@ -1,3 +1,4 @@
+#include "BsPrecompileHeader.h"
 #include "Triangle.h"
 #include <glad/glad.h>
 #include "Transform.h"

@@ -1,5 +1,6 @@
+#include "BsPrecompileHeader.h"
 #include "Texture.h"
-#include<iostream>
+//#include<iostream>
 //#include <glad/glad.h>
 //#include <GLFW/glfw3.h>
 #include "../StbImageWrapper.h"

@@ -1,7 +1,8 @@
+#include "BsPrecompileHeader.h"
 #include "ImGuiLayer.h"
 
-#include "../EngineContext.h"
-#include "../GlfwWrapper.h"
+#include "EngineContext.h"
+#include "GlfwWrapper.h"
 //#include "glad/glad.h"
 
 #include <imgui.h>

@@ -1,6 +1,6 @@
+#include "BsPrecompileHeader.h"
 #include "GlfwWrapper.h"
 #include "EngineContext.h"
-#include <iostream>
 
 void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height);
 

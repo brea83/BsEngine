@@ -1,26 +1,23 @@
+#include "BsPrecompileHeader.h"
 #include "ForwardRenderPass.h"
-#include <vector>
-#include "../Shaders/Shader.h"
-#include "../Primitives/Renderable.h"
-#include "../../Scene.h"
-#include "../Camera.h"
+#include "Graphics/Shaders/Shader.h"
+#include "Graphics/Primitives/Renderable.h"
+#include "Scene.h"
+#include "Graphics/Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "../Texture.h"
+#include "Graphics/Texture.h"
 
 ForwardRenderPass::ForwardRenderPass()
 {
 	_fallbackTexture = new Texture("Assets/Textures/ffxivSnowman1.png");
 
-	_shader = new Shader("Graphics/Shaders/VertexShader.glsl", "Graphics/Shaders/FragmentShader.glsl");
+	_shader = new Shader("Source/Graphics/Shaders/VertexShader.glsl", "Source/Graphics/Shaders/FragmentShader.glsl");
 	// TODO: determine right place to set up view and projection matrices
 	_shader->Use();
 
-	/*_viewMatrix = glm::mat4(1.0f);
-	_viewMatrix = glm::translate(_viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
-
+	_viewMatrix = glm::mat4(1.0f);
 	_projectionMatrix = glm::mat4(1.0f);
-	_projectionMatrix = glm::perspective(glm::radians(45.0f), (800.0f / 600.0f), 0.1f, 100.0f);
-	*/
+
 	glm::mat4 identityMatrix = glm::mat4(1.0f);
 	_shader->SetUniformMat4("model", identityMatrix);
 

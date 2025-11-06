@@ -1,3 +1,4 @@
+#include "BsPrecompileHeader.h"
 #include "Cube.h"
 #include "Transform.h"
 #include <glad/glad.h>

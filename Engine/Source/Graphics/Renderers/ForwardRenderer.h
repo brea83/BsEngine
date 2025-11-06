@@ -3,7 +3,7 @@
 class ForwardRenderer : public Renderer
 {
 public:
-	ForwardRenderer(EngineContext* engineContext);
+	ForwardRenderer(/*EngineContext* engineContext*/);
 	// Inherited via Renderer
 	void Init() override;
 	void BeginFrame(Scene& scene) override;

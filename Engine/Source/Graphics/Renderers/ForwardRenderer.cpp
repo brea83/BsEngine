@@ -5,9 +5,10 @@
 #include "ForwardRenderPass.h"
 #include "../../EngineContext.h"
 
-ForwardRenderer::ForwardRenderer(EngineContext* engineContext)
+ForwardRenderer::ForwardRenderer(/*EngineContext* engineContext*/)
 {
-	_engine = engineContext;
+	//_engine = engineContext;
+	//Init();
 }
 
 void ForwardRenderer::Init()

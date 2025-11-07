@@ -50,17 +50,32 @@ void ImGuiLayer::OnAttach()
 void ImGuiLayer::OnDetach()
 {}
 
-void ImGuiLayer::OnImGuiRender()
-{
-	static bool show = true;
-	ImGui::ShowDemoWindow(&show);
-}
-
 void ImGuiLayer::Begin()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+}
+
+void ImGuiLayer::OnImGuiRender()
+{
+	
+	static bool show = true;
+
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	if(ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Exit")) EngineContext::GetEngine()->StopApplication();
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+	ImGui::Begin("Settings");
+
+
+	ImGui::End();
 }
 
 void ImGuiLayer::End()

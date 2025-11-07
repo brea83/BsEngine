@@ -4,8 +4,19 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+static int s_NumCubes = 0;
 Cube::Cube(bool useMinimalVerticies)
 {
+	if (s_NumCubes == 0)
+	{
+		Name = "Cube";
+	}
+	else
+	{
+		Name = "Cube_" + std::to_string(s_NumCubes);
+	}
+	s_NumCubes++;
+
 	if (useMinimalVerticies)
 	{
 		_verticies = {

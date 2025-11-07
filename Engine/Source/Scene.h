@@ -18,5 +18,7 @@ public:
 private:
 	Camera* _mainCamera;
 	std::vector<Renderable*> _objectsToRender; 
+
+	friend class SceneHierarchyPanel;
 };
 

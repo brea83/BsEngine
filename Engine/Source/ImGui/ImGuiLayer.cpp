@@ -11,6 +11,7 @@
 
 #include "GLFW/glfw3.h"
 
+
 ImGuiLayer::ImGuiLayer()
 {}
 
@@ -42,9 +43,11 @@ void ImGuiLayer::OnAttach()
 
 	EngineContext* engine = EngineContext::GetEngine();
 
-	// set up platfor/fenderer bindings
+	// set up imgui connection to glfw and open gl
 	ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 	ImGui_ImplOpenGL3_Init();
+
+	_hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
 }
 
 void ImGuiLayer::OnDetach()
@@ -59,7 +62,7 @@ void ImGuiLayer::Begin()
 
 void ImGuiLayer::OnImGuiRender()
 {
-	
+	EngineContext& engine = *EngineContext::GetEngine();
 	static bool show = true;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
@@ -67,15 +70,18 @@ void ImGuiLayer::OnImGuiRender()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Exit")) EngineContext::GetEngine()->StopApplication();
+			if (ImGui::MenuItem("Exit")) engine.StopApplication();
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
-	ImGui::Begin("Settings");
-
-
+	ImGui::Begin("Window stats");
+	Window& window = engine.GetWindow();
+	ImGui::Text("Width: %d", window.WindowWidth());
+	ImGui::Text("Height: %d", window.WindowHeight());
 	ImGui::End();
+
+	_hierarchy.OnImGuiRender();
 }
 
 void ImGuiLayer::End()

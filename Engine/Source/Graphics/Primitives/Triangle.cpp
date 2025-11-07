@@ -4,8 +4,19 @@
 #include "Transform.h"
 //#include <GLFW/glfw3.h>
 
+static int s_NumTriangles = 0;
+
 Triangle::Triangle()
 {
+	if (s_NumTriangles == 0)
+	{
+		Name = "Triangle";
+	}
+	else
+	{
+		Name = "Triangle_" + std::to_string(s_NumTriangles);
+	}
+	s_NumTriangles++;
 	_verticies = {
 		Vertex{{ 0.0f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 0.5f, 1.0f }},
 		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},

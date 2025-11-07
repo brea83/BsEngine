@@ -1,14 +1,16 @@
 #pragma once
+#include "BsPrecompileHeader.h"
 #include "../Shaders/Shader.h"
 #include <glm/glm.hpp>
-#include <array>
-#include <vector>
+
 
 class Transform;
 
 class Renderable
 {
 public:
+	std::string Name;
+
 	struct Vertex
 	{
 		glm::vec3 Position;

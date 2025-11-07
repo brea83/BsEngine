@@ -70,6 +70,7 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 {
 	int width = event.GetWidth();
 	int height = event.GetHeight();
+	if (width < 1 || height < 1) return false;
 	_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
 	return true;
 }

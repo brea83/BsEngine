@@ -169,6 +169,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\Events\MouseEvents.cpp" />
     <ClCompile Include="Source\Events\ApplicationEvent.cpp" />
     <ClCompile Include="Source\Events\Event.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="Source\Events\MouseEvents.h" />
     <ClInclude Include="Source\Events\ApplicationEvent.h" />
     <ClInclude Include="Source\Events\Event.h" />

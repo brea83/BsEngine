@@ -66,6 +66,9 @@ int Window::Init()
 		data.Width = width;
 		data.Height = height;
 
+		// if new window size is invalid for renderer, don't update size or send event;
+		if (width < 1 || height < 1) return;
+
 		// don't try to run callback if no callback registered
 		if (!data.EventCallback) return;
 		WindowResizedEvent event(width, height);
@@ -146,15 +149,15 @@ void Window::OnUpdate()
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	EngineContext* engine = EngineContext::GetEngine();
-
-	if (engine != nullptr)
-	{
-		//engine->OnFrameBufferSize(width, height);
-	}
-	glViewport(0, 0, width, height);
-}
+//void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height)
+//{
+//	// make sure the viewport matches the new window dimensions; note that width and 
+//	// height will be significantly larger than specified on retina displays.
+//	EngineContext* engine = EngineContext::GetEngine();
+//
+//	if (engine != nullptr)
+//	{
+//		//engine->OnFrameBufferSize(width, height);
+//	}
+//	glViewport(0, 0, width, height);
+//}

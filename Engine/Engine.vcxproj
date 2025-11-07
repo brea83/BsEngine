@@ -169,6 +169,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Events\MouseEvents.cpp" />
+    <ClCompile Include="Source\Events\ApplicationEvent.cpp" />
+    <ClCompile Include="Source\Events\Event.cpp" />
     <ClCompile Include="Source\Graphics\Camera.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Cube.cpp" />
     <ClCompile Include="Source\EngineContext.cpp" />
@@ -205,6 +208,9 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Source\Events\MouseEvents.h" />
+    <ClInclude Include="Source\Events\ApplicationEvent.h" />
+    <ClInclude Include="Source\Events\Event.h" />
     <ClInclude Include="Source\Graphics\Camera.h" />
     <ClInclude Include="Source\Graphics\Primitives\Cube.h" />
     <ClInclude Include="Source\EngineContext.h" />
@@ -214,6 +220,7 @@
     <ClInclude Include="Source\ImGui\ImGuiLayer.h" />
     <ClInclude Include="Source\Layer.h" />
     <ClInclude Include="Source\LayerStack.h" />
+    <ClInclude Include="Source\Events\MouseCodes.h" />
     <ClInclude Include="Source\StbImageWrapper.h" />
     <ClInclude Include="Source\Graphics\Primitives\Rectangle.h" />
     <ClInclude Include="Source\Graphics\Primitives\Renderable.h" />

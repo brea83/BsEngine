@@ -1,14 +1,31 @@
 #include "BsPrecompileHeader.h"
 #include "GlfwWrapper.h"
 #include "EngineContext.h"
+#include "Events/ApplicationEvent.h"
+#include "Events/MouseEvents.h"
+//#include "Events/KeyEvents.h"
 
 void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height);
 
-Window::Window()
-{}
+static uint8_t s_GlfwWindowCount = 0;
+
+Window::Window(const WindowProperties& properties)
+{
+	_data.Title = properties.Title;
+	_data.Width = properties.Width;
+	_data.Height = properties.Height;
+}
 
 Window::~Window()
-{}
+{
+	glfwDestroyWindow(_window);
+	--s_GlfwWindowCount;
+
+	if (s_GlfwWindowCount == 0)
+	{
+		glfwTerminate();
+	}
+}
 
 int Window::Init()
 {
@@ -35,10 +52,79 @@ int Window::Init()
 		glfwTerminate();
 		return -1;
 	}
+	s_GlfwWindowCount++; //successfully made a window increment our tracker for that
+
 	//make the windows's current context current
 	glfwMakeContextCurrent(_window);
-	// setting up window resize callback
-	glfwSetFramebufferSizeCallback(_window,  FrameBufferSizeCallback1);
+	// setting up window  callbacks
+	glfwSetWindowUserPointer(_window, &_data);
+
+
+	glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, int width, int height) /*Old Method : FrameBufferSizeCallback1); */
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		data.Width = width;
+		data.Height = height;
+
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+		WindowResizedEvent event(width, height);
+		data.EventCallback(event);
+	});
+
+	glfwSetWindowCloseCallback(_window, [](GLFWwindow* window)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		WindowClosedEvent event;
+		data.EventCallback(event);
+	});
+
+	glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		switch (action)
+		{
+			case GLFW_PRESS:
+			{
+				MouseButtonPressedEvent event(button);
+				data.EventCallback(event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				MouseButtonReleasedEvent event(button);
+				data.EventCallback(event);
+				break;
+			}
+		}
+	});
+
+	glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		MouseScrolledEvent event((float)xOffset, (float)yOffset);
+		data.EventCallback(event);
+	});
+
+	glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPosition, double yPosition)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		MouseMovedEvent event((float)xPosition, (float)yPosition);
+		data.EventCallback(event);
+	});
+
 #pragma endregion WindowInitialization
 
 	// initialize GLAD to load openGL function pointers
@@ -52,6 +138,13 @@ int Window::Init()
 	return 1;
 }
 
+void Window::OnUpdate()
+{
+	// glfw: swap buffers and poll IO events
+	glfwSwapBuffers(_window);
+	glfwPollEvents();
+}
+
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height)
 {
@@ -61,7 +154,7 @@ void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height)
 
 	if (engine != nullptr)
 	{
-		engine->OnFrameBufferSize(width, height);
+		//engine->OnFrameBufferSize(width, height);
 	}
 	glViewport(0, 0, width, height);
 }

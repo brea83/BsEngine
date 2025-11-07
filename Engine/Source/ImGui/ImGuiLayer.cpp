@@ -43,7 +43,7 @@ void ImGuiLayer::OnAttach()
 	EngineContext* engine = EngineContext::GetEngine();
 
 	// set up platfor/fenderer bindings
-	ImGui_ImplGlfw_InitForOpenGL(engine->GetMainWindow()->GetGlfwWindow(), true);
+	ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 	ImGui_ImplOpenGL3_Init();
 }
 
@@ -53,31 +53,31 @@ void ImGuiLayer::OnDetach()
 void ImGuiLayer::OnImGuiRender()
 {
 	static bool show = true;
-	//ImGui::ShowDemoWindow(&show);
+	ImGui::ShowDemoWindow(&show);
 }
 
 void ImGuiLayer::Begin()
 {
-	//ImGui_ImplOpenGL3_NewFrame();
-	//ImGui_ImplGlfw_NewFrame();
-	//ImGui::NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void ImGuiLayer::End()
 {
-	//ImGuiIO& io = ImGui::GetIO();
-	//Application& app = Application::Get();
-	//io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+	ImGuiIO& io = ImGui::GetIO();
+	EngineContext& engine = *EngineContext::GetEngine();
+	io.DisplaySize = ImVec2(engine.GetWindow().WindowWidth(), engine.GetWindow().WindowHeight());
 
-	// rendering
-	//ImGui::Render();
-	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	 //rendering
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	//{
-	//	GLFWwindow* backup_current_context = glfwGetCurrentContext();
-	//	ImGui::UpdatePlatformWindows();
-	//	ImGui::RenderPlatformWindowsDefault();
-	//	glfwMakeContextCurrent(backup_current_context);
-	//}
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backup_current_context);
+	}
 }

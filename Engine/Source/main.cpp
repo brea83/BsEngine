@@ -24,7 +24,7 @@ int main()
 	{
 		return -1;
 	}
-	GLFWwindow* glfw = engine->GetMainWindow()->GetGlfwWindow();
+	//GLFWwindow* glfw = engine->GetGlfwWindow();
 
 #pragma region AddMeshesToStartScene
 	Scene* startingScene = engine->GetScene();
@@ -47,29 +47,28 @@ int main()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	// loop until the user closes window
-	while (!glfwWindowShouldClose(glfw))
+	while (engine->IsRunning()/*!glfwWindowShouldClose(glfw)*/)
 	{
-		// input
-		ProcessInput(glfw);
+		// input moved into engine events
+		//ProcessInput(glfw);
 
 
 		//this is where we do the engine context
 		engine->Draw();
 
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		glfwSwapBuffers(glfw);
-		glfwPollEvents();
+		// glfw: swap buffers and poll IO events moved into window class OnUpdate()
+		engine->Update();
 	}
 
 	// clean up GLFW
-	glfwTerminate();
+	//glfwTerminate();
 
 	return 0;
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-void ProcessInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
-}
+// process all input: moved into engine context
+//void ProcessInput(GLFWwindow* window)
+//{
+//	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//		glfwSetWindowShouldClose(window, true);
+//}

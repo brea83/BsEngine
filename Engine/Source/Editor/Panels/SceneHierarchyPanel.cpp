@@ -4,6 +4,7 @@
 #include<backends/imgui_impl_glfw.h>
 #include<backends/imgui_impl_opengl3.h>
 #include "Graphics/Primitives/Renderable.h"
+#include "Graphics/Primitives/Transform.h"
 
 SceneHierarchyPanel::SceneHierarchyPanel()
 { }
@@ -16,10 +17,50 @@ void SceneHierarchyPanel::SetContext( Scene* scene)
 void SceneHierarchyPanel::OnImGuiRender()
 {
 	ImGui::Begin("Hierarchy");
-	for (Renderable* renderObject : _currentScene->_objectsToRender)
-	{
-		ImGui::Text("%s", renderObject->Name.c_str());
-	}
 
+	//left panel
+	static int selected = 0;
+	Renderable* selectedObject{ nullptr };
+	{
+		ImGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+
+		for ( int i = 0; i < _currentScene->_objectsToRender.size(); i++)//Renderable* renderObject : _currentScene->_objectsToRender)
+		{
+			Renderable* renderObject = _currentScene->_objectsToRender[i];
+
+			//char label[128];
+			//sprintf(label, renderObject->Name.c_str());
+
+			if (ImGui::Selectable(renderObject->Name.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
+			{
+				selected = i;
+				//selectedObject = _currentScene->_objectsToRender[i];
+			}
+			//ImGui::Text("%s", renderObject->Name.c_str());
+		}
+		ImGui::EndChild();
+	}
+	ImGui::SameLine();
+	// right panel
+	{
+		ImGui::BeginChild("Details View", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+		if (_currentScene->_objectsToRender.size() > selected && selected >= 0)
+		{
+			selectedObject = _currentScene->_objectsToRender[selected];
+			ImGui::Text("%s", selectedObject->Name.c_str());
+			ImGui::Separator();
+			// property names on left
+			{
+				ImGui::BeginChild("property names", ImVec2(50, 0),  ImGuiChildFlags_ResizeX);
+				ImGui::Text("Transform");
+				ImGui::EndChild();
+			}
+			
+		}
+		
+
+
+		ImGui::EndChild();
+	}
 	ImGui::End();
 }

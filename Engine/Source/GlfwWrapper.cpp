@@ -65,6 +65,7 @@ int Window::Init()
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		data.Width = width;
 		data.Height = height;
+		glViewport(0, 0, width, height);
 
 		// if new window size is invalid for renderer, don't update size or send event;
 		if (width < 1 || height < 1) return;

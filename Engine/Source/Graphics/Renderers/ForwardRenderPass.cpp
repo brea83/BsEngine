@@ -53,8 +53,8 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 		object->Render(*_shader);
 
 		// make sure this obj model transform is not applied to the next obj
-		glm::mat4 identityMatrix = glm::mat4(1.0f);
-		_shader->SetUniformMat4("model", identityMatrix);
+		//glm::mat4 identityMatrix = glm::mat4(1.0f);
+		//_shader->SetUniformMat4("model", identityMatrix);
 	}
 	_shader->EndUse();
 }

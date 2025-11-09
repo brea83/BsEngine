@@ -13,9 +13,11 @@ public:
 	glm::mat4 ViewMatrix() const;
 	glm::mat4 ProjectionMatrix() const;
 
-	void SetFov(float fov) { _fov = fov; }
-	void SetAspectRatio(float aspect) { _aspectRatio = aspect; }
-	void SetNearFar(float nearPlane, float farPlane) { _near = nearPlane; _far = farPlane; }
+	void SetFov(float fov) { _fov = fov;  _bProjectionMatrixDirty = true; }
+	float GetFov() { return _fov; }
+	void SetAspectRatio(float aspect) { _aspectRatio = aspect; _bProjectionMatrixDirty = true; }
+	float GetAspectRatio() { return _aspectRatio; }
+	void SetNearFar(float nearPlane, float farPlane) { _near = nearPlane; _far = farPlane;  _bProjectionMatrixDirty = true; }
 protected:
 	glm::vec3 _position{ 0.0f, 0.0f, 3.0f };
 	glm::vec3 _target{ 0.0f };
@@ -27,5 +29,6 @@ protected:
 	float _aspectRatio{ 1280.0f / 720.0f };
 	float _near{ 0.1f };
 	float _far{ 100.0f };
+	bool _bProjectionMatrixDirty{ false };
 };
 

@@ -3,7 +3,7 @@
 #include "EngineContext.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvents.h"
-//#include "Events/KeyEvents.h"
+#include "Events/KeyboardEvents.h"
 
 void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height);
 
@@ -126,6 +126,45 @@ int Window::Init()
 		if (!data.EventCallback) return;
 
 		MouseMovedEvent event((float)xPosition, (float)yPosition);
+		data.EventCallback(event);
+	});
+
+	glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scanCode, int action, int mods)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		switch (action)
+		{
+			case GLFW_PRESS:
+			{
+				KeyPressedEvent event(key, false);
+				data.EventCallback(event);
+				break;
+			}
+			case GLFW_RELEASE:
+			{
+				KeyReleasedEvent event(key);
+				data.EventCallback(event);
+				break;
+			}
+			case GLFW_REPEAT:
+			{
+				KeyPressedEvent event(key, true);
+				data.EventCallback(event);
+				break;
+			}
+		}
+	});
+
+	glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int keyCode)
+	{
+		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		// don't try to run callback if no callback registered
+		if (!data.EventCallback) return;
+
+		KeyTypedEvent event(keyCode);
 		data.EventCallback(event);
 	});
 

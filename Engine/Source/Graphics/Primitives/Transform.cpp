@@ -41,12 +41,22 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
 
 glm::vec3 Transform::GetRotationEuler()
 {
-    return glm::vec3();
+    if (_positionDirty || _scaleDirty || _rotationDirty)
+    {
+        RecalculateModelMatrix();
+    }
+
+    return _eulerRotation;
 }
 
 glm::vec3 Transform::GetScale()
 {
-    return glm::vec3();
+    if (_positionDirty || _scaleDirty || _rotationDirty)
+    {
+        RecalculateModelMatrix();
+    }
+
+    return _scale;
 }
 
 glm::mat4& Transform::GetObjectToWorldMatrix()
@@ -64,7 +74,10 @@ void Transform::RecalculateModelMatrix()
     glm::mat4 identity = glm::mat4(1.0f);
     glm::mat4 translation = glm::translate(identity, _position);
 
-    glm::mat4 rotation = glm::mat4_cast(glm::normalize(_orientation));
+    //glm::mat4 rotation = glm::mat4_cast(glm::normalize(_orientation));
+    glm::mat4 rotation = glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f })
+        * glm::rotate(identity, glm::radians(_eulerRotation.y), glm::vec3{ 0.0f, 1.0f, 0.0f })
+        * glm::rotate(identity, glm::radians(_eulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f });
 
     glm::mat4 scale = glm::scale(identity, _scale);
 

@@ -38,5 +38,7 @@ private:
 	glm::mat4 _localMatrix;
 
 	glm::mat4 _worldMatrix;
+
+	friend class SceneHierarchyPanel;
 };
 

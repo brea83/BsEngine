@@ -27,6 +27,8 @@ public:
 	void SetScene(Scene* newScene) { _activeScene = newScene; }
 	Scene* GetScene() { return _activeScene; }
 
+	Renderer* GetRenderer() { return _renderer; }
+
 	// methods
 	bool IsRunning()const { return _bRunning; }
 	void StopApplication() { _bRunning = false; }

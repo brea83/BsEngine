@@ -67,11 +67,13 @@ void ImGuiLayer::OnImGuiRender()
 	static bool show = true;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	
 	if(ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("Exit")) engine.StopApplication();
+
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -85,6 +87,11 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::SeparatorText("From Scene Camera");
 	ImGui::Text("AspectRatio: %f", engine.GetScene()->GetMainCamera()->GetAspectRatio());
+	ImGui::End();
+
+	ImGui::Begin("Viewport");
+	uint32_t textureID = engine.GetRenderer()->GetFrameBufferID();
+	ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
 	ImGui::End();
 
 	_hierarchy.OnImGuiRender();

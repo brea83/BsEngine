@@ -5,7 +5,7 @@
 #include "Events/MouseEvents.h"
 #include "Events/KeyboardEvents.h"
 
-void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height);
+//void FrameBufferSizeCallback1(GLFWwindow* window, int width, int height);
 
 static uint8_t s_GlfwWindowCount = 0;
 

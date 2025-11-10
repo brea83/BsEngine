@@ -5,6 +5,8 @@ class Camera
 public:
 	Camera();
 
+	bool BIsSceneViewCam{ false };
+
 	void SetPosition(const glm::vec3& position) { _position = position; }
 	const glm::vec3& GetPosition() { return _position; }
 

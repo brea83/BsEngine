@@ -38,17 +38,26 @@ EngineContext* EngineContext::GetEngine()
 
 void EngineContext::Update()
 {
-	ProcessInput(_mainWindow->GetGlfwWindow());
+	//TODO: plan out what gets updated when window is minimized and what doesn't
+	if (!_bMinimized)
+	{
+		ProcessInput(_mainWindow->GetGlfwWindow());
+	}
+
 	_imGuiLayer->OnUpdate();
+
 	_mainWindow->OnUpdate();
 }
 
 
 void EngineContext::Draw()
 {
-	_renderer->BeginFrame(*_activeScene);
-	_renderer->RenderFrame(*_activeScene);
-	_renderer->EndFrame(*_activeScene);
+	if (!_bMinimized)
+	{
+		_renderer->BeginFrame(*_activeScene);
+		_renderer->RenderFrame(*_activeScene);
+		_renderer->EndFrame(*_activeScene);
+	}
 
 	_imGuiLayer->Begin();
 	_imGuiLayer->OnImGuiRender();
@@ -71,7 +80,12 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 {
 	int width = event.GetWidth();
 	int height = event.GetHeight();
-	if (width < 1 || height < 1) return false;
+	if (width < 1 || height < 1)
+	{
+		_bMinimized = true;
+		return false;
+	}
+	_bMinimized = false;
 	_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
 	return true;
 }

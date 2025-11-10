@@ -238,6 +238,7 @@
     <ClInclude Include="Source\GlfwWrapper.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Source\Graphics\Shaders\FragmentShader.glsl" />
     <None Include="Source\Graphics\Shaders\VertexShader.glsl" />
   </ItemGroup>

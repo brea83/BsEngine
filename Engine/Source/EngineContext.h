@@ -47,6 +47,7 @@ private:
 
 	// properties
 	bool _bRunning{ true };
+	bool _bMinimized{ false };
 	std::unique_ptr<Window> _mainWindow;
 	Scene* _activeScene;
 	Renderer* _renderer;

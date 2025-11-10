@@ -251,5 +251,42 @@ IMGUI
 
 ABOUT FRAME BUFFER	
 	viewport has the framebuffer
-	
+================================
+DAY 7 (week 3)
+================================
+
+this week's goals
+G
+	cube rendered in window with perspective
+	imgui implemented
+	cube can be rotated, translated, and scaled using imgui
+	cube is textured.
+
+bonus goals
+	stuff that will make the rest of the engine easier to work on
+	imgui stuff is all in an editor context
+
+	expect asset loader to be refactored soon
+		
+	hot reloading a shader
+		// asset viewer	
+		shows unordered map of loaded resources
+
+		so there's a base class resource
+		shader resource adds a recompile function
+			takes in a | dilineated string of the two paths to each part of the shader code
+
+			includes early returns as a safety to not overwrite the old shader if the shader can't compile
+		texture resource adds mipmap settings
+			add enums of the settings to the texture class
+			abstract creation of texture into its own function that can be called both in the constructer and by inspector
+		
+		asset viewer 
+		switches based on resource type to build the right inspectors
+
+		think about ways to abstract and reuse parts of the imgui editor code for all the inspectors
+
+		Model/mesh needs to be separated from renderable so that several renderables can reference the same mesh loaded only once
+			asset loader class would be where the meshes and textures live and are fetched by scene entities
+
 

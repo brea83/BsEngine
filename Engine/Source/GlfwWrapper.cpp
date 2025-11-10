@@ -68,7 +68,7 @@ int Window::Init()
 		glViewport(0, 0, width, height);
 
 		// if new window size is invalid for renderer, don't update size or send event;
-		if (width < 1 || height < 1) return;
+		//if (width < 1 || height < 1) return;
 
 		// don't try to run callback if no callback registered
 		if (!data.EventCallback) return;

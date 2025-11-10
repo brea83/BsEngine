@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
+  <Class Name="KeyEvent" Collapsed="true">
+    <Position X="10" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>Source\Events\KeyboardEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KeyPressedEvent" Collapsed="true">
+    <Position X="7.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAABAAAAAAAACA=</HashCode>
+      <FileName>Source\Events\KeyboardEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KeyReleasedEvent" Collapsed="true">
+    <Position X="10" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Events\KeyboardEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KeyTypedEvent" Collapsed="true">
+    <Position X="12.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Source\Events\KeyboardEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneHierarchyPanel">
+    <Position X="33" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABIAAAAAAAAAAIAAAAAAEAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Source\Editor\Panels\SceneHierarchyPanel.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_currentScene" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MouseMovedEvent" Collapsed="true">
+    <Position X="14.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAEAAACAAAAAAAAAAAAYAAAAAAACAA=</HashCode>
+      <FileName>Source\Events\MouseEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MouseScrolledEvent" Collapsed="true">
+    <Position X="16.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAMAAAAAAUAAAAAAAAgAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Source\Events\MouseEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MouseButtonEvent" Collapsed="true">
+    <Position X="20.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAABAAAAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Events\MouseEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MouseButtonPressedEvent" Collapsed="true">
+    <Position X="21.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Events\MouseEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MouseButtonReleasedEvent" Collapsed="true">
+    <Position X="19" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Events\MouseEvents.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WindowResizedEvent" Collapsed="true">
+    <Position X="3.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAEAAAAgABAABAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Source\Events\ApplicationEvent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WindowClosedEvent" Collapsed="true">
+    <Position X="5.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Source\Events\ApplicationEvent.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Event" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAIAIAAIAAAEEAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Source\Events\Event.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EventDispatcher">
+    <Position X="26.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Source\Events\Event.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_event" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="EngineContext">
+    <Position X="30.5" Y="4.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAABAAgAAAEChQEAIEEAgBAAIDACGAACAAAA=</HashCode>
+      <FileName>Source\EngineContext.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_activeScene" />
+      <Field Name="_imGuiLayer" />
+      <Field Name="_renderer" />
+      <Field Name="_mainWindow" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Layer" Collapsed="true">
+    <Position X="31" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAIAAEAAEAAABEAEABAA=</HashCode>
+      <FileName>Source\Layer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LayerStack" Collapsed="true">
+    <Position X="32.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACACAAAACAAAACAEAQAAICAAAAAAAAAAIAEAA=</HashCode>
+      <FileName>Source\LayerStack.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Scene">
+    <Position X="35.25" Y="9.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAgQAgAAAAAAAQAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Scene.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_mainCamera" />
+      <Field Name="_objectsToRender" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Texture">
+    <Position X="18.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIEAIAAAAA=</HashCode>
+      <FileName>Source\Graphics\Texture.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Transform">
+    <Position X="46" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAACgAJEAkQAAAAAQAEAAQAgAAIABEggAAACA=</HashCode>
+      <FileName>Source\Graphics\Primitives\Transform.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Window">
+    <Position X="28" Y="4.25" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="Window::WindowData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Source\GlfwWrapper.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgAEABgACAAAAAAAAAEAAAQAAAAAAAAACCAEAAAA=</HashCode>
+      <FileName>Source\GlfwWrapper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera">
+    <Position X="36.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IDACAAIAACAAAAAAAAAAAQAAQgIABwAAIAIAgIgAQAI=</HashCode>
+      <FileName>Source\Graphics\Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ForwardRenderer" Collapsed="true">
+    <Position X="27.5" Y="11" Width="1.5" />
+    <InheritanceLine Type="Renderer" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="28.25" Y="10.574" />
+        <Point X="28.25" Y="10.879" />
+        <Point X="28.25" Y="10.879" />
+        <Point X="28.25" Y="11" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AACAEAAAAAAAAAAAAEAAABAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Renderers\ForwardRenderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ForwardRenderPass">
+    <Position X="24.75" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAQAAAAMAAQAAAAAAAAAAAACAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Source\Graphics\Renderers\ForwardRenderPass.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_shader" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="StbImageWrapper">
+    <Position X="18.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAABAAAAAA=</HashCode>
+      <FileName>Source\StbImageWrapper.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderer">
+    <Position X="26.5" Y="8.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AACAEAAAAAAAAAAAAEAAAQAAAAAAAAAIAAACAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Renderers\Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RenderPass" Collapsed="true">
+    <Position X="24.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Renderers\RenderPass.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Shader">
+    <Position X="20.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAQACAAAgAAAAAQAAAAAAACAAEAAAABAAFABAQBAA=</HashCode>
+      <FileName>Source\Graphics\Shaders\Shader.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Cube" Collapsed="true">
+    <Position X="43.25" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAABABACAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Primitives\Cube.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rectangle" Collapsed="true">
+    <Position X="39" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAABACAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Primitives\Rectangle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Renderable">
+    <Position X="41.25" Y="10.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Struct Name="Renderable::Vertex" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Source\Graphics\Primitives\Renderable.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAEAAAAASBAAAQAAAAAAAAAABACAAAEACA=</HashCode>
+      <FileName>Source\Graphics\Primitives\Renderable.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_transform" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Triangle" Collapsed="true">
+    <Position X="41.25" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABACAAAAAAA=</HashCode>
+      <FileName>Source\Graphics\Primitives\Triangle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImGuiLayer">
+    <Position X="30.25" Y="11" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAgAAAAgAIAAAAAAIAAEAAABAABAAEAAAA=</HashCode>
+      <FileName>Source\ImGui\ImGuiLayer.h</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_hierarchy" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="std::unique_ptr&lt;_Ty, _Dx&gt;" Collapsed="true">
+    <Position X="28" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAEAAAAAAgEAEAAQgAAAAAAAAAAAQAgAAAAAIg=</HashCode>
+      <FileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="std::vector&lt;_Ty, _Alloc&gt;" Collapsed="true">
+    <Position X="41.25" Y="10" Width="1.5" />
+    <NestedTypes>
+      <Class Name="std::vector&lt;_Ty, _Alloc&gt;::_Asan_extend_guard" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="std::vector&lt;_Ty, _Alloc&gt;::_Asan_create_guard" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Struct Name="std::vector&lt;_Ty, _Alloc&gt;::_Reallocation_guard" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="std::vector&lt;_Ty, _Alloc&gt;::_Simple_reallocation_guard" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="std::vector&lt;_Ty, _Alloc&gt;::_Vaporization_guard" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Enum Name="std::vector&lt;_Ty, _Alloc&gt;::_Reallocation_policy" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>A2AAEYEiAbLsCEBAAONYMAkWM0UARBIggQkwghAFQko=</HashCode>
+      <FileName>C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

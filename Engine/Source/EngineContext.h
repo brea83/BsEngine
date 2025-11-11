@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Events/ApplicationEvent.h"
-#include "ImGui/ImGuiLayer.h"
+#include "Editor/ImGuiLayer.h"
 
 //class Renderer;
 class Scene;

@@ -123,7 +123,7 @@
     <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp">
       <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ImGui\ImGuiLayer.cpp">
+    <ClCompile Include="Source\Editor\ImGuiLayer.cpp">
       <Filter>Source Files\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp">
@@ -151,6 +151,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AssetLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TextResource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -233,7 +248,7 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h">
       <Filter>Header Files\dependencies\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ImGui\ImGuiLayer.h">
+    <ClInclude Include="Source\Editor\ImGuiLayer.h">
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Camera.h">
@@ -264,6 +279,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\FrameBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AssetLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

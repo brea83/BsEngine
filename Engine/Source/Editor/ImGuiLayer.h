@@ -2,6 +2,7 @@
 
 #include "../Layer.h"
 #include "Editor/Panels/SceneHierarchyPanel.h"
+#include "Editor/Panels/ImGuiPanel.h"
 
 class Scene;
 
@@ -23,4 +24,5 @@ class Scene;
 	private:
 		float _time{ 0.0f };
 		SceneHierarchyPanel _hierarchy;
+		ImGuiPanel* _assetViewer;
 	};

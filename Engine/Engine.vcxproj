@@ -169,6 +169,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp" />
+    <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp" />
+    <ClCompile Include="Source\AssetLoader.cpp" />
+    <ClCompile Include="Source\Resource.cpp" />
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
     <ClCompile Include="Source\Events\KeyboardEvents.cpp" />
     <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
@@ -184,7 +188,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\ImGui\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Editor\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Layer.cpp" />
     <ClCompile Include="Source\LayerStack.cpp" />
     <ClCompile Include="Source\StbImageWrapper.cpp" />
@@ -199,6 +203,7 @@
     <ClCompile Include="Source\Graphics\Primitives\Transform.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
     <ClCompile Include="Source\GlfwWrapper.cpp" />
+    <ClCompile Include="Source\TextResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.h" />
@@ -211,6 +216,10 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h" />
+    <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h" />
+    <ClInclude Include="Source\AssetLoader.h" />
+    <ClInclude Include="Source\Resource.h" />
     <ClInclude Include="Source\Graphics\FrameBuffer.h" />
     <ClInclude Include="Source\Events\KeyboardEvents.h" />
     <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
@@ -223,7 +232,7 @@
     <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h" />
     <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h" />
     <ClInclude Include="Source\BsPrecompileHeader.h" />
-    <ClInclude Include="Source\ImGui\ImGuiLayer.h" />
+    <ClInclude Include="Source\Editor\ImGuiLayer.h" />
     <ClInclude Include="Source\Layer.h" />
     <ClInclude Include="Source\LayerStack.h" />
     <ClInclude Include="Source\Events\MouseCodes.h" />
@@ -238,6 +247,7 @@
     <ClInclude Include="Source\Graphics\Primitives\Transform.h" />
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
     <ClInclude Include="Source\GlfwWrapper.h" />
+    <ClInclude Include="Source\TextResource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

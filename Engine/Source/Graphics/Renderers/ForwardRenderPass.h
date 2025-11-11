@@ -17,7 +17,5 @@ private:
 	Shader* _shader;
 	Texture* _fallbackTexture;
 
-	glm::mat4 _viewMatrix;
-	glm::mat4 _projectionMatrix;
 };
 

@@ -12,12 +12,16 @@
 #include "GLFW/glfw3.h"
 #include "Graphics/Camera.h"
 
+#include "Editor/Panels/AssetViewerPanel.h"
+
 
 ImGuiLayer::ImGuiLayer()
 {}
 
 ImGuiLayer::~ImGuiLayer()
-{}
+{
+	delete _assetViewer;
+}
 
 void ImGuiLayer::OnAttach()
 {
@@ -49,6 +53,8 @@ void ImGuiLayer::OnAttach()
 	ImGui_ImplOpenGL3_Init();
 
 	_hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
+
+	_assetViewer = new AssetViewerPanel();
 }
 
 void ImGuiLayer::OnDetach()
@@ -95,6 +101,8 @@ void ImGuiLayer::OnImGuiRender()
 	ImGui::End();*/
 
 	_hierarchy.OnImGuiRender();
+
+	_assetViewer->OnImGuiRender();
 }
 
 void ImGuiLayer::End()

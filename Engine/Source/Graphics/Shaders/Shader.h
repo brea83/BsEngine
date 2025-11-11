@@ -1,32 +1,34 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include "Resource.h"
 
-class Shader
+class Shader : public Resource
 {
 public:
 	//------------------ constructors and properties
 
-	Shader(const char* vertPath, const char* fragPath);
+	Shader(const std::string& vertPath, const std::string& fragPath);
 	~Shader();
 
 	unsigned int ShaderProgram{ 0 };
 
 	//--------------- methods
 
-	void Compile(const char* vertPath, const char* fragPath);
+	void Compile(const std::string& vertPath, const std::string& fragPath);
+	void ReCompile(const std::string& barDelineatedPaths);
+	bool IsValid() { return ShaderProgram != 0; }
 	
 	void SetUniformBool(const std::string& name, bool value) const;
 	void SetUniformInt(const std::string& name, int value) const;
 	void SetUniformFloat(const std::string& name, float value) const;
-	void SetUniformMat4(const std::string& name, glm::mat4& matrix) const;
+	void SetUniformMat4(const std::string& name, glm::mat4 matrix) const;
 
 	void Use();
 	void EndUse();
 
 private:
-	std::string LoadFile(const char* aPath); // TODO: move this to asset loading later
-	unsigned int CompileShader(int glShaderType, const char* filePath);
+	unsigned int CompileShader(int glShaderType, const std::string& filePath);
 	unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
 
 };

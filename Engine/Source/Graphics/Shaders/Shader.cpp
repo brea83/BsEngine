@@ -1,6 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "Shader.h"
-
+#include "AssetLoader.h"
 #include <fstream>
 
 #include <glad/glad.h>
@@ -9,7 +9,8 @@
 
 
 
-Shader::Shader(const char* vertPath, const char* fragPath)
+Shader::Shader(const std::string& vertPath, const std::string& fragPath)
+	: Resource(ResourceType::Shader)
 {
 	Compile(vertPath, fragPath);
 }
@@ -17,22 +18,9 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 Shader::~Shader()
 {}
 
-std::string Shader::LoadFile(const char* aPath)
+unsigned int Shader::CompileShader(int glShaderType, const std::string& filePath)
 {
-	std::ifstream file(aPath);
-	if (!file.is_open())
-	{
-		std::cerr << "Failed to open file: " << aPath << std::endl;
-		return "";
-	}
-	std::stringstream buffer;
-	buffer << file.rdbuf();
-	return buffer.str();
-}
-
-unsigned int Shader::CompileShader(int glShaderType, const char* filePath)
-{
-	std::string shaderCodeString = LoadFile(filePath);
+	std::string shaderCodeString = AssetLoader::LoadTextFile(filePath);
 	const char* shaderCode = shaderCodeString.c_str();
 
 	unsigned int shaderObject;
@@ -81,7 +69,7 @@ unsigned int Shader::LinkShader(unsigned int vertexShader, unsigned int fragment
 	return shaderProgram;
 }
 
-void Shader::Compile(const char* vertPath, const char* fragPath)
+void Shader::Compile(const std::string& vertPath, const std::string& fragPath)
 {
 	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);//LoadVertexShader(vertPath);
 	if (vertexShader == 0) return;
@@ -92,6 +80,26 @@ void Shader::Compile(const char* vertPath, const char* fragPath)
 	if (linkedProgram == 0) return;
 	ShaderProgram = linkedProgram;
 	
+}
+
+void Shader::ReCompile(const std::string& barDelineatedPaths)
+{
+	std::stringstream ss(barDelineatedPaths);
+
+	std::string segment;
+	std::vector<std::string> segmentList;
+	char delimiter = '|';
+	while (std::getline(ss, segment, delimiter))
+	{
+		segmentList.emplace_back(segment);
+	}
+
+	if (segmentList.size() < 2) return;
+
+	if(!AssetLoader::ReLoadTextFile(segmentList[0])) return;
+	if(!AssetLoader::ReLoadTextFile(segmentList[1])) return;
+
+	Compile(segmentList[0], segmentList[1]);
 }
 
 void Shader::SetUniformBool(const std::string & name, bool value) const
@@ -109,7 +117,7 @@ void Shader::SetUniformFloat(const std::string & name, float value) const
 	glUniform1f(glGetUniformLocation(ShaderProgram, name.c_str()), value);
 }
 
-void Shader::SetUniformMat4(const std::string& name, glm::mat4& matrix) const
+void Shader::SetUniformMat4(const std::string& name, glm::mat4 matrix) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 }

@@ -1,9 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "SceneHierarchyPanel.h"
-#include <imgui.h>
-#include<backends/imgui_impl_glfw.h>
-#include<backends/imgui_impl_opengl3.h>
-#include <misc/cpp/imgui_stdlib.h>
+
 //#include <imgui_internal.h>
 //#include "misc/cpp/imgui_stdlib.cpp"
 #include "Graphics/Primitives/Renderable.h"

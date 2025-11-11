@@ -89,10 +89,10 @@ void ImGuiLayer::OnImGuiRender()
 	ImGui::Text("AspectRatio: %f", engine.GetScene()->GetMainCamera()->GetAspectRatio());
 	ImGui::End();
 
-	ImGui::Begin("Viewport");
+	/*ImGui::Begin("Viewport");
 	uint32_t textureID = engine.GetRenderer()->GetFrameBufferID();
 	ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
-	ImGui::End();
+	ImGui::End();*/
 
 	_hierarchy.OnImGuiRender();
 }

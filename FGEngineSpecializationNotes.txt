@@ -50,6 +50,8 @@ RESOURCES
 	VULKAN
 	https://docs.vulkan.org/tutorial/latest/00_Introduction.html
 
+	ENTT
+		entity component library https://github.com/skypjack/entt
 	OTHER PPLS ENGINES
 	Zenith Engine has interesting structure for render passes https://github.com/gitbetter/Zenith/tree/master
 	hazel engine
@@ -290,3 +292,42 @@ bonus goals
 			asset loader class would be where the meshes and textures live and are fetched by scene entities
 
 
+================================
+DAY 8 (week 3)
+================================
+Assimp api for importing fbx
+	stands for asset import library or something
+learn OpenGL is a core resource for learning to use it
+
+Assimp imports a thing called something like an AiScene
+	it has a mRootNode, mMeshes[], mMaterials[]
+
+need to refactor our renderable set up
+	to take into account the structure of Model & Mesh
+
+	could do renderable is the base class for both
+	but only models get added to scene
+
+	this doesnt take into account sharing the loaded resource
+
+	Entities and Components really helps fix this to make sharing
+
+	an entity can have a mesh renderer
+		and those mesh renderers can point to the same shared resources
+
+		if the entity is just an int id for a collection of components, 
+		and the compoenents are mostly just data, 
+		it makes serializing the scene quite easy
+
+INSTALLING ASSIMP 
+	it is not header only, it is a library
+	they have an installer, which should give you dlls and the lib
+		the dll and the lib file should be all you need, 
+		there are two libs, mtlib and mtdlib, one is for debug and one is for release
+	try installing with cmake from git hub?
+
+think about how to use the fbx model's parent node structure for display in heirarchy
+
+THIS WEEK MIGHT BE THE ONLY TIME TO GET FBX IMPORT SET UP
+
+emil will go over making an obj loader as well. 

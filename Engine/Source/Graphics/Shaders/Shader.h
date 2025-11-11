@@ -10,15 +10,11 @@ public:
 	Shader(const char* vertPath, const char* fragPath);
 	~Shader();
 
-	unsigned int ShaderProgram;
+	unsigned int ShaderProgram{ 0 };
 
 	//--------------- methods
-	//add uniform setters here
 
-	unsigned int LoadVertexShader(const char* aPath);
-	unsigned int LoadFragmentShader(const char* aPath);
-
-	void RecompileShader();
+	void Compile(const char* vertPath, const char* fragPath);
 	
 	void SetUniformBool(const std::string& name, bool value) const;
 	void SetUniformInt(const std::string& name, int value) const;
@@ -30,6 +26,8 @@ public:
 
 private:
 	std::string LoadFile(const char* aPath); // TODO: move this to asset loading later
+	unsigned int CompileShader(int glShaderType, const char* filePath);
+	unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
 
 };
 

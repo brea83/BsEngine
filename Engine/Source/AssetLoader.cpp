@@ -6,6 +6,7 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Graphics/Texture.h"
 
+
 std::unordered_map<std::string, Resource*> AssetLoader::_resources;
 
 std::string AssetLoader::LoadTextFile(const std::string& filePath)
@@ -63,6 +64,7 @@ bool AssetLoader::ReLoadTextFile(const std::string& filePath)
 
 Shader* AssetLoader::LoadShader(const std::string& vertPath, const std::string& fragPath)
 {
+
 	if (_resources.find(vertPath + "|" + fragPath) != _resources.end())
 	{
 		return (Shader*)_resources.at(vertPath + "|" + fragPath);

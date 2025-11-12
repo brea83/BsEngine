@@ -9,6 +9,7 @@
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
+#include "Graphics/Model.h"
 
 
 //void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -41,6 +42,10 @@ int main()
 	startingScene->AddRenderable(triangle1);
 	
 	startingScene->AddRenderable(cube);
+
+	//Model* testModel = new Model("Assets/Meshes/GuitarBackpack.fbx");
+	//Transform* modelTransform = testModel->GetTransform();
+	//startingScene->AddRenderable(testModel);
 #pragma endregion 1 triangles, 1 cube
 
 	// uncomment this call to draw in wireframe polygons.

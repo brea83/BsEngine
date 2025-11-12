@@ -1,12 +1,12 @@
 #pragma once
-#include "Renderable.h"
+#include "Mesh.h"
 #include <vector>
 
-class Triangle : public Renderable
+class Triangle : public Mesh
 {
 public:
 	Triangle();
-	Triangle(std::vector<Vertex>& newVerticies);
+	//Triangle(std::vector<Vertex>& newVerticies);
 	~Triangle();
 
 	void Render(Shader& currentShader) override;

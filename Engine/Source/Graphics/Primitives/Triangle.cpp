@@ -17,7 +17,7 @@ Triangle::Triangle()
 		Name = "Triangle_" + std::to_string(s_NumTriangles);
 	}
 	s_NumTriangles++;
-	_verticies = {
+	_vertices = {
 		Vertex{{ 0.0f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 0.5f, 1.0f }},
 		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
 		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
@@ -27,11 +27,11 @@ Triangle::Triangle()
 	Init();
 }
 
-Triangle::Triangle(std::vector<Vertex>& newVerticies)
-{
-	_verticies = newVerticies;
-	Init();
-}
+//Triangle::Triangle(std::vector<Vertex>& newVerticies)
+//{
+//	_vertices = newVerticies;
+//	Init();
+//}
 
 void Triangle::Init(/*std::vector<Vertex>& verticies*/)
 {
@@ -43,7 +43,7 @@ void Triangle::Init(/*std::vector<Vertex>& verticies*/)
 	//bind vert array first, then bind the buffer and tell it how ot traverse the array.
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER,  _verticies.size() * sizeof(Vertex), &_verticies[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,  _vertices.size() * sizeof(Vertex), &_vertices[0], GL_STATIC_DRAW);
 
 	// vertex positions
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));

@@ -1,6 +1,6 @@
 #pragma once
-#include "Renderable.h"
-class Cube :    public Renderable
+#include "Mesh.h"
+class Cube :    public Mesh
 {
 public:
 	//Cube();

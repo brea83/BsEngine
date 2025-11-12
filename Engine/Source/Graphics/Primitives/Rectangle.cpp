@@ -6,7 +6,7 @@
 
 Rectangle::Rectangle()
 {
-	_verticies = {
+	_vertices = {
 		Vertex{{-0.5f,  0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}}, // top left
 		Vertex{{ 0.5f,  0.5f, 0.0f}, {1.0f, 0.0f, 1.0f}}, // top right
 		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}}, // bottom left
@@ -25,7 +25,7 @@ Rectangle::Rectangle()
 
 Rectangle::Rectangle(std::vector<Vertex>& newVerticies)
 {
-	_verticies = newVerticies;
+	_vertices = newVerticies;
 	_transform = new Transform();
 	Init();
 }
@@ -43,7 +43,7 @@ void Rectangle::Init()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, _verticies.size() * sizeof(Vertex), &_verticies[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Vertex), &_vertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _triangles.size() * sizeof(glm::uvec3), &_triangles[0], GL_STATIC_DRAW);

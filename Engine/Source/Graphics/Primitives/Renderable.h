@@ -9,32 +9,17 @@ class Transform;
 class Renderable
 {
 public:
+
+	Renderable(const std::string& name = "Default Name");
+	virtual ~Renderable();
+
 	std::string Name;
-
-	struct Vertex
-	{
-		glm::vec3 Position;
-		glm::vec3 Color;
-		glm::vec2 UV1;
-		//glm::vec3 Normals;
-	};
-
 
 	virtual Transform* GetTransform() { return _transform; }
 	virtual void Render(Shader& currentShader) = 0;
 protected:
 	//properties
-
-	Transform* _transform;
-
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO; //Element buffer object
-
-	std::vector<Vertex> _verticies;
-	std::vector<glm::uvec3> _triangles;
-
-	// methods
+	Transform* _transform{ nullptr };
 
 	// methods
 	virtual void Init() = 0;

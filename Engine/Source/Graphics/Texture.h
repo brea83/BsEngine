@@ -19,6 +19,36 @@ enum class Mag_FilterType
 	COUNT
 };
 
+enum class TextureType
+{
+	Diffuse,
+	Specular,
+	Ambient,
+	Emmissive,
+	Height,
+	Normal,
+	Gloss,
+	Opacity,
+	Displacement,
+	Lightmap,
+	Reflection,
+	//pbr pipeline types
+	BaseColor,
+	NormalCamera,
+	EmissionColor,
+	Metalness,
+	Roughness,
+	Ao,
+	/*
+	* gltf standard packing
+	* red = Ao
+	* greem = roughness
+	* blue = metalness
+	* some ppl use alpha for clipping but its not standard
+	*/
+	GltfMetalicRoughness
+};
+
 class Texture : public Resource
 {
 public:

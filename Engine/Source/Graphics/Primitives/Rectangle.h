@@ -1,10 +1,10 @@
 #pragma once
-#include "Renderable.h"
+#include "Mesh.h"
 #include <vector>
 
 class Transform;
 
-class Rectangle : public Renderable
+class Rectangle : public Mesh
 {
 public:
 	Rectangle();

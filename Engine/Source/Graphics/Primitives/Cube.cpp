@@ -19,7 +19,7 @@ Cube::Cube(bool useMinimalVerticies)
 
 	if (useMinimalVerticies)
 	{
-		_verticies = {
+		_vertices = {
 			// back face
 			Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }}, // top left
 			Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
@@ -61,41 +61,41 @@ Cube::Cube(bool useMinimalVerticies)
 	}
 	else
 	{
-		_verticies = {
+		_vertices = {
 			// front face
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }},
+			Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }},
+			Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
+			Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }},
+			Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }},
 			// back face
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 0.0f }},
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 0.0f }},
+			Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 0.0f }},
+			Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 1.0f, 1.0f }},
+			Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 1.0f }},
+			Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 0.0f }},
 
 			//bottom face 
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 0.0f }},
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 0.0f }},
+			Vertex{{-0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 1.0f }},
+			Vertex{{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 1.0f }},
+			Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 1.0f, 0.0f }},
+			Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 0.0f }},
 
 			//top face
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 0.0f }},
+			Vertex{{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
+			Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }},
+			Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 1.0f }},
+			Vertex{{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, { 1.0f, 0.0f }},
 
 			//left face
-			Renderable::Vertex{{-0.5f, -0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
-			Renderable::Vertex{{-0.5f, -0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
-			Renderable::Vertex{{-0.5f,  0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
-			Renderable::Vertex{{-0.5f,  0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
+			Vertex{{-0.5f, -0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
+			Vertex{{-0.5f, -0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
+			Vertex{{-0.5f,  0.5f,  0.5f}, {0.5f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
+			Vertex{{-0.5f,  0.5f, -0.5f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
 
 			//right face
-			Renderable::Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
-			Renderable::Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
+			Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }},
+			Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 1.0f }},
+			Vertex{{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 1.0f }},
+			Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
 		};
 
 		_triangles = {
@@ -131,7 +131,7 @@ void Cube::Init()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, _verticies.size() * sizeof(Vertex), &_verticies[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Vertex), &_vertices[0], GL_STATIC_DRAW);
 
 	// set up element buffer object, which gets saved on the VAO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

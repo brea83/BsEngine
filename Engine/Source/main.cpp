@@ -43,9 +43,10 @@ int main()
 	
 	startingScene->AddRenderable(cube);
 
-	//Model* testModel = new Model("Assets/Meshes/GuitarBackpack.fbx");
-	//Transform* modelTransform = testModel->GetTransform();
-	//startingScene->AddRenderable(testModel);
+	Model* testModel = new Model("Assets/Meshes/GuitarBackpack.fbx");
+	Transform* modelTransform = testModel->GetTransform();
+	modelTransform->SetScale(glm::vec3(0.005f));
+	startingScene->AddRenderable(testModel);
 #pragma endregion 1 triangles, 1 cube
 
 	// uncomment this call to draw in wireframe polygons.

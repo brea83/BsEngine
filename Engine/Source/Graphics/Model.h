@@ -31,6 +31,7 @@ protected:
 	//TODO: refactor this to look for matching models and meshes in the assetloader
 	// and move the actual loading and processing to the asset loader
 	// for now just following tutorial to see if I can get importing to work at all
+	void ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, aiNode* parentNode);
 	void ProcessNode(aiNode* node, const aiScene* assimpScene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* assimpScene);
 	std::vector<Texture*> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName);

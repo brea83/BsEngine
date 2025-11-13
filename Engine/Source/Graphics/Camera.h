@@ -21,7 +21,7 @@ public:
 	float GetAspectRatio() { return _aspectRatio; }
 	void SetNearFar(float nearPlane, float farPlane) { _near = nearPlane; _far = farPlane;  _bProjectionMatrixDirty = true; }
 protected:
-	glm::vec3 _position{ 0.0f, 0.0f, 30.0f };
+	glm::vec3 _position{ 0.0f, 0.0f, 10.0f };
 	glm::vec3 _target{ 0.0f };
 	glm::vec3 _up;
 	glm::vec3 _right;

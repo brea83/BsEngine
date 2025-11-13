@@ -2,6 +2,13 @@
 #include "Model.h"
 #include "Graphics/Texture.h"
 #include "AssetLoader.h"
+#include "Graphics/Primitives/Transform.h"
+#include "Graphics/Primitives/Mesh.h"
+#include <glm/glm.hpp>
+#include "Assimp/AssimpGlmHelpers.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
 
 Model::Model(const std::string& modelFilePath, const std::string& textureDirectoryPath)
 	: _texturesDirectory(textureDirectoryPath)
@@ -58,13 +65,49 @@ void Model::LoadModel(const std::string & filePath)
 	ProcessNode(assimpScene->mRootNode, assimpScene);
 }
 
+void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, aiNode* parentNode)
+{
+
+	if (parentNode) 
+	{ 
+		localTransform->ParentTransform = _transform; 
+	}
+	
+	aiVector3D scaling;
+	aiQuaternion rotation;
+	aiVector3D position;
+	nodeMatrix.Decompose(scaling, rotation, position);
+
+	localTransform->SetPosition(AssimpGlmHelpers::GetGlmVec(position));
+	localTransform->SetScale(AssimpGlmHelpers::GetGlmVec(scaling));
+	localTransform->SetRotationQuaternion(AssimpGlmHelpers::GetGlmQuat(rotation));
+}
+
 void Model::ProcessNode(aiNode * node, const aiScene * assimpScene)
 {
+	aiMatrix4x4 nodeTransform = node->mTransformation;
+	//if root node set model's transform
+	if (node->mParent == nullptr)
+	{
+		ProcessTransform(node->mTransformation, _transform, nullptr);
+	}
+	else
+	{
+		// there is a parent transform combine its transform withours so that the mesh offsets from the root node are correct
+		nodeTransform = node->mParent->mTransformation * nodeTransform;
+	}
+
+
 	// current node meshes
+	//Mesh* meshWithCurrentNodeTransform = nullptr;
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
-		aiMesh* mesh = assimpScene->mMeshes[node->mMeshes[i]];
-		_meshes.push_back(processMesh(mesh, assimpScene));
+		aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[i]];
+		Mesh mesh = processMesh(aiMesh, assimpScene);
+
+		ProcessTransform(nodeTransform, mesh.GetTransform(), node->mParent);
+		//meshWithCurrentNodeTransform = &mesh;
+		_meshes.push_back(mesh);
 	}
 
 	// process children
@@ -84,12 +127,15 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 	{
 
 		Mesh::Vertex vertex;
+		
 		//process position 
 		aiVector3D sourcePosition = mesh->mVertices[i];
 		vertex.Position = glm::vec3(sourcePosition.x, sourcePosition.y, sourcePosition.z);
+
 		// normals 
 		aiVector3D sourceNormal = mesh->mNormals[i];
 		vertex.Normal = glm::vec3(sourceNormal.x, sourceNormal.y, sourceNormal.z);
+
 		// texture uvs
 		if (mesh->mTextureCoords[0])
 		{
@@ -100,6 +146,7 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 		{
 			vertex.UV1 = glm::vec2(0.0f, 0.0f);
 		}
+
 		// colors
 		if (mesh->mColors[0])
 		{

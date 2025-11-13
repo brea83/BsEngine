@@ -39,6 +39,25 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
     _rotationDirty;
 }
 
+void Transform::SetRotationEuler(glm::vec3 value)
+{
+    _eulerRotation = value;
+    _orientation = glm::quat(glm::radians(value)); 
+    _rotationDirty = true;
+}
+
+void Transform::SetRotationQuaternion(glm::quat orientation)
+{
+    _orientation = orientation;
+    float yaw = glm::yaw(_orientation);
+    float pitch = glm::pitch(_orientation);
+    float roll = glm::roll(_orientation);
+
+    _eulerRotation = glm::vec3(yaw, pitch, roll);
+
+    _rotationDirty = true;
+}
+
 glm::vec3 Transform::GetRotationEuler()
 {
     if (_positionDirty || _scaleDirty || _rotationDirty)
@@ -66,6 +85,12 @@ glm::mat4& Transform::GetObjectToWorldMatrix()
         RecalculateModelMatrix();
     } 
 
+    if (ParentTransform != nullptr)
+    {
+        _worldMatrix = ParentTransform->GetObjectToWorldMatrix() * _localMatrix;
+        return _worldMatrix;
+    }
+
     return _localMatrix;
 }
 
@@ -82,6 +107,7 @@ void Transform::RecalculateModelMatrix()
     glm::mat4 scale = glm::scale(identity, _scale);
 
     _localMatrix = translation * rotation * scale;
+
     _positionDirty = false;
     _scaleDirty = false;
     _rotationDirty = false;

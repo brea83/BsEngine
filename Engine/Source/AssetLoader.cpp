@@ -85,32 +85,42 @@ Shader* AssetLoader::LoadShader(const std::string& vertPath, const std::string& 
 
 Texture* AssetLoader::LoadTexture(const std::string& filePath)
 {
+	//prep filepath
+	std::string relativePath = "";
+	ParsePathString(filePath, relativePath);
+
+	if (relativePath != "" && relativePath != filePath)
+	{
+		return LoadTextureParsedPath(relativePath);
+	}
+	
+	return LoadTextureParsedPath(filePath);
+}
+
+void AssetLoader::ParsePathString(const std::string& inPath, std::string& outPath)
+{
+	//prep filepath
+	
+	if (inPath.substr(0, inPath.find_first_of('\\')) == "..")
+	{
+		outPath = "Assets" + inPath.substr(inPath.find_first_of('\\'));
+		//std::cout << "PATH WAS RELATIVE, AND STARTED WITH .." << std::endl;
+		//std::cout << "path modified to: " << outPath << std::endl;
+		return;
+	}
+
+	outPath = inPath;
+}
+
+Texture* AssetLoader::LoadTextureParsedPath(const std::string& filePath)
+{
 	if (_resources.find(filePath) != _resources.end())
 	{
 		return (Texture*)_resources.at(filePath);
 	}
 
-
-	//prep filepath
-	std::string relativePath = "";
-	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
-	std::cout << "trying to load file path: " << filePath << std::endl;
-	if (filePath.substr(0, filePath.find_first_of('\\')) == "..")
-	{
-		relativePath = "Assets" + filePath.substr(filePath.find_first_of('\\'));
-		std::cout << "PATH WAS RELATIVE" << std::endl;
-		std::cout << "path modified to: " << relativePath << std::endl;
-	}
-
 	StbImageData data;
-	if (relativePath != "")
-	{
-		StbImageWrapper::LoadImage(relativePath, data);
-	}
-	else
-	{
-		StbImageWrapper::LoadImage(filePath, data);
-	}
+	StbImageWrapper::LoadImage(filePath, data);
 
 	if (!data.BLoadSuccess) return nullptr;
 

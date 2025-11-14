@@ -7,6 +7,9 @@
 
 void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& imageData)
 {
+	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+	std::cout << "trying to load file path: " << filePath << std::endl;
+
 	stbi_set_flip_vertically_on_load(true);
 	unsigned char* data = stbi_load(filePath.c_str(), &imageData.Width, &imageData.Height, &imageData.ChannelsCount, 0);
 
@@ -29,6 +32,7 @@ void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& image
 		}
 		imageData.StbData = data;
 		imageData.BLoadSuccess = true;
+		std::cout << "FILE LOAD SUCCESS" << std::endl;
 	}
 	else
 	{

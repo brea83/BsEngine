@@ -20,6 +20,6 @@ void main()
 {
     gl_Position = projection * view * transform * vec4(positionData, 1.0);
     VertexColor = colorData;
-    Normal = normalData;
+    Normal = normalize(vec3(transform * vec4(normalData, 0.0)));
     UV1 = uv1;
 }

@@ -80,9 +80,11 @@ void SceneHierarchyPanel::OnImGuiRender()
 				transform->_positionDirty = true;
 			}
 
-			if (DrawVec3Control("Rotation", transform->_eulerRotation))
+			//translate rotation from radians to degrees
+			glm::vec3 eulerDegrees = transform->GetRotationEuler();
+			if (DrawVec3Control("Rotation", eulerDegrees ))
 			{
-				transform->_rotationDirty = true;
+				transform->SetRotationEuler(eulerDegrees);
 			}
 			if (DrawVec3Control("Scale", transform->_scale, 1.0f))
 			{

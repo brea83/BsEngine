@@ -80,7 +80,7 @@ void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, 
 
 	localTransform->SetPosition(AssimpGlmHelpers::GetGlmVec(position));
 	localTransform->SetScale(AssimpGlmHelpers::GetGlmVec(scaling));
-	localTransform->SetRotationEuler(AssimpGlmHelpers::GetGlmVec(rotation), false);
+	localTransform->SetRotationEuler(AssimpGlmHelpers::GetGlmVec(rotation), AngleType::Radians);
 }
 
 aiMatrix4x4 Model::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)

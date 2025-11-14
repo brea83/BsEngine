@@ -19,9 +19,9 @@ glm::vec3 Transform::GetPosition()
     return _position;
 }
 
-void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
+void Transform::Rotate(float angle, glm::vec3 axis, AngleType angleType)
 {
-    if (isDegrees)
+    if (angleType == AngleType::Degrees)
     {
         _localMatrix = glm::rotate(_localMatrix, glm::radians(angle), axis);
     }
@@ -39,27 +39,30 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
     _rotationDirty;
 }
 
-void Transform::SetRotationEuler(glm::vec3 value, bool isDegrees)
+void Transform::SetRotationEuler(glm::vec3 value, AngleType angleType)
 {
-    if (isDegrees)
+    if (angleType == AngleType::Degrees)
     {
-        _eulerRotation = value;
-        _orientation = glm::quat(glm::radians(value)); 
+        _eulerRotation = glm::radians(value);  
+        _orientation = glm::quat(_eulerRotation); 
     }
     else
     {
-        _eulerRotation = glm::vec3(glm::degrees(value));
+        _eulerRotation = glm::vec3(value);
         _orientation = glm::quat(value);
     }
 
     _rotationDirty = true;
 }
 
-void Transform::SetRotationQuaternion(glm::quat orientation, bool isDegrees)
+void Transform::SetRotationQuaternion(glm::quat orientation, AngleType angleType)
 {
-    if (isDegrees)
+    if (angleType == AngleType::Degrees)
     {
-        _orientation = orientation;
+        _orientation.w = glm::radians(orientation.w);
+        _orientation.x = glm::radians(orientation.x);
+        _orientation.y = glm::radians(orientation.y);
+        _orientation.z = glm::radians(orientation.z);
         float yaw = glm::yaw(_orientation);
         float pitch = glm::pitch(_orientation);
         float roll = glm::roll(_orientation);
@@ -69,9 +72,9 @@ void Transform::SetRotationQuaternion(glm::quat orientation, bool isDegrees)
     else
     {
         _orientation = orientation;
-        float yaw = glm::degrees( glm::yaw(_orientation));
-        float pitch = glm::degrees(glm::pitch(_orientation));
-        float roll = glm::degrees(glm::roll(_orientation));
+        float yaw =  glm::yaw(_orientation);
+        float pitch = glm::pitch(_orientation);
+        float roll = glm::roll(_orientation);
 
         _eulerRotation = glm::vec3(yaw, pitch, roll);
     }
@@ -79,14 +82,24 @@ void Transform::SetRotationQuaternion(glm::quat orientation, bool isDegrees)
     _rotationDirty = true;
 }
 
-glm::vec3 Transform::GetRotationEuler()
+glm::vec3 Transform::GetRotationEuler(AngleType angleType)
 {
     if (_positionDirty || _scaleDirty || _rotationDirty)
     {
         RecalculateModelMatrix();
     }
 
-    return _eulerRotation;
+    switch (angleType)
+    {
+    case AngleType::Degrees:
+        return glm::degrees(_eulerRotation);
+        break;
+    case AngleType::Radians:
+        return _eulerRotation;
+        break;
+    default:
+        break;
+    }
 }
 
 glm::vec3 Transform::GetScale()
@@ -120,11 +133,13 @@ void Transform::RecalculateModelMatrix()
     glm::mat4 identity = glm::mat4(1.0f);
     glm::mat4 translation = glm::translate(identity, _position);
 
-    //glm::mat4 rotation = glm::mat4_cast(glm::normalize(_orientation));
-    glm::mat4 rotation =
+    _orientation = glm::normalize(_orientation);
+    glm::mat4 rotation = glm::mat4_cast(_orientation);
+
+   /* glm::mat4 rotation =
         glm::rotate(identity, glm::radians(_eulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f })
         * glm::rotate(identity, glm::radians(_eulerRotation.y), glm::vec3{ 0.0f, 1.0f, 0.0f })
-        * glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f });
+        * glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f });*/
 
     glm::mat4 scale = glm::scale(identity, _scale);
 

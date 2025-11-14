@@ -10,9 +10,9 @@ public:
 	struct Vertex
 	{
 		glm::vec3 Position;
+		glm::vec3 Normal;
 		glm::vec3 Color;
 		glm::vec2 UV1;
-		glm::vec3 Normal;
 	};
 
 	//constructors and properties
@@ -31,7 +31,7 @@ protected:
 	unsigned int EBO{ 0 }; //Element buffer object
 
 	std::vector<Vertex> _vertices;
-	std::vector<glm::uvec3> _triangles;
+	//std::vector<glm::uvec3> _triangles;
 	std::vector<unsigned int> _indices;
 
 	//methods

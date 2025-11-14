@@ -15,8 +15,8 @@ public:
 	glm::vec3 GetPosition();
 
 	void Rotate(float angle, glm::vec3 axis, bool isDegrees = true);
-	void SetRotationEuler(glm::vec3 value);
-	void SetRotationQuaternion(glm::quat orientation);
+	void SetRotationEuler(glm::vec3 value, bool isDegrees = true);
+	void SetRotationQuaternion(glm::quat orientation, bool isDegrees = true);
 
 	glm::vec3 GetRotationEuler();
 	

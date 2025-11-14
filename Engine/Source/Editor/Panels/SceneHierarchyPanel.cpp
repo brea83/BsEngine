@@ -30,12 +30,13 @@ void SceneHierarchyPanel::OnImGuiRender()
 		{
 			Renderable* renderObject = _currentScene->_objectsToRender[i];
 			static const std::string emptyName = "_NameEmpty_";
+
+
 			if (renderObject->Name.empty())
 			{
 				if (ImGui::Selectable(emptyName.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
 				{
 					selected = i;
-					//selectedObject = _currentScene->_objectsToRender[i];
 				}
 			}
 			else
@@ -43,7 +44,6 @@ void SceneHierarchyPanel::OnImGuiRender()
 				if (ImGui::Selectable(renderObject->Name.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
 				{
 					selected = i;
-					//selectedObject = _currentScene->_objectsToRender[i];
 				}
 			}
 		}

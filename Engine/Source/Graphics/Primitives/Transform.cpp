@@ -39,21 +39,42 @@ void Transform::Rotate(float angle, glm::vec3 axis, bool isDegrees)
     _rotationDirty;
 }
 
-void Transform::SetRotationEuler(glm::vec3 value)
+void Transform::SetRotationEuler(glm::vec3 value, bool isDegrees)
 {
-    _eulerRotation = value;
-    _orientation = glm::quat(glm::radians(value)); 
+    if (isDegrees)
+    {
+        _eulerRotation = value;
+        _orientation = glm::quat(glm::radians(value)); 
+    }
+    else
+    {
+        _eulerRotation = glm::vec3(glm::degrees(value));
+        _orientation = glm::quat(value);
+    }
+
     _rotationDirty = true;
 }
 
-void Transform::SetRotationQuaternion(glm::quat orientation)
+void Transform::SetRotationQuaternion(glm::quat orientation, bool isDegrees)
 {
-    _orientation = orientation;
-    float yaw = glm::yaw(_orientation);
-    float pitch = glm::pitch(_orientation);
-    float roll = glm::roll(_orientation);
+    if (isDegrees)
+    {
+        _orientation = orientation;
+        float yaw = glm::yaw(_orientation);
+        float pitch = glm::pitch(_orientation);
+        float roll = glm::roll(_orientation);
 
-    _eulerRotation = glm::vec3(yaw, pitch, roll);
+        _eulerRotation = glm::vec3(yaw, pitch, roll);
+    }
+    else
+    {
+        _orientation = orientation;
+        float yaw = glm::degrees( glm::yaw(_orientation));
+        float pitch = glm::degrees(glm::pitch(_orientation));
+        float roll = glm::degrees(glm::roll(_orientation));
+
+        _eulerRotation = glm::vec3(yaw, pitch, roll);
+    }
 
     _rotationDirty = true;
 }
@@ -100,9 +121,10 @@ void Transform::RecalculateModelMatrix()
     glm::mat4 translation = glm::translate(identity, _position);
 
     //glm::mat4 rotation = glm::mat4_cast(glm::normalize(_orientation));
-    glm::mat4 rotation = glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f })
+    glm::mat4 rotation =
+        glm::rotate(identity, glm::radians(_eulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f })
         * glm::rotate(identity, glm::radians(_eulerRotation.y), glm::vec3{ 0.0f, 1.0f, 0.0f })
-        * glm::rotate(identity, glm::radians(_eulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f });
+        * glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f });
 
     glm::mat4 scale = glm::scale(identity, _scale);
 

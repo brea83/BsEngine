@@ -45,7 +45,7 @@ int main()
 
 	Model* testModel = new Model("Assets/Meshes/GuitarBackpack.fbx");
 	Transform* modelTransform = testModel->GetTransform();
-	modelTransform->SetScale(glm::vec3(0.005f));
+	//modelTransform->SetScale(glm::vec3(0.01f));
 	startingScene->AddRenderable(testModel);
 #pragma endregion 1 triangles, 1 cube
 

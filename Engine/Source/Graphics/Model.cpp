@@ -62,7 +62,7 @@ void Model::LoadModel(const std::string & filePath)
 		std::cout << "found " << other << " unknown type textures" << std::endl;
 	}*/
 
-	ProcessNode(assimpScene->mRootNode, assimpScene);
+	ProcessNode(assimpScene->mRootNode, assimpScene, aiMatrix4x4());
 }
 
 void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, aiNode* parentNode)
@@ -74,28 +74,48 @@ void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, 
 	}
 	
 	aiVector3D scaling;
-	aiQuaternion rotation;
+	aiVector3D rotation;
 	aiVector3D position;
 	nodeMatrix.Decompose(scaling, rotation, position);
 
 	localTransform->SetPosition(AssimpGlmHelpers::GetGlmVec(position));
 	localTransform->SetScale(AssimpGlmHelpers::GetGlmVec(scaling));
-	localTransform->SetRotationQuaternion(AssimpGlmHelpers::GetGlmQuat(rotation));
+	localTransform->SetRotationEuler(AssimpGlmHelpers::GetGlmVec(rotation), false);
 }
 
-void Model::ProcessNode(aiNode * node, const aiScene * assimpScene)
+aiMatrix4x4 Model::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
 {
-	aiMatrix4x4 nodeTransform = node->mTransformation;
+	if (parentNode)
+	{
+		return (CombineTransformsToRoot(parentNode->mParent, parentNode)) * childNode->mTransformation.Inverse();
+
+		// ((rootTransform) * child1) * child2) * child3
+	}
+
+	return childNode->mTransformation.Inverse();
+	 
+}
+
+void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 combinedParentMatrices)
+{
+	// the recursion starts with an identity matrix in combined parent matrices so this should be fine
+	aiMatrix4x4 nodeTransform = CombineTransformsToRoot(node->mParent, node); // node->mTransformation;//
 	//if root node set model's transform
-	if (node->mParent == nullptr)
+	if (!node->mParent)
 	{
 		ProcessTransform(node->mTransformation, _transform, nullptr);
+		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		std::cout << "Set MODEL transform" << std::endl;
+		std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
+		std::cout << "Rotation: " << _transform->GetRotationEuler().x << ", " << _transform->GetRotationEuler().y << ", " << _transform->GetRotationEuler().z << std::endl;
+		std::cout << "Scale: " << _transform->GetScale().x << ", " << _transform->GetScale().y << ", " << _transform->GetScale().z << std::endl;
 	}
 	else
 	{
-		// there is a parent transform combine its transform withours so that the mesh offsets from the root node are correct
-		nodeTransform = node->mParent->mTransformation * nodeTransform;
+		//nodeTransform = node->mParent->mTransformation.Inverse() * nodeTransform;
+		
 	}
+
 
 
 	// current node meshes
@@ -106,6 +126,11 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene)
 		Mesh mesh = processMesh(aiMesh, assimpScene);
 
 		ProcessTransform(nodeTransform, mesh.GetTransform(), node->mParent);
+		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		std::cout << "Set Mesh #" << node->mName.C_Str() << " transform" << std::endl;
+		std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
+		std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
+		std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
 		//meshWithCurrentNodeTransform = &mesh;
 		_meshes.push_back(mesh);
 	}
@@ -113,7 +138,7 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene)
 	// process children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		ProcessNode(node->mChildren[i], assimpScene);
+		ProcessNode(node->mChildren[i], assimpScene, nodeTransform);
 	}
 }
 

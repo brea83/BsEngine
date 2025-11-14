@@ -1,11 +1,12 @@
 #include "BsPrecompileHeader.h"
 #include "Model.h"
-#include "Graphics/Texture.h"
 #include "AssetLoader.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Graphics/Primitives/Mesh.h"
 #include <glm/glm.hpp>
 #include "Assimp/AssimpGlmHelpers.h"
+#include <filesystem>
+
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
@@ -14,7 +15,7 @@ Model::Model(const std::string& modelFilePath, const std::string& textureDirecto
 	: _texturesDirectory(textureDirectoryPath)
 {
 	_directory = modelFilePath.substr(0, modelFilePath.find_last_of('/'));
-	std::cout << "IMPORTING MODEL WITH DIRECTORY: " << _directory << std::endl;
+	Name = modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find("."));
 
 	LoadModel(modelFilePath);
 }
@@ -25,7 +26,7 @@ void Model::Init()
 void Model::LoadModel(const std::string & filePath)
 {
 	Assimp::Importer importer;
-	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
 
 	if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
 	{
@@ -33,6 +34,9 @@ void Model::LoadModel(const std::string & filePath)
 		return;
 	}
 
+	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+	std::cout << "IMPORTING MODEL " << Name << std::endl;
+	std::cout << " DIRECTORY: " << _directory << std::endl;
 	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
 	{
 		aiMaterial* material = assimpScene->mMaterials[i];
@@ -104,11 +108,11 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 	if (!node->mParent)
 	{
 		ProcessTransform(node->mTransformation, _transform, nullptr);
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-		std::cout << "Set MODEL transform" << std::endl;
-		std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
-		std::cout << "Rotation: " << _transform->GetRotationEuler().x << ", " << _transform->GetRotationEuler().y << ", " << _transform->GetRotationEuler().z << std::endl;
-		std::cout << "Scale: " << _transform->GetScale().x << ", " << _transform->GetScale().y << ", " << _transform->GetScale().z << std::endl;
+		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		//std::cout << "Set MODEL transform" << std::endl;
+		//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
+		//std::cout << "Rotation: " << _transform->GetRotationEuler().x << ", " << _transform->GetRotationEuler().y << ", " << _transform->GetRotationEuler().z << std::endl;
+		//std::cout << "Scale: " << _transform->GetScale().x << ", " << _transform->GetScale().y << ", " << _transform->GetScale().z << std::endl;
 	}
 	else
 	{
@@ -126,11 +130,11 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 		Mesh mesh = processMesh(aiMesh, assimpScene);
 
 		ProcessTransform(nodeTransform, mesh.GetTransform(), node->mParent);
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-		std::cout << "Set Mesh #" << node->mName.C_Str() << " transform" << std::endl;
-		std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
-		std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
-		std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
+		//std::cout << "------------------------------" << std::endl;
+		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
+		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
+		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
+		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
 		//meshWithCurrentNodeTransform = &mesh;
 		_meshes.push_back(mesh);
 	}
@@ -197,39 +201,41 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 	}
 	// process materials
 
-	/*aiMaterial* material = assimpScene->mMaterials[mesh->mMaterialIndex];
+	aiMaterial* material = assimpScene->mMaterials[mesh->mMaterialIndex];
 
 	if (material != nullptr)
 	{
-		
-		
-
 
 		std::vector<Texture*> diffuseMaps = loadMaterialTextures(material,
-			aiTextureType_DIFFUSE, "texture_diffuse");
+			aiTextureType_DIFFUSE, TextureType::Diffuse);
 
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
-		std::vector<Texture*> specularMaps = loadMaterialTextures(material,
-			aiTextureType_SPECULAR, "texture_specular");
+		//std::vector<Texture*> specularMaps = loadMaterialTextures(material,
+		//	aiTextureType_SPECULAR, "texture_specular");
 
-		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-	}*/
+		//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	}
 
 	return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName)
+std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
 {
 	std::vector<Texture*> textures;
 	for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
 	{
 		aiString filePath;
 		material->GetTexture(type, i, &filePath);
-		//Texture* texture = AssetLoader::LoadTexture(filePath.C_Str());
-		//texture.type = typeName;
-		//texture.path = str;
-		//textures.push_back(texture);
+		
+		/*std::string typeName = TextureTypeToString.at(bsTextureType);
+		std::cout << "TEXTURE PATH: " << filePath.C_Str() << std::endl;
+		std::cout << "TYPE: " << typeName << std::endl;*/
+		Texture* texture = AssetLoader::LoadTexture(filePath.C_Str());
+		if (texture == nullptr) continue;
+
+		texture->Type = bsTextureType;
+		textures.push_back(texture);
 	}
 	return textures;
 }

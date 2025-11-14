@@ -2,6 +2,7 @@
 #include "BsPrecompileHeader.h"
 #include "Graphics/Primitives/Renderable.h"
 #include "Graphics/Primitives/Mesh.h"
+#include "Graphics/Texture.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -35,6 +36,6 @@ protected:
 	aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 	void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 	Mesh processMesh(aiMesh* mesh, const aiScene* assimpScene);
-	std::vector<Texture*> loadMaterialTextures(aiMaterial* material, aiTextureType type, std::string typeName);
+	std::vector<Texture*> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
 };
 

@@ -43,6 +43,12 @@ Texture::Texture(const std::string & filePath)
 	CreateTexture(filePath);
 }
 
+TextureType Texture::GetTypeByString(const std::string& searchString)
+{
+	//if(searchString == )
+	return TextureType();
+}
+
 void Texture::CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter)
 {
 	_minFilterType = minFilter;
@@ -82,6 +88,7 @@ int Texture::GetGlMag()
 
 void Texture::CreateTexture(const std::string& filePath)
 {
+	
 	int glMinFilter = GetGlMin();
 	int glMagFilter = GetGlMag();
 

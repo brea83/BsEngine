@@ -12,11 +12,10 @@ uniform sampler2D Texture1;
 
 void main()
 {
-//	FragColor = texture(Texture1, UV1);
-//	vec4 lighterVetexColors = vec4(0.25f) + vec4(VertexColor, 1.0f);
-//	FragColor *= normalize(lighterVetexColors);
-	//FragColor *= vec4(VertexColor, 1.0f);
-	vec3 newNormal = Normal + vec3(0.2f);
-	FragColor = vec4(normalize(newNormal), 1.0f);
+	FragColor = texture(Texture1, UV1);
+	//vec3 newNormal = Normal + vec3(0.2f);
+	//FragColor *= vec4(normalize(Normal), 1.0f);
+	//FragColor = vec4(VertexColor, 1.0f);
+	//FragColor = vec4(normalize(newNormal), 1.0f);
 	//FragColor = vec4(VertexColor, 1.0f);
 }

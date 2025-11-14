@@ -90,8 +90,27 @@ Texture* AssetLoader::LoadTexture(const std::string& filePath)
 		return (Texture*)_resources.at(filePath);
 	}
 
+
+	//prep filepath
+	std::string relativePath = "";
+	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+	std::cout << "trying to load file path: " << filePath << std::endl;
+	if (filePath.substr(0, filePath.find_first_of('\\')) == "..")
+	{
+		relativePath = "Assets" + filePath.substr(filePath.find_first_of('\\'));
+		std::cout << "PATH WAS RELATIVE" << std::endl;
+		std::cout << "path modified to: " << relativePath << std::endl;
+	}
+
 	StbImageData data;
-	StbImageWrapper::LoadImage(filePath, data);
+	if (relativePath != "")
+	{
+		StbImageWrapper::LoadImage(relativePath, data);
+	}
+	else
+	{
+		StbImageWrapper::LoadImage(filePath, data);
+	}
 
 	if (!data.BLoadSuccess) return nullptr;
 

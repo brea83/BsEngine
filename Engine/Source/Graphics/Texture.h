@@ -47,6 +47,36 @@ enum class TextureType
 	* some ppl use alpha for clipping but its not standard
 	*/
 	GltfMetalicRoughness
+
+};
+
+const std::unordered_map<TextureType, std::string> TextureTypeToString = {
+	{TextureType::Diffuse, "Diffuse"},
+	{TextureType::Specular, "Specular"},
+	{TextureType::Ambient, "Ambient"},
+	{TextureType::Emmissive, "Emmissive"},
+	{TextureType::Height, "Height"},
+	{TextureType::Normal, "Normal"},
+	{TextureType::Gloss, "Gloss"},
+	{TextureType::Opacity, "Opacity"},
+	{TextureType::Displacement, "Displacement"},
+	{TextureType::Lightmap, "Lightmap"},
+	{TextureType::Reflection, "Reflection"},
+	//pbr pipeline types
+	{TextureType::BaseColor, "BaseColor"},
+	{TextureType::NormalCamera, "NormalCamera"},
+	{TextureType::EmissionColor, "EmissionColor"},
+	{TextureType::Metalness, "Metalness"},
+	{TextureType::Roughness, "Roughness"},
+	{TextureType::Ao, "Ao"},
+	/*
+	* gltf standard packing
+	* red = Ao
+	* greem = roughness
+	* blue = metalness
+	* some ppl use alpha for clipping but its not standard
+	*/
+	{TextureType::GltfMetalicRoughness, ""},
 };
 
 class Texture : public Resource
@@ -59,9 +89,11 @@ public:
 	unsigned int TextureObject{ 0 };
 	static const char* Min_FilterModeNames[(unsigned long long)Min_FilterType::COUNT];
 	static const char* Mag_FilterModeNames[(unsigned long long)Mag_FilterType::COUNT];
+	TextureType Type{ TextureType::Diffuse };
 
 	Min_FilterType GetMinFilterType() const { return _minFilterType; }
 	Mag_FilterType GetMagFilterType() const { return _magFilterType; }
+	static TextureType GetTypeByString(const std::string& searchString);
 
 	void CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter);
 	void Bind(unsigned int slot = 0) const;

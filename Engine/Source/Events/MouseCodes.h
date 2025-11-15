@@ -5,7 +5,7 @@ using MouseCode = uint16_t;
 
 namespace Inputs
 {
-	enum : MouseCode
+	enum class Mouse: MouseCode
 	{
 		Button1 = GLFW_MOUSE_BUTTON_1,
 		Button2 = GLFW_MOUSE_BUTTON_2,

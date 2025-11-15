@@ -1,6 +1,6 @@
 #pragma once
 #include "Events/Event.h"
-
+#include "KeyCodes.h"
 
 class KeyEvent : public Event
 {

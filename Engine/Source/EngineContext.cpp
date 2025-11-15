@@ -41,7 +41,7 @@ void EngineContext::Update()
 	//TODO: plan out what gets updated when window is minimized and what doesn't
 	if (!_bMinimized)
 	{
-		ProcessInput(_mainWindow->GetGlfwWindow());
+		//ProcessInput(_mainWindow->GetGlfwWindow());
 	}
 
 	_imGuiLayer->OnUpdate();
@@ -72,7 +72,11 @@ void EngineContext::OnEvent(Event& event)
 	dispatcher.Dispatch<WindowClosedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnWindowClosed));
 	dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnFrameBufferSize));
 
-	// TODO: add dispatchers for key events.
+	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnKeyPressedEvent));
+	
+	dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseButtonPressedEvent));
+	dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseScrolled));
+	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 	//std::cout << event.ToString() << std::endl;
 }
 
@@ -93,5 +97,29 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 bool EngineContext::OnWindowClosed(WindowClosedEvent& event)
 {
 	_bRunning = false;
+	return true;
+}
+
+
+bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
+{
+	return false;
+}
+
+bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
+{
+	return false;
+}
+
+bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
+{
+	return false;
+}
+
+bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
+{
+	Inputs::Keyboard key = static_cast<Inputs::Keyboard>(event.GetKeyCode());
+
+	std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
 	return true;
 }

@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Events/ApplicationEvent.h"
+#include "Events/KeyboardEvents.h"
+#include "Events/MouseEvents.h"
 #include "Editor/ImGuiLayer.h"
 
 //class Renderer;
@@ -59,10 +61,13 @@ private:
 	// DebugConsole* _console;
 	// methods
 
-	void ProcessInput(GLFWwindow* window)
-	{
+	bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
+	bool OnMouseScrolled(MouseScrolledEvent& event);
+	bool OnMouseMoved(MouseMovedEvent& event);
+	bool OnKeyPressedEvent(KeyPressedEvent& event);
+	/*{
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window, true);
-	}
+	}*/
 };
 

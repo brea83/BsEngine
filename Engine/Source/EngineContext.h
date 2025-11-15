@@ -52,6 +52,9 @@ private:
 	// properties
 	bool _bRunning{ true };
 	bool _bMinimized{ false };
+	float _deltaTime{ 0.0f };
+	float _lastFrameTime{ 0.0f };
+
 	std::unique_ptr<Window> _mainWindow;
 	Scene* _activeScene;
 	Renderer* _renderer;

@@ -11,7 +11,7 @@ public:
 	const glm::vec3& GetPosition() { return _position; }
 
 	void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f ,0.0f));
-
+	bool HandleMoveInput(int keyCode, float deltaTime);
 	glm::mat4 ViewMatrix() const;
 	glm::mat4 ProjectionMatrix() const;
 

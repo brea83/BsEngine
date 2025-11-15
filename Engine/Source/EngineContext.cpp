@@ -42,9 +42,12 @@ void EngineContext::Update()
 	if (!_bMinimized)
 	{
 		//ProcessInput(_mainWindow->GetGlfwWindow());
+		float currentFrame = glfwGetTime();
+		_deltaTime = currentFrame - _lastFrameTime;
+		_lastFrameTime = currentFrame;
 	}
 
-	_imGuiLayer->OnUpdate();
+	_imGuiLayer->OnUpdate(_lastFrameTime);
 
 	_mainWindow->OnUpdate();
 }
@@ -118,8 +121,21 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 
 bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 {
-	Inputs::Keyboard key = static_cast<Inputs::Keyboard>(event.GetKeyCode());
+	KeyCode keyCode = event.GetKeyCode();
+	//Inputs::Keyboard key = static_cast<Inputs::Keyboard>(keyCode);
 
-	std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
-	return true;
+	//std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
+
+	// TODO: refactor this into a proper input system
+	if (keyCode == GLFW_KEY_W 
+		|| keyCode == GLFW_KEY_S
+		|| keyCode == GLFW_KEY_A
+		|| keyCode == GLFW_KEY_D)
+	{
+		return _activeScene->GetMainCamera()->HandleMoveInput(keyCode, _deltaTime);
+	}
+	
+
+	//_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
+	return false;
 }

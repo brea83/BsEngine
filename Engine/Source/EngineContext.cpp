@@ -47,7 +47,7 @@ void EngineContext::Update()
 	if (!_bMinimized)
 	{
 		//ProcessInput(_mainWindow->GetGlfwWindow());
-		float currentFrame = glfwGetTime();
+		float currentFrame = (float)glfwGetTime();
 		_deltaTime = currentFrame - _lastFrameTime;
 		_lastFrameTime = currentFrame;
 	}
@@ -116,6 +116,11 @@ bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
 
 bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 {
+	float yOffset = event.GetYOffset();
+	if (_camFlyMode)
+	{
+		return _activeScene->GetMainCamera()->Zoom(yOffset);
+	}
 	return false;
 }
 

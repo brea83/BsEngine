@@ -55,12 +55,17 @@ bool Camera::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
 	if (_pitch > 89.0f) _pitch = 89.0f;
 	if (_pitch < -89.0f) _pitch = -89.0f;
 
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(_yaw) * cos(glm::radians(_pitch)));
-	direction.y = sin(glm::radians(_pitch));
-	direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
-	_forward = glm::normalize(direction);
+	UpdateCameraVectors();
 
+	return true;
+}
+
+bool Camera::Zoom(float amount)
+{
+	_fov -= amount;
+	if (_fov < 1.0f) _fov = 1.0f;
+
+	if (_fov > 45.0f) _fov = 45.0f;
 	return true;
 }
 
@@ -73,4 +78,16 @@ glm::mat4 Camera::ViewMatrix() const
 glm::mat4 Camera::ProjectionMatrix() const
 {
 	return glm::perspective(glm::radians(_fov), _aspectRatio, _near, _far);
+}
+
+void Camera::UpdateCameraVectors()
+{
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(_yaw) * cos(glm::radians(_pitch)));
+	direction.y = sin(glm::radians(_pitch));
+	direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_forward = glm::normalize(direction);
+
+	_right = glm::normalize(glm::cross(_forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+	_up = glm::normalize(glm::cross(_right, _forward));
 }

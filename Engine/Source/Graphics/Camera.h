@@ -13,6 +13,7 @@ public:
 	void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f ,0.0f));
 	bool HandleMoveWasd(int keyCode, float deltaTime);
 	bool HandleLookMouse(float xOffset, float yOffset, float deltaTime);
+	bool Zoom(float amount);
 	glm::mat4 ViewMatrix() const;
 	glm::mat4 ProjectionMatrix() const;
 
@@ -36,5 +37,7 @@ protected:
 	float _near{ 0.1f };
 	float _far{ 100.0f };
 	bool _bProjectionMatrixDirty{ false };
+
+	void UpdateCameraVectors();
 };
 

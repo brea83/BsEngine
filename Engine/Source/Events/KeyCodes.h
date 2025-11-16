@@ -201,6 +201,8 @@ namespace Inputs
     {Keyboard::Backslash, "Backslash"},
     {Keyboard::RightBracket, "Right Bracket"},
     {Keyboard::Accent, "Accent"},
+    {Keyboard::World1, "World 1"},
+    {Keyboard::World2, "World 2"},
     {Keyboard::Escape, "Escape"},
     {Keyboard::Enter, "Enter"},
     {Keyboard::Tab, "    "},

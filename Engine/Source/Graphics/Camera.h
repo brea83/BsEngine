@@ -11,7 +11,8 @@ public:
 	const glm::vec3& GetPosition() { return _position; }
 
 	void LookAt(const glm::vec3& target, const glm::vec3& up = glm::vec3(0.0f, 1.0f ,0.0f));
-	bool HandleMoveInput(int keyCode, float deltaTime);
+	bool HandleMoveWasd(int keyCode, float deltaTime);
+	bool HandleLookMouse(float xOffset, float yOffset, float deltaTime);
 	glm::mat4 ViewMatrix() const;
 	glm::mat4 ProjectionMatrix() const;
 
@@ -26,6 +27,9 @@ protected:
 	glm::vec3 _up;
 	glm::vec3 _right;
 	glm::vec3 _forward;
+
+	float _yaw = -90.0f;
+	float _pitch = 0.0f;
 
 	float _fov{ 45.0f };
 	float _aspectRatio{ 1280.0f / 720.0f };

@@ -20,7 +20,7 @@ void Camera::LookAt(const glm::vec3 & target, const glm::vec3 & newUp)
 
 //TODO REFACTOR THIS INTO A MOVEMENT COMPONENT TO BE USED BY SCENE CAM AND OTHER THINGS
 	// AND REFACTOR THE SCENE EDIT CAMERA TO BE DIFFERENT FROM THE SCENE'S MAIN GAMEPLAY CAM
-bool Camera::HandleMoveInput(int keyCode, float deltaTime)
+bool Camera::HandleMoveWasd(int keyCode, float deltaTime)
 {
 	const float cameraSpeed = 10.0f * deltaTime; // adjust accordingly
 	switch (keyCode)
@@ -41,6 +41,27 @@ bool Camera::HandleMoveInput(int keyCode, float deltaTime)
 		return false;
 	}
 
+}
+
+bool Camera::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
+{
+	const float sensitivity = 1.0f * deltaTime;
+	xOffset *= sensitivity;
+	yOffset *= sensitivity;
+
+	_yaw += xOffset;
+	_pitch += yOffset;
+
+	if (_pitch > 89.0f) _pitch = 89.0f;
+	if (_pitch < -89.0f) _pitch = -89.0f;
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(_yaw) * cos(glm::radians(_pitch)));
+	direction.y = sin(glm::radians(_pitch));
+	direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
+	_forward = glm::normalize(direction);
+
+	return true;
 }
 
 glm::mat4 Camera::ViewMatrix() const

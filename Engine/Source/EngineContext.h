@@ -52,6 +52,12 @@ private:
 	// properties
 	bool _bRunning{ true };
 	bool _bMinimized{ false };
+
+	bool _camFlyMode{ false };
+	bool _firstMouse{ false };
+	float _prevMouseX{ 0.0f };
+	float _prevMouseY{ 0.0f };
+
 	float _deltaTime{ 0.0f };
 	float _lastFrameTime{ 0.0f };
 

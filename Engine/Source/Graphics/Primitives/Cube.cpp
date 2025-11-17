@@ -4,10 +4,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-static int s_NumCubes = 0;
-Cube::Cube(bool useMinimalVerticies)
+static int s_NumCubes = 1;
+Cube::Cube(/*unsigned int uid,*/ bool useMinimalVerticies, const std::string& name)
+	: Mesh(/*uid, */(name + " " + std::to_string(s_NumCubes++)))
 {
-	if (s_NumCubes == 0)
+	/*if (s_NumCubes == 0)
 	{
 		Name = "Cube";
 	}
@@ -15,7 +16,7 @@ Cube::Cube(bool useMinimalVerticies)
 	{
 		Name = "Cube_" + std::to_string(s_NumCubes);
 	}
-	s_NumCubes++;
+	s_NumCubes++;*/
 
 	if (useMinimalVerticies)
 	{
@@ -144,7 +145,7 @@ Cube::Cube(bool useMinimalVerticies)
 		};
 	}
 
-	_transform = new Transform();
+	_transform = std::make_shared<Transform>();
 
 	Init();
 }

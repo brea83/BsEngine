@@ -4,7 +4,8 @@
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-Rectangle::Rectangle()
+Rectangle::Rectangle(/*unsigned int uid, */const std::string& name)
+	: Mesh(/*uid,*/ name)
 {
 	_vertices = {
 		Vertex{{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f, 0.0f }}, // top left
@@ -22,15 +23,8 @@ Rectangle::Rectangle()
 		1, 2, 3
 	};
 
-	_transform = new Transform();
+	_transform = std::make_shared<Transform>();
 
-	Init();
-}
-
-Rectangle::Rectangle(std::vector<Vertex>& newVerticies)
-{
-	_vertices = newVerticies;
-	_transform = new Transform();
 	Init();
 }
 

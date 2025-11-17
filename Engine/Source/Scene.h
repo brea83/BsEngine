@@ -11,7 +11,11 @@ class Scene
 public:
 	Scene();
 	~Scene();
+	
+
 	void AddRenderable(Renderable* newRenderable) { _objectsToRender.push_back(newRenderable); }
+	void CreateCube();
+	void RemoveRenderable(Renderable* objToRemove);
 	std::vector<Renderable*>& GetRenderables() { return _objectsToRender; }
 
 	Camera* GetMainCamera() { return _mainCamera; }

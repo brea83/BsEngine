@@ -23,11 +23,20 @@ void SceneHierarchyPanel::OnImGuiRender()
 	//left panel
 	static int selected = 0;
 	Renderable* selectedObject{ nullptr };
+	
+	//ImGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+	if (ImGui::BeginTable("##HierarchyTable", 2))
 	{
-		//ImGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
+		float fontSize = ImGui::GetFontSize();
+		ImGui::TableSetupColumn("Objects", ImGuiTableColumnFlags_WidthFixed, fontSize * 20.0f);
+		ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch);
 
 		for ( int i = 0; i < _currentScene->_objectsToRender.size(); i++)//Renderable* renderObject : _currentScene->_objectsToRender)
 		{
+			ImGui::TableNextRow();
+			// Column 1
+			ImGui::TableSetColumnIndex(0);
+
 			Renderable* renderObject = _currentScene->_objectsToRender[i];
 			static const std::string emptyName = "_NameEmpty_";
 
@@ -46,12 +55,21 @@ void SceneHierarchyPanel::OnImGuiRender()
 					selected = i;
 				}
 			}
+
+			// the values
+			ImGui::TableSetColumnIndex(1);
+
+			ImGui::PushID(i);
+			if (ImGui::Button("X"))
+			{
+				_currentScene->RemoveRenderable(renderObject);
+			}
+			ImGui::PopID();
 		}
-		//ImGui::EndChild();
+		ImGui::EndTable();
 	}
+	
 	ImGui::End();
-	//ImGui::SameLine();
-	// right panel
 	
 	ImGui::Begin("Details View");
 	if (_currentScene->_objectsToRender.size() > selected && selected >= 0)
@@ -71,7 +89,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 				
 			ImGui::SeparatorText("Transform");
 				
-			Transform* transform = selectedObject->GetTransform();
+			std::shared_ptr<Transform> transform = selectedObject->GetTransform();
 			//glm::vec3 position = transform->GetPosition();
 			glm::vec3 rotation = transform->GetRotationEuler();
 			glm::vec3 scale = transform->GetScale();

@@ -59,7 +59,7 @@ RESOURCES
 	VIDEOS
 	projection matrix https://www.youtube.com/watch?v=U0_ONQQ5ZNM
 ================================
-DAY 1
+LECTURE 1
 ================================
 
 Intro
@@ -158,7 +158,7 @@ opengl
 	however the glBegin() and glEnd() wrapping the actual rendering is similar to what we will be doing
 
 ================================
-DAY 2
+LECTURE 2
 ================================
 
 - installing glad 
@@ -170,7 +170,7 @@ DAY 2
 	by Martin's error detection going wonky
 
 ================================
-DAY 3
+LECTURE 3
 ================================
 - actually doing color in our renderer
 - setting up renderer structures and interfaces
@@ -205,7 +205,7 @@ STARTING STRUCTURES
 VERTEX COLOR THE TRIANGLE TIME
 
 ================================
-DAY 4 (week 2)
+LECTURE 4 (week 2)
 ================================
 - SQUARE 
 	index buffer, and transforms
@@ -217,7 +217,7 @@ DAY 4 (week 2)
 
 - CUBE
 ================================
-DAY 5 (week 2)
+LECTURE 5 (week 2)
 ================================
 CAMERA
 
@@ -231,7 +231,7 @@ WALK THROUGH OF CAMERA AND SCENE of Martin's engine
 	reminder that can init glm:vec3 etc with a single number if all values are supposed to match
 
 ================================
-DAY 6 (week 2)
+LECTURE 6 (week 2)
 ================================
 MODULE ONE REQUIREMENTS
 	a cube rendered in a window with perspective
@@ -254,7 +254,7 @@ IMGUI
 ABOUT FRAME BUFFER	
 	viewport has the framebuffer
 ================================
-DAY 7 (week 3)
+LECTURE 7 (week 3)
 ================================
 
 this week's goals
@@ -293,7 +293,7 @@ bonus goals
 
 
 ================================
-DAY 8 (week 3)
+LECTURE 8 (week 3)
 ================================
 Assimp api for importing fbx
 	stands for asset import library or something
@@ -331,3 +331,86 @@ think about how to use the fbx model's parent node structure for display in heir
 THIS WEEK MIGHT BE THE ONLY TIME TO GET FBX IMPORT SET UP
 
 emil will go over making an obj loader as well. 
+
+================================
+LECTURE 9 (week 4) mon UI
+================================
+
+module two is with Emil Hedemalm
+	runs a small company Evergreen IT
+		making iterum.gg
+
+	did c++ in stockholm tripple a
+	functional programming in fintech
+	and cloud programming in transportation industry
+
+week one 
+	ui 
+	parsed vs binary data, and obj loading
+	managers, singletons, and messages
+
+WHAT IS USER INTERFACE
+
+connect core simulation to some kind of visuals
+
+common tools in an engine editor,
+	single asset editor
+	map editor
+	script or text editor
+	test runner
+	playtest mode
+
+Other ui frameworks
+	qt GUI,
+	and GTK toolkit
+
+	windows WPF
+
+	Coherent gameface
+		takes more of a html 
+
+IMGUI
+	
+	IN THE LOOP
+	make the windows and widgets
+	at the end clean up
+
+ENTITY MANAGEMENT
+
+in this case:
+	An Entity is something you can click and move around in the level editor of your game
+	you may want to save it
+
+	it is NOT
+	sim data for particles
+	simulation data for spawning enemies on the map
+	strictly coupled to any one ui element
+
+
+managing entities
+	list or data struct of entitites 
+
+	manager that can create and delete and stor ethe list of entities
+
+
+visualizing entities
+	3d part 
+	ui part
+
+might want a graphics manager that handles more complex which entities should render
+
+
+first list of entities
+	click on enity in ui
+		selects it active for edititing, 
+	button for create entity
+	button for delete entity
+
+
+	anonymous name spaces
+	// .cpp
+ 
+	// Anonymous namespace, only accessible in this .cpp-file
+	namespace {
+	  myAnonStuff.
+	};

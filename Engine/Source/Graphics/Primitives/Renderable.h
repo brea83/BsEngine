@@ -10,17 +10,19 @@ class Renderable
 {
 public:
 
-	Renderable(const std::string& name = "Default Name");
+	Renderable(/*unsigned int uid, */const std::string& name = "Default Name");
 	virtual ~Renderable();
 
 	std::string Name;
 
-	virtual Transform* GetTransform() { return _transform; }
+	//virtual unsigned int GetUID() const { return _uid; }
+	virtual std::shared_ptr<Transform> GetTransform() { return _transform; }
 	virtual void Render(Shader& currentShader) = 0;
+
 protected:
 	//properties
-	Transform* _transform{ nullptr };
-
+	std::shared_ptr<Transform> _transform{ nullptr };
+	//unsigned int _uid;
 	// methods
 	virtual void Init() = 0;
 };

@@ -2,11 +2,13 @@
 #include "Renderable.h"
 #include "Transform.h"
 
-Renderable::Renderable(const std::string& name)
-	: Name(name)
+Renderable::Renderable(/*unsigned int uid,*/ const std::string& name )
+	:  /*_uid(uid),*/ Name(name)
 {
-	_transform = new Transform();
+	_transform = std::make_shared<Transform>();
 }
 
 Renderable::~Renderable()
-{}
+{
+	
+}

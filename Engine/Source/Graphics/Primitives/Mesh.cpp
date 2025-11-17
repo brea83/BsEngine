@@ -5,14 +5,27 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-Mesh::Mesh(const std::string& name)
-    : Renderable(name)
-{}
-
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures)
-    : Renderable("Mesh"),_vertices(vertices), _indices(indices), Textures(textures)
+Mesh::Mesh(/*unsigned int uid,*/ const std::string& name)
+    : Renderable(/*uid,*/ name)
 {
+    std::cout << "creating Mesh: " << Name << std::endl;
+}
+
+Mesh::Mesh(/*unsigned int uid, */std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name)
+    : Renderable(/*uid,*/ name),_vertices(vertices), _indices(indices), Textures(textures)
+{
+    //std::cout << "creating Mesh: " << Name << std::endl;
 	Init();
+}
+
+Mesh::~Mesh()
+{
+    // optional: de-allocate all resources once they've outlived their purpose:
+    // ------------------------------------------------------------------------
+   // if (EBO) glDeleteBuffers(1, &EBO);
+   // std::cout << "Deleting Mesh: " << Name << std::endl;
+    if (VBO) glDeleteBuffers(1, &VBO);
+    if (VAO) glDeleteVertexArrays(1, &VAO);
 }
 
 void Mesh::Init()
@@ -55,7 +68,7 @@ void Mesh::Render(Shader& currentShader)
     //for now only use the first included texture as our shader only supports one shader
     if (Textures.size() > 0)
     {
-        Texture* defaultTexture = Textures[0];
+        std::shared_ptr<Texture> defaultTexture = Textures[0];
         defaultTexture->Bind();
         currentShader.SetUniformInt("Texture1", 0);
     }
@@ -65,4 +78,11 @@ void Mesh::Render(Shader& currentShader)
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    if (Textures.size() > 0)
+    {
+        std::shared_ptr<Texture> defaultTexture = Textures[0];
+        defaultTexture->UnBind();
+        //currentShader.SetUniformInt("Texture1", 0);
+    }
 }

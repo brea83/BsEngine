@@ -22,6 +22,8 @@ public:
 
 	static EngineContext* GetEngine();
 	bool Init();
+	
+	static int NextUID;
 
 	Window& GetWindow() { return *_mainWindow; }
 	GLFWwindow* GetGlfwWindow() { return _mainWindow->GetGlfwWindow(); }

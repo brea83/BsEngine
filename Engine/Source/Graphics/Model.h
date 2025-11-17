@@ -8,20 +8,19 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class Texture;
+//class Texture;
 
 class Model : public Renderable
 {
 public:
-	Model(const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures");
-
-	
+	Model(/*unsigned int uid, */const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures");
+	~Model();
 
 	// Inherited via Renderable
 	void Render(Shader& currentShader) override;
 protected:
 	//properties
-	std::vector<Mesh> _meshes;
+	std::vector<std::shared_ptr<Mesh>> _meshes;
 	std::string _directory;
 	std::string _texturesDirectory{"Assets/Textures"};
 
@@ -32,10 +31,10 @@ protected:
 	//TODO: refactor this to look for matching models and meshes in the assetloader
 	// and move the actual loading and processing to the asset loader
 	// for now just following tutorial to see if I can get importing to work at all
-	void ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, aiNode* parentNode);
+	void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode);
 	aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 	void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
-	Mesh processMesh(aiMesh* mesh, const aiScene* assimpScene);
-	std::vector<Texture*> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
+	std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
+	std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
 };
 

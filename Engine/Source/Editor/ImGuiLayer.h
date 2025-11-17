@@ -4,6 +4,8 @@
 #include "Editor/Panels/SceneHierarchyPanel.h"
 #include "Editor/Panels/ImGuiPanel.h"
 
+class EngineContext;
+
 class Scene;
 
 	//may need key, mouse, and application events
@@ -17,6 +19,8 @@ class Scene;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
+
+		void DrawEditorMenu(EngineContext* engine);
 
 		void Begin();
 		void End();

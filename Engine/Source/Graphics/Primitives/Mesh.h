@@ -1,7 +1,7 @@
 #pragma once
 #include "Renderable.h"
-
-class Texture;
+#include "Graphics/Texture.h"
+//class Texture;
 
 class Mesh :    public Renderable
 {
@@ -16,10 +16,11 @@ public:
 	};
 
 	//constructors and properties
-	Mesh(const std::string& name = "Default Name");
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures);
+	Mesh(/*unsigned int uid,*/ const std::string& name = "Default Name");
+	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name = "Default Mesh Name");
+	virtual ~Mesh();
 
-	std::vector<Texture*> Textures;
+	std::vector<std::shared_ptr<Texture>> Textures;
 
 	// methods
 	void Render(Shader& currentShader) override;

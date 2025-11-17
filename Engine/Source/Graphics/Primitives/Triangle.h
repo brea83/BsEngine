@@ -5,7 +5,7 @@
 class Triangle : public Mesh
 {
 public:
-	Triangle();
+	Triangle(/*unsigned int uid*/const std::string& name = "Triangle");
 	//Triangle(std::vector<Vertex>& newVerticies);
 	~Triangle();
 

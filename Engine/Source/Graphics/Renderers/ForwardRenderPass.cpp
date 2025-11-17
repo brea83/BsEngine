@@ -24,7 +24,6 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 	_shader->Use();
 
-	_fallbackTexture->Bind(0);
 	_shader->SetUniformInt("Texture1", 0);
 
 	Camera* mainCam = sceneToRender.GetMainCamera();
@@ -33,6 +32,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 	for (Renderable* object : objectsToRender)
 	{
+		_fallbackTexture->Bind(0);
 		object->Render(*_shader);
 	}
 	_shader->EndUse();

@@ -7,8 +7,7 @@ class Transform;
 class Rectangle : public Mesh
 {
 public:
-	Rectangle();
-	Rectangle(std::vector<Vertex>& newVerticies);
+	Rectangle(/*unsigned int uid, */const std::string& name = "Rectangle");
 	~Rectangle();
 
 	

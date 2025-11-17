@@ -8,6 +8,7 @@
 #define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
 
 EngineContext* EngineContext::_engine = nullptr;
+//EngineContext* EngineContext::NextUID = 0;
 
 EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer)
 	: _mainWindow(startingWindow), _activeScene(startingScene), _renderer(startingRenderer)

@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include "Resource.h"
 
+class TextResource;
+
 class Shader : public Resource
 {
 public:
@@ -28,6 +30,9 @@ public:
 	void EndUse();
 
 private:
+	std::shared_ptr<TextResource> _vertexSource;
+	std::shared_ptr<TextResource> _fragmentSource;
+
 	unsigned int CompileShader(int glShaderType, const std::string& filePath);
 	unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
 

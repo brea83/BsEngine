@@ -16,8 +16,8 @@ public:
 	static std::string SelectedAsset;
 
 private:
-	void DrawTextureEditor(Texture* texture);
-	void DrawShaderEditor(Shader* shader, std::string& filePath);
-	void DrawTextInspector(TextResource* resource);
+	void DrawTextureEditor(std::shared_ptr<Texture> texture);
+	void DrawShaderEditor(std::shared_ptr <Shader> shader, std::string& filePath);
+	void DrawTextInspector(std::shared_ptr <TextResource> resource);
 };
 

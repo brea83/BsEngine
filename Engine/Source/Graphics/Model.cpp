@@ -11,13 +11,18 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-Model::Model(const std::string& modelFilePath, const std::string& textureDirectoryPath)
-	: _texturesDirectory(textureDirectoryPath)
+Model::Model(/*unsigned int uid, */const std::string& modelFilePath, const std::string& textureDirectoryPath)
+	: Renderable(/*uid, */modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find("."))), _directory(modelFilePath.substr(0, modelFilePath.find_last_of('/'))), _texturesDirectory(textureDirectoryPath)
 {
-	_directory = modelFilePath.substr(0, modelFilePath.find_last_of('/'));
-	Name = modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find("."));
-
+	//_directory = modelFilePath.substr(0, modelFilePath.find_last_of('/'));
+	//Name = modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find("."));
+	//_uid = uid;
 	LoadModel(modelFilePath);
+}
+
+Model::~Model()
+{
+	//delete[] _meshes;
 }
 
 void Model::Init()
@@ -66,10 +71,14 @@ void Model::LoadModel(const std::string & filePath)
 		std::cout << "found " << other << " unknown type textures" << std::endl;
 	}*/
 
+	//std::cout << "====================================" << std::endl;
+	//std::cout << "Reserving " << assimpScene->mNumMeshes << ", in _meshes" << std::endl;
+	//std::cout << "====================================" << std::endl;
+	_meshes.reserve(assimpScene->mNumMeshes);
 	ProcessNode(assimpScene->mRootNode, assimpScene, aiMatrix4x4());
 }
 
-void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, Transform* localTransform, aiNode* parentNode)
+void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
 {
 
 	if (parentNode) 
@@ -127,11 +136,11 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[i]];
-		Mesh mesh = processMesh(aiMesh, assimpScene);
-
-		ProcessTransform(nodeTransform, mesh.GetTransform(), node->mParent);
 		//std::cout << "------------------------------" << std::endl;
+		std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
+
 		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
+		ProcessTransform(nodeTransform, mesh->GetTransform(), node->mParent);
 		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
@@ -146,11 +155,11 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 	}
 }
 
-Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
+std::shared_ptr<Mesh>  Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 {
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<unsigned int> indices;
-	std::vector<Texture*> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -206,7 +215,7 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 	if (material != nullptr)
 	{
 
-		std::vector<Texture*> diffuseMaps = loadMaterialTextures(material,
+		std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material,
 			aiTextureType_DIFFUSE, TextureType::Diffuse);
 
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
@@ -217,12 +226,12 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 		//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
-	return Mesh(vertices, indices, textures);
+	return std::make_shared<Mesh>(/*_uid, */vertices, indices, textures, mesh->mName.C_Str());
 }
 
-std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
+std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
 {
-	std::vector<Texture*> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 	for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
 	{
 		aiString filePath;
@@ -231,11 +240,11 @@ std::vector<Texture*> Model::loadMaterialTextures(aiMaterial* material, aiTextur
 		/*std::string typeName = TextureTypeToString.at(bsTextureType);
 		std::cout << "TEXTURE PATH: " << filePath.C_Str() << std::endl;
 		std::cout << "TYPE: " << typeName << std::endl;*/
-		Texture* texture = AssetLoader::LoadTexture(filePath.C_Str());
+		std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(filePath.C_Str());
 		if (texture == nullptr) continue;
 
 		texture->Type = bsTextureType;
-		textures.push_back(texture);
+		textures.emplace_back(texture);
 	}
 	return textures;
 }
@@ -244,6 +253,6 @@ void Model::Render(Shader& currentShader)
 {
 	for (unsigned int i = 0; i < _meshes.size(); i++)
 	{
-		_meshes[i].Render(currentShader);
+		_meshes[i]->Render(currentShader);
 	}
 }

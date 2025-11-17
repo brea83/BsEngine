@@ -15,7 +15,7 @@ class Transform
 public:
 	Transform();
 	// properties
-	Transform* ParentTransform{ nullptr };
+	std::shared_ptr<Transform> ParentTransform;
 
 	void SetPosition(glm::vec3 value) { _position = value; _positionDirty = true; }
 	glm::vec3 GetPosition();

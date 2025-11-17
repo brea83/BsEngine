@@ -20,8 +20,22 @@ Shader::~Shader()
 
 unsigned int Shader::CompileShader(int glShaderType, const std::string& filePath)
 {
-	std::string shaderCodeString = AssetLoader::LoadTextFile(filePath);
-	const char* shaderCode = shaderCodeString.c_str();
+	const char* shaderCode;
+	if (glShaderType == GL_FRAGMENT_SHADER)
+	{
+		_fragmentSource = AssetLoader::LoadTextFile(filePath);
+		shaderCode = _fragmentSource->Text.c_str();
+	}
+	else if (glShaderType == GL_VERTEX_SHADER)
+	{
+		_vertexSource = AssetLoader::LoadTextFile(filePath);
+		shaderCode = _vertexSource->Text.c_str();
+	}
+	else
+	{
+		std::cout << "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE" << std::endl;
+		return 0;
+	}
 
 	unsigned int shaderObject;
 	shaderObject = glCreateShader(glShaderType);

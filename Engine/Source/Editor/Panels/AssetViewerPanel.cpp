@@ -11,7 +11,14 @@ void AssetViewerPanel::OnImGuiRender()
 {
 	ImGui::Begin("Loaded Assets");
 
-	std::unordered_map<std::string, Resource*>& resources = AssetLoader::GetResources();
+	ImGui::SeparatorText("Clean Up Test");
+	if (ImGui::Button("Clean"))
+	{
+		AssetLoader::CleanUp();
+	}
+
+	ImGui::SeparatorText("Loaded Assets");
+	std::unordered_map<std::string, std::shared_ptr<Resource>>& resources = AssetLoader::GetResources();
 
 	for (auto pair : resources)
 	{
@@ -25,19 +32,19 @@ void AssetViewerPanel::OnImGuiRender()
 	{
 		ImGui::NewLine();
 		ImGui::SeparatorText(SelectedAsset.c_str());
-		Resource* resource = resources.at(SelectedAsset);
+		std::shared_ptr<Resource> resource = resources.at(SelectedAsset);
 		ResourceType type = resource->Type;
 		
 		switch (type)
 		{
 		case ResourceType::TextFile:
-			DrawTextInspector((TextResource*)resource);
+			DrawTextInspector(std::dynamic_pointer_cast<TextResource>(resource));
 			break;
 		case ResourceType::Shader:
-			DrawShaderEditor((Shader*)resource, SelectedAsset);
+			DrawShaderEditor(std::dynamic_pointer_cast<Shader>(resource), SelectedAsset);
 			break;
 		case ResourceType::Texture:
-			DrawTextureEditor((Texture*)resource);
+			DrawTextureEditor(std::dynamic_pointer_cast<Texture>(resource));
 			break;
 		case ResourceType::Model:
 			break;
@@ -49,7 +56,7 @@ void AssetViewerPanel::OnImGuiRender()
 	ImGui::End();
 }
 
-void AssetViewerPanel::DrawTextureEditor(Texture* texture)
+void AssetViewerPanel::DrawTextureEditor(std::shared_ptr<Texture> texture)
 {
 	int current_min = static_cast<int>(texture->GetMinFilterType());
 	int current_mag = static_cast<int>(texture->GetMagFilterType());
@@ -65,12 +72,12 @@ void AssetViewerPanel::DrawTextureEditor(Texture* texture)
 	}
 }
 
-void AssetViewerPanel::DrawShaderEditor(Shader* shader, std::string& filePath)
+void AssetViewerPanel::DrawShaderEditor(std::shared_ptr <Shader> shader, std::string& filePath)
 {
 	if (ImGui::Button("Recompile Shader")) shader->ReCompile(filePath);
 }
 
-void AssetViewerPanel::DrawTextInspector(TextResource * resource)
+void AssetViewerPanel::DrawTextInspector(std::shared_ptr <TextResource> resource)
 {
 	ImGui::TextWrapped(resource->Text.c_str());
 }

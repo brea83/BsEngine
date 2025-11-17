@@ -74,16 +74,7 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 	
-	if(ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit")) engine.StopApplication();
-
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
+	DrawEditorMenu(&engine);
 	ImGui::Begin("Window stats");
 	ImGui::SeparatorText("from Window Class");
 	Window& window = engine.GetWindow();
@@ -103,6 +94,32 @@ void ImGuiLayer::OnImGuiRender()
 	_hierarchy.OnImGuiRender();
 
 	_assetViewer->OnImGuiRender();
+}
+
+void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Exit")) engine->StopApplication();
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Assets"))
+		{
+			if (ImGui::MenuItem("Create Cube")) engine->GetScene()->CreateCube();
+
+			if (ImGui::MenuItem("Create Model"))
+			{
+				//	TODO: figure out pop up window from menu
+				
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
 }
 
 void ImGuiLayer::End()

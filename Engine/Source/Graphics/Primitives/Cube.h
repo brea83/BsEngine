@@ -4,7 +4,7 @@ class Cube :    public Mesh
 {
 public:
 	//Cube();
-	Cube(bool useMinimalVerticies = true);
+	Cube( /*unsigned int uid, */bool useMinimalVerticies = false, const std::string& name = "Cube");
 	//Cube(std::vector<Vertex>& newVerticies, std::vector<glm::uvec3>& newTriangleIndices);
 	~Cube();
 

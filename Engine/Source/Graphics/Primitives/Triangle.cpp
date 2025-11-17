@@ -4,11 +4,12 @@
 #include "Transform.h"
 //#include <GLFW/glfw3.h>
 
-static int s_NumTriangles = 0;
+static int s_NumTriangles = 1;
 
-Triangle::Triangle()
+Triangle::Triangle(/*unsigned int uid*/const std::string& name)
+	: Mesh(/*uid*/name + " " + std::to_string(s_NumTriangles++))
 {
-	if (s_NumTriangles == 0)
+	/*if (s_NumTriangles == 0)
 	{
 		Name = "Triangle";
 	}
@@ -16,14 +17,14 @@ Triangle::Triangle()
 	{
 		Name = "Triangle_" + std::to_string(s_NumTriangles);
 	}
-	s_NumTriangles++;
+	s_NumTriangles++;*/
 	_vertices = {
 		Vertex{{ 0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, { 0.5f, 1.0f }},
 		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
 		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
 	};
 
-	_transform = new Transform();
+	_transform = std::make_shared<Transform>();
 	Init();
 }
 

@@ -15,9 +15,18 @@ public:
 		glm::vec2 UV1;
 	};
 
+	struct ObjPackedIndices
+	{
+		unsigned int Position;
+		unsigned int Uv;
+		unsigned int Normal;
+	};
+
 	//constructors and properties
 	Mesh(/*unsigned int uid,*/ const std::string& name = "Default Name");
 	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name = "Default Mesh Name");
+	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices/*, std::vector<std::shared_ptr<Texture>> textures*/, const std::string& name = "Default Mesh Name");
+
 	virtual ~Mesh();
 
 	std::vector<std::shared_ptr<Texture>> Textures;

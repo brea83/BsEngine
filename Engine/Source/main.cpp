@@ -70,7 +70,8 @@ void PopulateStartingScene(EngineContext* engine)
 	//startingScene->AddRenderable(cube);
 
 	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/GuitarBackpack.fbx");
-	////std::shared_ptr<Transform> modelTransform = testModel->GetTransform();
-	////modelTransform->SetScale(glm::vec3(0.01f));
-	//startingScene->AddRenderable(testModel);
+	//std::shared_ptr<Transform> modelTransform = testModel->GetTransform();
+	//modelTransform->SetScale(glm::vec3(0.01f));
+	Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/plane.obj");
+	startingScene->AddRenderable(testModel);
 }

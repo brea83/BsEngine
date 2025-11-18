@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "Assimp/AssimpGlmHelpers.h"
 #include <filesystem>
+#include <fstream>
 
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -30,52 +31,176 @@ void Model::Init()
 
 void Model::LoadModel(const std::string & filePath)
 {
-	Assimp::Importer importer;
-	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
-
-	if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
+	//Parse filepath for .fbx or .obj and send it to different loaders.
+	std::string fileExtension = filePath.substr(filePath.find_last_of('.'));
+	if (fileExtension == ".fbx")
 	{
-		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		// TODO: turn this into a function
+		Assimp::Importer importer;
+		const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
+
+		if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
+		{
+			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+			return;
+		}
+
+		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		std::cout << "IMPORTING MODEL " << Name << std::endl;
+		std::cout << " DIRECTORY: " << _directory << std::endl;
+		/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
+		{
+			aiMaterial* material = assimpScene->mMaterials[i];
+			aiString name =  material->GetName();
+
+			int diffuse = material->GetTextureCount(aiTextureType_DIFFUSE);
+			int baseColor = material->GetTextureCount(aiTextureType_BASE_COLOR);
+			int ambient = material->GetTextureCount(aiTextureType_AMBIENT);
+			int ao = material->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
+			int metallic = material->GetTextureCount(aiTextureType_METALNESS);
+			int normal = material->GetTextureCount(aiTextureType_NORMALS);
+			int diffuseRoughness = material->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
+			int gltfRoughness = material->GetTextureCount(aiTextureType_GLTF_METALLIC_ROUGHNESS);
+			int other = material->GetTextureCount(aiTextureType_UNKNOWN);
+
+			std::cout << ":::::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+			std::cout << name.C_Str() << std::endl;
+			std::cout << "--------" << std::endl;
+			std::cout << "found " << diffuse << " diffuse type textures" << std::endl;
+			std::cout << "found " << baseColor << " base color type textures" << std::endl;
+			std::cout << "found " << ambient << " ambient type textures" << std::endl;
+			std::cout << "found " << ao << " ambient occlusion type textures" << std::endl;
+			std::cout << "found " << metallic << " metallic type textures" << std::endl;
+			std::cout << "found " << normal << " normal type textures" << std::endl;
+			std::cout << "found " << diffuseRoughness << " diffuse roughness type textures" << std::endl;
+			std::cout << "found " << gltfRoughness << " gltf metallic roughness type textures" << std::endl;
+			std::cout << "found " << other << " unknown type textures" << std::endl;
+		}*/
+
+		//std::cout << "====================================" << std::endl;
+		//std::cout << "Reserving " << assimpScene->mNumMeshes << ", in _meshes" << std::endl;
+		//std::cout << "====================================" << std::endl;
+		_meshes.reserve(assimpScene->mNumMeshes);
+		ProcessNode(assimpScene->mRootNode, assimpScene, aiMatrix4x4());
 		return;
 	}
-
-	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-	std::cout << "IMPORTING MODEL " << Name << std::endl;
-	std::cout << " DIRECTORY: " << _directory << std::endl;
-	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
+	
+	if( fileExtension == ".obj")
 	{
-		aiMaterial* material = assimpScene->mMaterials[i];
-		aiString name =  material->GetName();
+		//std::shared_ptr< TextResource> fileText = AssetLoader::LoadTextFile(filePath);
 
-		int diffuse = material->GetTextureCount(aiTextureType_DIFFUSE);
-		int baseColor = material->GetTextureCount(aiTextureType_BASE_COLOR);
-		int ambient = material->GetTextureCount(aiTextureType_AMBIENT);
-		int ao = material->GetTextureCount(aiTextureType_AMBIENT_OCCLUSION);
-		int metallic = material->GetTextureCount(aiTextureType_METALNESS);
-		int normal = material->GetTextureCount(aiTextureType_NORMALS);
-		int diffuseRoughness = material->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS);
-		int gltfRoughness = material->GetTextureCount(aiTextureType_GLTF_METALLIC_ROUGHNESS);
-		int other = material->GetTextureCount(aiTextureType_UNKNOWN);
 
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
-		std::cout << name.C_Str() << std::endl;
-		std::cout << "--------" << std::endl;
-		std::cout << "found " << diffuse << " diffuse type textures" << std::endl;
-		std::cout << "found " << baseColor << " base color type textures" << std::endl;
-		std::cout << "found " << ambient << " ambient type textures" << std::endl;
-		std::cout << "found " << ao << " ambient occlusion type textures" << std::endl;
-		std::cout << "found " << metallic << " metallic type textures" << std::endl;
-		std::cout << "found " << normal << " normal type textures" << std::endl;
-		std::cout << "found " << diffuseRoughness << " diffuse roughness type textures" << std::endl;
-		std::cout << "found " << gltfRoughness << " gltf metallic roughness type textures" << std::endl;
-		std::cout << "found " << other << " unknown type textures" << std::endl;
-	}*/
+		// no stored text asset from that path so make one
+		std::ifstream file(filePath);
 
-	//std::cout << "====================================" << std::endl;
-	//std::cout << "Reserving " << assimpScene->mNumMeshes << ", in _meshes" << std::endl;
-	//std::cout << "====================================" << std::endl;
-	_meshes.reserve(assimpScene->mNumMeshes);
-	ProcessNode(assimpScene->mRootNode, assimpScene, aiMatrix4x4());
+		if (!file.is_open())
+		{
+			std::cerr << "Failed to open file: " << filePath << std::endl;
+			return;
+		}
+		std::string line;
+
+		std::vector<Mesh::Vertex> vertices;
+		std::vector<glm::vec3> positions;
+		std::vector<glm::vec3> normals;
+		std::vector<glm::vec2> uvs;
+		std::vector<unsigned int> indices;
+
+		while(std::getline(file, line))
+		{
+			std::istringstream lineStream(line);
+			std::string firstWord;
+			lineStream >> firstWord;
+
+			if (firstWord == "v")
+			{
+				// do vertex stuff
+				glm::vec3 position;
+				lineStream >> position.x >> position.y >> position.z;
+				positions.push_back(position);	
+			}
+
+			if (firstWord == "vt")
+			{
+				// texture coordinates
+				glm::vec2 uv;
+				lineStream >> uv.x >> uv.y;
+				uvs.push_back(uv);
+			}
+
+			if (firstWord == "vn")
+			{
+				// normals
+				glm::vec3 normal;
+				lineStream >> normal.x >> normal.y >> normal.z;
+				normals.push_back(normal);
+			}
+
+			//if (firstWord == "vp")
+			//{
+			//	// parameter?
+			//}
+
+			if (firstWord == "f")
+			{
+				// faces data
+				// format vertex_index/texture_index/normal_index
+				// -1 referring to the last element of vertex list.
+				
+				std::vector<Mesh::ObjPackedIndices> objIndices;
+				std::string word;
+				while (lineStream >> word)
+				{
+					std::istringstream wordStream(word);
+					std::string positionString, uvString, normalString;
+					std::getline(wordStream, positionString, '/');
+					std::getline(wordStream, uvString, '/');
+					std::getline(wordStream, normalString, '/');
+
+					int relativePosIndex = std::atoi(positionString.c_str());
+					int relativeUvIndex = std::atoi(uvString.c_str());
+					int relativeNormalIndes = std::atoi(normalString.c_str());
+
+					unsigned int positionIndex, normalIndex, uvIndex;
+					positionIndex = (relativePosIndex >= 0) ? relativePosIndex : positions.size() + relativePosIndex;
+					uvIndex = (relativeUvIndex >= 0) ? relativeUvIndex : uvs.size() + relativeUvIndex;
+					normalIndex = (relativeNormalIndes >= 0) ? relativeNormalIndes : normals.size() + relativeNormalIndes;
+					
+					objIndices.push_back(Mesh::ObjPackedIndices{ positionIndex, uvIndex, normalIndex });
+				}
+
+
+				
+
+				/*indices.push_back(positionIndex);
+				lineStream >> word;
+				indices.push_back(normalIndex);
+				lineStream >> word;
+				indices.push_back(uvIndex);*/
+			}
+		}
+		file.close();
+
+		vertices.reserve(positions.size());
+		for (int i = 0; i < positions.size(); i++)
+		{
+			Mesh::Vertex vertex;
+			vertex.Position = positions[i];
+
+			if (i < normals.size()) vertex.Normal = normals[i];
+
+			if (i < uvs.size()) vertex.UV1 = uvs[i];
+			
+			vertices.push_back(vertex);
+		}
+		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, Name);
+		std::shared_ptr<Transform> transform = mesh->GetTransform();
+		transform->ParentTransform = _transform;
+		_meshes.push_back(mesh);
+	}
+
+
+
 }
 
 void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)

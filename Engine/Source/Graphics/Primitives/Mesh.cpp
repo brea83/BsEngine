@@ -18,6 +18,12 @@ Mesh::Mesh(/*unsigned int uid, */std::vector<Vertex> vertices, std::vector<unsig
 	Init();
 }
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const std::string& name)
+    : Renderable(/*uid,*/ name), _vertices(vertices), _indices(indices)
+{
+    Init();
+}
+
 Mesh::~Mesh()
 {
     // optional: de-allocate all resources once they've outlived their purpose:

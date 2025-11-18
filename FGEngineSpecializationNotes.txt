@@ -414,3 +414,36 @@ first list of entities
 	namespace {
 	  myAnonStuff.
 	};
+
+================================
+LECTURE 10 (week 4) tue parsed vs binary data, and Obj
+================================
+
+data storage types are
+	parsed files (text)
+		csv
+		json
+		xml
+		yaml (yet another markup language)	
+			like python white space is used to create semantic structure
+		wavefront.obj
+		collada (xml based)
+	binary files
+		tell it how many bytes to read at time, char one byte, 2 or 4 bytes int, etc
+		png
+		fbx
+		save files
+		asset files that have been compressed and optimized
+		audio files
+		
+Simple object loading
+.obj
+	list of vertices
+	list of uv texture coords
+	list of normals
+	list of faces (using the indicies of above)
+
+	VERTICES
+	v 0.01 0.23 0.125 \n
+
+

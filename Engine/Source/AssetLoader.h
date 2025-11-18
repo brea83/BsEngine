@@ -19,6 +19,7 @@ public:
 	static std::shared_ptr<Shader> LoadShader(const std::string& vertPath, const std::string& fragPath);
 	static std::shared_ptr<Texture> LoadTexture(const std::string& filePath);
 
+	//static 
 	//static Model* LoadModel(const std::string& modelPath);
 
 	static std::unordered_map<std::string, std::shared_ptr<Resource>>& GetResources() { return _resources; }

@@ -17,9 +17,9 @@ public:
 
 	struct ObjPackedIndices
 	{
-		unsigned int Position;
-		unsigned int Uv;
-		unsigned int Normal;
+		int Position;
+		int Uv;
+		int Normal;
 	};
 
 	//constructors and properties

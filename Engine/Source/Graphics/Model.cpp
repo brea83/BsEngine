@@ -144,6 +144,10 @@ void Model::LoadModel(const std::string & filePath)
 			if (firstWord == "f")
 			{
 				// faces data
+				// need to double check but I think all formal exports require faces to come After all the other data
+				//this will probably not get us quite enough spaces reserved, but it is probably closer than the empty init
+				if(vertices.capacity() < positions.size()) vertices.reserve(positions.size());
+
 				// format vertex_index/texture_index/normal_index
 				// -1 referring to the last element of vertex list.
 				
@@ -153,46 +157,84 @@ void Model::LoadModel(const std::string & filePath)
 				{
 					std::istringstream wordStream(word);
 					std::string positionString, uvString, normalString;
-					std::getline(wordStream, positionString, '/');
-					std::getline(wordStream, uvString, '/');
-					std::getline(wordStream, normalString, '/');
 
-					int relativePosIndex = std::atoi(positionString.c_str());
-					int relativeUvIndex = std::atoi(uvString.c_str());
-					int relativeNormalIndes = std::atoi(normalString.c_str());
+					int relativePosIndex;
+					int relativeUvIndex;
+					int relativeNormalIndex;
 
-					unsigned int positionIndex, normalIndex, uvIndex;
+					if (std::getline(wordStream, positionString, '/'))
+					{
+						relativePosIndex = std::atoi(positionString.c_str());
+						relativePosIndex = std::max(0, relativePosIndex - 1);
+					}
+					else
+					{
+						relativePosIndex = 0;
+					}
+
+					if (std::getline(wordStream, uvString, '/'))
+					{
+						relativeUvIndex = std::atoi(uvString.c_str());
+						relativeUvIndex = std::max(0, relativeUvIndex - 1);
+					}
+					else
+					{
+						relativeUvIndex = relativePosIndex;
+					}
+
+					if (std::getline(wordStream, normalString, '/'))
+					{
+						relativeNormalIndex = std::atoi(normalString.c_str());
+						relativeNormalIndex = std::max(0, relativeNormalIndex - 1);
+					}
+					else
+					{
+						relativeNormalIndex = relativePosIndex;
+					}
+
+					int positionIndex, normalIndex, uvIndex;
 					positionIndex = (relativePosIndex >= 0) ? relativePosIndex : positions.size() + relativePosIndex;
 					uvIndex = (relativeUvIndex >= 0) ? relativeUvIndex : uvs.size() + relativeUvIndex;
-					normalIndex = (relativeNormalIndes >= 0) ? relativeNormalIndes : normals.size() + relativeNormalIndes;
+					normalIndex = (relativeNormalIndex >= 0) ? relativeNormalIndex : normals.size() + relativeNormalIndex;
 					
 					objIndices.push_back(Mesh::ObjPackedIndices{ positionIndex, uvIndex, normalIndex });
 				}
 
+				//triangulate assuming n >3-gons are convex and coplanar
+				for (size_t i = 1; i + 1 < objIndices.size(); i++)
+				{
+					const Mesh::ObjPackedIndices* point[3] = { &objIndices[0], &objIndices[i], &objIndices[i + 1] };
 
+					//https://wikis.khronos.org/opengl/Calculating_a_Surface_Normal
+					// U and V are the vectors used to calculate surface normal
+					// U is point2 - point1 V is point3 - point1
+					// normal is U cross V
+
+					glm::vec3 U(positions[point[1]->Position] - positions[point[0]->Position]);
+					glm::vec3 V(positions[point[2]->Position] - positions[point[0]->Position]);
+					glm::vec3 faceNormal = glm::normalize(glm::cross(U, V));
+
+					// make the vertex for the mesh
+
+					for (size_t j = 0; j < 3; j++)
+					{
+						indices.push_back(vertices.size());
+						Mesh::Vertex vertex;
+
+						vertex.Position = positions[point[j]->Position ];
+						vertex.Normal = (point[j]->Normal != 0 && normals.size() > 0) ? normals[point[j]->Normal] : faceNormal;
+						if(uvs.size() > 0) vertex.UV1 = uvs[point[j]->Uv];
+
+						vertices.push_back(vertex);
+					}
+
+				}
 				
-
-				/*indices.push_back(positionIndex);
-				lineStream >> word;
-				indices.push_back(normalIndex);
-				lineStream >> word;
-				indices.push_back(uvIndex);*/
 			}
 		}
 		file.close();
 
-		vertices.reserve(positions.size());
-		for (int i = 0; i < positions.size(); i++)
-		{
-			Mesh::Vertex vertex;
-			vertex.Position = positions[i];
-
-			if (i < normals.size()) vertex.Normal = normals[i];
-
-			if (i < uvs.size()) vertex.UV1 = uvs[i];
-			
-			vertices.push_back(vertex);
-		}
+		
 		std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(vertices, indices, Name);
 		std::shared_ptr<Transform> transform = mesh->GetTransform();
 		transform->ParentTransform = _transform;

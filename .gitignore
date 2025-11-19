@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# manual exceptions
+# keep .obj in assets folder because these are 3d models not visual studio .objs
+!Engine/Assets/*.obj
+
 # User-specific files
 *.rsuser
 *.suo

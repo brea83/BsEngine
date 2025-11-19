@@ -3,9 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-# manual exceptions
-# keep .obj in assets folder because these are 3d models not visual studio .objs
-!Engine/Assets/**/*.obj
+
 
 # User-specific files
 *.rsuser
@@ -79,6 +77,10 @@ StyleCopReport.xml
 *.ilk
 *.meta
 *.obj
+# manual exception
+# keep .obj in assets folder because these are 3d models not visual studio .objs
+!Engine/Assets/**/*.obj
+
 *.iobj
 *.pch
 *.pdb

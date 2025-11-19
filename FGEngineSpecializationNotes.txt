@@ -455,3 +455,55 @@ for (size_t i = 1; i + 1 < objIndices.size(); i++)
 =
 0 1 2
 0 2 3
+
+================================
+LECTURE 11 (week 4) ui mix. managers, singletons, and messages
+================================
+
+started with overview of student progress on obj loading
+
+Mesh Manager!
+	class or namespace
+	MeshManager class is a singleton
+
+review of what the singleton pattern is
+	allocate during program initialization 
+	use it in the main loop
+	deallocate after the loop
+
+how should managers communicate with eachother if things are threaded
+poll system, check every frame
+or message based system inform on completion
+
+long slowprocess, 
+	make sure process is itterative, only spend a butdget of the frame each frame and defer to next frame
+
+	or perform task in another thread to ensure it doesn't impact the rest of the engine
+
+graphics and physics on one thread, 
+	visual feedback will be fluid
+
+gameplay in one thread, 
+	loading a save, or big asset happens here
+
+operating system messaging need to be in their own thread since some of them need to be responded to immediately
+
+NEED TO USE MUTEXES AND ATOMICS
+
+break to work on tasks: entity swaping meshes in editor, and architecture planning
+
+Messages
+	any request or response between subsystems or managers of your engine
+
+	one way to do it is to sub-class to extend a base class
+
+	for example a raycast
+		includes what is the ray, what were the hits
+
+went over virtual destructors
+
+important for asyn messaging messages are void since they may not finish immediately
+
+Next task:
+implement Msg queue
+	

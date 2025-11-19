@@ -4,10 +4,22 @@
 
 //
 
-Transform::Transform()
+Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
+    : _position(position), _eulerRotation(glm::radians(rotation)), _scale(scale)
 {
-    _localMatrix = glm::mat4(1.0f);
+    RecalculateModelMatrix();
+    //_localMatrix = glm::mat4(1.0f);
+
     _orientation = glm::quat(_eulerRotation);
+
+   /* if (ParentTransform != nullptr)
+    {
+        _worldMatrix = ParentTransform->GetObjectToWorldMatrix() * _localMatrix;
+    }
+    else
+    {
+        _worldMatrix = _localMatrix;
+    }*/
 }
 
 glm::vec3 Transform::GetPosition()

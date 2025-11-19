@@ -5,7 +5,7 @@
 
 # manual exceptions
 # keep .obj in assets folder because these are 3d models not visual studio .objs
-!Engine/Assets/*.obj
+!Engine/Assets/Meshes/*.obj
 
 # User-specific files
 *.rsuser

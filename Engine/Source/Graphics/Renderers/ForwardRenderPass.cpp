@@ -1,7 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "ForwardRenderPass.h"
 #include "Graphics/Shaders/Shader.h"
-#include "Graphics/Primitives/Renderable.h"
+#include "Graphics/Model.h"
 #include "Scene.h"
 #include "Graphics/Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,7 +20,7 @@ ForwardRenderPass::~ForwardRenderPass()
 
 void ForwardRenderPass::Execute(Scene& sceneToRender)
 {
-	std::vector<Renderable*>& objectsToRender = sceneToRender.GetRenderables();
+	std::vector<Model*>& objectsToRender = sceneToRender.GetRenderables();
 
 	_shader->Use();
 
@@ -30,7 +30,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	_shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	_shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 
-	for (Renderable* object : objectsToRender)
+	for (Model* object : objectsToRender)
 	{
 		_fallbackTexture->Bind(0);
 		object->Render(*_shader);

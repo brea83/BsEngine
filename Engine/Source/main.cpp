@@ -10,7 +10,7 @@
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Graphics/Model.h"
-
+#include "GameObject.h"
 
 //void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 void PopulateStartingScene(EngineContext* engine);
@@ -70,8 +70,11 @@ void PopulateStartingScene(EngineContext* engine)
 	//startingScene->AddRenderable(cube);
 
 	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/GuitarBackpack.fbx");
-	Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/Viking_House.obj");
-	std::shared_ptr<Transform> modelTransform = testModel->GetTransform();
-	modelTransform->SetScale(glm::vec3(20.0f));
-	startingScene->AddRenderable(testModel);
+	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/Viking_House.obj");
+
+	GameObject* testObject = new GameObject();
+	std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();
+	gameObjectTransform->SetScale(glm::vec3(20.0f));
+	startingScene->AddGameObject(testObject);
+	testObject->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
 }

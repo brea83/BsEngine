@@ -3,7 +3,8 @@
 
 //#include <imgui_internal.h>
 //#include "misc/cpp/imgui_stdlib.cpp"
-#include "Graphics/Primitives/Renderable.h"
+#include "GameObject.h"
+//#include "Graphics/Primitives/Renderable.h"
 #include "Graphics/Primitives/Transform.h"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -22,7 +23,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 
 	//left panel
 	static int selected = 0;
-	Renderable* selectedObject{ nullptr };
+	GameObject* selectedObject{ nullptr };
 	
 	//ImGui::BeginChild("left pane", ImVec2(150, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX);
 	if (ImGui::BeginTable("##HierarchyTable", 2))
@@ -31,17 +32,17 @@ void SceneHierarchyPanel::OnImGuiRender()
 		ImGui::TableSetupColumn("Objects", ImGuiTableColumnFlags_WidthFixed, fontSize * 20.0f);
 		ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch);
 
-		for ( int i = 0; i < _currentScene->_objectsToRender.size(); i++)//Renderable* renderObject : _currentScene->_objectsToRender)
+		for ( int i = 0; i < _currentScene->_gameObjects.size(); i++)//Renderable* renderObject : _currentScene->_objectsToRender)
 		{
 			ImGui::TableNextRow();
 			// Column 1
 			ImGui::TableSetColumnIndex(0);
 
-			Renderable* renderObject = _currentScene->_objectsToRender[i];
+			GameObject* gameObject = _currentScene->_gameObjects[i];
 			static const std::string emptyName = "_NameEmpty_";
 
 
-			if (renderObject->Name.empty())
+			if (gameObject->Name.empty())
 			{
 				if (ImGui::Selectable(emptyName.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
 				{
@@ -50,7 +51,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 			}
 			else
 			{
-				if (ImGui::Selectable(renderObject->Name.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
+				if (ImGui::Selectable(gameObject->Name.c_str(), selected == i, ImGuiSelectableFlags_SelectOnNav))
 				{
 					selected = i;
 				}
@@ -62,7 +63,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 			ImGui::PushID(i);
 			if (ImGui::Button("X"))
 			{
-				_currentScene->RemoveRenderable(renderObject);
+				_currentScene->RemoveGameObject(gameObject);
 			}
 			ImGui::PopID();
 		}
@@ -72,9 +73,9 @@ void SceneHierarchyPanel::OnImGuiRender()
 	ImGui::End();
 	
 	ImGui::Begin("Details View");
-	if (_currentScene->_objectsToRender.size() > selected && selected >= 0)
+	if (_currentScene->_gameObjects.size() > selected && selected >= 0)
 	{
-		selectedObject = _currentScene->_objectsToRender[selected];
+		selectedObject = _currentScene->_gameObjects[selected];
 		//ImGui::Text("%s", selectedObject->Name.c_str());
 		ImGui::Separator();
 		{

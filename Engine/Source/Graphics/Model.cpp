@@ -7,35 +7,37 @@
 #include "Assimp/AssimpGlmHelpers.h"
 #include <filesystem>
 #include <fstream>
-
+#include "GameObject.h"
+#include "EngineContext.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-Model::Model(/*unsigned int uid, */const std::string& modelFilePath, const std::string& textureDirectoryPath, const std::string& textureFileName)
-	: Renderable(/*uid, */modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find("."))), _directory(modelFilePath.substr(0, modelFilePath.find_last_of('/'))), _texturesDirectory(textureDirectoryPath)
+Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath, const std::string& textureFileName)
+	: Component(parent, modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))), 
+	_directory(modelFilePath.substr(0, modelFilePath.find_last_of('/'))), 
+	_texturesDirectory(textureDirectoryPath)
 {
+
 	std::string fileExtension = modelFilePath.substr(modelFilePath.find_last_of('.'));
 	if (fileExtension == ".fbx")
 	{
 		LoadModelAssimp(modelFilePath);
-		return;
 	}
-	
-	if (fileExtension == ".obj")
+	else if (fileExtension == ".obj")
 	{
 		LoadObj(modelFilePath, textureFileName);
-		return;
 	}
+
+	Scene* scene = EngineContext::GetEngine()->GetScene();
+	scene->AddRenderable(this);
 }
 
 Model::~Model()
 {
+	std::cout << "DELETING MODEL " << Name << std::endl;
 	//delete[] _meshes;
 }
-
-void Model::Init()
-{}
 
 void Model::LoadModelAssimp(const std::string & filePath)
 {
@@ -99,6 +101,10 @@ void Model::LoadObj(const std::string& filePath, const std::string& textureFileN
 		std::cerr << "Failed to open file: " << filePath << std::endl;
 		return;
 	}
+
+	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+	std::cout << "IMPORTING MODEL " << Name << std::endl;
+	std::cout << " DIRECTORY: " << _directory << std::endl;
 	std::string line;
 
 	std::vector<Mesh::Vertex> vertices;
@@ -250,7 +256,7 @@ void Model::LoadObj(const std::string& filePath, const std::string& textureFileN
 	}
 
 	std::shared_ptr<Transform> transform = mesh->GetTransform();
-	transform->ParentTransform = _transform;
+	transform->ParentTransform = _parentObject->GetTransform();
 	_meshes.push_back(mesh);
 	
 }
@@ -260,7 +266,7 @@ void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> 
 
 	if (parentNode) 
 	{ 
-		localTransform->ParentTransform = _transform; 
+		localTransform->ParentTransform = _parentObject->GetTransform();
 	}
 	
 	aiVector3D scaling;
@@ -293,7 +299,7 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 	//if root node set model's transform
 	if (!node->mParent)
 	{
-		ProcessTransform(node->mTransformation, _transform, nullptr);
+		ProcessTransform(node->mTransformation, _parentObject->GetTransform(), nullptr);
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "Set MODEL transform" << std::endl;
 		//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
@@ -425,6 +431,23 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* ma
 	}
 	return textures;
 }
+
+void Model::Initialize()
+{}
+
+void Model::CleanUp()
+{}
+
+std::shared_ptr<Component> Model::Clone()
+{
+	return std::shared_ptr<Component>();
+}
+
+void Model::SetParentObject(GameObject* newParent)
+{}
+
+void Model::OnUpdate()
+{}
 
 void Model::Render(Shader& currentShader)
 {

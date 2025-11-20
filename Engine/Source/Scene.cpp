@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "Scene.h"
-#include "Graphics/Primitives/Renderable.h"
+#include "GameObject.h"
+#include "Graphics/Model.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Camera.h"
 
@@ -13,32 +14,48 @@ Scene::Scene()
 Scene::~Scene()
 {
 	// unload scene objects that do not persist across scenes
-	if (!_objectsToRender.empty())
+	if (!_gameObjects.empty())
 	{
-		for (Renderable* renderObject : _objectsToRender)
+		for (GameObject* gameObject : _gameObjects)
 		{
-			delete renderObject;
+			delete gameObject;
 		}
 	}
 }
 
-void Scene::CreateCube()
+void Scene::CreateEmptyGameObject()
 {
-	_objectsToRender.emplace_back(new Cube());
+	_gameObjects.emplace_back(new GameObject());
 }
 
-void Scene::RemoveRenderable(Renderable* objToRemove)
+void Scene::RemoveGameObject(GameObject* objectToRemove)
 {
-	auto foundItterator = std::find(_objectsToRender.begin(), _objectsToRender.end(), objToRemove);
+	auto itterator = std::find(_gameObjects.begin(), _gameObjects.end(), objectToRemove);
+	if (itterator != _gameObjects.end())
+	{
+		_gameObjects.erase(itterator);
+		return;
+	}
+	std::cout << "Tried to remove: " << objectToRemove << ", from Scene, but could not find it" << std::endl;
+}
+
+void Scene::CreateCube()
+{
+	//_objectsToRender.emplace_back(new Cube());
+}
+
+void Scene::RemoveRenderable(Model* modelToRemove)
+{
+	auto foundItterator = std::find(_objectsToRender.begin(), _objectsToRender.end(), modelToRemove);
 
 	if (foundItterator != _objectsToRender.end())
 	{
-		std::cout << "FOUND OBJECT: " << objToRemove->Name << std::endl;
+		std::cout << "FOUND OBJECT: " << modelToRemove->Name << std::endl;
 		_objectsToRender.erase(foundItterator);
-		delete objToRemove;
+		delete modelToRemove;
 	}
 	else
 	{
-		std::cout << objToRemove->Name << ", NOT FOUND" << std::endl;
+		std::cout << modelToRemove->Name << ", NOT FOUND" << std::endl;
 	}
 }

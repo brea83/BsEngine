@@ -3,7 +3,8 @@
 #include <vector>
 //#include <memory>
 
-class Renderable;
+class GameObject;
+class Model;
 class Camera;
 
 class Scene
@@ -12,16 +13,21 @@ public:
 	Scene();
 	~Scene();
 	
+	void CreateEmptyGameObject();
+	void AddGameObject(GameObject* gameObject) { _gameObjects.push_back(gameObject); }
+	void RemoveGameObject(GameObject* objectToRemove);
 
-	void AddRenderable(Renderable* newRenderable) { _objectsToRender.push_back(newRenderable); }
+	void AddRenderable(Model* newRenderable) { _objectsToRender.push_back(newRenderable); }
 	void CreateCube();
-	void RemoveRenderable(Renderable* objToRemove);
-	std::vector<Renderable*>& GetRenderables() { return _objectsToRender; }
+	void RemoveRenderable(Model* modelToRemove);
+	std::vector<Model*>& GetRenderables() { return _objectsToRender; }
 
 	Camera* GetMainCamera() { return _mainCamera; }
 private:
 	Camera* _mainCamera;
-	std::vector<Renderable*> _objectsToRender; 
+	std::vector<Model*> _objectsToRender; 
+
+	std::vector<GameObject*> _gameObjects;
 
 	friend class SceneHierarchyPanel;
 };

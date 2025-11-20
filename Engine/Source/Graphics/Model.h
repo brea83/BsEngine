@@ -1,6 +1,7 @@
 #pragma once
 #include "BsPrecompileHeader.h"
-#include "Graphics/Primitives/Renderable.h"
+//#include "Graphics/Primitives/Renderable.h"
+#include "Component.h"
 #include "Graphics/Primitives/Mesh.h"
 #include "Graphics/Texture.h"
 
@@ -10,14 +11,14 @@
 
 //class Texture;
 
-class Model : public Renderable
+class Model : public Component
 {
 public:
-	Model(/*unsigned int uid, */const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures/", const std::string& textureFileName = "Viking_House.png");
+	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures/", const std::string& textureFileName = "Viking_House.png");
 	~Model();
 
 	// Inherited via Renderable
-	void Render(Shader& currentShader) override;
+	void Render(Shader& currentShader);
 protected:
 	//properties
 	std::vector<std::shared_ptr<Mesh>> _meshes;
@@ -26,7 +27,6 @@ protected:
 
 	
 	//methods
-	void Init() override;
 	void LoadModelAssimp(const std::string& filePath);
 	void LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 	//TODO: refactor this to look for matching models and meshes in the assetloader
@@ -37,5 +37,12 @@ protected:
 	void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 	std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
 	std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
+
+	// Inherited via Component
+	void Initialize() override;
+	void CleanUp() override;
+	std::shared_ptr<Component> Clone() override;
+	void SetParentObject(GameObject* newParent) override;
+	void OnUpdate() override;
 };
 

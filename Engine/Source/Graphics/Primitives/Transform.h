@@ -50,6 +50,6 @@ private:
 
 	glm::mat4 _worldMatrix;
 
-	friend class SceneHierarchyPanel;
+	friend class DetailsViewPanel;
 };
 

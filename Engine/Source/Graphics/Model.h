@@ -19,6 +19,7 @@ public:
 
 	// Inherited via Renderable
 	void Render(Shader& currentShader);
+
 protected:
 	//properties
 	std::vector<std::shared_ptr<Mesh>> _meshes;

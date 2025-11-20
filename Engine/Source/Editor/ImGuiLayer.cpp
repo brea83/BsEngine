@@ -13,6 +13,7 @@
 #include "Graphics/Camera.h"
 
 #include "Editor/Panels/AssetViewerPanel.h"
+#include "Editor/Panels/DetailsViewPanel.h"
 
 
 ImGuiLayer::ImGuiLayer()
@@ -52,9 +53,10 @@ void ImGuiLayer::OnAttach()
 	ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	_hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
+	_currentScene = EngineContext::GetEngine()->GetScene();
+	//_hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
 
-	_assetViewer = new AssetViewerPanel();
+	//_assetViewer = new AssetViewerPanel();
 }
 
 void ImGuiLayer::OnDetach()
@@ -91,9 +93,10 @@ void ImGuiLayer::OnImGuiRender()
 	ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
 	ImGui::End();*/
 
-	_hierarchy.OnImGuiRender();
+	int selected = SceneHierarchyPanel::Draw(_currentScene);
 
-	_assetViewer->OnImGuiRender();
+	DetailsViewPanel::Draw(_currentScene, selected);
+	AssetViewerPanel::Draw();
 }
 
 void ImGuiLayer::DrawEditorMenu(EngineContext* engine)

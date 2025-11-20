@@ -7,5 +7,7 @@
 class ImGuiPanel
 {
 public :
-	virtual void OnImGuiRender() = 0;
+	virtual ~ImGuiPanel(){}
+	virtual bool Draw() = 0;
+	virtual int DrawReturnsInt() = 0;
 };

@@ -15,7 +15,7 @@ class Scene;
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnSceneChange(Scene* newScene) { _hierarchy.SetContext(newScene); }
+		void OnSceneChange(Scene* newScene) { _currentScene = newScene; }
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
@@ -27,6 +27,7 @@ class Scene;
 
 	private:
 		float _time{ 0.0f };
+		Scene* _currentScene;
 		SceneHierarchyPanel _hierarchy;
 		ImGuiPanel* _assetViewer;
 	};

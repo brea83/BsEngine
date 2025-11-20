@@ -30,10 +30,15 @@ void Scene::CreateEmptyGameObject()
 
 void Scene::RemoveGameObject(GameObject* objectToRemove)
 {
+	if (objectToRemove == nullptr) return;
+
 	auto itterator = std::find(_gameObjects.begin(), _gameObjects.end(), objectToRemove);
 	if (itterator != _gameObjects.end())
 	{
+
 		_gameObjects.erase(itterator);
+		delete objectToRemove;
+
 		return;
 	}
 	std::cout << "Tried to remove: " << objectToRemove << ", from Scene, but could not find it" << std::endl;
@@ -44,7 +49,7 @@ void Scene::CreateCube()
 	//_objectsToRender.emplace_back(new Cube());
 }
 
-void Scene::RemoveRenderable(Model* modelToRemove)
+void Scene::RemoveRenderable(std::shared_ptr<Model> modelToRemove)
 {
 	auto foundItterator = std::find(_objectsToRender.begin(), _objectsToRender.end(), modelToRemove);
 
@@ -52,7 +57,6 @@ void Scene::RemoveRenderable(Model* modelToRemove)
 	{
 		std::cout << "FOUND OBJECT: " << modelToRemove->Name << std::endl;
 		_objectsToRender.erase(foundItterator);
-		delete modelToRemove;
 	}
 	else
 	{

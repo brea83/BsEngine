@@ -1,10 +1,25 @@
 #include "BsPrecompileHeader.h"
 #include "GameObject.h"
+#include "EngineContext.h"
+#include "Scene.h"
 #include "Graphics/Primitives/Transform.h"
+#include "Graphics/Model.h"
 
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
 	: Name(name), _transform(std::make_shared<Transform> (position, rotation, scale))
 {}
+
+GameObject::~GameObject()
+{
+	for (auto pair : _components)
+	{
+		std::shared_ptr<Model> model = std::dynamic_pointer_cast<Model>(pair.second);
+		if (model)
+		{
+			EngineContext::GetEngine()->GetScene()->RemoveRenderable(model);
+		}
+	}
+}
 
 void GameObject::SetParent(std::shared_ptr<GameObject> newParent)
 {}
@@ -18,4 +33,12 @@ void GameObject::Init()
 {
 	// send renderable components to graphics pipeline? 
 	// or do those components do that themselves?
+}
+
+void GameObject::OnComponentAdded(std::shared_ptr<Component> component)
+{
+	if (std::dynamic_pointer_cast<Model>(component))
+	{
+		EngineContext::GetEngine()->GetScene()->AddRenderable(std::dynamic_pointer_cast<Model>(component));
+	}
 }

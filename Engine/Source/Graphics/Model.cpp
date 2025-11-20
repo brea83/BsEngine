@@ -14,7 +14,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath, const std::string& textureFileName)
-	: Component(parent, modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))), 
+	: Component(parent, "Model Component"/* modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))*/),
 	_directory(modelFilePath.substr(0, modelFilePath.find_last_of('/'))), 
 	_texturesDirectory(textureDirectoryPath)
 {
@@ -28,9 +28,6 @@ Model::Model(GameObject* parent, const std::string& modelFilePath, const std::st
 	{
 		LoadObj(modelFilePath, textureFileName);
 	}
-
-	Scene* scene = EngineContext::GetEngine()->GetScene();
-	scene->AddRenderable(this);
 }
 
 Model::~Model()
@@ -433,7 +430,9 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* ma
 }
 
 void Model::Initialize()
-{}
+{
+
+}
 
 void Model::CleanUp()
 {}

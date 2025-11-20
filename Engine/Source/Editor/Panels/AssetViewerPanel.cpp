@@ -5,9 +5,9 @@
 #include "Graphics/Shaders/Shader.h"
 #include "TextResource.h"
 
-std::string AssetViewerPanel::SelectedAsset{ "" };
+//std::string AssetViewerPanel::SelectedAsset{ "" };
 
-void AssetViewerPanel::OnImGuiRender()
+void AssetViewerPanel::Draw()
 {
 	ImGui::Begin("Loaded Assets");
 
@@ -19,6 +19,14 @@ void AssetViewerPanel::OnImGuiRender()
 
 	ImGui::SeparatorText("Loaded Assets");
 	std::unordered_map<std::string, std::shared_ptr<Resource>>& resources = AssetLoader::GetResources();
+
+	if (resources.size() <= 0)
+	{
+		ImGui::End();
+		return;
+	}
+
+	static std::string SelectedAsset;
 
 	for (auto pair : resources)
 	{
@@ -38,13 +46,13 @@ void AssetViewerPanel::OnImGuiRender()
 		switch (type)
 		{
 		case ResourceType::TextFile:
-			DrawTextInspector(std::dynamic_pointer_cast<TextResource>(resource));
+			DrawTextInspector(SelectedAsset, std::dynamic_pointer_cast<TextResource>(resource));
 			break;
 		case ResourceType::Shader:
-			DrawShaderEditor(std::dynamic_pointer_cast<Shader>(resource), SelectedAsset);
+			DrawShaderEditor(SelectedAsset, std::dynamic_pointer_cast<Shader>(resource));
 			break;
 		case ResourceType::Texture:
-			DrawTextureEditor(std::dynamic_pointer_cast<Texture>(resource));
+			DrawTextureEditor(SelectedAsset, std::dynamic_pointer_cast<Texture>(resource));
 			break;
 		case ResourceType::Model:
 			break;
@@ -56,28 +64,28 @@ void AssetViewerPanel::OnImGuiRender()
 	ImGui::End();
 }
 
-void AssetViewerPanel::DrawTextureEditor(std::shared_ptr<Texture> texture)
+void AssetViewerPanel::DrawTextureEditor(const std::string& assetKey, std::shared_ptr<Texture> texture)
 {
 	int current_min = static_cast<int>(texture->GetMinFilterType());
 	int current_mag = static_cast<int>(texture->GetMagFilterType());
 
 	if (ImGui::Combo("Min Filter", &current_min, Texture::Min_FilterModeNames, IM_ARRAYSIZE(Texture::Min_FilterModeNames)))
 	{
-		texture->CreateTexture(SelectedAsset, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
+		texture->CreateTexture(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
 	}
 
 	if (ImGui::Combo("Mag Filter", &current_mag, Texture::Mag_FilterModeNames, IM_ARRAYSIZE(Texture::Mag_FilterModeNames)))
 	{
-		texture->CreateTexture(SelectedAsset, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
+		texture->CreateTexture(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
 	}
 }
 
-void AssetViewerPanel::DrawShaderEditor(std::shared_ptr <Shader> shader, std::string& filePath)
+void AssetViewerPanel::DrawShaderEditor(const std::string& assetKey, std::shared_ptr <Shader> shader)
 {
-	if (ImGui::Button("Recompile Shader")) shader->ReCompile(filePath);
+	if (ImGui::Button("Recompile Shader")) shader->ReCompile(assetKey);
 }
 
-void AssetViewerPanel::DrawTextInspector(std::shared_ptr <TextResource> resource)
+void AssetViewerPanel::DrawTextInspector(const std::string& assetKey, std::shared_ptr <TextResource> resource)
 {
 	ImGui::TextWrapped(resource->Text.c_str());
 }

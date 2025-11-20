@@ -20,7 +20,7 @@ ForwardRenderPass::~ForwardRenderPass()
 
 void ForwardRenderPass::Execute(Scene& sceneToRender)
 {
-	std::vector<Model*>& objectsToRender = sceneToRender.GetRenderables();
+	std::vector<std::shared_ptr<Model>>& objectsToRender = sceneToRender.GetRenderables();
 
 	_shader->Use();
 
@@ -30,7 +30,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	_shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	_shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 
-	for (Model* object : objectsToRender)
+	for (auto object : objectsToRender)
 	{
 		_fallbackTexture->Bind(0);
 		object->Render(*_shader);

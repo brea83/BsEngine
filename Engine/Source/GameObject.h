@@ -16,48 +16,21 @@ public:
 
 	virtual std::shared_ptr<Transform> GetTransform() { return _transform; }
 
+	// Component function templates defined lower in the file to make 
+	// reading what functions are available less cluttered
+
 	template <typename Type>
-	bool HasCompoenent()
-	{
-		return _components.find(typeid(Type).hash_code()) != _components.end();
-	}
+	bool HasCompoenent();
 
 	// args are used to construct the component of <Type>
 	template <typename Type, typename... Args>
-	std::shared_ptr<Type>  AddComponent(Args&&... args)
-	{
-		if (HasCompoenent<Type>())
-		{
-			std::cout << "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT" << std::endl;
-		}
-		std::shared_ptr<Type>  component = std::make_shared<Type>(this, std::forward<Args>(args)...);
-		//Component baseComponent = dynamic_cast<Component>(new Type(args));
-
-		_components[typeid(Type).hash_code()] = component;
-		OnComponentAdded(component);
-		return component;
-
-	}
+	std::shared_ptr<Type>  AddComponent(Args&&... args);
 
 	template <typename Type>
-	std::shared_ptr<Type> GetComponent()
-	{
-		//get hashcode key to look for
-		if (HasCompoenent<Type>())
-		{
-			return _components[typeid(Type).hash_code()];
-		}
-		
-	}
-
+	std::shared_ptr<Type> GetComponent();
+	
 	template <typename Type>
-	void RemoveComponent()
-	{
-		if (HasCompoenent<Type>())
-		{
-			_components.erase(typeid(Type).hash_code());
-		}
-	}
+	void RemoveComponent();
 
 	void SetParent(std::shared_ptr<GameObject> newParent);
 	std::shared_ptr<GameObject> GetParent() { return _parent; }
@@ -88,3 +61,46 @@ protected:
 	virtual void OnComponentAdded(std::shared_ptr<Component> component);
 };
 
+
+
+template <typename Type>
+inline bool GameObject::HasCompoenent()
+{
+	return _components.find(typeid(Type).hash_code()) != _components.end();
+}
+
+template <typename Type, typename... Args>
+inline std::shared_ptr<Type>  GameObject::AddComponent(Args&&... args)
+{
+	if (HasCompoenent<Type>())
+	{
+		std::cout << "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT" << std::endl;
+	}
+	std::shared_ptr<Type>  component = std::make_shared<Type>(this, std::forward<Args>(args)...);
+	//Component baseComponent = dynamic_cast<Component>(new Type(args));
+
+	_components[typeid(Type).hash_code()] = component;
+	OnComponentAdded(component);
+	return component;
+
+}
+
+template <typename Type>
+inline std::shared_ptr<Type>  GameObject::GetComponent()
+{
+	//get hashcode key to look for
+	if (HasCompoenent<Type>())
+	{
+		return _components[typeid(Type).hash_code()];
+	}
+
+}
+
+template<typename Type>
+inline void GameObject::RemoveComponent()
+{
+	if (HasCompoenent<Type>())
+	{
+		_components.erase(typeid(Type).hash_code());
+	}
+}

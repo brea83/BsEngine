@@ -5,6 +5,7 @@ enum class ResourceType
 	TextFile,
 	Shader,
 	Texture,
+	Renderable,
 	Model,
 };
 class Resource

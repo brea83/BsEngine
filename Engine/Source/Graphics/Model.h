@@ -47,3 +47,11 @@ protected:
 	void OnUpdate() override;
 };
 
+// what does a model component need to know to tell the renderer where to render its meshes?
+// how many meshes it has
+// a ref to each unique mesh (data about verts in object space)
+// a way to track and adjust transform offsets from the model root instead of the world root
+
+//easy for single mesh. model just uses the game object's transform
+
+

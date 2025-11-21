@@ -49,6 +49,7 @@ public:
 
 	// methods
 	void Render(Shader& currentShader) override;
+	void Render(Shader& currentShader, std::shared_ptr<Transform> transform) override;
 
 protected:
 	//properties
@@ -62,6 +63,7 @@ protected:
 
 	//methods
 	void Init() override;
+
 };
 
 template <>

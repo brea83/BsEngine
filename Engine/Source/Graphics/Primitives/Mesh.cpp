@@ -67,6 +67,32 @@ void Mesh::Init()
     glBindVertexArray(0);
 }
 
+void Mesh::Render(Shader& currentShader, std::shared_ptr<Transform> transform)
+{
+    currentShader.SetUniformMat4("transform", transform->GetObjectToWorldMatrix());
+
+    //for now only use the first included texture as our shader only supports one shader
+    if (Textures.size() > 0)
+    {
+        std::shared_ptr<Texture> defaultTexture = Textures[0];
+        defaultTexture->Bind();
+        currentShader.SetUniformInt("Texture1", 0);
+    }
+
+    //draw
+    glBindVertexArray(VAO);
+    //glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    if (Textures.size() > 0)
+    {
+        std::shared_ptr<Texture> defaultTexture = Textures[0];
+        defaultTexture->UnBind();
+        //currentShader.SetUniformInt("Texture1", 0);
+    }
+}
+
 void Mesh::Render(Shader& currentShader)
 {
     currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());

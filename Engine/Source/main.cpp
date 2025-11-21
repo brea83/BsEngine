@@ -77,4 +77,10 @@ void PopulateStartingScene(EngineContext* engine)
 	gameObjectTransform->SetScale(glm::vec3(20.0f));
 	startingScene->AddGameObject(testObject);
 	testObject->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
+
+	GameObject* testObject2 = new GameObject();
+	std::shared_ptr<Transform> gameObjectTransform2 = testObject2->GetTransform();
+	gameObjectTransform2->SetScale(glm::vec3(30.0f));
+	startingScene->AddGameObject(testObject2);
+	testObject2->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
 }

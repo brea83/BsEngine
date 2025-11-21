@@ -2,11 +2,10 @@
 #include "BsPrecompileHeader.h"
 #include "../Shaders/Shader.h"
 #include <glm/glm.hpp>
+#include "Resource.h"
+#include "Graphics/Primitives/Transform.h"
 
-
-class Transform;
-
-class Renderable
+class Renderable: public Resource
 {
 public:
 
@@ -18,6 +17,7 @@ public:
 	//virtual unsigned int GetUID() const { return _uid; }
 	virtual std::shared_ptr<Transform> GetTransform() { return _transform; }
 	virtual void Render(Shader& currentShader) = 0;
+	virtual void Render(Shader& currentShader, std::shared_ptr<Transform> transform) = 0;
 
 protected:
 	//properties

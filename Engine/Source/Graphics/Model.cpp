@@ -90,170 +90,184 @@ void Model::LoadModelAssimp(const std::string & filePath)
 
 void Model::LoadObj(const std::string& filePath, const std::string& textureFileName)
 {
+	
+	//std::ifstream file(filePath);
+
+	//if (!file.is_open())
+	//{
+	//	std::cerr << "Failed to open file: " << filePath << std::endl;
+	//	return;
+	//}
+
+	//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+	//std::cout << "IMPORTING MODEL " << Name << std::endl;
+	//std::cout << " DIRECTORY: " << _directory << std::endl;
+	//std::string line;
+
+	//std::vector<Mesh::Vertex> vertices;
+	//std::vector<glm::vec3> positions;
+	//std::vector<glm::vec3> normals;
+	//std::vector<glm::vec2> uvs;
+	//std::vector<unsigned int> indices;
+
+	//while (std::getline(file, line))
+	//{
+	//	std::istringstream lineStream(line);
+	//	std::string firstWord;
+	//	lineStream >> firstWord;
+
+	//	if (firstWord == "v")
+	//	{
+	//		// do vertex stuff
+	//		glm::vec3 position;
+	//		lineStream >> position.x >> position.y >> position.z;
+	//		positions.push_back(position);
+	//	}
+
+	//	if (firstWord == "vt")
+	//	{
+	//		// texture coordinates
+	//		glm::vec2 uv;
+	//		lineStream >> uv.x >> uv.y;
+	//		uvs.push_back(uv);
+	//	}
+
+	//	if (firstWord == "vn")
+	//	{
+	//		// normals
+	//		glm::vec3 normal;
+	//		lineStream >> normal.x >> normal.y >> normal.z;
+	//		normals.push_back(normal);
+	//	}
+
+	//	//if (firstWord == "vp")
+	//	//{
+	//	//	// parameter?
+	//	//}
+
+	//	if (firstWord == "f")
+	//	{
+	//		// faces data
+	//		// need to double check but I think all formal exports require faces to come After all the other data
+	//		//this will probably not get us quite enough spaces reserved, but it is probably closer than the empty init
+	//		if (vertices.capacity() < positions.size()) vertices.reserve(positions.size());
+
+	//		// format vertex_index/texture_index/normal_index
+	//		// -1 referring to the last element of vertex list.
+
+	//		std::vector<Mesh::ObjPackedIndices> objIndices;
+	//		std::string word;
+	//		while (lineStream >> word)
+	//		{
+	//			std::istringstream wordStream(word);
+	//			std::string positionString, uvString, normalString;
+
+	//			int relativePosIndex;
+	//			int relativeUvIndex;
+	//			int relativeNormalIndex;
+
+	//			if (std::getline(wordStream, positionString, '/'))
+	//			{
+	//				relativePosIndex = std::atoi(positionString.c_str());
+	//				relativePosIndex = std::max(0, relativePosIndex - 1);
+	//			}
+	//			else
+	//			{
+	//				relativePosIndex = 0;
+	//			}
+
+	//			if (std::getline(wordStream, uvString, '/'))
+	//			{
+	//				relativeUvIndex = std::atoi(uvString.c_str());
+	//				relativeUvIndex = std::max(0, relativeUvIndex - 1);
+	//			}
+	//			else
+	//			{
+	//				relativeUvIndex = relativePosIndex;
+	//			}
+
+	//			if (std::getline(wordStream, normalString, '/'))
+	//			{
+	//				relativeNormalIndex = std::atoi(normalString.c_str());
+	//				relativeNormalIndex = std::max(0, relativeNormalIndex - 1);
+	//			}
+	//			else
+	//			{
+	//				relativeNormalIndex = relativePosIndex;
+	//			}
+
+	//			int positionIndex, normalIndex, uvIndex;
+	//			positionIndex = (relativePosIndex >= 0) ? relativePosIndex : positions.size() + relativePosIndex;
+	//			uvIndex = (relativeUvIndex >= 0) ? relativeUvIndex : uvs.size() + relativeUvIndex;
+	//			normalIndex = (relativeNormalIndex >= 0) ? relativeNormalIndex : normals.size() + relativeNormalIndex;
+
+	//			objIndices.push_back(Mesh::ObjPackedIndices{ positionIndex, uvIndex, normalIndex });
+	//		}
+
+	//		//triangulate assuming n >3-gons are convex and coplanar
+	//		for (size_t i = 1; i + 1 < objIndices.size(); i++)
+	//		{
+	//			const Mesh::ObjPackedIndices* point[3] = { &objIndices[0], &objIndices[i], &objIndices[i + 1] };
+
+	//			//https://wikis.khronos.org/opengl/Calculating_a_Surface_Normal
+	//			// U and V are the vectors used to calculate surface normal
+	//			// U is point2 - point1 V is point3 - point1
+	//			// normal is U cross V
+
+	//			glm::vec3 U(positions[point[1]->Position] - positions[point[0]->Position]);
+	//			glm::vec3 V(positions[point[2]->Position] - positions[point[0]->Position]);
+	//			glm::vec3 faceNormal = glm::normalize(glm::cross(U, V));
+
+	//			// make the vertex for the mesh
+
+	//			for (size_t j = 0; j < 3; j++)
+	//			{
+	//				Mesh::Vertex vertex;
+
+	//				vertex.Position = positions[point[j]->Position];
+	//				vertex.Normal = (point[j]->Normal != 0 && normals.size() > 0) ? normals[point[j]->Normal] : faceNormal;
+	//				if (uvs.size() > 0) vertex.UV1 = uvs[point[j]->Uv];
+
+	//				// check if identical vertex exists to use its index instead
+	//				auto found = std::find(vertices.begin(), vertices.end(), vertex);
+
+	//				if (found != vertices.end())
+	//				{
+	//					size_t index = distance(vertices.begin(), found);
+	//					indices.push_back(index);
+	//				}
+	//				else
+	//				{
+	//					indices.push_back(vertices.size());
+	//					vertices.push_back(vertex);
+	//				}
+
+	//			}
+
+	//		}
+
+	//	}
+	//}
+	//file.close();
+
+	//std::string textureFilePath = _texturesDirectory + textureFileName;
+	//std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(textureFilePath);
+	//std::vector< std::shared_ptr<Texture>> textures;
+	//std::shared_ptr<Mesh> mesh;
+	//if (texture == nullptr)
+	//{
+	//	mesh = std::make_shared<Mesh>(vertices, indices, Name);
+	//}
+	//else
+	//{
+	//	textures.push_back(texture);
+	//	mesh = std::make_shared<Mesh>(vertices, indices, textures, Name);
+	//}
+
 	std::string textureFilePath = _texturesDirectory + textureFileName;
-	std::ifstream file(filePath);
-
-	if (!file.is_open())
-	{
-		std::cerr << "Failed to open file: " << filePath << std::endl;
-		return;
-	}
-
-	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-	std::cout << "IMPORTING MODEL " << Name << std::endl;
-	std::cout << " DIRECTORY: " << _directory << std::endl;
-	std::string line;
-
-	std::vector<Mesh::Vertex> vertices;
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec3> normals;
-	std::vector<glm::vec2> uvs;
-	std::vector<unsigned int> indices;
-
-	while (std::getline(file, line))
-	{
-		std::istringstream lineStream(line);
-		std::string firstWord;
-		lineStream >> firstWord;
-
-		if (firstWord == "v")
-		{
-			// do vertex stuff
-			glm::vec3 position;
-			lineStream >> position.x >> position.y >> position.z;
-			positions.push_back(position);
-		}
-
-		if (firstWord == "vt")
-		{
-			// texture coordinates
-			glm::vec2 uv;
-			lineStream >> uv.x >> uv.y;
-			uvs.push_back(uv);
-		}
-
-		if (firstWord == "vn")
-		{
-			// normals
-			glm::vec3 normal;
-			lineStream >> normal.x >> normal.y >> normal.z;
-			normals.push_back(normal);
-		}
-
-		//if (firstWord == "vp")
-		//{
-		//	// parameter?
-		//}
-
-		if (firstWord == "f")
-		{
-			// faces data
-			// need to double check but I think all formal exports require faces to come After all the other data
-			//this will probably not get us quite enough spaces reserved, but it is probably closer than the empty init
-			if (vertices.capacity() < positions.size()) vertices.reserve(positions.size());
-
-			// format vertex_index/texture_index/normal_index
-			// -1 referring to the last element of vertex list.
-
-			std::vector<Mesh::ObjPackedIndices> objIndices;
-			std::string word;
-			while (lineStream >> word)
-			{
-				std::istringstream wordStream(word);
-				std::string positionString, uvString, normalString;
-
-				int relativePosIndex;
-				int relativeUvIndex;
-				int relativeNormalIndex;
-
-				if (std::getline(wordStream, positionString, '/'))
-				{
-					relativePosIndex = std::atoi(positionString.c_str());
-					relativePosIndex = std::max(0, relativePosIndex - 1);
-				}
-				else
-				{
-					relativePosIndex = 0;
-				}
-
-				if (std::getline(wordStream, uvString, '/'))
-				{
-					relativeUvIndex = std::atoi(uvString.c_str());
-					relativeUvIndex = std::max(0, relativeUvIndex - 1);
-				}
-				else
-				{
-					relativeUvIndex = relativePosIndex;
-				}
-
-				if (std::getline(wordStream, normalString, '/'))
-				{
-					relativeNormalIndex = std::atoi(normalString.c_str());
-					relativeNormalIndex = std::max(0, relativeNormalIndex - 1);
-				}
-				else
-				{
-					relativeNormalIndex = relativePosIndex;
-				}
-
-				int positionIndex, normalIndex, uvIndex;
-				positionIndex = (relativePosIndex >= 0) ? relativePosIndex : positions.size() + relativePosIndex;
-				uvIndex = (relativeUvIndex >= 0) ? relativeUvIndex : uvs.size() + relativeUvIndex;
-				normalIndex = (relativeNormalIndex >= 0) ? relativeNormalIndex : normals.size() + relativeNormalIndex;
-
-				objIndices.push_back(Mesh::ObjPackedIndices{ positionIndex, uvIndex, normalIndex });
-			}
-
-			//triangulate assuming n >3-gons are convex and coplanar
-			for (size_t i = 1; i + 1 < objIndices.size(); i++)
-			{
-				const Mesh::ObjPackedIndices* point[3] = { &objIndices[0], &objIndices[i], &objIndices[i + 1] };
-
-				//https://wikis.khronos.org/opengl/Calculating_a_Surface_Normal
-				// U and V are the vectors used to calculate surface normal
-				// U is point2 - point1 V is point3 - point1
-				// normal is U cross V
-
-				glm::vec3 U(positions[point[1]->Position] - positions[point[0]->Position]);
-				glm::vec3 V(positions[point[2]->Position] - positions[point[0]->Position]);
-				glm::vec3 faceNormal = glm::normalize(glm::cross(U, V));
-
-				// make the vertex for the mesh
-
-				for (size_t j = 0; j < 3; j++)
-				{
-					indices.push_back(vertices.size());
-					Mesh::Vertex vertex;
-
-					vertex.Position = positions[point[j]->Position];
-					vertex.Normal = (point[j]->Normal != 0 && normals.size() > 0) ? normals[point[j]->Normal] : faceNormal;
-					if (uvs.size() > 0) vertex.UV1 = uvs[point[j]->Uv];
-
-					vertices.push_back(vertex);
-				}
-
-			}
-
-		}
-	}
-	file.close();
-
-
-	std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(textureFilePath);
-	std::vector< std::shared_ptr<Texture>> textures;
-	std::shared_ptr<Mesh> mesh;
-	if (texture == nullptr)
-	{
-		mesh = std::make_shared<Mesh>(vertices, indices, Name);
-	}
-	else
-	{
-		textures.push_back(texture);
-		mesh = std::make_shared<Mesh>(vertices, indices, textures, Name);
-	}
-
-	std::shared_ptr<Transform> transform = mesh->GetTransform();
-	transform->ParentTransform = _parentObject->GetTransform();
+	std::shared_ptr<Mesh> mesh = AssetLoader::LoadObj(filePath, textureFilePath);
+	//std::shared_ptr<Transform> transform = mesh->GetTransform();
+	//transform->ParentTransform = _parentObject->GetTransform();
 	_meshes.push_back(mesh);
 	
 }
@@ -452,6 +466,6 @@ void Model::Render(Shader& currentShader)
 {
 	for (unsigned int i = 0; i < _meshes.size(); i++)
 	{
-		_meshes[i]->Render(currentShader);
+		_meshes[i]->Render(currentShader, _parentObject->GetTransform());
 	}
 }

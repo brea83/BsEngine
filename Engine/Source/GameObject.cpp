@@ -5,8 +5,9 @@
 #include "Graphics/Primitives/Transform.h"
 #include "Graphics/Model.h"
 
+static int s_NumGameObjects = 1;
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-	: Name(name), _transform(std::make_shared<Transform> (position, rotation, scale))
+	: Name(name + " " + std::to_string(s_NumGameObjects++)), _transform(std::make_shared<Transform>(position, rotation, scale))
 {}
 
 GameObject::~GameObject()

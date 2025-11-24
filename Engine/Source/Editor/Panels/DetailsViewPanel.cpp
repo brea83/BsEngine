@@ -34,7 +34,8 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 
 				selectedObject->Name = std::string(buffer);
 			}*/
-			DrawStringProperty("Name", selectedObject->Name, selectedObject->Name.size());
+			static bool bIsEditing = false;
+			DrawStringProperty("Name", selectedObject->Name, bIsEditing, selectedObject->Name.size());
 
 			ImGui::SeparatorText("Transform");
 
@@ -148,10 +149,11 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 	return bValueChanged;
 }
 
-bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, float columnWidth)
+bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, bool& bIsEditing, float columnWidth)
 {
-	static bool bValueChanged = false;
-	static bool bIsEditing = false;
+	//bool bValueChanged = false;
+	//bool bIsEditing = false;
+	bool bValueSubmitted = false;
 
 	if (ImGui::BeginTable(label.c_str(), 3/*, ImGuiTableFlags_Resizable*/))
 	{
@@ -171,14 +173,14 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 		ImGui::PushItemWidth(fontSize * columnWidth);
 		// do stuff
 		static char editingValue[256];
-		memset(editingValue, 0, sizeof(editingValue));
+		//memset(editingValue, 0, sizeof(editingValue));
 		//strcpy_s(editingValue, sizeof(editingValue), value.c_str());
 
 		if (bIsEditing)
 		{
 			if(ImGui::InputTextWithHint("##EditableString", value.c_str(), editingValue, IM_ARRAYSIZE(editingValue)))
 			{
-				bValueChanged = (value.c_str() != editingValue);
+				//bValueChanged = (value.c_str() != editingValue);
 			}
 		}
 		else
@@ -193,7 +195,7 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 		std::string buttonText = bIsEditing ? "Done" : "Edit";
 		if(ImGui::Button(buttonText.c_str()))
 		{
-			if (bIsEditing && bValueChanged)
+			if (bIsEditing /*&& bValueChanged*/)
 			{
 				if (editingValue != NULL && editingValue[0] == '\0')
 				{
@@ -202,8 +204,9 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 				else
 				{
 					value = editingValue;
+					bValueSubmitted = true;
 				}
-				bValueChanged = false;
+				//bValueChanged = false;
 			}
 
 			bIsEditing = !bIsEditing;
@@ -212,19 +215,11 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 		ImGui::EndTable();
 	}
 
-	return bValueChanged;
+	return bValueSubmitted;
 }
 
 void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/)
 {
-	//for (auto pair : componentMap)
-	//{
-	//	std::shared_ptr<Component> component = pair.second;
-	//	char buffer[256];
-	//	memset(buffer, 0, sizeof(buffer));
-	//	strcpy_s(buffer, sizeof(buffer), component->Name.c_str());
-	//	ImGui::SeparatorText(buffer);
-	//}
 
 	if (selectedObject->HasCompoenent<Model>())
 	{
@@ -235,6 +230,11 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered
 		ImGui::SeparatorText(buffer);
 
 		//ImGui::Text(component->GetFilePath().c_str());
-		DrawStringProperty("FilePath", component->GetFilePath());
+		static bool bIsEditing = false;
+		
+		if (DrawStringProperty("FilePath", component->GetFilePath(), bIsEditing))
+		{
+			std::cout << "Model component String property returned value submitted == true" << std::endl;
+		}
 	}
 }

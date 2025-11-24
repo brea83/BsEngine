@@ -18,7 +18,7 @@ public:
 	~Model();
 
 	void SetFilePath(const std::string& modelFilePath) { }
-	const std::string& GetFilePath() const { return _filePath; }
+	std::string& GetFilePath() { return _filePath; }
 
 	// Inherited via Renderable
 	void Render(Shader& currentShader);

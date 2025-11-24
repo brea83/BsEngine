@@ -26,14 +26,15 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 		//ImGui::Text("%s", selectedObject->Name.c_str());
 		ImGui::Separator();
 		{
-			char buffer[256];
+			/*char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy_s(buffer, sizeof(buffer), selectedObject->Name.c_str());
 			if (ImGui::InputText("Name", buffer, sizeof(buffer)))
 			{
 
 				selectedObject->Name = std::string(buffer);
-			}
+			}*/
+			DrawStringProperty("Name", selectedObject->Name, selectedObject->Name.size());
 
 			ImGui::SeparatorText("Transform");
 
@@ -147,6 +148,73 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 	return bValueChanged;
 }
 
+bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, float columnWidth)
+{
+	static bool bValueChanged = false;
+	static bool bIsEditing = false;
+
+	if (ImGui::BeginTable(label.c_str(), 3/*, ImGuiTableFlags_Resizable*/))
+	{
+		float fontSize = ImGui::GetFontSize();
+		ImGui::TableSetupColumn("Labels"/*, ImGuiTableColumnFlags_WidthFixed*/);
+		ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed*/);
+		ImGui::TableSetupColumn("DeleteButton"/*, ImGuiTableColumnFlags_WidthStretch*/);
+
+		ImGui::TableNextRow();
+		// the label
+		ImGui::PushItemWidth(fontSize * 3);
+		ImGui::TableSetColumnIndex(0);
+		ImGui::Text(label.c_str());
+
+		// the values
+		ImGui::TableSetColumnIndex(1);
+		ImGui::PushItemWidth(fontSize * columnWidth);
+		// do stuff
+		static char editingValue[256];
+		memset(editingValue, 0, sizeof(editingValue));
+		//strcpy_s(editingValue, sizeof(editingValue), value.c_str());
+
+		if (bIsEditing)
+		{
+			if(ImGui::InputTextWithHint("##EditableString", value.c_str(), editingValue, IM_ARRAYSIZE(editingValue)))
+			{
+				bValueChanged = (value.c_str() != editingValue);
+			}
+		}
+		else
+		{
+			ImGui::Text( value.c_str());
+		}
+
+		// the button to turn  the value field into an edit field
+		ImGui::TableSetColumnIndex(2);
+		ImGui::PushItemWidth(-FLT_MIN);
+
+		std::string buttonText = bIsEditing ? "Done" : "Edit";
+		if(ImGui::Button(buttonText.c_str()))
+		{
+			if (bIsEditing && bValueChanged)
+			{
+				if (editingValue != NULL && editingValue[0] == '\0')
+				{
+					std::cout << "Error: tried to submit empty string to property: " << label << std::endl;
+				}
+				else
+				{
+					value = editingValue;
+				}
+				bValueChanged = false;
+			}
+
+			bIsEditing = !bIsEditing;
+		}
+
+		ImGui::EndTable();
+	}
+
+	return bValueChanged;
+}
+
 void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/)
 {
 	//for (auto pair : componentMap)
@@ -166,6 +234,7 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered
 		strcpy_s(buffer, sizeof(buffer), component->Name.c_str());
 		ImGui::SeparatorText(buffer);
 
-		ImGui::Text(component->GetFilePath().c_str());
+		//ImGui::Text(component->GetFilePath().c_str());
+		DrawStringProperty("FilePath", component->GetFilePath());
 	}
 }

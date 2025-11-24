@@ -15,7 +15,7 @@
 
 Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath, const std::string& textureFileName)
 	: Component(parent, "Model Component"/* modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))*/),
-	_directory(modelFilePath.substr(0, modelFilePath.find_last_of('/'))), 
+	_filePath(modelFilePath), 
 	_texturesDirectory(textureDirectoryPath)
 {
 
@@ -50,7 +50,7 @@ void Model::LoadModelAssimp(const std::string & filePath)
 
 	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 	std::cout << "IMPORTING MODEL " << Name << std::endl;
-	std::cout << " DIRECTORY: " << _directory << std::endl;
+	std::cout << " DIRECTORY: " << _filePath << std::endl;
 	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
 	{
 		aiMaterial* material = assimpScene->mMaterials[i];
@@ -101,7 +101,7 @@ void Model::LoadObj(const std::string& filePath, const std::string& textureFileN
 
 	//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 	//std::cout << "IMPORTING MODEL " << Name << std::endl;
-	//std::cout << " DIRECTORY: " << _directory << std::endl;
+	//std::cout << " DIRECTORY: " << _filePath << std::endl;
 	//std::string line;
 
 	//std::vector<Mesh::Vertex> vertices;

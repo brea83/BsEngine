@@ -29,6 +29,8 @@ public:
 	template <typename Type>
 	std::shared_ptr<Type> GetComponent();
 	
+	std::unordered_map<size_t, std::shared_ptr<Component>>& GetAllComponents() { return _components; }
+	
 	template <typename Type>
 	void RemoveComponent();
 
@@ -91,7 +93,7 @@ inline std::shared_ptr<Type>  GameObject::GetComponent()
 	//get hashcode key to look for
 	if (HasCompoenent<Type>())
 	{
-		return _components[typeid(Type).hash_code()];
+		return std::dynamic_pointer_cast<Type>(_components[typeid(Type).hash_code()]);
 	}
 
 }

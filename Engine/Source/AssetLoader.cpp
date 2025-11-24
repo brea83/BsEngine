@@ -2,13 +2,39 @@
 #include "AssetLoader.h"
 #include <fstream>
 #include "StbImageWrapper.h"
+#define NOMINMAX
+//#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef LoadImage
 
 
+//const int AssetLoader::MimimumAvailableMb{ 2 };
 
 std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::_resources;
 
+bool AssetLoader::IsMemoryAvailable(int minimumAvailableMb)
+{
+	MEMORYSTATUSEX statusEx;
+	statusEx.dwLength = sizeof(statusEx);
+	GlobalMemoryStatusEx(&statusEx);
+	//std::cout << "********************" << std::endl;
+	//std::cout << "Physical Memory" << std::endl;
+	//std::cout << "Total: " << statusEx.ullTotalPhys / (1024 * 1024 ) << std::endl;
+	//std::cout << "Available: " << statusEx.ullAvailPhys / (1024 * 1024) << std::endl;
+
+	bool result = minimumAvailableMb < statusEx.ullAvailPhys / (1024 * 1024);
+	//std::cout << "Available memory > minimum required == " << result << std::endl;
+	return result;
+}
+
 std::shared_ptr<TextResource> AssetLoader::LoadTextFile(const std::string& filePath)
 {
+	if (!IsMemoryAvailable(MimimumAvailableMb))
+	{
+		std::cout << "LOAD TEXT FILE ERROR: available memory less than " << std::endl;
+		return nullptr;
+	}
+
 	if (_resources.find(filePath) != _resources.end())
 	{
 		auto textResourcePtr = std::dynamic_pointer_cast<TextResource>(_resources.at(filePath));
@@ -72,6 +98,11 @@ bool AssetLoader::ReLoadTextFile(const std::string& filePath)
 
 std::shared_ptr<Shader> AssetLoader::LoadShader(const std::string& vertPath, const std::string& fragPath)
 {
+	if (!IsMemoryAvailable(MimimumAvailableMb))
+	{
+		std::cout << "LOAD SHADER FILE ERROR: available memory less than " << std::endl;
+		return nullptr;
+	}
 
 	if (_resources.find(vertPath + "|" + fragPath) != _resources.end())
 	{
@@ -96,6 +127,12 @@ std::shared_ptr<Shader> AssetLoader::LoadShader(const std::string& vertPath, con
 
 std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
 {
+	if (!IsMemoryAvailable(MimimumAvailableMb))
+	{
+		std::cout << "LOAD TEXTURE FILE ERROR: available memory less than " << std::endl;
+		return nullptr;
+	}
+
 	//prep filepath
 	std::string relativePath = "";
 	ParsePathString(filePath, relativePath);
@@ -112,6 +149,11 @@ std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
 
 std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const std::string& textureFilePath)
 {
+	if (!IsMemoryAvailable(MimimumAvailableMb))
+	{
+		std::cout << "LOAD OBJ FILE ERROR: available memory less than " << std::endl;
+		return nullptr;
+	}
 
 	if (_resources.find(filePath) != _resources.end())
 	{

@@ -17,13 +17,16 @@ public:
 	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures/", const std::string& textureFileName = "Viking_House.png");
 	~Model();
 
+	void SetFilePath(const std::string& modelFilePath) { }
+	const std::string& GetFilePath() const { return _filePath; }
+
 	// Inherited via Renderable
 	void Render(Shader& currentShader);
 
 protected:
 	//properties
 	std::vector<std::shared_ptr<Mesh>> _meshes;
-	std::string _directory;
+	std::string _filePath;
 	std::string _texturesDirectory{"Assets/Textures/"};
 
 	

@@ -506,4 +506,50 @@ important for asyn messaging messages are void since they may not finish immedia
 
 Next task:
 implement Msg queue
+
+================================
+LECTURE 12 (week 5) more resource management, textures, and models
+================================
+
+group code share
+
+what is a resource
+	models, meshes
+	textures
+	maps / levels
+	scripts text
+	nav mesh (binary)
+	audio
+	ui html, css, text, binary
+	file handles
+	network handles
+
+Loading into memory an obj 
+	open file
+	read
+	close file handle
+	parse/ transform data
+	load into graphics driver (opengl)
+	free up some of the read or transformd data
+	free gl resources (when needed or at end of program)
+
+when do we need to free resources:
+	free pre-emptively
+	how much gpu memory do we need?
+	inclue functions to check available memory for big allocations
+	what do you do if there isn't enough memory?
+
+example: low-poly mesh 1k tris
+	obj. 3000 verts, normals and uvs, 4 bytes per numeric component of each.
+	~ 96 kb for one model
+
+memory limits
+	what is reasonable 1 gb, 4gb?
+
+
+OnWindows you can use GlobalMemoryStatusEx to querry how much physical memory is available
+
+TASK1: add some functions to check available memory
+
+TASK 2 make obj loader iterative
 	

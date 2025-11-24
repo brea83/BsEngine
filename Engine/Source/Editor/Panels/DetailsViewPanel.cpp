@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Graphics/Primitives/Transform.h"
+#include "Component.h"
+#include "Graphics/Model.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -57,6 +59,9 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 
 		}
 
+		ImGui::SeparatorText("Componenets");
+		DrawComponents(selectedObject/*selectedObject->GetAllComponents()*/);
+		
 	}
 	ImGui::End();
 	return true;
@@ -140,4 +145,27 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 	}
 
 	return bValueChanged;
+}
+
+void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/)
+{
+	//for (auto pair : componentMap)
+	//{
+	//	std::shared_ptr<Component> component = pair.second;
+	//	char buffer[256];
+	//	memset(buffer, 0, sizeof(buffer));
+	//	strcpy_s(buffer, sizeof(buffer), component->Name.c_str());
+	//	ImGui::SeparatorText(buffer);
+	//}
+
+	if (selectedObject->HasCompoenent<Model>())
+	{
+		std::shared_ptr<Model> component = selectedObject->GetComponent<Model>();
+		char buffer[256];
+		memset(buffer, 0, sizeof(buffer));
+		strcpy_s(buffer, sizeof(buffer), component->Name.c_str());
+		ImGui::SeparatorText(buffer);
+
+		ImGui::Text(component->GetFilePath().c_str());
+	}
 }

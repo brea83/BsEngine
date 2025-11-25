@@ -9,37 +9,20 @@ static int s_NumTriangles = 1;
 Triangle::Triangle(/*unsigned int uid*/const std::string& name)
 	: Mesh(/*uid*/name + " " + std::to_string(s_NumTriangles++))
 {
-	/*if (s_NumTriangles == 0)
-	{
-		Name = "Triangle";
-	}
-	else
-	{
-		Name = "Triangle_" + std::to_string(s_NumTriangles);
-	}
-	s_NumTriangles++;*/
 	_vertices = {
 		Vertex{{ 0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}, { 0.5f, 1.0f }},
 		Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 0.0f }},
 		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
 	};
 
-	_transform = std::make_shared<Transform>();
 	Init();
 }
 
-//Triangle::Triangle(std::vector<Vertex>& newVerticies)
-//{
-//	_vertices = newVerticies;
-//	Init();
-//}
-
-void Triangle::Init(/*std::vector<Vertex>& verticies*/)
+void Triangle::Init()
 {
 	// generate vert array and vert buffer
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-
 
 	//bind vert array first, then bind the buffer and tell it how ot traverse the array.
 	glBindVertexArray(VAO);
@@ -72,9 +55,6 @@ Triangle::~Triangle()
 
 void Triangle::Render(Shader& currentShader)
 {
-	// send transform to shader
-	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
-
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	glBindVertexArray(0);

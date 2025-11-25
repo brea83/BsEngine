@@ -4,11 +4,11 @@
 
 class Transform;
 
-class Rectangle : public Mesh
+class Quad : public Mesh
 {
 public:
-	Rectangle(/*unsigned int uid, */const std::string& name = "Rectangle");
-	~Rectangle();
+	Quad(/*unsigned int uid, */const std::string& name = "Rectangle");
+	~Quad();
 
 	
 	void Render(Shader& currentShader) override;

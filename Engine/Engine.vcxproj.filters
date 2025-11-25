@@ -81,7 +81,7 @@
     <ClCompile Include="Source\Graphics\Primitives\Cube.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Rectangle.cpp">
+    <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp">
       <Filter>Source Files\Primitives</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp">
@@ -218,7 +218,7 @@
     <ClInclude Include="Source\Graphics\Primitives\Cube.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Rectangle.h">
+    <ClInclude Include="Source\Graphics\Primitives\QuadMesh.h">
       <Filter>Header Files\Primitives</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h">

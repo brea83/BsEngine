@@ -90,15 +90,18 @@ void Model::LoadModelAssimp(const std::string & filePath)
 
 bool Model::LoadObj(const std::string& filePath, const std::string& textureFileName)
 {
-	std::shared_ptr<Mesh> mesh = AssetLoader::LoadObj(filePath, _texturePath);
-	if (mesh != nullptr)
+	std::shared_ptr<Mesh> mesh = AssetLoader::LoadObj(filePath);
+	if (mesh == nullptr)
 	{
-		_meshes.clear();
-		_meshes.push_back(mesh);
-		return true;
+		return false;
 	}
+	_meshes.clear();
+	_meshes.push_back(mesh);
 
-	return false;
+	_texture = AssetLoader::LoadTexture(_texturePath);
+	if (_texture == nullptr) return false;
+
+	return true;
 }
 
 void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
@@ -163,7 +166,7 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 		std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
 
 		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-		ProcessTransform(nodeTransform, mesh->GetTransform(), node->mParent);
+		ProcessTransform(nodeTransform, _parentObject->GetTransform(), node->mParent);
 		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
@@ -249,7 +252,7 @@ std::shared_ptr<Mesh>  Model::processMesh(aiMesh * mesh, const aiScene * assimpS
 		//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	}
 
-	return std::make_shared<Mesh>(/*_uid, */vertices, indices, textures, mesh->mName.C_Str());
+	return std::make_shared<Mesh>(/*_uid, */vertices, indices, /*textures,*/ mesh->mName.C_Str());
 }
 
 std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
@@ -308,8 +311,22 @@ bool Model::Reload()
 
 void Model::Render(Shader& currentShader)
 {
+
+	currentShader.SetUniformMat4("transform", _parentObject->GetTransform()->GetObjectToWorldMatrix());
+	if (_texture != nullptr)
+	{
+		_texture->Bind();
+		currentShader.SetUniformInt("Texture1", 0);
+	}
+
 	for (unsigned int i = 0; i < _meshes.size(); i++)
 	{
-		_meshes[i]->Render(currentShader, _parentObject->GetTransform());
+		_meshes[i]->Render(currentShader);
+	}
+
+	if (_texture != nullptr)
+	{
+		_texture->UnBind();
+		//currentShader.SetUniformInt("Texture1", 0);
 	}
 }

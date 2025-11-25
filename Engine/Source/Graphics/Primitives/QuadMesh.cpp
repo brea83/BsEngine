@@ -1,11 +1,11 @@
 #include "BsPrecompileHeader.h"
-#include "Rectangle.h"
+#include "QuadMesh.h"
 #include "Transform.h"
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-Rectangle::Rectangle(/*unsigned int uid, */const std::string& name)
-	: Mesh(/*uid,*/ name)
+Quad::Quad(const std::string& name)
+	: Mesh(name)
 {
 	_vertices = {
 		Vertex{{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f, 0.0f }}, // top left
@@ -14,21 +14,16 @@ Rectangle::Rectangle(/*unsigned int uid, */const std::string& name)
 		Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}, // bottom right
 	};
 
-	//_triangles = {  //idicies of the vertexies list to use as points of a triangle
-	//	{0, 1, 2},   // first triangle
-	//	{1, 2, 3}   // second triangle
-	//};
 	_indices = {
 		0, 1, 2,
 		1, 2, 3
 	};
 
-	_transform = std::make_shared<Transform>();
 
 	Init();
 }
 
-void Rectangle::Init()
+void Quad::Init()
 {
 
 	// generate vert array and vert buffer
@@ -57,21 +52,17 @@ void Rectangle::Init()
 	glBindVertexArray(0);
 }
 
-Rectangle::~Rectangle()
+Quad::~Quad()
 {
 	if (VBO) glDeleteBuffers(1, &VBO);
 	if (VAO) glDeleteVertexArrays(1, &VAO);
 	if (EBO) glDeleteBuffers(1, &EBO);
 }
 
-void Rectangle::Render(Shader& currentShader)
+void Quad::Render(Shader& currentShader)
 {
-	// send transform to shader
-	currentShader.SetUniformMat4("transform", _transform->GetObjectToWorldMatrix());
-
 	//draw
 	glBindVertexArray(VAO);
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

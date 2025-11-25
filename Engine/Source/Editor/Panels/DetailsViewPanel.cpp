@@ -38,7 +38,7 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 			}*/
 			static bool bIsEditing = false;
 			static std::string editingValue1;
-			//DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
+			DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
 
 			ImGui::SeparatorText("Transform");
 
@@ -158,17 +158,17 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 	//bool bIsEditing = false;
 	bool bValueSubmitted = false;
 
-	if (ImGui::BeginTable(label.c_str(), 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter))
+	if (ImGui::BeginTable(label.c_str(), 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
 	{
 		float fontSize = ImGui::GetFontSize();
-		ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * 25.0f);
+		ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
 		ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthFixed, ImGui::GetContentRegionAvail().x * 0.5);
 		ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
 
 		ImGui::TableNextRow();
 		// the label
 		ImGui::TableSetColumnIndex(0);
-		ImGui::PushItemWidth(fontSize * 3);
+		ImGui::PushItemWidth(fontSize * columnWidth);
 		ImGui::Text(label.c_str());
 		ImGui::PopItemWidth();
 
@@ -256,13 +256,9 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 			}
 			else
 			{
-				if (component->_meshes[0]->Textures.size() > 0)
+				if (component->_texture != nullptr)
 				{
-					component->_meshes[0]->Textures[0] = newTexture;
-				}
-				else
-				{
-					component->_meshes[0]->Textures.push_back(newTexture);
+					component->_texture = newTexture;
 				}
 			}
 		}

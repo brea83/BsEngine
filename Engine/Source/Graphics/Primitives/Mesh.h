@@ -4,6 +4,13 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
 
+enum class PrimitiveMeshType : int
+{
+	Triangle,
+	Quad,
+	Cube
+};
+
 class Mesh :    public Renderable
 {
 public:
@@ -40,16 +47,16 @@ public:
 
 	//constructors and properties
 	Mesh(/*unsigned int uid,*/ const std::string& name = "Default Name");
-	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name = "Default Mesh Name");
+	//Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name = "Default Mesh Name");
 	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices/*, std::vector<std::shared_ptr<Texture>> textures*/, const std::string& name = "Default Mesh Name");
 
 	virtual ~Mesh();
 
-	std::vector<std::shared_ptr<Texture>> Textures;
+	//std::vector<std::shared_ptr<Texture>> Textures;
 
 	// methods
 	void Render(Shader& currentShader) override;
-	void Render(Shader& currentShader, std::shared_ptr<Transform> transform) override;
+	//void Render(Shader& currentShader, std::shared_ptr<Transform> transform) override;
 
 protected:
 	//properties

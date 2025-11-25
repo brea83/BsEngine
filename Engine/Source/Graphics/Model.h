@@ -27,9 +27,12 @@ public:
 
 protected:
 	//properties
-	std::vector<std::shared_ptr<Mesh>> _meshes;
 	std::string _filePath;
 	std::string _texturePath;
+	std::vector<std::shared_ptr<Mesh>> _meshes;
+	//Todo: replace textures with materials.
+	std::shared_ptr<Texture> _texture;
+
 	bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 
 	

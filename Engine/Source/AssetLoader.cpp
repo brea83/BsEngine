@@ -7,7 +7,9 @@
 #include <windows.h>
 #undef LoadImage
 
-
+#include "Graphics/Primitives/Triangle.h"
+#include "Graphics/Primitives/QuadMesh.h"
+#include "Graphics/Primitives/Cube.h"
 //const int AssetLoader::MimimumAvailableMb{ 2 };
 
 std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::_resources;
@@ -146,6 +148,52 @@ std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
 }
 
 
+
+std::shared_ptr<Mesh> AssetLoader::LoadPrimitive(PrimitiveMeshType primitiveType)
+{
+	switch (primitiveType)
+	{
+	case PrimitiveMeshType::Triangle:
+	{
+		if (_resources.find("PrimitiveMesh_Triangle") != _resources.end())
+		{
+			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Triangle"));
+			if (resourcePtr) return resourcePtr;
+		}
+		std::shared_ptr<Mesh> mesh = std::make_shared<Triangle>();
+
+		_resources.emplace("PrimitiveMesh_Triangle", mesh);
+		return mesh;
+	}
+	case PrimitiveMeshType::Quad:
+	{
+		if (_resources.find("PrimitiveMesh_Quad") != _resources.end())
+		{
+			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Quad"));
+			if (resourcePtr) return resourcePtr;
+		}
+		std::shared_ptr<Mesh> mesh = std::make_shared<Quad>();
+
+		_resources.emplace("PrimitiveMesh_Quad", mesh);
+		return mesh;
+	}
+	case PrimitiveMeshType::Cube:
+	{
+		if (_resources.find("PrimitiveMesh_Cube") != _resources.end())
+		{
+			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Cube"));
+			if (resourcePtr) return resourcePtr;
+		}
+		std::shared_ptr<Mesh> mesh = std::make_shared<Cube>();
+
+		_resources.emplace("PrimitiveMesh_Cube", mesh);
+		return mesh;
+	}
+	default:
+		break;
+	}
+	return std::shared_ptr<Mesh>();
+}
 
 std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const std::string& textureFilePath)
 {
@@ -320,18 +368,8 @@ std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const st
 
 
 	std::shared_ptr<Mesh> mesh;
-	
-	std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(textureFilePath);
-	std::vector< std::shared_ptr<Texture>> textures;
-	if (texture == nullptr)
-	{
-		mesh = std::make_shared<Mesh>(vertices, indices, name);
-	}
-	else
-	{
-		textures.push_back(texture);
-		mesh = std::make_shared<Mesh>(vertices, indices, textures, name);
-	}
+
+	mesh = std::make_shared<Mesh>(vertices, indices, name);
 
 	_resources.emplace(filePath, mesh);
 	return mesh;
@@ -378,7 +416,6 @@ std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& f
 	{
 		auto texture = std::dynamic_pointer_cast<Texture>(_resources.at(filePath));
 		if (texture) return texture;
-		//return (Texture*)_resources.at(filePath);
 	}
 
 	StbImageData data;

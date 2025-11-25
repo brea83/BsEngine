@@ -21,6 +21,7 @@ public:
 	static std::shared_ptr<Texture> LoadTexture(const std::string& filePath);
 
 	//static 
+	static std::shared_ptr<Mesh> LoadPrimitive(PrimitiveMeshType primitiveType);
 	static std::shared_ptr<Mesh> LoadObj(const std::string& filePath, const std::string& textureFilePath = "");
 	//static std::shared_ptr<Mesh> LoadMesh(std::string& objContentsString);
 	//static std::shared_ptr<Model> LoadFbx(const std::string& filePath);

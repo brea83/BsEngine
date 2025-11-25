@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#include "AssetLoader.h"
 
 //DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
 //	:_currentScene(scene), _selected(selectedObjectIndex)
@@ -229,16 +230,40 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 		ImGui::SeparatorText(buffer);
 
 		//ImGui::Text(component->GetFilePath().c_str());
-		static bool bIsEditing = false;
+		static bool bIsEditing2 = false;
 		static std::string  editingValue2;
-		std::string previousValue = component->GetFilePath();
-		if (DrawStringProperty("FilePath", component->GetFilePath(), editingValue2, bIsEditing))
+		std::string previousValue2 = component->_filePath;
+		if (DrawStringProperty("Mesh File", component->_filePath, editingValue2, bIsEditing2))
 		{
 
 			if (!component->Reload())
 			{
 				std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
-				component->SetFilePath(previousValue);
+				component->_filePath = previousValue2;
+			}
+		}
+
+		static bool bIsEditing = false;
+		static std::string  editingValue1;
+		std::string previousValue = component->_texturePath;
+		if (DrawStringProperty("Texture File", component->_texturePath, editingValue1, bIsEditing))
+		{
+			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->_texturePath);
+			if (newTexture == nullptr)
+			{
+				std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
+				component->_texturePath = previousValue;
+			}
+			else
+			{
+				if (component->_meshes[0]->Textures.size() > 0)
+				{
+					component->_meshes[0]->Textures[0] = newTexture;
+				}
+				else
+				{
+					component->_meshes[0]->Textures.push_back(newTexture);
+				}
 			}
 		}
 	}

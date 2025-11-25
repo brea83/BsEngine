@@ -18,7 +18,7 @@ public:
 	~Model();
 
 	void SetFilePath(const std::string& modelFilePath) { }
-	std::string& GetFilePath() { return _filePath; }
+	std::string GetFilePath() { return _filePath; }
 
 	bool Reload();
 
@@ -50,6 +50,8 @@ protected:
 	std::shared_ptr<Component> Clone() override;
 	void SetParentObject(GameObject* newParent) override;
 	void OnUpdate() override;
+
+	friend class DetailsViewPanel;
 };
 
 // what does a model component need to know to tell the renderer where to render its meshes?

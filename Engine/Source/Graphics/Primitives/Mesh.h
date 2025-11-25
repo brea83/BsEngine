@@ -46,17 +46,16 @@ public:
 	};
 
 	//constructors and properties
-	Mesh(/*unsigned int uid,*/ const std::string& name = "Default Name");
-	//Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<std::shared_ptr<Texture>> textures, const std::string& name = "Default Mesh Name");
-	Mesh(/*unsigned int uid,*/ std::vector<Vertex> vertices, std::vector<unsigned int> indices/*, std::vector<std::shared_ptr<Texture>> textures*/, const std::string& name = "Default Mesh Name");
+	Mesh( const std::string& name = "Default Name");
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const std::string& name = "Default Mesh Name");
 
 	virtual ~Mesh();
 
-	//std::vector<std::shared_ptr<Texture>> Textures;
-
+	std::vector<Vertex>& GetVertices() { return _vertices; }
+	std::vector<unsigned int>& GetIndices() { return _indices; }
 	// methods
 	void Render(Shader& currentShader) override;
-	//void Render(Shader& currentShader, std::shared_ptr<Transform> transform) override;
+	
 
 protected:
 	//properties
@@ -65,7 +64,6 @@ protected:
 	unsigned int EBO{ 0 }; //Element buffer object
 
 	std::vector<Vertex> _vertices;
-	//std::vector<glm::uvec3> _triangles;
 	std::vector<unsigned int> _indices;
 
 	//methods

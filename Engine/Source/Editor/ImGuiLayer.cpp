@@ -78,14 +78,15 @@ void ImGuiLayer::OnImGuiRender()
 	
 	DrawEditorMenu(&engine);
 	ImGui::Begin("Window stats");
+	ImGui::SeparatorText("FPS");
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui::Text("%.3f", io.Framerate);
 	ImGui::SeparatorText("from Window Class");
 	Window& window = engine.GetWindow();
 	ImGui::Text("Width: %d", window.WindowWidth());
 	ImGui::Text("Height: %d", window.WindowHeight());
 	ImGui::Text("AspectRatio: %f", ((float) window.WindowWidth() / (float)window.WindowHeight()));
 
-	ImGui::SeparatorText("From Scene Camera");
-	ImGui::Text("AspectRatio: %f", engine.GetScene()->GetMainCamera()->GetAspectRatio());
 	ImGui::End();
 
 	/*ImGui::Begin("Viewport");

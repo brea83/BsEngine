@@ -90,7 +90,7 @@ void Model::LoadModelAssimp(const std::string & filePath)
 
 bool Model::LoadObj(const std::string& filePath, const std::string& textureFileName)
 {
-	std::shared_ptr<Mesh> mesh = AssetLoader::LoadObj(filePath);
+	std::shared_ptr<Mesh> mesh = AssetLoader::LoadMesh(filePath);
 	if (mesh == nullptr)
 	{
 		return false;

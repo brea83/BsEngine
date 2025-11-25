@@ -21,6 +21,7 @@ public:
 	static std::shared_ptr<Texture> LoadTexture(const std::string& filePath);
 
 	//static 
+	static std::shared_ptr<Mesh>LoadMesh(const std::string& filePath);
 	static std::shared_ptr<Mesh> LoadPrimitive(PrimitiveMeshType primitiveType);
 	static std::shared_ptr<Mesh> LoadObj(const std::string& filePath, const std::string& textureFilePath = "");
 	//static std::shared_ptr<Mesh> LoadMesh(std::string& objContentsString);
@@ -34,7 +35,9 @@ private:
 	static void ParsePathString(const std::string& inPath, std::string& outPath);
 	static std::shared_ptr<Texture> LoadTextureParsedPath(const std::string& filePath);
 
-
+	static std::string CheckForSerializedVersion(const std::string& filePath);
+	static std::string SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh);
+	static std::shared_ptr<Mesh> LoadSerializedMesh(const std::string& filePath);
 
 	//fbx Importing functions 
 

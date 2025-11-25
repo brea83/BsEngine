@@ -47,13 +47,12 @@ void EngineContext::Update()
 	//TODO: plan out what gets updated when window is minimized and what doesn't
 	if (!_bMinimized)
 	{
-		//ProcessInput(_mainWindow->GetGlfwWindow());
 		float currentFrame = (float)glfwGetTime();
 		_deltaTime = currentFrame - _lastFrameTime;
 		_lastFrameTime = currentFrame;
 	}
 
-	_imGuiLayer->OnUpdate(_lastFrameTime);
+	_imGuiLayer->OnUpdate(_deltaTime);
 
 	_mainWindow->OnUpdate();
 }

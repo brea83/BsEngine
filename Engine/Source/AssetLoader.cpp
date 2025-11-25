@@ -149,6 +149,27 @@ std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
 
 
 
+std::shared_ptr<Mesh> AssetLoader::LoadMesh(const std::string& filePath)
+{
+	//std::string serializedPath = CheckForSerializedVersion(filePath);
+	//if ( serializedPath != "")
+	//{
+	//	return LoadSerializedMesh(serializedPath);
+	//}
+
+	std::string fileExtension = filePath.substr(filePath.find_last_of('.'));
+	if (fileExtension == ".fbx")
+	{
+		//LoadModelAssimp(filePath);
+	}
+	else if (fileExtension == ".obj")
+	{
+		return LoadObj(filePath);
+	}
+	
+	return nullptr;
+}
+
 std::shared_ptr<Mesh> AssetLoader::LoadPrimitive(PrimitiveMeshType primitiveType)
 {
 	switch (primitiveType)
@@ -371,6 +392,15 @@ std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const st
 
 	mesh = std::make_shared<Mesh>(vertices, indices, name);
 
+	if (mesh == nullptr) return nullptr;
+
+	//std::string serializedPath = SerializeMesh(filePath, mesh);
+	//if (serializedPath != "")
+	//{
+	//	_resources.emplace(serializedPath, mesh);
+	//	return mesh;
+	//}
+
 	_resources.emplace(filePath, mesh);
 	return mesh;
 }
@@ -430,3 +460,68 @@ std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& f
 	_resources.emplace(filePath, texture);
 	return texture;
 }
+
+std::string AssetLoader::CheckForSerializedVersion(const std::string& filePath)
+{
+	std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
+	serializedPath.append(".bmeta");
+
+	if (_resources.find(serializedPath) != _resources.end()) return serializedPath;
+
+	std::ifstream file(serializedPath);
+
+	if (!file.is_open())
+	{
+		std::cerr << "Failed to open file: " << serializedPath << std::endl;
+		return "";
+	}
+	file.close();
+	return serializedPath;
+}
+
+std::string AssetLoader::SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh)
+{
+	std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
+	serializedPath.append(".bmeta");
+
+	std::fstream file;
+	file.open(serializedPath.c_str(), std::ios_base::out | std::ios_base::binary);
+
+	//metadata about the mesh structure
+	/*file.write((char*)mesh->GetVertices().size(), sizeof(size_t));
+	file.write((char*)mesh->GetIndices().size(), sizeof(size_t));*/
+
+	file.write(reinterpret_cast<const char*>(mesh.get()), sizeof(mesh.get()));
+	file.close();
+
+
+	return serializedPath;
+}
+
+std::shared_ptr<Mesh> AssetLoader::LoadSerializedMesh(const std::string& filePath)
+{
+	if (_resources.find(filePath) != _resources.end())
+	{
+		auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at(filePath));
+		if (resourcePtr) return resourcePtr;
+	}
+
+	//serialized file exists but has not been loaded, try to read it in
+	Mesh mesh;
+
+	std::ifstream file(filePath, std::ios_base::binary);
+	if (!file.is_open())
+	{
+		return nullptr;
+	}
+
+	file.read(reinterpret_cast<char*>(&mesh), sizeof(mesh));
+	file.close();
+	
+	return std::make_shared<Mesh>(mesh);
+}
+
+///loadobj(filePath)
+// check for serialized version of file .meta? .bmeta? 
+// if serialized verson exists run load serialized version
+//		which will check if already loaded and return the loaded mesh if so

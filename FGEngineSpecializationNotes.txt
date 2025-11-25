@@ -552,4 +552,26 @@ OnWindows you can use GlobalMemoryStatusEx to querry how much physical memory is
 TASK1: add some functions to check available memory
 
 TASK 2 make obj loader iterative
-	
+================================
+LECTURE 13 (week 5) mesh loading optimization
+================================
+
+Tasks: serialize mesh as a binary.
+	fps counter & timing of loads
+
+about threads
+	they allow concurency
+	this alows better performance
+	and allows responsiveness even while other threads are busy
+
+these slides are old school check out dots engine notes for notes about thread pools and futures.
+
+windows has WaitForSingleObject(mutex, max miliseconds to wait)
+	if the mutex is free it passes the function
+
+	if the mutex isn't free the thread will paus and wait 
+	if the mutex is released before the miliseconds to wait it will go forward
+
+MUST ReleaseMutex(mutex) after WaitForSingleObject() is done
+
+Task 2: Thread some part of your engine

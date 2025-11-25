@@ -7,6 +7,7 @@
 #include "Graphics/Model.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 //DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
 //	:_currentScene(scene), _selected(selectedObjectIndex)
@@ -35,7 +36,8 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 				selectedObject->Name = std::string(buffer);
 			}*/
 			static bool bIsEditing = false;
-			DrawStringProperty("Name", selectedObject->Name, bIsEditing, selectedObject->Name.size());
+			static std::string editingValue1;
+			//DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
 
 			ImGui::SeparatorText("Transform");
 
@@ -78,7 +80,7 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 	{
 		float fontSize = ImGui::GetFontSize();
 		ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-		ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/ );
 		ImGui::TableNextRow();
 		// the label
 		ImGui::TableSetColumnIndex(0);
@@ -86,7 +88,7 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 
 		// the values
 		ImGui::TableSetColumnIndex(1);
-		ImGui::PushItemWidth(fontSize * 4.0f);
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);// fontSize * 4.0f);
 
 		ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.25f, 0.25f, 1.0f });
@@ -149,76 +151,73 @@ bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& valu
 	return bValueChanged;
 }
 
-bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, bool& bIsEditing, float columnWidth)
+bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth)
 {
-	//bool bValueChanged = false;
+	bool bValueChanged = false;
 	//bool bIsEditing = false;
 	bool bValueSubmitted = false;
 
-	if (ImGui::BeginTable(label.c_str(), 3/*, ImGuiTableFlags_Resizable*/))
+	if (ImGui::BeginTable(label.c_str(), 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersOuter))
 	{
 		float fontSize = ImGui::GetFontSize();
-		ImGui::TableSetupColumn("Labels"/*, ImGuiTableColumnFlags_WidthFixed*/);
-		ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed*/);
-		ImGui::TableSetupColumn("DeleteButton"/*, ImGuiTableColumnFlags_WidthStretch*/);
+		ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * 25.0f);
+		ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthFixed, ImGui::GetContentRegionAvail().x * 0.5);
+		ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
 
 		ImGui::TableNextRow();
 		// the label
-		ImGui::PushItemWidth(fontSize * 3);
 		ImGui::TableSetColumnIndex(0);
+		ImGui::PushItemWidth(fontSize * 3);
 		ImGui::Text(label.c_str());
+		ImGui::PopItemWidth();
 
 		// the values
 		ImGui::TableSetColumnIndex(1);
-		ImGui::PushItemWidth(fontSize * columnWidth);
+		ImGui::PushItemWidth(fontSize * value.size());
 		// do stuff
-		static char editingValue[256];
-		//memset(editingValue, 0, sizeof(editingValue));
-		//strcpy_s(editingValue, sizeof(editingValue), value.c_str());
 
 		if (bIsEditing)
 		{
-			if(ImGui::InputTextWithHint("##EditableString", value.c_str(), editingValue, IM_ARRAYSIZE(editingValue)))
-			{
-				//bValueChanged = (value.c_str() != editingValue);
-			}
+			ImGui::InputTextWithHint("##EditableString", value.c_str(), &editingValue);	
 		}
 		else
 		{
 			ImGui::Text( value.c_str());
 		}
+		ImGui::PopItemWidth();
 
 		// the button to turn  the value field into an edit field
 		ImGui::TableSetColumnIndex(2);
-		ImGui::PushItemWidth(-FLT_MIN);
+		ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x);
 
 		std::string buttonText = bIsEditing ? "Done" : "Edit";
 		if(ImGui::Button(buttonText.c_str()))
 		{
-			if (bIsEditing /*&& bValueChanged*/)
+			bValueChanged = (value != editingValue);
+			if (bIsEditing && bValueChanged)
 			{
-				if (editingValue != NULL && editingValue[0] == '\0')
-				{
-					std::cout << "Error: tried to submit empty string to property: " << label << std::endl;
-				}
-				else
+				if (editingValue != "" && editingValue != " ")
 				{
 					value = editingValue;
 					bValueSubmitted = true;
 				}
-				//bValueChanged = false;
+				//else
+				//{
+				//	//std::cout << "Error: tried to submit empty string to property: " << label << std::endl;
+				//}
+
 			}
 
 			bIsEditing = !bIsEditing;
 		}
-
+		ImGui::PopItemWidth();
 		ImGui::EndTable();
 	}
 
 	return bValueSubmitted;
 }
 
-void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/)
+void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 {
 
 	if (selectedObject->HasCompoenent<Model>())
@@ -231,10 +230,16 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject/*std::unordered
 
 		//ImGui::Text(component->GetFilePath().c_str());
 		static bool bIsEditing = false;
-		
-		if (DrawStringProperty("FilePath", component->GetFilePath(), bIsEditing))
+		static std::string  editingValue2;
+		std::string previousValue = component->GetFilePath();
+		if (DrawStringProperty("FilePath", component->GetFilePath(), editingValue2, bIsEditing))
 		{
-			std::cout << "Model component String property returned value submitted == true" << std::endl;
+
+			if (!component->Reload())
+			{
+				std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
+				component->SetFilePath(previousValue);
+			}
 		}
 	}
 }

@@ -14,11 +14,13 @@
 class Model : public Component
 {
 public:
-	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureDirectoryPath = "Assets/Textures/", const std::string& textureFileName = "Viking_House.png");
+	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
 	~Model();
 
 	void SetFilePath(const std::string& modelFilePath) { }
 	std::string& GetFilePath() { return _filePath; }
+
+	bool Reload();
 
 	// Inherited via Renderable
 	void Render(Shader& currentShader);
@@ -27,12 +29,12 @@ protected:
 	//properties
 	std::vector<std::shared_ptr<Mesh>> _meshes;
 	std::string _filePath;
-	std::string _texturesDirectory{"Assets/Textures/"};
+	std::string _texturePath;
+	bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 
 	
 	//methods
 	void LoadModelAssimp(const std::string& filePath);
-	void LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 	//TODO: refactor this to look for matching models and meshes in the assetloader
 	// and move the actual loading and processing to the asset loader
 	// for now just following tutorial to see if I can get importing to work at all

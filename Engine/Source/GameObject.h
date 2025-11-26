@@ -38,6 +38,7 @@ public:
 	GameObject* GetParent() { return _parent; }
 
 	void AddChild(GameObject* child);
+	void RemoveChild(GameObject* child);
 	std::vector< GameObject*>& GetChildren() { return _children; }
 
 	virtual void OnUpdate(){ }

@@ -24,11 +24,37 @@ GameObject::~GameObject()
 
 void GameObject::SetParent(GameObject* newParent)
 {
+	if (_parent != nullptr && _parent != newParent)
+	{
+		_parent->RemoveChild(this);
+	}
+
+	_parent = newParent;
 }
 
 void GameObject::AddChild(GameObject* child)
 {
+	if (child == nullptr) return;
 
+	if (std::find(_children.begin(), _children.end(), child) != _children.end())
+	{
+		// already is a child. do nothing
+		return;
+	}
+
+	_children.push_back(child);
+	child->SetParent(this);
+}
+
+void GameObject::RemoveChild(GameObject* child)
+{
+	if (child == nullptr) return;
+	auto foundItterator = std::find(_children.begin(), _children.end(), child);
+
+	if (foundItterator != _children.end())
+	{
+		_children.erase(foundItterator);
+	}
 }
 
 //TODO: update this to read in serialized data for loading scenes etc

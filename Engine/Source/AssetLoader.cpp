@@ -515,7 +515,6 @@ std::string AssetLoader::SerializeMesh(const std::string& filePath, std::shared_
 	file.write((char*)mesh->GetVertices().data(), sizeof(Mesh::Vertex) * mesh->GetVertices().size());
 	file.write((char*)mesh->GetIndices().data(), sizeof(unsigned int) * mesh->GetIndices().size());
 
-	//file.write(reinterpret_cast<const char*>(mesh.get()), sizeof(*mesh.get()));
 	file.close();
 
 

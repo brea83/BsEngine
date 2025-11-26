@@ -22,20 +22,20 @@ void Camera::LookAt(const glm::vec3 & target, const glm::vec3 & newUp)
 	// AND REFACTOR THE SCENE EDIT CAMERA TO BE DIFFERENT FROM THE SCENE'S MAIN GAMEPLAY CAM
 bool Camera::HandleMoveWasd(int keyCode, float deltaTime)
 {
-	const float cameraSpeed = 10.0f * deltaTime; // adjust accordingly
+	 float velocity = _cameraSpeed * deltaTime; // adjust accordingly
 	switch (keyCode)
 	{
 	case GLFW_KEY_W:
-		_position += cameraSpeed * _forward;
+		_position += velocity * _forward;
 		return true;
 	case GLFW_KEY_S:
-			_position -= cameraSpeed * _forward;
+			_position -= velocity * _forward;
 		return true;
 	case GLFW_KEY_A:
-		_position -= glm::normalize(glm::cross(_forward, _up)) * cameraSpeed;
+		_position -= glm::normalize(glm::cross(_forward, _up)) * velocity;
 		return true;
 	case GLFW_KEY_D:
-		_position += glm::normalize(glm::cross(_forward, _up)) * cameraSpeed;
+		_position += glm::normalize(glm::cross(_forward, _up)) * velocity;
 		return true;
 	default:
 		return false;
@@ -45,7 +45,7 @@ bool Camera::HandleMoveWasd(int keyCode, float deltaTime)
 
 bool Camera::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
 {
-	const float sensitivity = 1.0f * deltaTime;
+	const float sensitivity = _mouseLookSesitivity * deltaTime;
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
@@ -63,9 +63,10 @@ bool Camera::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
 bool Camera::Zoom(float amount)
 {
 	_fov -= amount;
+
 	if (_fov < 1.0f) _fov = 1.0f;
 
-	if (_fov > 45.0f) _fov = 45.0f;
+	if (_fov > 90.0f) _fov = 90.0f;
 	return true;
 }
 

@@ -34,11 +34,11 @@ public:
 	template <typename Type>
 	void RemoveComponent();
 
-	void SetParent(std::shared_ptr<GameObject> newParent);
-	std::shared_ptr<GameObject> GetParent() { return _parent; }
+	void SetParent(GameObject* newParent);
+	GameObject* GetParent() { return _parent; }
 
-	void AddChild(std::shared_ptr<GameObject> child);
-	std::vector< std::shared_ptr<GameObject>>& GetChildren() { return _children; }
+	void AddChild(GameObject* child);
+	std::vector< GameObject*>& GetChildren() { return _children; }
 
 	virtual void OnUpdate(){ }
 
@@ -55,8 +55,8 @@ protected:
 	//for now components are hashed by their typeid hashcode, meaning no duplicates of class type. this will need to be modified
 	std::unordered_map<size_t, std::shared_ptr<Component>> _components;
 
-	std::shared_ptr<GameObject> _parent{ nullptr };
-	std::vector<std::shared_ptr<GameObject>> _children;
+	GameObject* _parent{ nullptr };
+	std::vector<GameObject*> _children;
 
 	virtual void Init();
 

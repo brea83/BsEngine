@@ -177,17 +177,23 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	if (keyCode == GLFW_KEY_TAB)
 	{
 		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
-		_camFlyMode = !_camFlyMode;
-		if (_camFlyMode)
-		{
-			_firstMouse = true;
-			glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		}
-		else
-		{
-			glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
+		ToggleCamFlyMode();
 	}
 	//_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
 	return false;
+}
+
+
+void EngineContext::ToggleCamFlyMode()
+{
+	_camFlyMode = !_camFlyMode;
+	if (_camFlyMode)
+	{
+		_firstMouse = true;
+		glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	else
+	{
+		glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }

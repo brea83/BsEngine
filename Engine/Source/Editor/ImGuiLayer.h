@@ -30,4 +30,7 @@ class Scene;
 		Scene* _currentScene;
 		SceneHierarchyPanel _hierarchy;
 		ImGuiPanel* _assetViewer;
+
+		void DrawSceneTools();
+
 	};

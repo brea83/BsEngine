@@ -40,6 +40,8 @@ public:
 	void Draw();
 	void DrawConsole();
 
+	void ToggleCamFlyMode();
+
 	// Window event callbacks
 	void OnEvent(Event& event);
 	bool OnFrameBufferSize(WindowResizedEvent& event);

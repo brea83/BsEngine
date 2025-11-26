@@ -575,3 +575,31 @@ windows has WaitForSingleObject(mutex, max miliseconds to wait)
 MUST ReleaseMutex(mutex) after WaitForSingleObject() is done
 
 Task 2: Thread some part of your engine
+
+================================
+LECTURE 14 (week 5) rendering data and texture loading
+================================
+
+seekg and tellg are how you tell your filestream where to start reading and writing from
+
+shader or entity rendering group
+	like transparent, or cast shadows etc
+
+CAMERAS
+	list of cameras in the ui
+	cameras have settings 
+		perspective, ortho
+		position
+		rotation
+		zoom
+		speed for moving with wasd
+
+yet again going into camera view and projection matrices
+
+review of loading textures
+
+TEXTURE MANAGER
+	structure looks a lot like a specialized version of my general asset loader
+
+going over making your own png loader.
+

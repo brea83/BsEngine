@@ -38,6 +38,11 @@ protected:
 	float _far{ 100.0f };
 	bool _bProjectionMatrixDirty{ false };
 
+	float _cameraSpeed{ 10.0f };
+	float _mouseLookSesitivity{ 10.0f };
+
 	void UpdateCameraVectors();
+
+	friend class ImGuiLayer;
 };
 

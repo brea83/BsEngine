@@ -56,7 +56,6 @@ public:
 	// methods
 	void Render(Shader& currentShader) override;
 	
-
 protected:
 	//properties
 	unsigned int VAO{ 0 };

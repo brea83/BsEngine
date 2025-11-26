@@ -10,8 +10,10 @@
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/QuadMesh.h"
 #include "Graphics/Primitives/Cube.h"
-//const int AssetLoader::MimimumAvailableMb{ 2 };
 
+#include <chrono>
+
+const static std::string s_SerializationVersion = "Version 0.1 of Bs Engine Serialization";
 std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::_resources;
 
 bool AssetLoader::IsMemoryAvailable(int minimumAvailableMb)
@@ -151,12 +153,19 @@ std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
 
 std::shared_ptr<Mesh> AssetLoader::LoadMesh(const std::string& filePath)
 {
-	//std::string serializedPath = CheckForSerializedVersion(filePath);
-	//if ( serializedPath != "")
-	//{
-	//	return LoadSerializedMesh(serializedPath);
-	//}
+	std::string serializedPath = CheckForSerializedVersion(filePath);
+	if ( serializedPath != "")
+	{
+		auto timerStart = std::chrono::high_resolution_clock::now();
+		std::shared_ptr<Mesh> mesh = LoadSerializedMesh(serializedPath);
+		auto timerEnd = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
+		std::cout << "Loading serialized mesh took: " << duration.count() << " microseconds." << std::endl;
 
+		return mesh;
+	}
+
+	std::shared_ptr<Mesh> mesh;
 	std::string fileExtension = filePath.substr(filePath.find_last_of('.'));
 	if (fileExtension == ".fbx")
 	{
@@ -164,10 +173,15 @@ std::shared_ptr<Mesh> AssetLoader::LoadMesh(const std::string& filePath)
 	}
 	else if (fileExtension == ".obj")
 	{
-		return LoadObj(filePath);
+		auto timerStart = std::chrono::high_resolution_clock::now();
+		mesh = LoadObj(filePath);
+		auto timerEnd = std::chrono::high_resolution_clock::now();
+
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
+		std::cout << "Loading Obj took: " << duration.count() << " microseconds." << std::endl;
 	}
 	
-	return nullptr;
+	return mesh;
 }
 
 std::shared_ptr<Mesh> AssetLoader::LoadPrimitive(PrimitiveMeshType primitiveType)
@@ -394,12 +408,12 @@ std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const st
 
 	if (mesh == nullptr) return nullptr;
 
-	//std::string serializedPath = SerializeMesh(filePath, mesh);
-	//if (serializedPath != "")
-	//{
-	//	_resources.emplace(serializedPath, mesh);
-	//	return mesh;
-	//}
+	std::string serializedPath = SerializeMesh(filePath, mesh);
+	if (serializedPath != "")
+	{
+		_resources.emplace(serializedPath, mesh);
+		return mesh;
+	}
 
 	_resources.emplace(filePath, mesh);
 	return mesh;
@@ -484,14 +498,24 @@ std::string AssetLoader::SerializeMesh(const std::string& filePath, std::shared_
 	std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
 	serializedPath.append(".bmeta");
 
-	std::fstream file;
-	file.open(serializedPath.c_str(), std::ios_base::out | std::ios_base::binary);
+	std::ofstream file(serializedPath, std::ios_base::binary);
+	if (!file.is_open())
+	{
+		std::cerr << "ERROR: failed to open file to serialize mesh: " << serializedPath << std::endl;
+		return "";
+	}
 
 	//metadata about the mesh structure
-	/*file.write((char*)mesh->GetVertices().size(), sizeof(size_t));
-	file.write((char*)mesh->GetIndices().size(), sizeof(size_t));*/
+	file.write((char*)s_SerializationVersion.c_str(), s_SerializationVersion.size() * sizeof(char));
+	size_t numVertices = mesh->GetVertices().size();
+	file.write((char*)&numVertices, sizeof(size_t));
+	size_t numIndices = mesh->GetIndices().size();
+	file.write((char*)&numIndices, sizeof(size_t));
 
-	file.write(reinterpret_cast<const char*>(mesh.get()), sizeof(mesh.get()));
+	file.write((char*)mesh->GetVertices().data(), sizeof(Mesh::Vertex) * mesh->GetVertices().size());
+	file.write((char*)mesh->GetIndices().data(), sizeof(unsigned int) * mesh->GetIndices().size());
+
+	//file.write(reinterpret_cast<const char*>(mesh.get()), sizeof(*mesh.get()));
 	file.close();
 
 
@@ -506,22 +530,33 @@ std::shared_ptr<Mesh> AssetLoader::LoadSerializedMesh(const std::string& filePat
 		if (resourcePtr) return resourcePtr;
 	}
 
-	//serialized file exists but has not been loaded, try to read it in
-	Mesh mesh;
-
 	std::ifstream file(filePath, std::ios_base::binary);
 	if (!file.is_open())
 	{
 		return nullptr;
 	}
 
-	file.read(reinterpret_cast<char*>(&mesh), sizeof(mesh));
+	std::string version;
+	version.resize(s_SerializationVersion.size());
+	file.read((char*)version.data(), s_SerializationVersion.size() * sizeof(char));
+
+	size_t numVertices;
+	file.read((char*)&numVertices, sizeof(size_t));
+	if (numVertices > 100000000) throw std::runtime_error("Error reading serialized mesh, too many vertices");
+
+	size_t numIndices;
+	file.read((char*)&numIndices, sizeof(size_t));
+	if (numIndices > 300000000) throw std::runtime_error("Error reading serialized mesh, too many indices");
+
+	std::vector<Mesh::Vertex> vertices;
+	vertices.resize(numVertices);
+	file.read((char*)vertices.data(), sizeof(Mesh::Vertex) * numVertices);
+
+	std::vector<unsigned int> indices;
+	indices.resize(numIndices);
+	file.read((char*)indices.data(), sizeof(unsigned int) * numIndices);
+
 	file.close();
 	
-	return std::make_shared<Mesh>(mesh);
+	return std::make_shared<Mesh>(vertices, indices);
 }
-
-///loadobj(filePath)
-// check for serialized version of file .meta? .bmeta? 
-// if serialized verson exists run load serialized version
-//		which will check if already loaded and return the loaded mesh if so

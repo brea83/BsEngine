@@ -22,11 +22,13 @@ GameObject::~GameObject()
 	}
 }
 
-void GameObject::SetParent(std::shared_ptr<GameObject> newParent)
-{}
-
-void GameObject::AddChild(std::shared_ptr<GameObject> child)
+void GameObject::SetParent(GameObject* newParent)
 {
+}
+
+void GameObject::AddChild(GameObject* child)
+{
+
 }
 
 //TODO: update this to read in serialized data for loading scenes etc

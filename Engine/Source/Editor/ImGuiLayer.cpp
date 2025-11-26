@@ -122,8 +122,11 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 			}
 			ImGui::EndMenu();
 		}
+
 		ImGui::EndMainMenuBar();
 	}
+
+	DrawSceneTools();
 }
 
 void ImGuiLayer::End()
@@ -143,4 +146,33 @@ void ImGuiLayer::End()
 		ImGui::RenderPlatformWindowsDefault();
 		glfwMakeContextCurrent(backup_current_context);
 	}
+}
+
+void ImGuiLayer::DrawSceneTools()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		ImGui::Separator();
+		if(ImGui::Button("CamFlyMode"))
+		{
+			EngineContext* engine = EngineContext::GetEngine();
+			engine->ToggleCamFlyMode();
+		}
+		ImGui::SetItemTooltip("Tab to toggle fly controlls");
+
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
+		ImGui::Text("Cam Speed");
+		ImGui::DragFloat("##Speed", &_currentScene->GetMainCamera()->_cameraSpeed);
+		ImGui::Text("Look Sensitivity");
+		ImGui::DragFloat("##Sensitivity", &_currentScene->GetMainCamera()->_mouseLookSesitivity);
+		ImGui::Text("FOV");
+		ImGui::DragFloat("##FoVvalue", &_currentScene->GetMainCamera()->_fov);
+		if(ImGui::Button("ResetFoV"))
+		{
+			_currentScene->GetMainCamera()->_fov = 45.0f;
+		}
+		ImGui::PopItemWidth();
+		ImGui::EndMainMenuBar();
+	}
+	
 }

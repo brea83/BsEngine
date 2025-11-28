@@ -44,6 +44,18 @@ void Scene::RemoveGameObject(GameObject* objectToRemove)
 	std::cout << "Tried to remove: " << objectToRemove << ", from Scene, but could not find it" << std::endl;
 }
 
+GameObject* Scene::GetGameObjectByIndex(int index)
+{
+	
+	if (index < 0 || NumGameObjects() <= index)
+	{
+		return nullptr;
+	}
+
+	return _gameObjects[index];
+	
+}
+
 void Scene::CreateCube()
 {
 	//_objectsToRender.emplace_back(new Cube());

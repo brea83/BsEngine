@@ -16,6 +16,9 @@ public:
 	void CreateEmptyGameObject();
 	void AddGameObject(GameObject* gameObject) { _gameObjects.push_back(gameObject); }
 	void RemoveGameObject(GameObject* objectToRemove);
+	int NumGameObjects() { return _gameObjects.size(); }
+	GameObject* GetGameObjectByIndex(int index);
+	
 
 	void AddRenderable(std::shared_ptr<Model> newRenderable) { _objectsToRender.push_back(newRenderable); }
 	void CreateCube();

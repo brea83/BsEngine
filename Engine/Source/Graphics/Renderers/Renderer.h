@@ -15,6 +15,7 @@ public:
 	virtual void RenderFrame(Scene& scene) = 0;
 	virtual void EndFrame(Scene& scene) = 0;
 
+	std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return _frameBuffer; }
 	virtual uint32_t GetFrameBufferID() { return _frameBuffer->GetColorAttachmentRendererId(); }
 protected:
 	EngineContext* _engine;

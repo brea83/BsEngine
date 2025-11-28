@@ -10,6 +10,8 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& specification)
 FrameBuffer::~FrameBuffer()
 {
 	glDeleteFramebuffers(1, &_rendererId);
+	glDeleteTextures(1, &_colorAttatchment);
+	glDeleteTextures(1, &_depthAttachment);
 }
 
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& specification)
@@ -20,6 +22,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification&
 void FrameBuffer::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, _rendererId);
+	glViewport(0, 0, _specification.Width, _specification.Height);
 }
 
 void FrameBuffer::UnBind()
@@ -29,6 +32,13 @@ void FrameBuffer::UnBind()
 
 void FrameBuffer::Resize()
 {
+	if (_rendererId)
+	{
+		glDeleteFramebuffers(1, &_rendererId);
+		glDeleteTextures(1, &_colorAttatchment);
+		glDeleteTextures(1, &_depthAttachment);
+	}
+
 	glCreateFramebuffers(1, &_rendererId);
 	glBindFramebuffer(GL_FRAMEBUFFER, _rendererId);
 
@@ -53,4 +63,11 @@ void FrameBuffer::Resize()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::Resize(uint32_t width, uint32_t height)
+{
+	_specification.Width = width;
+	_specification.Height = height;
+	Resize();
 }

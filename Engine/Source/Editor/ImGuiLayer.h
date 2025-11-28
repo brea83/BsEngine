@@ -1,10 +1,12 @@
 #pragma once
 
-#include "../Layer.h"
+#include "Layer.h"
 #include "Editor/Panels/SceneHierarchyPanel.h"
 #include "Editor/Panels/ImGuiPanel.h"
+#include <glm/glm.hpp>
 
 class EngineContext;
+class Camera;
 
 class Scene;
 
@@ -28,6 +30,7 @@ class Scene;
 	private:
 		float _time{ 0.0f };
 		Scene* _currentScene;
+		glm::vec2 _viewportPanelSize{ 0.0f };
 
 		bool bGridVisibleX{ true };
 		bool bGridVisibleY{ false };
@@ -37,6 +40,7 @@ class Scene;
 
 		void DrawSceneTools();
 
-		void DrawGridLines();
+		void DrawGridLines(Camera* camera);
+		void DrawGizmos(Camera* camera, int selectedObjectIndex);
 
 	};

@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/glm.hpp>
 
 struct FrameBufferSpecification
 {
@@ -25,10 +26,11 @@ public:
 	uint32_t GetColorAttachmentRendererId() const { return _colorAttatchment; }
 
 	void Resize();
+	void Resize(uint32_t width, uint32_t height);
 private:
-	uint32_t _rendererId;
-	uint32_t _colorAttatchment;
-	uint32_t _depthAttachment;
+	uint32_t _rendererId{ 0 };
+	uint32_t _colorAttatchment{ 0 };
+	uint32_t _depthAttachment{ 0 };
 	FrameBufferSpecification _specification;
 };
 

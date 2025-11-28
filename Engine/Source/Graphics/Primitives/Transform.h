@@ -33,6 +33,8 @@ public:
 	// methods
 	glm::mat4& GetObjectToWorldMatrix();
 
+	glm::mat4 GetLocal() const { return _localMatrix; }
+	glm::mat4 GetWorld() const { return _worldMatrix; }
 
 private:
 	glm::vec3 _position { 0.0f };

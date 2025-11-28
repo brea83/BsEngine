@@ -3,19 +3,24 @@
 
 #include "EngineContext.h"
 #include "GlfwWrapper.h"
+#include "Graphics/Camera.h"
+#include "Graphics/FrameBuffer.h"
+#include "GameObject.h"
+#include "Graphics/Primitives/Transform.h"
 //#include "glad/glad.h"
 
 #include <imgui.h>
-#include<backends/imgui_impl_glfw.h>
-#include<backends/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <ImGuizmo/ImGuizmo.h>
+
+#include <glm/matrix.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "GLFW/glfw3.h"
-#include "Graphics/Camera.h"
 
 #include "Editor/Panels/AssetViewerPanel.h"
 #include "Editor/Panels/DetailsViewPanel.h"
-#include <ImGuizmo/ImGuizmo.h>
-#include <glm/matrix.hpp>
 
 
 ImGuiLayer::ImGuiLayer()
@@ -70,7 +75,8 @@ void ImGuiLayer::Begin()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	//ToDo hook this up to detect perspective changes
-	//ImGuizmo::BeginFrame();
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetOrthographic(false);
 }
 
 void ImGuiLayer::OnImGuiRender()
@@ -78,8 +84,7 @@ void ImGuiLayer::OnImGuiRender()
 	EngineContext& engine = *EngineContext::GetEngine();
 	static bool show = true;
 
-	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-	//DrawGridLines();
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport()/*, ImGuiDockNodeFlags_PassthruCentralNode*/);
 	DrawEditorMenu(&engine);
 	ImGui::Begin("Window stats");
 	ImGui::SeparatorText("FPS");
@@ -93,15 +98,28 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	/*ImGui::Begin("Viewport");
-	uint32_t textureID = engine.GetRenderer()->GetFrameBufferID();
-	ImGui::Image((void*)textureID, ImVec2{ 1280, 720 });
-	ImGui::End();*/
-
 	int selected = SceneHierarchyPanel::Draw(_currentScene);
 
 	DetailsViewPanel::Draw(_currentScene, selected);
 	AssetViewerPanel::Draw();
+
+	ImGui::Begin("Viewport");
+	Camera* camera = _currentScene->GetMainCamera();
+	//DrawGridLines(camera);
+	
+	std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
+	uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
+	ImVec2 currentSize = ImGui::GetContentRegionAvail();
+
+	if (_viewportPanelSize.x != currentSize.x || _viewportPanelSize.y != currentSize.y)
+	{
+		_viewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
+		frameBuffer->Resize(currentSize.x, currentSize.y);
+		camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
+	}
+	ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
+	DrawGizmos(camera, selected);
+	ImGui::End();
 }
 
 void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
@@ -181,34 +199,30 @@ void ImGuiLayer::DrawSceneTools()
 	
 }
 
-void ImGuiLayer::DrawGridLines()
+void ImGuiLayer::DrawGridLines(Camera* camera)
 {
-	Camera* mainCam = _currentScene->GetMainCamera();
+}
 
-	glm::mat4 view = mainCam->ViewMatrix();
-	glm::mat4 projection = mainCam->ProjectionMatrix();
-	float guizmoProjection[16] = 
-	{
-		projection[0][0], projection[1][0], projection[2][0], projection[3][0],
-		projection[0][1], projection[1][1], projection[2][1], projection[3][1],
-		projection[0][2], projection[1][2], projection[2][2], projection[3][2],
-		projection[0][3], projection[1][3], projection[2][3], projection[3][3],
-	};
-	float guizmoView[16] = 
-	{
-		view[0][0], view[1][0], view[2][0], view[3][0],
-		view[0][1], view[1][1], view[2][1], view[3][1],
-		view[0][2], view[1][2], view[2][2], view[3][2],
-		view[0][3], view[1][3], view[2][3], view[3][3],
-	};
+void ImGuiLayer::DrawGizmos(Camera* camera, int selectedObjectIndex)
+{
+	GameObject* selectedObject = _currentScene->GetGameObjectByIndex(selectedObjectIndex);
+	if (selectedObject == nullptr) return;
 
-	static const float guizmoIdentity[16] =
-	{
-		1.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, 1.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-	};
+	ImGuizmo::SetDrawlist();
 
-	//ImGuizmo::DrawGrid(guizmoView, guizmoProjection, guizmoIdentity, 100.0f);
+	//glm::vec2 viewport = glm::vec2(ImGui::GetMainViewport()->WorkSize.x, ImGui::GetMainViewport()->WorkSize.y);
+	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+	
+	
+
+	std::shared_ptr<Transform> transform = selectedObject->GetTransform();
+	glm::mat4 transformMatrix = transform->GetLocal();
+
+	ImGuizmo::Manipulate(glm::value_ptr(camera->ViewMatrix()), glm::value_ptr(camera->ProjectionMatrix()),
+		ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix));
+	
+	if (ImGuizmo::IsUsing())
+	{
+		transform->SetPosition(glm::vec3(transformMatrix[3]));
+	}
 }

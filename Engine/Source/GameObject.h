@@ -34,10 +34,12 @@ public:
 	template <typename Type>
 	void RemoveComponent();
 
-	void SetParent(GameObject* newParent);
+	void SetParent(GameObject* newParent, bool bSentFromAddChild = false);
 	GameObject* GetParent() { return _parent; }
 
-	void AddChild(GameObject* child);
+	void UnParent(bool bKeepWorldPosition = true);
+
+	void AddChild(GameObject* child, bool bSentFromSetParent = false);
 	void RemoveChild(GameObject* child);
 	std::vector< GameObject*>& GetChildren() { return _children; }
 

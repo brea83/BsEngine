@@ -15,6 +15,7 @@ class Transform
 public:
 	Transform(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 	// properties
+	void UnParent(bool bKeepWorldPosition = true);
 	std::shared_ptr<Transform> ParentTransform;
 
 	void SetPosition(glm::vec3 value) { _position = value; _positionDirty = true; }
@@ -35,7 +36,7 @@ public:
 
 private:
 	glm::vec3 _position { 0.0f };
-	bool _positionDirty { false };
+	bool _positionDirty { true };
 
 	//Note to self: store rotations as radians for easier import
 	glm::vec3 _eulerRotation { 0.0f };
@@ -49,6 +50,8 @@ private:
 	glm::mat4 _localMatrix;
 
 	glm::mat4 _worldMatrix;
+
+	void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
 
 	friend class DetailsViewPanel;
 };

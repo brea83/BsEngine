@@ -20,19 +20,42 @@ GameObject::~GameObject()
 			EngineContext::GetEngine()->GetScene()->RemoveRenderable(model);
 		}
 	}
+
+	if (_parent == nullptr && _children.size() > 0)
+	{
+		for (GameObject* child : _children)
+		{
+			child->UnParent();
+		}
+	}
 }
 
-void GameObject::SetParent(GameObject* newParent)
+void GameObject::SetParent(GameObject* newParent, bool bSentFromAddChild)
 {
-	if (_parent != nullptr && _parent != newParent)
+	if (newParent == nullptr || _parent == newParent) return;
+
+	if (_parent != nullptr)
 	{
 		_parent->RemoveChild(this);
 	}
 
 	_parent = newParent;
+	_transform->ParentTransform = _parent->GetTransform();
+
+	if (!bSentFromAddChild)
+	{
+		_parent->AddChild(this);
+	}
 }
 
-void GameObject::AddChild(GameObject* child)
+
+void GameObject::UnParent(bool bKeepWorldPosition)
+{
+	_transform->UnParent();
+	_parent = nullptr;
+}
+
+void GameObject::AddChild(GameObject* child, bool bSentFromSetParent)
 {
 	if (child == nullptr) return;
 
@@ -43,7 +66,11 @@ void GameObject::AddChild(GameObject* child)
 	}
 
 	_children.push_back(child);
-	child->SetParent(this);
+
+	if (!bSentFromSetParent)
+	{
+		child->SetParent(this, true);
+	}
 }
 
 void GameObject::RemoveChild(GameObject* child)

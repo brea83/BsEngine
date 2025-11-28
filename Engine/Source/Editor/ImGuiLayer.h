@@ -28,9 +28,15 @@ class Scene;
 	private:
 		float _time{ 0.0f };
 		Scene* _currentScene;
+
+		bool bGridVisibleX{ true };
+		bool bGridVisibleY{ false };
+		bool bGridVisibleZ{ true };
 		SceneHierarchyPanel _hierarchy;
 		ImGuiPanel* _assetViewer;
 
 		void DrawSceneTools();
+
+		void DrawGridLines();
 
 	};

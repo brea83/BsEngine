@@ -14,6 +14,8 @@
 
 #include "Editor/Panels/AssetViewerPanel.h"
 #include "Editor/Panels/DetailsViewPanel.h"
+#include <ImGuizmo/ImGuizmo.h>
+#include <glm/matrix.hpp>
 
 
 ImGuiLayer::ImGuiLayer()
@@ -67,6 +69,8 @@ void ImGuiLayer::Begin()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+	//ToDo hook this up to detect perspective changes
+	//ImGuizmo::BeginFrame();
 }
 
 void ImGuiLayer::OnImGuiRender()
@@ -75,7 +79,7 @@ void ImGuiLayer::OnImGuiRender()
 	static bool show = true;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-	
+	//DrawGridLines();
 	DrawEditorMenu(&engine);
 	ImGui::Begin("Window stats");
 	ImGui::SeparatorText("FPS");
@@ -175,4 +179,36 @@ void ImGuiLayer::DrawSceneTools()
 		ImGui::EndMainMenuBar();
 	}
 	
+}
+
+void ImGuiLayer::DrawGridLines()
+{
+	Camera* mainCam = _currentScene->GetMainCamera();
+
+	glm::mat4 view = mainCam->ViewMatrix();
+	glm::mat4 projection = mainCam->ProjectionMatrix();
+	float guizmoProjection[16] = 
+	{
+		projection[0][0], projection[1][0], projection[2][0], projection[3][0],
+		projection[0][1], projection[1][1], projection[2][1], projection[3][1],
+		projection[0][2], projection[1][2], projection[2][2], projection[3][2],
+		projection[0][3], projection[1][3], projection[2][3], projection[3][3],
+	};
+	float guizmoView[16] = 
+	{
+		view[0][0], view[1][0], view[2][0], view[3][0],
+		view[0][1], view[1][1], view[2][1], view[3][1],
+		view[0][2], view[1][2], view[2][2], view[3][2],
+		view[0][3], view[1][3], view[2][3], view[3][3],
+	};
+
+	static const float guizmoIdentity[16] =
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		1.0f, 0.0f, 0.0f, 1.0f,
+	};
+
+	//ImGuizmo::DrawGrid(guizmoView, guizmoProjection, guizmoIdentity, 100.0f);
 }

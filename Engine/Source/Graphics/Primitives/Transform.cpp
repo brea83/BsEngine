@@ -1,16 +1,36 @@
 #include "BsPrecompileHeader.h"
 #include "Transform.h"
 #include <glm/gtc/matrix_transform.hpp>
+#define  GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/matrix_decompose.hpp>
 
 //
 
 Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
-    : _position(position), _eulerRotation(glm::radians(rotation)), _scale(scale)
-{
-    //_localMatrix = glm::mat4(1.0f);
+    : _position(position), _eulerRotation(glm::radians(rotation)), 
+    _orientation(glm::quat(glm::radians(rotation))), _scale(scale), 
+    _localMatrix(glm::mat4(1.0f)), _worldMatrix(glm::mat4(1.0f))
+{ }
 
-    _orientation = glm::quat(_eulerRotation);
-    RecalculateModelMatrix();
+void Transform::UnParent(bool bKeepWorldPosition)
+{
+    if (ParentTransform != nullptr)
+    {
+        glm::mat4 parentMatrix = ParentTransform->_localMatrix;
+
+        _localMatrix = parentMatrix * _localMatrix;
+
+        Decompose(_localMatrix, _scale, _orientation, _position );
+
+        SetRotationQuaternion(_orientation, AngleType::Radians);
+
+        if (ParentTransform->ParentTransform != nullptr)
+        {
+            ParentTransform = ParentTransform->ParentTransform;
+            return;
+        }
+    }
+    ParentTransform = nullptr;
 }
 
 glm::vec3 Transform::GetPosition()
@@ -151,4 +171,11 @@ void Transform::RecalculateModelMatrix()
     _positionDirty = false;
     _scaleDirty = false;
     _rotationDirty = false;
+}
+
+void Transform::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)
+{
+    glm::vec3 skew;
+    glm::vec4 perspective;
+    glm::decompose(modelMatrix, scale, orientation, translation, skew, perspective);
 }

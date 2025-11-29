@@ -10,6 +10,7 @@
 //#include "glad/glad.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <ImGuizmo/ImGuizmo.h>
@@ -103,7 +104,8 @@ void ImGuiLayer::OnImGuiRender()
 	DetailsViewPanel::Draw(_currentScene, selected);
 	AssetViewerPanel::Draw();
 
-	ImGui::Begin("Viewport");
+	ImGui::Begin("Viewport", NULL,ImGuiWindowFlags_MenuBar);
+	DrawSceneTools();
 	Camera* camera = _currentScene->GetMainCamera();
 	//DrawGridLines(camera);
 	
@@ -124,6 +126,7 @@ void ImGuiLayer::OnImGuiRender()
 
 void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 {
+	
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -148,7 +151,6 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 		ImGui::EndMainMenuBar();
 	}
 
-	DrawSceneTools();
 }
 
 void ImGuiLayer::End()
@@ -172,29 +174,35 @@ void ImGuiLayer::End()
 
 void ImGuiLayer::DrawSceneTools()
 {
-	if (ImGui::BeginMainMenuBar())
+	ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+	float height = ImGui::GetFrameHeight();
+	if (ImGui::BeginViewportSideBar("##SceneTools", viewport, ImGuiDir_Up, height, windowFlags))
 	{
-		ImGui::Separator();
-		if(ImGui::Button("CamFlyMode"))
+		if (ImGui::BeginMenuBar())
 		{
-			EngineContext* engine = EngineContext::GetEngine();
-			engine->ToggleCamFlyMode();
-		}
-		ImGui::SetItemTooltip("Tab to toggle fly controlls");
+			if(ImGui::Button("CamFlyMode"))
+			{
+				EngineContext* engine = EngineContext::GetEngine();
+				engine->ToggleCamFlyMode();
+			}
+			ImGui::SetItemTooltip("Tab to toggle fly controlls");
 
-		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
-		ImGui::Text("Cam Speed");
-		ImGui::DragFloat("##Speed", &_currentScene->GetMainCamera()->_cameraSpeed);
-		ImGui::Text("Look Sensitivity");
-		ImGui::DragFloat("##Sensitivity", &_currentScene->GetMainCamera()->_mouseLookSesitivity);
-		ImGui::Text("FOV");
-		ImGui::DragFloat("##FoVvalue", &_currentScene->GetMainCamera()->_fov);
-		if(ImGui::Button("ResetFoV"))
-		{
-			_currentScene->GetMainCamera()->_fov = 45.0f;
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
+			ImGui::Text("Cam Speed");
+			ImGui::DragFloat("##Speed", &_currentScene->GetMainCamera()->_cameraSpeed);
+			ImGui::Text("Look Sensitivity");
+			ImGui::DragFloat("##Sensitivity", &_currentScene->GetMainCamera()->_mouseLookSesitivity);
+			ImGui::Text("FOV");
+			ImGui::DragFloat("##FoVvalue", &_currentScene->GetMainCamera()->_fov);
+			if(ImGui::Button("ResetFoV"))
+			{
+				_currentScene->GetMainCamera()->_fov = 45.0f;
+			}
+			ImGui::PopItemWidth();
+			ImGui::EndMenuBar();
 		}
-		ImGui::PopItemWidth();
-		ImGui::EndMainMenuBar();
+		ImGui::End();
 	}
 	
 }

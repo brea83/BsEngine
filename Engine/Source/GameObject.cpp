@@ -98,3 +98,11 @@ void GameObject::OnComponentAdded(std::shared_ptr<Component> component)
 		EngineContext::GetEngine()->GetScene()->AddRenderable(std::dynamic_pointer_cast<Model>(component));
 	}
 }
+
+void GameObject::OnComponentRemoved(std::shared_ptr<Component> component)
+{
+	if (std::dynamic_pointer_cast<Model>(component))
+	{
+		EngineContext::GetEngine()->GetScene()->RemoveRenderable(std::dynamic_pointer_cast<Model>(component));
+	}
+}

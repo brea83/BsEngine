@@ -15,6 +15,8 @@ class Model : public Component
 {
 public:
 	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
+	Model(GameObject* parent);
+	Model(GameObject* parent, PrimitiveMeshType primitiveMesh);
 	~Model();
 
 	void SetFilePath(const std::string& modelFilePath) { }

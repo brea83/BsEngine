@@ -64,6 +64,7 @@ protected:
 	virtual void Init();
 
 	virtual void OnComponentAdded(std::shared_ptr<Component> component);
+	virtual void OnComponentRemoved(std::shared_ptr<Component> component);
 };
 
 
@@ -98,14 +99,16 @@ inline std::shared_ptr<Type>  GameObject::GetComponent()
 	{
 		return std::dynamic_pointer_cast<Type>(_components[typeid(Type).hash_code()]);
 	}
-
+	return nullptr;
 }
 
 template<typename Type>
 inline void GameObject::RemoveComponent()
 {
-	if (HasCompoenent<Type>())
+	std::shared_ptr<Type> component = GetComponent<Type>();
+	if (component != nullptr)
 	{
+		OnComponentRemoved(component);
 		_components.erase(typeid(Type).hash_code());
 	}
 }

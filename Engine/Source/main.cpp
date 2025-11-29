@@ -72,18 +72,17 @@ void PopulateStartingScene(EngineContext* engine)
 	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/GuitarBackpack.fbx");
 	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/Viking_House.obj");
 
-	GameObject* testObject = new GameObject();
+	GameObject* testObject = new GameObject("Viking House");
 	std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();
 	gameObjectTransform->SetScale(glm::vec3(20.0f));
 	startingScene->AddGameObject(testObject);
 	testObject->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
 
-	GameObject* testObject2 = new GameObject();
+	GameObject* testObject2 = new GameObject("Empty");
 	std::shared_ptr<Transform> gameObjectTransform2 = testObject2->GetTransform();
 	gameObjectTransform2->SetScale(glm::vec3(2.0f));
 	gameObjectTransform2->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 	startingScene->AddGameObject(testObject2);
-	testObject2->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
 	
 	testObject->AddChild(testObject2);
 }

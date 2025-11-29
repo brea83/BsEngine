@@ -30,6 +30,42 @@ Model::Model(GameObject* parent, const std::string& modelFilePath, const std::st
 	}
 }
 
+Model::Model(GameObject* parent)
+ : Component(parent, "Model Component"), _filePath(""), _texturePath("")
+{
+
+}
+
+Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
+: Component(parent, "Model Component"), _texturePath("")
+{
+	
+	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
+	if (mesh != nullptr)
+	{
+		_meshes.push_back(mesh);
+
+		switch (primitiveMesh)
+		{
+		case PrimitiveMeshType::Triangle:
+			_filePath = "PrimitiveMesh_Triangle";
+			break;
+		case PrimitiveMeshType::Quad:
+			_filePath = "PrimitiveMesh_Quad";
+			break;
+		case PrimitiveMeshType::Cube:
+			_filePath = "PrimitiveMesh_Cube";
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		_filePath = "";
+	}
+}
+
 Model::~Model()
 {
 	std::cout << "DELETING MODEL " << Name << std::endl;

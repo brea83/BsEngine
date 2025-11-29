@@ -21,48 +21,44 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 		return false;
 	}
 	
-	GameObject* selectedObject{ nullptr };
 	ImGui::Begin("Details View");
 	{
-		selectedObject = _currentScene->_gameObjects[_selected];
-		//ImGui::Text("%s", selectedObject->Name.c_str());
-		ImGui::Separator();
+		GameObject* selectedObject = _currentScene->_gameObjects[_selected];
+		
+		static bool bIsEditing = false;
+		static std::string editingValue1;
+		DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
+
+		if(ImGui::Button("AddComponent"))
 		{
-			/*char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), selectedObject->Name.c_str());
-			if (ImGui::InputText("Name", buffer, sizeof(buffer)))
-			{
-
-				selectedObject->Name = std::string(buffer);
-			}*/
-			static bool bIsEditing = false;
-			static std::string editingValue1;
-			DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
-
-			ImGui::SeparatorText("Transform");
-
-			std::shared_ptr<Transform> transform = selectedObject->GetTransform();
-			//glm::vec3 position = transform->GetPosition();
-			glm::vec3 rotation = transform->GetRotationEuler();
-			glm::vec3 scale = transform->GetScale();
-			if (DrawVec3Control("Position", transform->_position))
-			{
-				transform->_positionDirty = true;
-			}
-
-			//translate rotation from radians to degrees
-			glm::vec3 eulerDegrees = transform->GetRotationEuler();
-			if (DrawVec3Control("Rotation", eulerDegrees))
-			{
-				transform->SetRotationEuler(eulerDegrees);
-			}
-			if (DrawVec3Control("Scale", transform->_scale, 1.0f))
-			{
-				transform->_scaleDirty = true;
-			}
-
+			// To Do make pop up to select component type. 
+			// for now we only have one component tho so test add and remove with that
+			selectedObject->AddComponent<Model>();
 		}
+
+		ImGui::SeparatorText("Transform");
+
+		std::shared_ptr<Transform> transform = selectedObject->GetTransform();
+		//glm::vec3 position = transform->GetPosition();
+		glm::vec3 rotation = transform->GetRotationEuler();
+		glm::vec3 scale = transform->GetScale();
+		if (DrawVec3Control("Position", transform->_position))
+		{
+			transform->_positionDirty = true;
+		}
+
+		//translate rotation from radians to degrees
+		glm::vec3 eulerDegrees = transform->GetRotationEuler();
+		if (DrawVec3Control("Rotation", eulerDegrees))
+		{
+			transform->SetRotationEuler(eulerDegrees);
+		}
+		if (DrawVec3Control("Scale", transform->_scale, 1.0f))
+		{
+			transform->_scaleDirty = true;
+		}
+
+		
 
 		ImGui::SeparatorText("Componenets");
 		DrawComponents(selectedObject/*selectedObject->GetAllComponents()*/);
@@ -158,12 +154,12 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 	//bool bIsEditing = false;
 	bool bValueSubmitted = false;
 
-	if (ImGui::BeginTable(label.c_str(), 3, ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+	if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
 	{
 		float fontSize = ImGui::GetFontSize();
 		ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-		ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthFixed, ImGui::GetContentRegionAvail().x * 0.5);
-		ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
+		ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
+		//ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
 
 		ImGui::TableNextRow();
 		// the label
@@ -188,10 +184,15 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 		ImGui::PopItemWidth();
 
 		// the button to turn  the value field into an edit field
-		ImGui::TableSetColumnIndex(2);
-		ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x);
+		//ImGui::TableSetColumnIndex(2);
+		//ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x);
+		ImGui::EndTable();
 
+		ImGui::SameLine();
 		std::string buttonText = bIsEditing ? "Done" : "Edit";
+		float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+		ImGui::PushID(label.c_str());
 		if(ImGui::Button(buttonText.c_str()))
 		{
 			bValueChanged = (value != editingValue);
@@ -211,8 +212,8 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 
 			bIsEditing = !bIsEditing;
 		}
-		ImGui::PopItemWidth();
-		ImGui::EndTable();
+		ImGui::PopID();
+		//ImGui::PopItemWidth();
 	}
 
 	return bValueSubmitted;
@@ -223,11 +224,23 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 
 	if (selectedObject->HasCompoenent<Model>())
 	{
+		ImGui::Separator();
 		std::shared_ptr<Model> component = selectedObject->GetComponent<Model>();
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
 		strcpy_s(buffer, sizeof(buffer), component->Name.c_str());
-		ImGui::SeparatorText(buffer);
+		ImGui::Text(buffer);
+		ImGui::SameLine();
+		
+		float buttonWidth2 = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth2);
+
+		if (ImGui::Button("X"))
+		{
+			selectedObject->RemoveComponent<Model>();
+		}
+
+		ImGui::Separator();
 
 		//ImGui::Text(component->GetFilePath().c_str());
 		static bool bIsEditing2 = false;

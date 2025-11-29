@@ -59,6 +59,9 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 void Scene::CreateCube()
 {
 	//_objectsToRender.emplace_back(new Cube());
+	GameObject* object = new GameObject("Cube");
+	AddGameObject(object);
+	object->AddComponent<Model, PrimitiveMeshType>(PrimitiveMeshType::Cube);
 }
 
 void Scene::RemoveRenderable(std::shared_ptr<Model> modelToRemove)

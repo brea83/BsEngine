@@ -136,15 +136,15 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Assets"))
+		if (ImGui::BeginMenu("Scene"))
 		{
-			if (ImGui::MenuItem("Create Cube")) engine->GetScene()->CreateCube();
-
-			if (ImGui::MenuItem("Create Model"))
+			if (ImGui::MenuItem("Empty GameObject"))
 			{
-				//	TODO: figure out pop up window from menu
-				
+				GameObject* testObject = new GameObject();
+				_currentScene->AddGameObject(testObject);
 			}
+
+			if (ImGui::MenuItem("Create Cube")) _currentScene->CreateCube();
 			ImGui::EndMenu();
 		}
 

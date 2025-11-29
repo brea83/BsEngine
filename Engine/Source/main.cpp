@@ -55,22 +55,6 @@ int main()
 void PopulateStartingScene(EngineContext* engine)
 {
 	Scene* startingScene = engine->GetScene();
-	//Triangle* triangle1 = new Triangle(/*Scene::NextUID++*/);
-	//std::shared_ptr<Transform> triTransform = triangle1->GetTransform();
-	//triTransform->SetPosition(glm::vec3(-0.5f, -1.0f, 0.0f));
-
-	//Cube* cube = new Cube(/*Scene::NextUID++,*/ false);
-	//std::shared_ptr<Transform> rectTransform = cube->GetTransform();
-	////rectTransform->SetScale( glm::vec3(0.5f, 0.5f, 0.5f));
-	//rectTransform->SetPosition(glm::vec3(1.0f, 0.5f, 0.0f));
-
-
-	//startingScene->AddRenderable(triangle1);
-
-	//startingScene->AddRenderable(cube);
-
-	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/GuitarBackpack.fbx");
-	//Model* testModel = new Model(/*Scene::NextUID++, */"Assets/Meshes/Viking_House.obj");
 
 	GameObject* testObject = new GameObject("Viking House");
 	std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();

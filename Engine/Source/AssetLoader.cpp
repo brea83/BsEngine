@@ -13,6 +13,8 @@
 
 #include <chrono>
 
+#include "Assimp/AssimpGlmHelpers.h"
+
 const static std::string s_SerializationVersion = "Version 0.1 of Bs Engine Serialization";
 std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::_resources;
 
@@ -419,6 +421,26 @@ std::shared_ptr<Mesh> AssetLoader::LoadObj(const std::string& filePath, const st
 	return mesh;
 }
 
+std::shared_ptr<Mesh> AssetLoader::LoadFbx(const std::string& filePath, GameObject* rootObject)
+{
+	Assimp::Importer importer;
+	const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
+	
+	if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
+	{
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return nullptr;
+	}
+
+	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+	std::cout << "IMPORTING " << filePath << std::endl;
+
+	std::vector<Mesh> meshes;
+	meshes.reserve(assimpScene->mNumMeshes);
+	ProcessNode(meshes, assimpScene->mRootNode, assimpScene, aiMatrix4x4());
+	return nullptr;
+}
+
 void AssetLoader::CleanUp()
 {
 	std::vector<std::string> resourcesToDelete;
@@ -559,3 +581,6 @@ std::shared_ptr<Mesh> AssetLoader::LoadSerializedMesh(const std::string& filePat
 	
 	return std::make_shared<Mesh>(vertices, indices);
 }
+
+void AssetLoader::ProcessNode(std::vector<Mesh>& meshes, aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices)
+{}

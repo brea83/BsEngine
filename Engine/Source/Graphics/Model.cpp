@@ -13,23 +13,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath/* textureDirectoryPath, const std::string& textureFileName*/)
-	: Component(parent, "Model Component"/* modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))*/),
-	_filePath(modelFilePath), 
-	_texturePath(textureFilePath)
-{
-
-	std::string fileExtension = modelFilePath.substr(modelFilePath.find_last_of('.'));
-	if (fileExtension == ".fbx")
-	{
-		LoadModelAssimp(modelFilePath);
-	}
-	else if (fileExtension == ".obj")
-	{
-		LoadObj(modelFilePath);
-	}
-}
-
 Model::Model(GameObject* parent)
  : Component(parent, "Model Component"), _filePath(""), _texturePath("")
 {
@@ -64,6 +47,31 @@ Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
 	{
 		_filePath = "";
 	}
+}
+
+Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath/* textureDirectoryPath, const std::string& textureFileName*/)
+	: Component(parent, "Model Component"/* modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))*/),
+	_filePath(modelFilePath),
+	_texturePath(textureFilePath)
+{
+
+	Reload();
+}
+
+
+bool Model::Reload()
+{
+	std::string fileExtension = _filePath.substr(_filePath.find_last_of('.'));
+	if (fileExtension == ".fbx")
+	{
+		LoadModelAssimp(_filePath);
+		return false;
+	}
+	else if (fileExtension == ".obj")
+	{
+		return LoadObj(_filePath, _texturePath);
+	}
+	return false;
 }
 
 Model::~Model()
@@ -329,21 +337,6 @@ void Model::SetParentObject(GameObject* newParent)
 
 void Model::OnUpdate()
 {}
-
-bool Model::Reload()
-{
-	std::string fileExtension = _filePath.substr(_filePath.find_last_of('.'));
-	if (fileExtension == ".fbx")
-	{
-		LoadModelAssimp(_filePath);
-		return false;
-	}
-	else if (fileExtension == ".obj")
-	{
-		return LoadObj(_filePath, _texturePath);
-	}
-	return false;
-}
 
 void Model::Render(Shader& currentShader)
 {

@@ -25,7 +25,7 @@ public:
 	static std::shared_ptr<Mesh> LoadPrimitive(PrimitiveMeshType primitiveType);
 	static std::shared_ptr<Mesh> LoadObj(const std::string& filePath, const std::string& textureFilePath = "");
 	//static std::shared_ptr<Mesh> LoadMesh(std::string& objContentsString);
-	//static std::shared_ptr<Model> LoadFbx(const std::string& filePath);
+	static std::shared_ptr <Mesh> LoadFbx(const std::string& filePath, GameObject* rootObject);
 
 	static std::unordered_map<std::string, std::shared_ptr<Resource>>& GetResources() { return _resources; }
 	static void CleanUp();
@@ -37,14 +37,15 @@ private:
 
 	static std::string CheckForSerializedVersion(const std::string& filePath);
 	static std::string SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh);
+	//static std::string SerializeAssimpSubMesh(const std::string& filePath, const std::string& meshName, std::shared_ptr<Mesh> mesh);
 	static std::shared_ptr<Mesh> LoadSerializedMesh(const std::string& filePath);
 
 	//fbx Importing functions 
 
+	static void ProcessNode(std::vector<Mesh>& meshes, aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 	//static std::shared_ptr<Mesh> LoadMesh(aiMesh& mesh, const aiScene& assimpScene);
 	//static void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode);
 	//static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
-	//static void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 	//static std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
 	//static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
 };

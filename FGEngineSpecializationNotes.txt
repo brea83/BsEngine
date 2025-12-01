@@ -603,3 +603,20 @@ TEXTURE MANAGER
 
 going over making your own png loader.
 
+================================
+LECTURE 15 (week 6) 
+================================
+
+serializing and persisting scenes
+requirements
+	ask what types of games are you building with the engine
+	should maps and saves be human readable
+
+interface clas IWritable 
+
+error handling for saving scenes/maps
+
+use a static string for error return msg
+
+can use serialize deserialize to duplicate objects
+

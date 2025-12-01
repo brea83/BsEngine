@@ -21,14 +21,27 @@ public:
 
 	bool Reload();
 
+	// Inherited via Component
+	void Initialize() override;
+	void CleanUp() override;
+	std::shared_ptr<Component> Clone() override;
+
+	std::string Name() const override { return _name; }
+	void SetName(const std::string& name) override { _name = name; }
+	GameObject* GetParentObject() const override { return _parentObject; }
+	void SetParentObject(GameObject* newParent) override;
+
 	void SetFilePath(const std::string& modelFilePath) { }
 	std::string GetFilePath() { return _filePath; }
 
-	// Inherited via Renderable
+	void OnUpdate() override;
+	
 	void Render(Shader& currentShader);
 
 protected:
 	//properties
+	std::string _name;
+	GameObject* _parentObject;
 	std::string _filePath;
 	std::string _texturePath;
 	std::vector<std::shared_ptr<Mesh>> _meshes;
@@ -49,13 +62,6 @@ protected:
 	void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 	std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
 	std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
-
-	// Inherited via Component
-	void Initialize() override;
-	void CleanUp() override;
-	std::shared_ptr<Component> Clone() override;
-	void SetParentObject(GameObject* newParent) override;
-	void OnUpdate() override;
 
 	friend class DetailsViewPanel;
 };

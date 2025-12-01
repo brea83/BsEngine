@@ -6,6 +6,8 @@
 class GameObject;
 class Model;
 class Camera;
+class CameraComponent;
+class EditorCamera;
 
 class Scene
 {
@@ -13,23 +15,28 @@ public:
 	Scene();
 	~Scene();
 	
-	void CreateEmptyGameObject();
+	GameObject* CreateEmptyGameObject();
 	void AddGameObject(GameObject* gameObject) { _gameObjects.push_back(gameObject); }
 	void RemoveGameObject(GameObject* objectToRemove);
 	int NumGameObjects() { return _gameObjects.size(); }
 	GameObject* GetGameObjectByIndex(int index);
 	
 
-	void AddRenderable(std::shared_ptr<Model> newRenderable) { _objectsToRender.push_back(newRenderable); }
+	void AddRenderable(std::shared_ptr<Model> newRenderable) { _meshComponents.push_back(newRenderable); }
 	void CreateCube();
 	void RemoveRenderable(std::shared_ptr<Model> modelToRemove);
-	std::vector<std::shared_ptr<Model>>& GetRenderables() { return _objectsToRender; }
+	std::vector<std::shared_ptr<Model>>& GetRenderables() { return _meshComponents; }
 
-	Camera* GetMainCamera() { return _mainCamera; }
+	void AddCamera(std::shared_ptr<CameraComponent> camera) { _cameraComponents.push_back(camera); }
+	bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
+	std::shared_ptr<Camera> GetActiveCamera() { return _activeCamera; }
+
 private:
-	Camera* _mainCamera;
-	std::vector<std::shared_ptr<Model>> _objectsToRender;
+	std::shared_ptr<Camera> _activeCamera;
+	std::shared_ptr<Camera> _defaultCamera{ nullptr };
 
+	std::vector<std::shared_ptr<CameraComponent>> _cameraComponents;
+	std::vector<std::shared_ptr<Model>> _meshComponents;
 	std::vector<GameObject*> _gameObjects;
 
 	friend class SceneHierarchyPanel;

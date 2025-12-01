@@ -39,7 +39,7 @@ int SceneHierarchyPanel::Draw(Scene* _currentScene)
 		ImGui::TableSetupColumn("Objects", ImGuiTableColumnFlags_WidthFixed, fontSize * 20.0f);
 		ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch);
 
-		for ( int i = 0; i < _currentScene->_gameObjects.size(); i++)//Renderable* renderObject : _currentScene->_objectsToRender)
+		for ( int i = 0; i < _currentScene->_gameObjects.size(); i++)//Renderable* renderObject : _currentScene->_meshComponents)
 		{
 			ImGui::TableNextRow();
 			// Column 1

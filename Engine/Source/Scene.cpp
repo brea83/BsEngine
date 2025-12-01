@@ -3,12 +3,22 @@
 #include "GameObject.h"
 #include "Graphics/Model.h"
 #include "Graphics/Primitives/Cube.h"
-#include "Graphics/Camera.h"
+#include "Graphics/Primitives/Transform.h"
+#include "Editor/EditorCamera.h"
+#include "CameraComponent.h"
 
 Scene::Scene()
 { 
-	_mainCamera = new Camera();
-	//NextUID = 0;
+
+	GameObject* cameraObject = CreateEmptyGameObject();
+	cameraObject->Name = "Main Camera";
+	std::shared_ptr<Transform> transform = cameraObject->GetTransform();
+	transform->SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
+	transform->SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
+	
+	_activeCamera = cameraObject->AddComponent<CameraComponent>();
+
+	_activeCamera->BIsSceneViewCam = true;
 }
 
 Scene::~Scene()
@@ -23,9 +33,11 @@ Scene::~Scene()
 	}
 }
 
-void Scene::CreateEmptyGameObject()
+GameObject* Scene::CreateEmptyGameObject()
 {
-	_gameObjects.emplace_back(new GameObject());
+	GameObject* newObject = new GameObject();
+	_gameObjects.push_back(newObject);
+	return newObject;
 }
 
 void Scene::RemoveGameObject(GameObject* objectToRemove)
@@ -58,7 +70,7 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 
 void Scene::CreateCube()
 {
-	//_objectsToRender.emplace_back(new Cube());
+	//_meshComponents.emplace_back(new Cube());
 	GameObject* object = new GameObject("Cube");
 	AddGameObject(object);
 	object->AddComponent<Model, PrimitiveMeshType>(PrimitiveMeshType::Cube);
@@ -66,15 +78,48 @@ void Scene::CreateCube()
 
 void Scene::RemoveRenderable(std::shared_ptr<Model> modelToRemove)
 {
-	auto foundItterator = std::find(_objectsToRender.begin(), _objectsToRender.end(), modelToRemove);
+	auto foundItterator = std::find(_meshComponents.begin(), _meshComponents.end(), modelToRemove);
 
-	if (foundItterator != _objectsToRender.end())
+	if (foundItterator != _meshComponents.end())
 	{
-		std::cout << "FOUND OBJECT: " << modelToRemove->Name << std::endl;
-		_objectsToRender.erase(foundItterator);
+		std::cout << "FOUND OBJECT: " << modelToRemove->Name() << std::endl;
+		_meshComponents.erase(foundItterator);
 	}
 	else
 	{
-		std::cout << modelToRemove->Name << ", NOT FOUND" << std::endl;
+		std::cout << modelToRemove->Name() << ", NOT FOUND" << std::endl;
 	}
+}
+
+bool Scene::TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove)
+{
+	if (_cameraComponents.size() < 2)
+	{
+		std::cout << "Error: tried to delete last camera component, but scene requires minimum of one camera" << std::endl;
+		return false;
+	}
+
+	auto foundItterator = std::find(_cameraComponents.begin(), _cameraComponents.end(), cameraToRemove);
+
+	if (foundItterator == _cameraComponents.end())
+	{
+		std::cout << cameraToRemove->Name() << ", NOT FOUND, can't remove it" << std::endl;
+		return false;
+	}
+
+	bool bNeedNewActiveCam = cameraToRemove->BIsSceneViewCam;
+	bool bNeedNewDefaultCam = (_defaultCamera == nullptr) || (_defaultCamera == cameraToRemove);
+
+
+	std::cout << "Erasing component: " << cameraToRemove->Name() << std::endl;
+	_cameraComponents.erase(foundItterator);
+	
+	if (bNeedNewActiveCam)
+	{
+		if (bNeedNewDefaultCam) _defaultCamera = std::dynamic_pointer_cast<Camera>(_cameraComponents[0]); 
+		_activeCamera = _defaultCamera;
+		_activeCamera->BIsSceneViewCam = true;
+	}
+
+	return false;
 }

@@ -42,6 +42,37 @@ glm::vec3 Transform::GetPosition()
     return _position;
 }
 
+glm::vec3 Transform::Forward() const
+{
+    glm::vec3 direction;
+
+    direction.x = cos(_eulerRotation.x) * cos(_eulerRotation.y);
+    direction.y = sin(_eulerRotation.y);
+    direction.z = sin(_eulerRotation.x) * cos(_eulerRotation.y);
+
+    return glm::normalize(direction);
+}
+
+glm::vec3 Transform::Up() const
+{
+    return glm::normalize(glm::cross(Right(), Forward()));
+}
+
+glm::vec3 Transform::Left() const
+{
+    return Right() * -1.0f;
+}
+
+glm::vec3 Transform::Right() const
+{
+    return  glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+}
+
+glm::vec3 Transform::Down() const
+{
+    return Up() * -1.0f;
+}
+
 void Transform::Rotate(float angle, glm::vec3 axis, AngleType angleType)
 {
     if (angleType == AngleType::Degrees)

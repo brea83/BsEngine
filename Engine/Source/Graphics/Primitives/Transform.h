@@ -21,6 +21,12 @@ public:
 	void SetPosition(glm::vec3 value) { _position = value; _positionDirty = true; }
 	glm::vec3 GetPosition();
 
+	glm::vec3 Forward() const;
+	glm::vec3 Up() const;
+	glm::vec3 Left() const;
+	glm::vec3 Right() const;
+	glm::vec3 Down() const;
+
 	void Rotate(float angle, glm::vec3 axis, AngleType angleType = AngleType::Degrees);
 	void SetRotationEuler(glm::vec3 value, AngleType angleType = AngleType::Degrees);
 	void SetRotationQuaternion(glm::quat orientation, AngleType angleType = AngleType::Degrees);

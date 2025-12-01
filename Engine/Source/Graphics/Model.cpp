@@ -14,13 +14,13 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 Model::Model(GameObject* parent)
- : Component(parent, "Model Component"), _filePath(""), _texturePath("")
+ : _parentObject(parent), _name("Model Component"), _filePath(""), _texturePath("")
 {
 
 }
 
 Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
-: Component(parent, "Model Component"), _texturePath("")
+: _parentObject(parent), _name("Model Component"), _texturePath("")
 {
 	
 	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
@@ -49,10 +49,8 @@ Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
 	}
 }
 
-Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath/* textureDirectoryPath, const std::string& textureFileName*/)
-	: Component(parent, "Model Component"/* modelFilePath.substr(modelFilePath.find_last_of('/') + 1, modelFilePath.find_last_of("."))*/),
-	_filePath(modelFilePath),
-	_texturePath(textureFilePath)
+Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
+	: _parentObject(parent), _name("Model Component"), _filePath(modelFilePath), _texturePath(textureFilePath)
 {
 
 	Reload();
@@ -76,7 +74,7 @@ bool Model::Reload()
 
 Model::~Model()
 {
-	std::cout << "DELETING MODEL " << Name << std::endl;
+	std::cout << "DELETING MODEL " << _name << std::endl;
 	//delete[] _meshes;
 }
 
@@ -93,7 +91,7 @@ void Model::LoadModelAssimp(const std::string & filePath)
 	}
 
 	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-	std::cout << "IMPORTING MODEL " << Name << std::endl;
+	std::cout << "IMPORTING MODEL " << _name << std::endl;
 	std::cout << " DIRECTORY: " << _filePath << std::endl;
 	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
 	{

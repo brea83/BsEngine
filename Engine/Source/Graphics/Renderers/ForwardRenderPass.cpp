@@ -26,7 +26,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 	_shader->SetUniformInt("Texture1", 0);
 
-	Camera* mainCam = sceneToRender.GetMainCamera();
+	std::shared_ptr<Camera> mainCam = sceneToRender.GetActiveCamera();
 	_shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	_shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 

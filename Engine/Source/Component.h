@@ -6,11 +6,12 @@ class GameObject;
 class Component
 {
 public:
-    Component(GameObject* parent = nullptr, const std::string& name = "Component Name");
+    Component();
 
     virtual ~Component(){ }
 
-    std::string Name;
+    virtual std::string Name() const = 0;
+    virtual void SetName(const std::string& name) = 0;
 
     //might want to make an init that takes some kind of struct for data if what I'm seeing in zenith engine is accurate
     virtual void Initialize() = 0;
@@ -18,20 +19,20 @@ public:
     virtual void CleanUp() = 0;
     virtual std::shared_ptr<Component> Clone() = 0;
 
-    GameObject* AttatchedTo() const { return _parentObject; }
+    virtual GameObject* GetParentObject() const = 0;
     virtual void SetParentObject(GameObject* newParent) = 0;
 
     bool operator ==(const Component& otherComponent)
     {
-        return Name == otherComponent.Name 
+        return Name() == otherComponent.Name()
             && typeid(*this) == typeid(otherComponent) 
-            && _parentObject == otherComponent._parentObject;
+            && GetParentObject() == otherComponent.GetParentObject();
     }
 
     virtual void OnUpdate() = 0;
 
 protected:
-    GameObject* _parentObject;
+    //GameObject* _parentObject;
 
     // id generator
 
@@ -45,6 +46,6 @@ struct ComponentHash
     {
         std::hash<std::string> NameHash;
         
-        return NameHash(component.Name) ^ typeid(component).hash_code();
+        return NameHash(component.Name()) ^ typeid(component).hash_code();
     }
 };

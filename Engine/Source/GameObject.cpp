@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Graphics/Model.h"
+#include "CameraComponent.h"
 
 static int s_NumGameObjects = 1;
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
@@ -97,12 +98,26 @@ void GameObject::OnComponentAdded(std::shared_ptr<Component> component)
 	{
 		EngineContext::GetEngine()->GetScene()->AddRenderable(std::dynamic_pointer_cast<Model>(component));
 	}
+
+	//if (std::dynamic_pointer_cast<CameraComponent>(component))
+	//{
+	//	EngineContext::GetEngine()->GetScene()->AddCamera(std::dynamic_pointer_cast<CameraComponent>(component));
+	//}
 }
 
 void GameObject::OnComponentRemoved(std::shared_ptr<Component> component)
 {
+	//Scene* scene = EngineContext::GetEngine()->GetScene();
 	if (std::dynamic_pointer_cast<Model>(component))
 	{
 		EngineContext::GetEngine()->GetScene()->RemoveRenderable(std::dynamic_pointer_cast<Model>(component));
 	}
+
+	/*if (std::dynamic_pointer_cast<CameraComponent>(component))
+	{
+		if (!EngineContext::GetEngine()->GetScene()->TryRemoveCamera(std::dynamic_pointer_cast<CameraComponent>(component)))
+		{
+			_components[typeid(CameraComponent).hash_code()] = component;
+		}
+	}*/
 }

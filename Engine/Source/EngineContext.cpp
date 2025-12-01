@@ -21,7 +21,7 @@ bool EngineContext::Init()
 	_mainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
 	// don't start making render passes if we have no window
 	_renderer->Init();
-	_activeScene->GetMainCamera()->SetAspectRatio((float)_mainWindow->WindowWidth()/ (float)_mainWindow->WindowHeight());
+	_activeScene->GetActiveCamera()->SetAspectRatio((float)_mainWindow->WindowWidth()/ (float)_mainWindow->WindowHeight());
 
 	_imGuiLayer = new ImGuiLayer();
 	_imGuiLayer->OnAttach();
@@ -34,7 +34,7 @@ bool EngineContext::Init()
 
 EngineContext* EngineContext::GetEngine()
 {
-	if (!_engine)
+	if (_engine == NULL)
 	{
 		_engine = new EngineContext();
 		return _engine;
@@ -98,7 +98,7 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 		return false;
 	}
 	_bMinimized = false;
-	_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
+	_activeScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return true;
 }
 
@@ -119,7 +119,7 @@ bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 	float yOffset = event.GetYOffset();
 	if (_camFlyMode)
 	{
-		return _activeScene->GetMainCamera()->Zoom(yOffset);
+		return _activeScene->GetActiveCamera()->Zoom(yOffset);
 	}
 	return false;
 }
@@ -144,7 +144,7 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 		_prevMouseX = xPosition;
 		_prevMouseY = yPosition;
 
-		return _activeScene->GetMainCamera()->HandleLookMouse(xOffset, yOffset, _deltaTime);
+		return _activeScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, _deltaTime);
 	}
 	return false;
 }
@@ -171,7 +171,7 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		|| keyCode == GLFW_KEY_A
 		|| keyCode == GLFW_KEY_D))
 	{
-		return _activeScene->GetMainCamera()->HandleMoveWasd(keyCode, _deltaTime);
+		return _activeScene->GetActiveCamera()->HandleMoveWasd(keyCode, _deltaTime);
 	}
 	
 	if (keyCode == GLFW_KEY_TAB)
@@ -179,7 +179,7 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
 		ToggleCamFlyMode();
 	}
-	//_activeScene->GetMainCamera()->SetAspectRatio((float)width / (float)height);
+	//_activeScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return false;
 }
 

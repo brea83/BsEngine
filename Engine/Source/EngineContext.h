@@ -7,6 +7,8 @@
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
 #include "Editor/ImGuiLayer.h"
+#include <EnTT/entt.hpp>
+
 
 //class Renderer;
 class Scene;
@@ -33,6 +35,8 @@ public:
 
 	Renderer* GetRenderer() { return _renderer; }
 
+	entt::registry& GetRegistry() { return _registry; }
+
 	// methods
 	bool IsRunning()const { return _bRunning; }
 	void StopApplication() { _bRunning = false; }
@@ -52,6 +56,7 @@ private:
 	EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
 
 	static EngineContext* _engine;
+	entt::registry _registry;
 
 	// properties
 	bool _bRunning{ true };

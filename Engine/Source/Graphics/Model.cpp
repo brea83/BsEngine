@@ -142,8 +142,11 @@ bool Model::LoadObj(const std::string& filePath, const std::string& textureFileN
 	_meshes.clear();
 	_meshes.push_back(mesh);
 
-	_texture = AssetLoader::LoadTexture(_texturePath);
-	if (_texture == nullptr) return false;
+	if (textureFileName != "")
+	{
+		_texture = AssetLoader::LoadTexture(_texturePath);
+		if (_texture == nullptr) return false;
+	}
 
 	return true;
 }

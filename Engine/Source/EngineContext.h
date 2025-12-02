@@ -35,7 +35,7 @@ public:
 
 	Renderer* GetRenderer() { return m_Renderer; }
 
-	entt::registry& GetRegistry() { return m_Registry; }
+	
 
 	// methods
 	bool IsRunning()const { return m_IsRunning; }
@@ -56,7 +56,7 @@ private:
 	EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
 
 	static EngineContext* m_Engine;
-	entt::registry m_Registry;
+	
 
 	// properties
 	bool m_IsRunning{ true };

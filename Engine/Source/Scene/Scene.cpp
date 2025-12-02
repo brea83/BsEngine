@@ -71,8 +71,7 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 
 entt::entity Scene::CreateEntity()
 {
-	EngineContext* engine = EngineContext::GetEngine();
-	return engine->GetRegistry().create();
+	return m_Registry.create();
 }
 
 void Scene::CreateCube()

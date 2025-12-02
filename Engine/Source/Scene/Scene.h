@@ -24,6 +24,7 @@ public:
 	
 	void Initialize();
 
+	entt::registry& GetRegistry() { return m_Registry; }
 	entt::entity CreateEntity();
 
 	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { m_MeshComponents.push_back(newRenderable); }
@@ -36,9 +37,10 @@ public:
 	std::shared_ptr<Camera> GetActiveCamera() { return m_ActiveCamera; }
 
 private:
+	entt::registry m_Registry;
 	std::shared_ptr<Camera> m_ActiveCamera;
 	std::shared_ptr<Camera> m_DefaultCamera{ nullptr };
-	bool _hasInitiated{ false };
+	bool m_IsInitiated{ false };
 
 	std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
 	std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;

@@ -31,7 +31,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	m_Shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 
-	entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
+	entt::registry& registry = sceneToRender.GetRegistry();
 
 	auto group = registry.group<Transform>(entt::get<MeshComponent>);
 	for (auto entity : group)

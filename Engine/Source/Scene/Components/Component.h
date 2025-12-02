@@ -46,3 +46,13 @@ struct ComponentHash
         return NameHash(component.Name()) ^ typeid(component).hash_code();
     }
 };
+
+class TagComponent : public Component
+{
+public:
+    TagComponent() = default;
+    TagComponent(const TagComponent&) = default;
+    TagComponent(const std::string& tag) : Tag(tag) { }
+
+    std::string Tag;
+};

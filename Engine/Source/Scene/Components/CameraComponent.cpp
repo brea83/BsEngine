@@ -25,8 +25,8 @@ void CameraComponent::OnUpdate()
 	// AND REFACTOR THE SCENE EDIT CAMERA TO BE DIFFERENT FROM THE SCENE'S MAIN GAMEPLAY CAM
 bool CameraComponent::HandleMoveWasd(int keyCode, float deltaTime)
 {
-	float velocity = _cameraSpeed * deltaTime; // adjust accordingly
-	std::shared_ptr<Transform> transform = _parentObject->GetTransform();
+	float velocity = m_CameraSpeed * deltaTime; // adjust accordingly
+	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
 	glm::vec3 currentPosition = transform->GetPosition();
 	switch (keyCode)
 	{
@@ -50,11 +50,11 @@ bool CameraComponent::HandleMoveWasd(int keyCode, float deltaTime)
 
 bool CameraComponent::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
 {
-	const float sensitivity = _mouseLookSesitivity * deltaTime;
+	const float sensitivity = m_MouseLookSesitivity * deltaTime;
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
-	std::shared_ptr<Transform> transform = _parentObject->GetTransform();
+	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
 	glm::vec3 rotation = transform->GetRotationEuler(AngleType::Degrees);
 	transform->SetRotationEuler(glm::vec3(rotation.x + xOffset, rotation.y + yOffset, rotation.z), AngleType::Degrees);
 
@@ -63,7 +63,7 @@ bool CameraComponent::HandleLookMouse(float xOffset, float yOffset, float deltaT
 
 glm::mat4 CameraComponent::ViewMatrix() const
 {
-	std::shared_ptr<Transform> transform = _parentObject->GetTransform();
+	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
 	glm::vec3 position = transform->GetPosition();
 	return  glm::lookAt(position, position + transform->Forward(), transform->Up());
 }

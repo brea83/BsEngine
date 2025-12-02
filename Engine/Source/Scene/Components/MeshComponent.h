@@ -27,13 +27,13 @@ public:
 	void CleanUp() override;
 	std::shared_ptr<Component> Clone() override;
 
-	std::string Name() const override { return _name; }
-	void SetName(const std::string& name) override { _name = name; }
-	GameObject* GetParentObject() const override { return _parentObject; }
+	std::string Name() const override { return m_Name; }
+	void SetName(const std::string& name) override { m_Name = name; }
+	GameObject* GetParentObject() const override { return m_ParentObject; }
 	void SetParentObject(GameObject* newParent) override;
 
 	void SetFilePath(const std::string& modelFilePath) { }
-	std::string GetFilePath() { return _filePath; }
+	std::string GetFilePath() { return m_FilePath; }
 
 	void OnUpdate() override;
 	
@@ -43,13 +43,13 @@ public:
 
 protected:
 	//properties
-	std::string _name;
-	GameObject* _parentObject;
-	std::string _filePath;
-	std::string _texturePath;
-	std::vector<std::shared_ptr<Mesh>> _meshes;
+	std::string m_Name;
+	GameObject* m_ParentObject;
+	std::string m_FilePath;
+	std::string m_TexturePath;
+	std::vector<std::shared_ptr<Mesh>> m_Meshes;
 	//Todo: replace textures with materials.
-	std::shared_ptr<Texture> _texture;
+	std::shared_ptr<Texture> m_Texture;
 
 	bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 

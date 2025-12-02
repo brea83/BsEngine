@@ -10,7 +10,7 @@ Cube::Cube(bool useMinimalVerticies, const std::string& name)
 {
 	if (useMinimalVerticies)
 	{
-		_vertices = {
+		m_Vertices = {
 			// back face
 			Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }}, // top left
 			Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
@@ -24,7 +24,7 @@ Cube::Cube(bool useMinimalVerticies, const std::string& name)
 			Vertex{{ 0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }}, // bottom right
 		};
 
-		_indices = {  //idicies of the vertexies list to use as points of a triangle
+		m_Indices = {  //idicies of the vertexies list to use as points of a triangle
 			// back face
 			0, 1, 2, 1, 2, 3,
 			// front face
@@ -41,7 +41,7 @@ Cube::Cube(bool useMinimalVerticies, const std::string& name)
 	}
 	else
 	{
-		_vertices = {
+		m_Vertices = {
 			// front face
 			Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }},
 			Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f }},
@@ -78,7 +78,7 @@ Cube::Cube(bool useMinimalVerticies, const std::string& name)
 			Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }},
 		};
 
-		_indices = {
+		m_Indices = {
 			// Front face
 			0, 2, 1, 2, 0, 3,
 			// Back face
@@ -109,11 +109,11 @@ void Cube::Init()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Vertex), &_vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
 
 	// set up element buffer object, which gets saved on the VAO
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(unsigned int), &m_Indices[0], GL_STATIC_DRAW);
 
 	//position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,Position));
@@ -144,6 +144,6 @@ void Cube::Render(Shader& currentShader)
 {
 	//draw
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

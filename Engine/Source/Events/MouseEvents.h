@@ -7,16 +7,16 @@ class MouseMovedEvent : public Event
 {
 public:
 	MouseMovedEvent(const float x, const float y)
-	: _xPosition(x), _yPosition(y)
+	: m_PositionX(x), m_PositionY(y)
 	{ }
 
-	float GetX() const { return _xPosition; }
-	float GetY() const { return _yPosition; }
+	float GetX() const { return m_PositionX; }
+	float GetY() const { return m_PositionY; }
 
 	std::string ToString() const override
 	{
 		std::stringstream ss;
-		ss << "MouseMovedEvent: " << _xPosition << ", " << _yPosition;
+		ss << "MouseMovedEvent: " << m_PositionX << ", " << m_PositionY;
 		return ss.str();
 	}
 
@@ -24,46 +24,46 @@ public:
 	EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput)
 
 private:
-	float _xPosition;
-	float _yPosition;
+	float m_PositionX;
+	float m_PositionY;
 };
 
 class MouseScrolledEvent : public Event
 {
 public:
 	MouseScrolledEvent(const float xOffset, const float yOffset)
-		: _xOffset(xOffset), _yOffset(yOffset)
+		: m_OffsetX(xOffset), m_OffsetY(yOffset)
 	{ }
 
-	float GetXOffset() const { return _xOffset; }
-	float GetYOffset() const { return _yOffset; }
+	float GetXOffset() const { return m_OffsetX; }
+	float GetYOffset() const { return m_OffsetY; }
 
 	std::string ToString() const override
 	{
 		std::stringstream ss;
-		ss << "MouseScrolledEvent: " << _xOffset << ", " << _yOffset;
+		ss << "MouseScrolledEvent: " << m_OffsetX << ", " << m_OffsetY;
 		return ss.str();
 	}
 
 	EVENT_CLASS_TYPE(MouseScrolled)
 	EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 private:
-	float _xOffset;
-	float _yOffset;
+	float m_OffsetX;
+	float m_OffsetY;
 };
 
 class MouseButtonEvent : public Event
 {
 public:
-	MouseCode GetMouseButton() const { return _button; }
+	MouseCode GetMouseButton() const { return m_Button; }
 
 	EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput | EventCategoryMouseButton)
 protected:
 	MouseButtonEvent(const MouseCode button)
-		: _button(button)
+		: m_Button(button)
 	{ }
 
-	MouseCode _button;
+	MouseCode m_Button;
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent
@@ -76,7 +76,7 @@ public:
 	std::string ToString() const override
 	{
 		std::stringstream ss;
-		ss << "MouseButtonPressedEvent: " << _button;
+		ss << "MouseButtonPressedEvent: " << m_Button;
 		return ss.str();
 	}
 
@@ -93,7 +93,7 @@ public:
 	std::string ToString() const override
 	{
 		std::stringstream ss;
-		ss << "MouseButtonReleasedEvent: " << _button;
+		ss << "MouseButtonReleasedEvent: " << m_Button;
 		return ss.str();
 	}
 

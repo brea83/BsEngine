@@ -11,9 +11,9 @@
 
 ForwardRenderPass::ForwardRenderPass()
 {
-	_fallbackTexture = AssetLoader::LoadTexture("Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
+	m_FallbackTexture = AssetLoader::LoadTexture("Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
 
-	_shader = AssetLoader::LoadShader("Source/Graphics/Shaders/VertexShader.glsl", "Source/Graphics/Shaders/FragmentShader.glsl");
+	m_Shader = AssetLoader::LoadShader("Source/Graphics/Shaders/VertexShader.glsl", "Source/Graphics/Shaders/FragmentShader.glsl");
 }
 
 ForwardRenderPass::~ForwardRenderPass()
@@ -23,13 +23,13 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 {
 	std::vector<std::shared_ptr<MeshComponent>>& objectsToRender = sceneToRender.GetRenderables();
 
-	_shader->Use();
+	m_Shader->Use();
 
-	_shader->SetUniformInt("Texture1", 0);
+	m_Shader->SetUniformInt("Texture1", 0);
 
 	std::shared_ptr<Camera> mainCam = sceneToRender.GetActiveCamera();
-	_shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
-	_shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
+	m_Shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
+	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 
 	entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
 
@@ -39,15 +39,15 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 		Transform& transform = group.get<Transform>(entity);
 		MeshComponent& mesh = group.get<MeshComponent>(entity);
 
-		_fallbackTexture->Bind(0);
-		mesh.Render(*_shader, transform);
+		m_FallbackTexture->Bind(0);
+		mesh.Render(*m_Shader, transform);
 	}
 	
 	for (auto object : objectsToRender)
 	{
-		_fallbackTexture->Bind(0);
-		object->Render(*_shader);
+		m_FallbackTexture->Bind(0);
+		object->Render(*m_Shader);
 	}
 
-	_shader->EndUse();
+	m_Shader->EndUse();
 }

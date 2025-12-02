@@ -14,8 +14,8 @@ public:
 	// Inherited via RenderPass
 	void Execute(Scene& sceneToRender) override;
 private:
-	std::shared_ptr<Shader> _shader;
-	std::shared_ptr<Texture> _fallbackTexture;
+	std::shared_ptr<Shader> m_Shader;
+	std::shared_ptr<Texture> m_FallbackTexture;
 
 };
 

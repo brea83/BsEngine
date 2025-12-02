@@ -8,12 +8,12 @@
 
 static int s_NumGameObjects = 1;
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-	: Name(name + " " + std::to_string(s_NumGameObjects++)), _transform(std::make_shared<Transform>(position, rotation, scale))
+	: Name(name + " " + std::to_string(s_NumGameObjects++)), m_Transform(std::make_shared<Transform>(position, rotation, scale))
 {}
 
 GameObject::~GameObject()
 {
-	for (auto pair : _components)
+	for (auto pair : m_Components)
 	{
 		std::shared_ptr<MeshComponent> model = std::dynamic_pointer_cast<MeshComponent>(pair.second);
 		if (model)
@@ -22,9 +22,9 @@ GameObject::~GameObject()
 		}
 	}
 
-	if (_parent == nullptr && _children.size() > 0)
+	if (m_Parent == nullptr && m_Children.size() > 0)
 	{
-		for (GameObject* child : _children)
+		for (GameObject* child : m_Children)
 		{
 			child->UnParent();
 		}
@@ -33,40 +33,40 @@ GameObject::~GameObject()
 
 void GameObject::SetParent(GameObject* newParent, bool bSentFromAddChild)
 {
-	if (newParent == nullptr || _parent == newParent) return;
+	if (newParent == nullptr || m_Parent == newParent) return;
 
-	if (_parent != nullptr)
+	if (m_Parent != nullptr)
 	{
-		_parent->RemoveChild(this);
+		m_Parent->RemoveChild(this);
 	}
 
-	_parent = newParent;
-	_transform->ParentTransform = _parent->GetTransform();
+	m_Parent = newParent;
+	m_Transform->ParentTransform = m_Parent->GetTransform();
 
 	if (!bSentFromAddChild)
 	{
-		_parent->AddChild(this);
+		m_Parent->AddChild(this);
 	}
 }
 
 
 void GameObject::UnParent(bool bKeepWorldPosition)
 {
-	_transform->UnParent();
-	_parent = nullptr;
+	m_Transform->UnParent();
+	m_Parent = nullptr;
 }
 
 void GameObject::AddChild(GameObject* child, bool bSentFromSetParent)
 {
 	if (child == nullptr) return;
 
-	if (std::find(_children.begin(), _children.end(), child) != _children.end())
+	if (std::find(m_Children.begin(), m_Children.end(), child) != m_Children.end())
 	{
 		// already is a child. do nothing
 		return;
 	}
 
-	_children.push_back(child);
+	m_Children.push_back(child);
 
 	if (!bSentFromSetParent)
 	{
@@ -77,11 +77,11 @@ void GameObject::AddChild(GameObject* child, bool bSentFromSetParent)
 void GameObject::RemoveChild(GameObject* child)
 {
 	if (child == nullptr) return;
-	auto foundItterator = std::find(_children.begin(), _children.end(), child);
+	auto foundItterator = std::find(m_Children.begin(), m_Children.end(), child);
 
-	if (foundItterator != _children.end())
+	if (foundItterator != m_Children.end())
 	{
-		_children.erase(foundItterator);
+		m_Children.erase(foundItterator);
 	}
 }
 
@@ -117,7 +117,7 @@ void GameObject::OnComponentRemoved(std::shared_ptr<Component> component)
 	{
 		if (!EngineContext::GetEngine()->GetScene()->TryRemoveCamera(std::dynamic_pointer_cast<CameraComponent>(component)))
 		{
-			_components[typeid(CameraComponent).hash_code()] = component;
+			m_Components[typeid(CameraComponent).hash_code()] = component;
 		}
 	}*/
 }

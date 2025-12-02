@@ -11,14 +11,14 @@ static uint8_t s_GlfwWindowCount = 0;
 
 Window::Window(const WindowProperties& properties)
 {
-	_data.Title = properties.Title;
-	_data.Width = properties.Width;
-	_data.Height = properties.Height;
+	m_Data.Title = properties.Title;
+	m_Data.Width = properties.Width;
+	m_Data.Height = properties.Height;
 }
 
 Window::~Window()
 {
-	glfwDestroyWindow(_window);
+	glfwDestroyWindow(m_Window);
 	--s_GlfwWindowCount;
 
 	if (s_GlfwWindowCount == 0)
@@ -30,7 +30,7 @@ Window::~Window()
 int Window::Init()
 {
 #pragma region WindowInitialization
-	_window;
+	m_Window;
 	/* Init the GLFW library*/
 
 	if (!glfwInit())
@@ -44,8 +44,8 @@ int Window::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// create a windowed mode window and its openGL context
-	_window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "BsEngine V1", NULL, NULL);
-	if (!_window)
+	m_Window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "BsEngine V1", NULL, NULL);
+	if (!m_Window)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 
@@ -55,12 +55,12 @@ int Window::Init()
 	s_GlfwWindowCount++; //successfully made a window increment our tracker for that
 
 	//make the windows's current context current
-	glfwMakeContextCurrent(_window);
+	glfwMakeContextCurrent(m_Window);
 	// setting up window  callbacks
-	glfwSetWindowUserPointer(_window, &_data);
+	glfwSetWindowUserPointer(m_Window, &m_Data);
 
 
-	glfwSetFramebufferSizeCallback(_window, [](GLFWwindow* window, int width, int height) /*Old Method : FrameBufferSizeCallback1); */
+	glfwSetFramebufferSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) /*Old Method : FrameBufferSizeCallback1); */
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		data.Width = width;
@@ -76,7 +76,7 @@ int Window::Init()
 		data.EventCallback(event);
 	});
 
-	glfwSetWindowCloseCallback(_window, [](GLFWwindow* window)
+	glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -86,7 +86,7 @@ int Window::Init()
 		data.EventCallback(event);
 	});
 
-	glfwSetMouseButtonCallback(_window, [](GLFWwindow* window, int button, int action, int mods)
+	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -109,7 +109,7 @@ int Window::Init()
 		}
 	});
 
-	glfwSetScrollCallback(_window, [](GLFWwindow* window, double xOffset, double yOffset)
+	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -119,7 +119,7 @@ int Window::Init()
 		data.EventCallback(event);
 	});
 
-	glfwSetCursorPosCallback(_window, [](GLFWwindow* window, double xPosition, double yPosition)
+	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPosition, double yPosition)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -129,7 +129,7 @@ int Window::Init()
 		data.EventCallback(event);
 	});
 
-	glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scanCode, int action, int mods)
+	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scanCode, int action, int mods)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -158,7 +158,7 @@ int Window::Init()
 		}
 	});
 
-	glfwSetCharCallback(_window, [](GLFWwindow* window, unsigned int keyCode)
+	glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keyCode)
 	{
 		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 		// don't try to run callback if no callback registered
@@ -184,7 +184,7 @@ int Window::Init()
 void Window::OnUpdate()
 {
 	// glfw: swap buffers and poll IO events
-	glfwSwapBuffers(_window);
+	glfwSwapBuffers(m_Window);
 	glfwPollEvents();
 }
 

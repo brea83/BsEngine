@@ -28,7 +28,7 @@ int SceneHierarchyPanel::Draw(Scene* _currentScene)
 	if (ImGui::BeginTable("##HierarchyTable", 2))
 	{
 
-		if (_currentScene->_gameObjects.size() <= 0)
+		if (_currentScene->m_GameObjects.size() <= 0)
 		{
 			ImGui::EndTable();
 			ImGui::End();
@@ -39,13 +39,13 @@ int SceneHierarchyPanel::Draw(Scene* _currentScene)
 		ImGui::TableSetupColumn("Objects", ImGuiTableColumnFlags_WidthFixed, fontSize * 20.0f);
 		ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch);
 
-		for ( int i = 0; i < _currentScene->_gameObjects.size(); i++)//Renderable* renderObject : _currentScene->_meshComponents)
+		for ( int i = 0; i < _currentScene->m_GameObjects.size(); i++)//Renderable* renderObject : _currentScene->m_MeshComponents)
 		{
 			ImGui::TableNextRow();
 			// Column 1
 			ImGui::TableSetColumnIndex(0);
 
-			GameObject* gameObject = _currentScene->_gameObjects[i];
+			GameObject* gameObject = _currentScene->m_GameObjects[i];
 			static const std::string emptyName = "_NameEmpty_";
 
 

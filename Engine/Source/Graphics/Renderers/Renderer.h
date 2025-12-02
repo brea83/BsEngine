@@ -15,12 +15,12 @@ public:
 	virtual void RenderFrame(Scene& scene) = 0;
 	virtual void EndFrame(Scene& scene) = 0;
 
-	std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return _frameBuffer; }
-	virtual uint32_t GetFrameBufferID() { return _frameBuffer->GetColorAttachmentRendererId(); }
+	std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
+	virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentRendererId(); }
 protected:
-	EngineContext* _engine;
-	std::vector<std::unique_ptr<RenderPass>> _passes;
+	EngineContext* m_Engine;
+	std::vector<std::unique_ptr<RenderPass>> m_Passes;
 
-	std::shared_ptr<FrameBuffer> _frameBuffer;
+	std::shared_ptr<FrameBuffer> m_FrameBuffer;
 };
 

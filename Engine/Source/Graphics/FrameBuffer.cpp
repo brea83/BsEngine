@@ -9,9 +9,9 @@ FrameBuffer::FrameBuffer(const FrameBufferSpecification& specification)
 
 FrameBuffer::~FrameBuffer()
 {
-	glDeleteFramebuffers(1, &_rendererId);
-	glDeleteTextures(1, &_colorAttatchment);
-	glDeleteTextures(1, &_depthAttachment);
+	glDeleteFramebuffers(1, &m_RendererId);
+	glDeleteTextures(1, &m_ColorAttatchment);
+	glDeleteTextures(1, &m_DepthAttachment);
 }
 
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& specification)
@@ -21,8 +21,8 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification&
 
 void FrameBuffer::Bind()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, _rendererId);
-	glViewport(0, 0, _specification.Width, _specification.Height);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
+	glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 }
 
 void FrameBuffer::UnBind()
@@ -32,29 +32,29 @@ void FrameBuffer::UnBind()
 
 void FrameBuffer::Resize()
 {
-	if (_rendererId)
+	if (m_RendererId)
 	{
-		glDeleteFramebuffers(1, &_rendererId);
-		glDeleteTextures(1, &_colorAttatchment);
-		glDeleteTextures(1, &_depthAttachment);
+		glDeleteFramebuffers(1, &m_RendererId);
+		glDeleteTextures(1, &m_ColorAttatchment);
+		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
-	glCreateFramebuffers(1, &_rendererId);
-	glBindFramebuffer(GL_FRAMEBUFFER, _rendererId);
+	glCreateFramebuffers(1, &m_RendererId);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
 
-	glCreateTextures(GL_TEXTURE_2D, 1, &_colorAttatchment);
-	glBindTexture(GL_TEXTURE_2D, _colorAttatchment);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _specification.Width, _specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttatchment);
+	glBindTexture(GL_TEXTURE_2D, m_ColorAttatchment);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorAttatchment, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttatchment, 0);
 
 	// ADD A DEPTH BUFFER
-	glCreateTextures(GL_TEXTURE_2D, 1, &_depthAttachment);
-	glBindTexture(GL_TEXTURE_2D, _depthAttachment);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, _specification.Width, _specification.Height);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _depthAttachment, 0);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
+	glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 
 	// CHECK TO SEE IF IT WORKS	
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -67,7 +67,7 @@ void FrameBuffer::Resize()
 
 void FrameBuffer::Resize(uint32_t width, uint32_t height)
 {
-	_specification.Width = width;
-	_specification.Height = height;
+	m_Specification.Width = width;
+	m_Specification.Height = height;
 	Resize();
 }

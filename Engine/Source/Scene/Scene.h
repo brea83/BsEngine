@@ -17,32 +17,32 @@ public:
 	~Scene();
 	
 	GameObject* CreateEmptyGameObject();
-	void AddGameObject(GameObject* gameObject) { _gameObjects.push_back(gameObject); }
+	void AddGameObject(GameObject* gameObject) { m_GameObjects.push_back(gameObject); }
 	void RemoveGameObject(GameObject* objectToRemove);
-	int NumGameObjects() { return _gameObjects.size(); }
+	int NumGameObjects() { return m_GameObjects.size(); }
 	GameObject* GetGameObjectByIndex(int index);
 	
 	void Initialize();
 
 	entt::entity CreateEntity();
 
-	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { _meshComponents.push_back(newRenderable); }
+	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { m_MeshComponents.push_back(newRenderable); }
 	void CreateCube();
 	void RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove);
-	std::vector<std::shared_ptr<MeshComponent>>& GetRenderables() { return _meshComponents; }
+	std::vector<std::shared_ptr<MeshComponent>>& GetRenderables() { return m_MeshComponents; }
 
-	void AddCamera(std::shared_ptr<CameraComponent> camera) { _cameraComponents.push_back(camera); }
+	void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
 	bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
-	std::shared_ptr<Camera> GetActiveCamera() { return _activeCamera; }
+	std::shared_ptr<Camera> GetActiveCamera() { return m_ActiveCamera; }
 
 private:
-	std::shared_ptr<Camera> _activeCamera;
-	std::shared_ptr<Camera> _defaultCamera{ nullptr };
+	std::shared_ptr<Camera> m_ActiveCamera;
+	std::shared_ptr<Camera> m_DefaultCamera{ nullptr };
 	bool _hasInitiated{ false };
 
-	std::vector<std::shared_ptr<CameraComponent>> _cameraComponents;
-	std::vector<std::shared_ptr<MeshComponent>> _meshComponents;
-	std::vector<GameObject*> _gameObjects;
+	std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
+	std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;
+	std::vector<GameObject*> m_GameObjects;
 
 	friend class SceneHierarchyPanel;
 	friend class DetailsViewPanel;

@@ -17,14 +17,14 @@
 
 bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 {
-	if (_selected < 0 || _currentScene->_gameObjects.size() <= _selected)
+	if (_selected < 0 || _currentScene->m_GameObjects.size() <= _selected)
 	{
 		return false;
 	}
 	
 	ImGui::Begin("Details View");
 	{
-		GameObject* selectedObject = _currentScene->_gameObjects[_selected];
+		GameObject* selectedObject = _currentScene->m_GameObjects[_selected];
 		
 		static bool bIsEditing = false;
 		static std::string editingValue1;
@@ -58,9 +58,9 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 		//glm::vec3 position = transform->GetPosition();
 		glm::vec3 rotation = transform->GetRotationEuler();
 		glm::vec3 scale = transform->GetScale();
-		if (DrawVec3Control("Position", transform->_position))
+		if (DrawVec3Control("Position", transform->m_Position))
 		{
-			transform->_positionDirty = true;
+			transform->m_PositionDirty = true;
 		}
 
 		//translate rotation from radians to degrees
@@ -69,9 +69,9 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 		{
 			transform->SetRotationEuler(eulerDegrees);
 		}
-		if (DrawVec3Control("Scale", transform->_scale, 1.0f))
+		if (DrawVec3Control("Scale", transform->m_Scale, 1.0f))
 		{
-			transform->_scaleDirty = true;
+			transform->m_ScaleDirty = true;
 		}
 
 		
@@ -263,33 +263,33 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 		//ImGui::Text(component->GetFilePath().c_str());
 		static bool bIsEditing2 = false;
 		static std::string  editingValue2;
-		std::string previousValue2 = component->_filePath;
-		if (DrawStringProperty("Mesh File", component->_filePath, editingValue2, bIsEditing2))
+		std::string previousValue2 = component->m_FilePath;
+		if (DrawStringProperty("Mesh File", component->m_FilePath, editingValue2, bIsEditing2))
 		{
 
 			if (!component->Reload())
 			{
 				std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
-				component->_filePath = previousValue2;
+				component->m_FilePath = previousValue2;
 			}
 		}
 
 		static bool bIsEditing = false;
 		static std::string  editingValue1;
-		std::string previousValue = component->_texturePath;
-		if (DrawStringProperty("Texture File", component->_texturePath, editingValue1, bIsEditing))
+		std::string previousValue = component->m_TexturePath;
+		if (DrawStringProperty("Texture File", component->m_TexturePath, editingValue1, bIsEditing))
 		{
-			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->_texturePath);
+			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->m_TexturePath);
 			if (newTexture == nullptr)
 			{
 				std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
-				component->_texturePath = previousValue;
+				component->m_TexturePath = previousValue;
 			}
 			else
 			{
-				if (component->_texture != nullptr)
+				if (component->m_Texture != nullptr)
 				{
-					component->_texture = newTexture;
+					component->m_Texture = newTexture;
 				}
 			}
 		}
@@ -319,7 +319,7 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 
 		float labelWidth = ( ImGui::GetFontSize() * 10.0f);
 		std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
-		std::vector<float*> values{ &component->_fov, &component->_near, &component->_far };
+		std::vector<float*> values{ &component->m_Fov, &component->m_Near, &component->m_Far };
 		if(ImGui::BeginTable("##CameraProperties", 2))
 		{
 			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);

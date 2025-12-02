@@ -27,19 +27,19 @@ public:
 	
 	static int NextUID;
 
-	Window& GetWindow() { return *_mainWindow; }
-	GLFWwindow* GetGlfwWindow() { return _mainWindow->GetGlfwWindow(); }
+	Window& GetWindow() { return *m_MainWindow; }
+	GLFWwindow* GetGlfwWindow() { return m_MainWindow->GetGlfwWindow(); }
 
-	void SetScene(Scene* newScene) { _activeScene = newScene; }
-	Scene* GetScene() { return _activeScene; }
+	void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
+	Scene* GetScene() { return m_ActiveScene; }
 
-	Renderer* GetRenderer() { return _renderer; }
+	Renderer* GetRenderer() { return m_Renderer; }
 
-	entt::registry& GetRegistry() { return _registry; }
+	entt::registry& GetRegistry() { return m_Registry; }
 
 	// methods
-	bool IsRunning()const { return _bRunning; }
-	void StopApplication() { _bRunning = false; }
+	bool IsRunning()const { return m_IsRunning; }
+	void StopApplication() { m_IsRunning = false; }
 	void Update();
 	void Draw();
 	void DrawConsole();
@@ -55,26 +55,26 @@ private:
 	// constructors, properties, getters and setters
 	EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
 
-	static EngineContext* _engine;
-	entt::registry _registry;
+	static EngineContext* m_Engine;
+	entt::registry m_Registry;
 
 	// properties
-	bool _bRunning{ true };
-	bool _bMinimized{ false };
+	bool m_IsRunning{ true };
+	bool m_IsMinimized{ false };
 
-	bool _camFlyMode{ false };
-	bool _firstMouse{ false };
-	float _prevMouseX{ 0.0f };
-	float _prevMouseY{ 0.0f };
+	bool m_CamFlyMode{ false };
+	bool m_FirstMouse{ false };
+	float m_PrevMouseX{ 0.0f };
+	float m_PrevMouseY{ 0.0f };
 
-	float _deltaTime{ 0.0f };
-	float _lastFrameTime{ 0.0f };
+	float m_DeltaTime{ 0.0f };
+	float m_LastFrameTime{ 0.0f };
 
-	std::unique_ptr<Window> _mainWindow;
-	Scene* _activeScene;
-	Renderer* _renderer;
+	std::unique_ptr<Window> m_MainWindow;
+	Scene* m_ActiveScene;
+	Renderer* m_Renderer;
 
-	ImGuiLayer* _imGuiLayer;
+	ImGuiLayer* m_ImGuiLayer;
 
 	// DebugConsole* _console;
 	// methods

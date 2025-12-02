@@ -14,30 +14,30 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 MeshComponent::MeshComponent(GameObject* parent)
- : _parentObject(parent), _name("Model Component"), _filePath(""), _texturePath("")
+ : m_ParentObject(parent), m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
 {
 
 }
 
 MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh)
-: _parentObject(parent), _name("Model Component"), _texturePath("")
+: m_ParentObject(parent), m_Name("Model Component"), m_TexturePath("")
 {
 	
 	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 	if (mesh != nullptr)
 	{
-		_meshes.push_back(mesh);
+		m_Meshes.push_back(mesh);
 
 		switch (primitiveMesh)
 		{
 		case PrimitiveMeshType::Triangle:
-			_filePath = "PrimitiveMesh_Triangle";
+			m_FilePath = "PrimitiveMesh_Triangle";
 			break;
 		case PrimitiveMeshType::Quad:
-			_filePath = "PrimitiveMesh_Quad";
+			m_FilePath = "PrimitiveMesh_Quad";
 			break;
 		case PrimitiveMeshType::Cube:
-			_filePath = "PrimitiveMesh_Cube";
+			m_FilePath = "PrimitiveMesh_Cube";
 			break;
 		default:
 			break;
@@ -45,28 +45,28 @@ MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh
 	}
 	else
 	{
-		_filePath = "";
+		m_FilePath = "";
 	}
 }
 
 MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-: _parentObject(nullptr), _name("Model Component"), _texturePath("")
+: m_ParentObject(nullptr), m_Name("Model Component"), m_TexturePath("")
 {
 	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 	if (mesh != nullptr)
 	{
-		_meshes.push_back(mesh);
+		m_Meshes.push_back(mesh);
 
 		switch (primitiveMesh)
 		{
 		case PrimitiveMeshType::Triangle:
-			_filePath = "PrimitiveMesh_Triangle";
+			m_FilePath = "PrimitiveMesh_Triangle";
 			break;
 		case PrimitiveMeshType::Quad:
-			_filePath = "PrimitiveMesh_Quad";
+			m_FilePath = "PrimitiveMesh_Quad";
 			break;
 		case PrimitiveMeshType::Cube:
-			_filePath = "PrimitiveMesh_Cube";
+			m_FilePath = "PrimitiveMesh_Cube";
 			break;
 		default:
 			break;
@@ -74,12 +74,12 @@ MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
 	}
 	else
 	{
-		_filePath = "";
+		m_FilePath = "";
 	}
 }
 
 MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
-	: _parentObject(parent), _name("Model Component"), _filePath(modelFilePath), _texturePath(textureFilePath)
+	: m_ParentObject(parent), m_Name("Model Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
 {
 
 	Reload();
@@ -88,23 +88,23 @@ MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePat
 
 bool MeshComponent::Reload()
 {
-	std::string fileExtension = _filePath.substr(_filePath.find_last_of('.'));
+	std::string fileExtension = m_FilePath.substr(m_FilePath.find_last_of('.'));
 	if (fileExtension == ".fbx")
 	{
-		LoadMeshAssimp(_filePath);
+		LoadMeshAssimp(m_FilePath);
 		return false;
 	}
 	else if (fileExtension == ".obj")
 	{
-		return LoadObj(_filePath, _texturePath);
+		return LoadObj(m_FilePath, m_TexturePath);
 	}
 	return false;
 }
 
 MeshComponent::~MeshComponent()
 {
-	std::cout << "DELETING MODEL " << _name << std::endl;
-	//delete[] _meshes;
+	std::cout << "DELETING MODEL " << m_Name << std::endl;
+	//delete[] m_Meshes;
 }
 
 void MeshComponent::LoadMeshAssimp(const std::string & filePath)
@@ -120,8 +120,8 @@ void MeshComponent::LoadMeshAssimp(const std::string & filePath)
 	}
 
 	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-	std::cout << "IMPORTING MESH " << _name << std::endl;
-	std::cout << " DIRECTORY: " << _filePath << std::endl;
+	std::cout << "IMPORTING MESH " << m_Name << std::endl;
+	std::cout << " DIRECTORY: " << m_FilePath << std::endl;
 	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
 	{
 		aiMaterial* material = assimpScene->mMaterials[i];
@@ -152,9 +152,9 @@ void MeshComponent::LoadMeshAssimp(const std::string & filePath)
 	}*/
 
 	//std::cout << "====================================" << std::endl;
-	//std::cout << "Reserving " << assimpScene->mNumMeshes << ", in _meshes" << std::endl;
+	//std::cout << "Reserving " << assimpScene->mNumMeshes << ", in m_Meshes" << std::endl;
 	//std::cout << "====================================" << std::endl;
-	_meshes.reserve(assimpScene->mNumMeshes);
+	m_Meshes.reserve(assimpScene->mNumMeshes);
 	ProcessNode(assimpScene->mRootNode, assimpScene, aiMatrix4x4());
 	return;
 }
@@ -166,13 +166,13 @@ bool MeshComponent::LoadObj(const std::string& filePath, const std::string& text
 	{
 		return false;
 	}
-	_meshes.clear();
-	_meshes.push_back(mesh);
+	m_Meshes.clear();
+	m_Meshes.push_back(mesh);
 
 	if (textureFileName != "")
 	{
-		_texture = AssetLoader::LoadTexture(_texturePath);
-		if (_texture == nullptr) return false;
+		m_Texture = AssetLoader::LoadTexture(m_TexturePath);
+		if (m_Texture == nullptr) return false;
 	}
 
 	return true;
@@ -183,7 +183,7 @@ void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Tra
 
 	if (parentNode) 
 	{ 
-		localTransform->ParentTransform = _parentObject->GetTransform();
+		localTransform->ParentTransform = m_ParentObject->GetTransform();
 	}
 	
 	aiVector3D scaling;
@@ -216,7 +216,7 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 	//if root node set model's transform
 	if (!node->mParent)
 	{
-		ProcessTransform(node->mTransformation, _parentObject->GetTransform(), nullptr);
+		ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "Set MODEL transform" << std::endl;
 		//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
@@ -240,12 +240,12 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 		std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
 
 		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-		ProcessTransform(nodeTransform, _parentObject->GetTransform(), node->mParent);
+		ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
 		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
 		//meshWithCurrentNodeTransform = &mesh;
-		_meshes.push_back(mesh);
+		m_Meshes.push_back(mesh);
 	}
 
 	// process children
@@ -370,30 +370,30 @@ void MeshComponent::OnUpdate()
 
 void MeshComponent::Render(Shader& currentShader)
 {
-	if (_parentObject == nullptr)
+	if (m_ParentObject == nullptr)
 	{
 		//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
 		//registry.
 	}
 	else
 	{
-		currentShader.SetUniformMat4("transform", _parentObject->GetTransform()->GetObjectToWorldMatrix());
+		currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
 	}
 
-	if (_texture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		_texture->Bind();
+		m_Texture->Bind();
 		currentShader.SetUniformInt("Texture1", 0);
 	}
 
-	for (unsigned int i = 0; i < _meshes.size(); i++)
+	for (unsigned int i = 0; i < m_Meshes.size(); i++)
 	{
-		_meshes[i]->Render(currentShader);
+		m_Meshes[i]->Render(currentShader);
 	}
 
-	if (_texture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		_texture->UnBind();
+		m_Texture->UnBind();
 		//currentShader.SetUniformInt("Texture1", 0);
 	}
 }
@@ -403,19 +403,19 @@ void MeshComponent::Render(Shader& currentShader, Transform& transform)
 	currentShader.SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
 	
 
-	if (_texture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		_texture->Bind();
+		m_Texture->Bind();
 		currentShader.SetUniformInt("Texture1", 0);
 	}
 
-	for (unsigned int i = 0; i < _meshes.size(); i++)
+	for (unsigned int i = 0; i < m_Meshes.size(); i++)
 	{
-		_meshes[i]->Render(currentShader);
+		m_Meshes[i]->Render(currentShader);
 	}
 
-	if (_texture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		_texture->UnBind();
+		m_Texture->UnBind();
 	}
 }

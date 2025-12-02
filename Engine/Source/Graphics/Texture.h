@@ -91,8 +91,8 @@ public:
 	static const char* Mag_FilterModeNames[(unsigned long long)Mag_FilterType::COUNT];
 	TextureType Type{ TextureType::Diffuse };
 
-	Min_FilterType GetMinFilterType() const { return _minFilterType; }
-	Mag_FilterType GetMagFilterType() const { return _magFilterType; }
+	Min_FilterType GetMinFilterType() const { return m_MinFilterType; }
+	Mag_FilterType GetMagFilterType() const { return m_MagFilterType; }
 	static TextureType GetTypeByString(const std::string& searchString);
 
 	void CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter);
@@ -100,8 +100,8 @@ public:
 	void UnBind() const;
 
 private:
-	Min_FilterType _minFilterType{ Min_FilterType::Nearest_Nearest };
-	Mag_FilterType _magFilterType{ Mag_FilterType::Nearest };
+	Min_FilterType m_MinFilterType{ Min_FilterType::Nearest_Nearest };
+	Mag_FilterType m_MagFilterType{ Mag_FilterType::Nearest };
 
 	int GetGlMin();
 	int GetGlMag();

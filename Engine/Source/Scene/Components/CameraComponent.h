@@ -7,18 +7,18 @@ class GameObject;
 class CameraComponent : public Camera, public Component
 {
 public:
-	CameraComponent(GameObject* parent) :_parentObject(parent), _name("Camera Component") {};
+	CameraComponent(GameObject* parent) :m_ParentObject(parent), m_Name("Camera Component") {};
 	~CameraComponent() {};
 	// Inherited via Component
 	void Initialize() override;
 	// Inherited via Component
-	std::string Name() const override { return _name; }
-	void SetName(const std::string& name) override { _name = name; }
+	std::string Name() const override { return m_Name; }
+	void SetName(const std::string& name) override { m_Name = name; }
 
 	void CleanUp() override;
 	std::shared_ptr<Component> Clone() override;
 	
-	GameObject* GetParentObject() const override { return _parentObject; }
+	GameObject* GetParentObject() const override { return m_ParentObject; }
 	void SetParentObject(GameObject* newParent) override;
 	
 	void OnUpdate() override;
@@ -31,12 +31,12 @@ public:
 	{
 		return Name() == other.Name()
 			//TODO: ADD ID COMPARISSON
-			&& _parentObject == other._parentObject;
+			&& m_ParentObject == other.m_ParentObject;
 	}
 
 	protected:
-		std::string _name;
-		GameObject* _parentObject{ nullptr };
+		std::string m_Name;
+		GameObject* m_ParentObject{ nullptr };
 
 
 		// Inherited via Camera

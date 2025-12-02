@@ -29,7 +29,7 @@ ImGuiLayer::ImGuiLayer()
 
 ImGuiLayer::~ImGuiLayer()
 {
-	delete _assetViewer;
+	delete m_AssetViewer;
 }
 
 void ImGuiLayer::OnAttach()
@@ -61,10 +61,10 @@ void ImGuiLayer::OnAttach()
 	ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	_currentScene = EngineContext::GetEngine()->GetScene();
-	//_hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
+	m_CurrentScene = EngineContext::GetEngine()->GetScene();
+	//m_Hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
 
-	//_assetViewer = new AssetViewerPanel();
+	//m_AssetViewer = new AssetViewerPanel();
 }
 
 void ImGuiLayer::OnDetach()
@@ -99,9 +99,9 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	int selected = SceneHierarchyPanel::Draw(_currentScene);
+	int selected = SceneHierarchyPanel::Draw(m_CurrentScene);
 
-	DetailsViewPanel::Draw(_currentScene, selected);
+	DetailsViewPanel::Draw(m_CurrentScene, selected);
 	AssetViewerPanel::Draw();
 
 	DrawViewport(engine, selected);
@@ -111,16 +111,16 @@ void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
 {
 	ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 	DrawSceneTools();
-	std::shared_ptr<Camera> camera = _currentScene->GetActiveCamera();
+	std::shared_ptr<Camera> camera = m_CurrentScene->GetActiveCamera();
 	//DrawGridLines(camera);
 
 	std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
 	uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
 	ImVec2 currentSize = ImGui::GetContentRegionAvail();
 
-	if (_viewportPanelSize.x != currentSize.x || _viewportPanelSize.y != currentSize.y)
+	if (m_ViewportPanelSize.x != currentSize.x || m_ViewportPanelSize.y != currentSize.y)
 	{
-		_viewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
+		m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
 		frameBuffer->Resize(currentSize.x, currentSize.y);
 		camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
 	}
@@ -161,10 +161,10 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 			if (ImGui::MenuItem("Empty GameObject"))
 			{
 				GameObject* testObject = new GameObject();
-				_currentScene->AddGameObject(testObject);
+				m_CurrentScene->AddGameObject(testObject);
 			}
 
-			if (ImGui::MenuItem("Create Cube")) _currentScene->CreateCube();
+			if (ImGui::MenuItem("Create Cube")) m_CurrentScene->CreateCube();
 			ImGui::EndMenu();
 		}
 
@@ -210,14 +210,14 @@ void ImGuiLayer::DrawSceneTools()
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
 			ImGui::Text("Cam Speed");
-			ImGui::DragFloat("##Speed", &_currentScene->GetActiveCamera()->_cameraSpeed);
+			ImGui::DragFloat("##Speed", &m_CurrentScene->GetActiveCamera()->m_CameraSpeed);
 			ImGui::Text("Look Sensitivity");
-			ImGui::DragFloat("##Sensitivity", &_currentScene->GetActiveCamera()->_mouseLookSesitivity);
+			ImGui::DragFloat("##Sensitivity", &m_CurrentScene->GetActiveCamera()->m_MouseLookSesitivity);
 			ImGui::Text("FOV");
-			ImGui::DragFloat("##FoVvalue", &_currentScene->GetActiveCamera()->_fov);
+			ImGui::DragFloat("##FoVvalue", &m_CurrentScene->GetActiveCamera()->m_Fov);
 			if(ImGui::Button("ResetFoV"))
 			{
-				_currentScene->GetActiveCamera()->_fov = 45.0f;
+				m_CurrentScene->GetActiveCamera()->m_Fov = 45.0f;
 			}
 			ImGui::PopItemWidth();
 			ImGui::EndMenuBar();
@@ -233,7 +233,7 @@ void ImGuiLayer::DrawGridLines(std::shared_ptr<Camera> camera)
 
 void ImGuiLayer::DrawGizmos(std::shared_ptr<Camera> camera, int selectedObjectIndex)
 {
-	GameObject* selectedObject = _currentScene->GetGameObjectByIndex(selectedObjectIndex);
+	GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
 	if (selectedObject == nullptr) return;
 
 	ImGuizmo::SetDrawlist();

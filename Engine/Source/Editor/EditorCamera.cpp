@@ -6,34 +6,34 @@
 EditorCamera::EditorCamera()
 {
 	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	_forward = glm::vec3(0.0f, 0.0f, -1.0f);
-	_right = glm::normalize(glm::cross(worldUp, _forward));
-	_up = glm::cross(_forward, _right);
+	m_Forward = glm::vec3(0.0f, 0.0f, -1.0f);
+	m_Right = glm::normalize(glm::cross(worldUp, m_Forward));
+	m_Up = glm::cross(m_Forward, m_Right);
 }
 
 //void EditorCamera::LookAt(const glm::vec3& target, const glm::vec3& up)
 //{
-//	_target = target;
-//	_up = up;
+//	m_Target = target;
+//	m_Up = up;
 //}
 
 bool EditorCamera::HandleMoveWasd(int keyCode, float deltaTime)
 {
-	float velocity = _cameraSpeed * deltaTime; // adjust accordingly
+	float velocity = m_CameraSpeed * deltaTime; // adjust accordingly
 
 	switch (keyCode)
 	{
 	case GLFW_KEY_W:
-		_position += velocity * _forward;
+		m_Position += velocity * m_Forward;
 		return true;
 	case GLFW_KEY_S:
-		_position -= velocity * _forward;
+		m_Position -= velocity * m_Forward;
 		return true;
 	case GLFW_KEY_A:
-		_position -= glm::normalize(glm::cross(_forward, _up)) * velocity;
+		m_Position -= glm::normalize(glm::cross(m_Forward, m_Up)) * velocity;
 		return true;
 	case GLFW_KEY_D:
-		_position += glm::normalize(glm::cross(_forward, _up)) * velocity;
+		m_Position += glm::normalize(glm::cross(m_Forward, m_Up)) * velocity;
 		return true;
 	default:
 		return false;
@@ -42,12 +42,12 @@ bool EditorCamera::HandleMoveWasd(int keyCode, float deltaTime)
 
 bool EditorCamera::HandleLookMouse(float xOffset, float yOffset, float deltaTime)
 {
-	const float sensitivity = _mouseLookSesitivity * deltaTime;
+	const float sensitivity = m_MouseLookSesitivity * deltaTime;
 	xOffset *= sensitivity;
 	yOffset *= sensitivity;
 
-	_yaw += xOffset;
-	_pitch += yOffset;
+	m_Yaw += xOffset;
+	m_Pitch += yOffset;
 
 	UpdateCameraVectors();
 
@@ -56,17 +56,17 @@ bool EditorCamera::HandleLookMouse(float xOffset, float yOffset, float deltaTime
 
 glm::mat4 EditorCamera::ViewMatrix() const
 {
-	return  glm::lookAt(_position, _position + _forward, _up);
+	return  glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 }
 
 void EditorCamera::UpdateCameraVectors()
 {
 	glm::vec3 direction;
-	direction.x = cos(glm::radians(_yaw) * cos(glm::radians(_pitch)));
-	direction.y = sin(glm::radians(_pitch));
-	direction.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
-	_forward = glm::normalize(direction);
+	direction.x = cos(glm::radians(m_Yaw) * cos(glm::radians(m_Pitch)));
+	direction.y = sin(glm::radians(m_Pitch));
+	direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+	m_Forward = glm::normalize(direction);
 
-	_right = glm::normalize(glm::cross(_forward, glm::vec3(0.0f, 1.0f, 0.0f)));
-	_up = glm::normalize(glm::cross(_right, _forward));
+	m_Right = glm::normalize(glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+	m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
 }

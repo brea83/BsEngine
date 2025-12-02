@@ -50,19 +50,19 @@ class EventDispatcher
 {
 public:
 	EventDispatcher(Event& event)
-		: _event(event)
+		: m_Event(event)
 	{ }
 
 	template<typename T, typename F> bool Dispatch(const F& function)
 	{
-		if (_event.GetEventType() == T::GetStaticType())
+		if (m_Event.GetEventType() == T::GetStaticType())
 		{
-			_event.Handled |= function(static_cast<T&>(_event));
+			m_Event.Handled |= function(static_cast<T&>(m_Event));
 			return true;
 		}
 		return false;
 	}
 
 private:
-	Event& _event;
+	Event& m_Event;
 };

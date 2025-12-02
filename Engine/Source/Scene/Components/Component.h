@@ -32,9 +32,6 @@ public:
     virtual void OnUpdate() = 0;
 
 protected:
-    //GameObject* _parentObject;
-
-    // id generator
 
 };
 

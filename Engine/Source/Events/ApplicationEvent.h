@@ -6,16 +6,16 @@ class WindowResizedEvent : public Event
 {
 public:
 	WindowResizedEvent(unsigned int width, unsigned int height)
-		: _width(width), _height(height)
+		: m_Width(width), m_Height(height)
 	{}
 
-	unsigned int GetWidth() const { return _width; }
-	unsigned int GetHeight() const { return _height; }
+	unsigned int GetWidth() const { return m_Width; }
+	unsigned int GetHeight() const { return m_Height; }
 
 	std::string ToString() const override
 	{
 		std::stringstream ss;
-		ss << "WindowResizedEvent: " << _width << ", " << _height;
+		ss << "WindowResizedEvent: " << m_Width << ", " << m_Height;
 		return ss.str();
 	}
 
@@ -23,8 +23,8 @@ public:
 	EVENT_CLASS_CATEGORY(EventCategoryApplication)
 
 private:
-	unsigned int _width;
-	unsigned int _height;
+	unsigned int m_Width;
+	unsigned int m_Height;
  };
 
 class WindowClosedEvent : public Event

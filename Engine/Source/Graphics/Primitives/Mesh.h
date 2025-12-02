@@ -51,8 +51,8 @@ public:
 
 	virtual ~Mesh();
 
-	std::vector<Vertex>& GetVertices() { return _vertices; }
-	std::vector<unsigned int>& GetIndices() { return _indices; }
+	std::vector<Vertex>& GetVertices() { return m_Vertices; }
+	std::vector<unsigned int>& GetIndices() { return m_Indices; }
 	// methods
 	void Render(Shader& currentShader) override;
 	
@@ -62,8 +62,8 @@ protected:
 	unsigned int VBO{ 0 };
 	unsigned int EBO{ 0 }; //Element buffer object
 
-	std::vector<Vertex> _vertices;
-	std::vector<unsigned int> _indices;
+	std::vector<Vertex> m_Vertices;
+	std::vector<unsigned int> m_Indices;
 
 	//methods
 	void Init() override;

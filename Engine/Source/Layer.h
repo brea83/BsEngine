@@ -13,8 +13,8 @@
 		virtual void OnImGuiRender() { }
 		//virtual void OnEvent(Event& event) { }
 
-		inline const std::string& GetName() const { return _debugName; }
+		inline const std::string& GetName() const { return m_DebugName; }
 
 	protected:
-		std::string _debugName;
+		std::string m_DebugName;
 	};

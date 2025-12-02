@@ -9,7 +9,7 @@ LayerStack::LayerStack()
 
 LayerStack::~LayerStack()
 {
-	for (Layer* layer : _layers)
+	for (Layer* layer : m_Layers)
 	{
 		delete layer;
 	}
@@ -17,30 +17,30 @@ LayerStack::~LayerStack()
 
 void LayerStack::PushLayer(Layer * layer)
 {
-	_layers.emplace(_layers.begin() + _layerInsertIndex, layer);
-	_layerInsertIndex++;
+	m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
+	m_LayerInsertIndex++;
 }
 
 void LayerStack::PushOverlay(Layer * overlay)
 {
-	_layers.emplace_back(overlay);
+	m_Layers.emplace_back(overlay);
 }
 
 void LayerStack::PopLayer(Layer * layer)
 {
-	auto itterator = std::find(_layers.begin(), _layers.end(), layer);
-	if (itterator != _layers.end())
+	auto itterator = std::find(m_Layers.begin(), m_Layers.end(), layer);
+	if (itterator != m_Layers.end())
 	{
-		_layers.erase(itterator);
-		_layerInsertIndex--;
+		m_Layers.erase(itterator);
+		m_LayerInsertIndex--;
 	}
 }
 
 void LayerStack::PopOverlay(Layer * overlay)
 {
-	auto itterator = std::find(_layers.begin(), _layers.end(), overlay);
-	if (itterator != _layers.end())
+	auto itterator = std::find(m_Layers.begin(), m_Layers.end(), overlay);
+	if (itterator != m_Layers.end())
 	{
-		_layers.erase(itterator);
+		m_Layers.erase(itterator);
 	}
 }

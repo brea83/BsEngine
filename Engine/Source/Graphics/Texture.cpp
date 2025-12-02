@@ -51,14 +51,14 @@ TextureType Texture::GetTypeByString(const std::string& searchString)
 
 void Texture::CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter)
 {
-	_minFilterType = minFilter;
-	_magFilterType = magFilter;
+	m_MinFilterType = minFilter;
+	m_MagFilterType = magFilter;
 	CreateTexture(filePath);
 }
 
 int Texture::GetGlMin()
 {
-	switch (_minFilterType)
+	switch (m_MinFilterType)
 	{
 	case Min_FilterType::Nearest_Nearest:
 		return GL_NEAREST_MIPMAP_NEAREST;
@@ -75,7 +75,7 @@ int Texture::GetGlMin()
 
 int Texture::GetGlMag()
 {
-	switch (_magFilterType)
+	switch (m_MagFilterType)
 	{
 	case Mag_FilterType::Nearest:
 		return GL_NEAREST;

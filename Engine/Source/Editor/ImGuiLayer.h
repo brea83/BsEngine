@@ -17,7 +17,7 @@ class Scene;
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnSceneChange(Scene* newScene) { _currentScene = newScene; }
+		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; }
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
@@ -30,15 +30,12 @@ class Scene;
 		void End();
 
 	private:
-		float _time{ 0.0f };
-		Scene* _currentScene;
-		glm::vec2 _viewportPanelSize{ 0.0f };
+		float m_Time{ 0.0f };
+		Scene* m_CurrentScene;
+		glm::vec2 m_ViewportPanelSize{ 0.0f };
 
-		bool bGridVisibleX{ true };
-		bool bGridVisibleY{ false };
-		bool bGridVisibleZ{ true };
-		SceneHierarchyPanel _hierarchy;
-		ImGuiPanel* _assetViewer;
+		SceneHierarchyPanel m_Hierarchy;
+		ImGuiPanel* m_AssetViewer;
 
 		void DrawSceneTools();
 

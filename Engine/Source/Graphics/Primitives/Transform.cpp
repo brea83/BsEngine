@@ -7,22 +7,22 @@
 //
 
 Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
-    : _position(position), _eulerRotation(glm::radians(rotation)), 
-    _orientation(glm::quat(glm::radians(rotation))), _scale(scale), 
-    _localMatrix(glm::mat4(1.0f)), _worldMatrix(glm::mat4(1.0f))
+    : m_Position(position), m_EulerRotation(glm::radians(rotation)), 
+    m_Orientation(glm::quat(glm::radians(rotation))), m_Scale(scale), 
+    m_LocalMatrix(glm::mat4(1.0f)), m_WorldMatrix(glm::mat4(1.0f))
 { }
 
 void Transform::UnParent(bool bKeepWorldPosition)
 {
     if (ParentTransform != nullptr)
     {
-        glm::mat4 parentMatrix = ParentTransform->_localMatrix;
+        glm::mat4 parentMatrix = ParentTransform->m_LocalMatrix;
 
-        _localMatrix = parentMatrix * _localMatrix;
+        m_LocalMatrix = parentMatrix * m_LocalMatrix;
 
-        Decompose(_localMatrix, _scale, _orientation, _position );
+        Decompose(m_LocalMatrix, m_Scale, m_Orientation, m_Position );
 
-        SetRotationQuaternion(_orientation, AngleType::Radians);
+        SetRotationQuaternion(m_Orientation, AngleType::Radians);
 
         if (ParentTransform->ParentTransform != nullptr)
         {
@@ -35,20 +35,20 @@ void Transform::UnParent(bool bKeepWorldPosition)
 
 glm::vec3 Transform::GetPosition()
 {
-    if(!_positionDirty) return _position;
+    if(!m_PositionDirty) return m_Position;
 
-    _localMatrix = glm::translate(_localMatrix, _position);
-    _positionDirty = false;
-    return _position;
+    m_LocalMatrix = glm::translate(m_LocalMatrix, m_Position);
+    m_PositionDirty = false;
+    return m_Position;
 }
 
 glm::vec3 Transform::Forward() const
 {
     glm::vec3 direction;
 
-    direction.x = cos(_eulerRotation.x) * cos(_eulerRotation.y);
-    direction.y = sin(_eulerRotation.y);
-    direction.z = sin(_eulerRotation.x) * cos(_eulerRotation.y);
+    direction.x = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
+    direction.y = sin(m_EulerRotation.y);
+    direction.z = sin(m_EulerRotation.x) * cos(m_EulerRotation.y);
 
     return glm::normalize(direction);
 }
@@ -77,68 +77,68 @@ void Transform::Rotate(float angle, glm::vec3 axis, AngleType angleType)
 {
     if (angleType == AngleType::Degrees)
     {
-        _localMatrix = glm::rotate(_localMatrix, glm::radians(angle), axis);
+        m_LocalMatrix = glm::rotate(m_LocalMatrix, glm::radians(angle), axis);
     }
     else
     {
-        _localMatrix = glm::rotate(_localMatrix, angle, axis);
+        m_LocalMatrix = glm::rotate(m_LocalMatrix, angle, axis);
     }
 
-    _orientation = glm::quat_cast(_localMatrix);
-    float yaw = glm::yaw(_orientation);
-    float pitch = glm::pitch(_orientation);
-    float roll = glm::roll(_orientation);
+    m_Orientation = glm::quat_cast(m_LocalMatrix);
+    float yaw = glm::yaw(m_Orientation);
+    float pitch = glm::pitch(m_Orientation);
+    float roll = glm::roll(m_Orientation);
 
-    _eulerRotation = glm::vec3(yaw, pitch, roll);
-    _rotationDirty;
+    m_EulerRotation = glm::vec3(yaw, pitch, roll);
+    m_RotationDirty;
 }
 
 void Transform::SetRotationEuler(glm::vec3 value, AngleType angleType)
 {
     if (angleType == AngleType::Degrees)
     {
-        _eulerRotation = glm::radians(value);  
-        _orientation = glm::quat(_eulerRotation); 
+        m_EulerRotation = glm::radians(value);  
+        m_Orientation = glm::quat(m_EulerRotation); 
     }
     else
     {
-        _eulerRotation = glm::vec3(value);
-        _orientation = glm::quat(value);
+        m_EulerRotation = glm::vec3(value);
+        m_Orientation = glm::quat(value);
     }
 
-    _rotationDirty = true;
+    m_RotationDirty = true;
 }
 
 void Transform::SetRotationQuaternion(glm::quat orientation, AngleType angleType)
 {
     if (angleType == AngleType::Degrees)
     {
-        _orientation.w = glm::radians(orientation.w);
-        _orientation.x = glm::radians(orientation.x);
-        _orientation.y = glm::radians(orientation.y);
-        _orientation.z = glm::radians(orientation.z);
-        float yaw = glm::yaw(_orientation);
-        float pitch = glm::pitch(_orientation);
-        float roll = glm::roll(_orientation);
+        m_Orientation.w = glm::radians(orientation.w);
+        m_Orientation.x = glm::radians(orientation.x);
+        m_Orientation.y = glm::radians(orientation.y);
+        m_Orientation.z = glm::radians(orientation.z);
+        float yaw = glm::yaw(m_Orientation);
+        float pitch = glm::pitch(m_Orientation);
+        float roll = glm::roll(m_Orientation);
 
-        _eulerRotation = glm::vec3(yaw, pitch, roll);
+        m_EulerRotation = glm::vec3(yaw, pitch, roll);
     }
     else
     {
-        _orientation = orientation;
-        float yaw =  glm::yaw(_orientation);
-        float pitch = glm::pitch(_orientation);
-        float roll = glm::roll(_orientation);
+        m_Orientation = orientation;
+        float yaw =  glm::yaw(m_Orientation);
+        float pitch = glm::pitch(m_Orientation);
+        float roll = glm::roll(m_Orientation);
 
-        _eulerRotation = glm::vec3(yaw, pitch, roll);
+        m_EulerRotation = glm::vec3(yaw, pitch, roll);
     }
 
-    _rotationDirty = true;
+    m_RotationDirty = true;
 }
 
 glm::vec3 Transform::GetRotationEuler(AngleType angleType)
 {
-    if (_positionDirty || _scaleDirty || _rotationDirty)
+    if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
     {
         RecalculateModelMatrix();
     }
@@ -146,10 +146,10 @@ glm::vec3 Transform::GetRotationEuler(AngleType angleType)
     switch (angleType)
     {
     case AngleType::Degrees:
-        return glm::degrees(_eulerRotation);
+        return glm::degrees(m_EulerRotation);
         break;
     case AngleType::Radians:
-        return _eulerRotation;
+        return m_EulerRotation;
         break;
     default:
         break;
@@ -158,50 +158,50 @@ glm::vec3 Transform::GetRotationEuler(AngleType angleType)
 
 glm::vec3 Transform::GetScale()
 {
-    if (_positionDirty || _scaleDirty || _rotationDirty)
+    if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
     {
         RecalculateModelMatrix();
     }
 
-    return _scale;
+    return m_Scale;
 }
 
 glm::mat4& Transform::GetObjectToWorldMatrix()
 {
-    if (_positionDirty || _scaleDirty || _rotationDirty)
+    if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
     {
         RecalculateModelMatrix();
     } 
 
     if (ParentTransform != nullptr)
     {
-        _worldMatrix = ParentTransform->GetObjectToWorldMatrix() * _localMatrix;
-        return _worldMatrix;
+        m_WorldMatrix = ParentTransform->GetObjectToWorldMatrix() * m_LocalMatrix;
+        return m_WorldMatrix;
     }
 
-    return _localMatrix;
+    return m_LocalMatrix;
 }
 
 void Transform::RecalculateModelMatrix()
 {
     glm::mat4 identity = glm::mat4(1.0f);
-    glm::mat4 translation = glm::translate(identity, _position);
+    glm::mat4 translation = glm::translate(identity, m_Position);
 
-    _orientation = glm::normalize(_orientation);
-    glm::mat4 rotation = glm::mat4_cast(_orientation);
+    m_Orientation = glm::normalize(m_Orientation);
+    glm::mat4 rotation = glm::mat4_cast(m_Orientation);
 
    /* glm::mat4 rotation =
-        glm::rotate(identity, glm::radians(_eulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f })
-        * glm::rotate(identity, glm::radians(_eulerRotation.y), glm::vec3{ 0.0f, 1.0f, 0.0f })
-        * glm::rotate(identity, glm::radians(_eulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f });*/
+        glm::rotate(identity, glm::radians(m_EulerRotation.z), glm::vec3{ 0.0f, 0.0f, 1.0f })
+        * glm::rotate(identity, glm::radians(m_EulerRotation.y), glm::vec3{ 0.0f, 1.0f, 0.0f })
+        * glm::rotate(identity, glm::radians(m_EulerRotation.x), glm::vec3{ 1.0f, 0.0f, 0.0f });*/
 
-    glm::mat4 scale = glm::scale(identity, _scale);
+    glm::mat4 scale = glm::scale(identity, m_Scale);
 
-    _localMatrix = translation * rotation * scale;
+    m_LocalMatrix = translation * rotation * scale;
 
-    _positionDirty = false;
-    _scaleDirty = false;
-    _rotationDirty = false;
+    m_PositionDirty = false;
+    m_ScaleDirty = false;
+    m_RotationDirty = false;
 }
 
 void Transform::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)

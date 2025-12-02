@@ -10,15 +10,15 @@ Camera::Camera()
 
 bool Camera::Zoom(float amount)
 {
-	_fov -= amount;
+	m_Fov -= amount;
 
-	if (_fov < 1.0f) _fov = 1.0f;
+	if (m_Fov < 1.0f) m_Fov = 1.0f;
 
-	if (_fov > 90.0f) _fov = 90.0f;
+	if (m_Fov > 90.0f) m_Fov = 90.0f;
 	return true;
 }
 
 glm::mat4 Camera::ProjectionMatrix() const
 {
-	return glm::perspective(glm::radians(_fov), _aspectRatio, _near, _far);
+	return glm::perspective(glm::radians(m_Fov), m_AspectRatio, m_Near, m_Far);
 }

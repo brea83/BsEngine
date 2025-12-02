@@ -14,7 +14,7 @@ public:
 	
 	std::string Name;
 
-	virtual std::shared_ptr<Transform> GetTransform() { return _transform; }
+	virtual std::shared_ptr<Transform> GetTransform() { return m_Transform; }
 
 	// Component function templates defined lower in the file to make 
 	// reading what functions are available less cluttered
@@ -29,19 +29,19 @@ public:
 	template <typename Type>
 	std::shared_ptr<Type> GetComponent();
 	
-	std::unordered_map<size_t, std::shared_ptr<Component>>& GetAllComponents() { return _components; }
+	std::unordered_map<size_t, std::shared_ptr<Component>>& GetAllComponents() { return m_Components; }
 	
 	template <typename Type>
 	void RemoveComponent();
 
 	void SetParent(GameObject* newParent, bool bSentFromAddChild = false);
-	GameObject* GetParent() { return _parent; }
+	GameObject* GetParent() { return m_Parent; }
 
 	void UnParent(bool bKeepWorldPosition = true);
 
 	void AddChild(GameObject* child, bool bSentFromSetParent = false);
 	void RemoveChild(GameObject* child);
-	std::vector< GameObject*>& GetChildren() { return _children; }
+	std::vector< GameObject*>& GetChildren() { return m_Children; }
 
 	virtual void OnUpdate(){ }
 
@@ -49,17 +49,17 @@ public:
 	{
 		return Name == other.Name
 			//TODO: ADD ID COMPARISSON
-			&& _parent == other._parent;
+			&& m_Parent == other.m_Parent;
 	}
 
 protected:
-	std::shared_ptr<Transform> _transform{ nullptr };
+	std::shared_ptr<Transform> m_Transform{ nullptr };
 
 	//for now components are hashed by their typeid hashcode, meaning no duplicates of class type. this will need to be modified
-	std::unordered_map<size_t, std::shared_ptr<Component>> _components;
+	std::unordered_map<size_t, std::shared_ptr<Component>> m_Components;
 
-	GameObject* _parent{ nullptr };
-	std::vector<GameObject*> _children;
+	GameObject* m_Parent{ nullptr };
+	std::vector<GameObject*> m_Children;
 
 	virtual void Init();
 
@@ -72,7 +72,7 @@ protected:
 template <typename Type>
 inline bool GameObject::HasCompoenent()
 {
-	return _components.find(typeid(Type).hash_code()) != _components.end();
+	return m_Components.find(typeid(Type).hash_code()) != m_Components.end();
 }
 
 template <typename Type, typename... Args>
@@ -85,7 +85,7 @@ inline std::shared_ptr<Type>  GameObject::AddComponent(Args&&... args)
 	std::shared_ptr<Type>  component = std::make_shared<Type>(this, std::forward<Args>(args)...);
 	//Component baseComponent = dynamic_cast<Component>(new Type(args));
 
-	_components[typeid(Type).hash_code()] = component;
+	m_Components[typeid(Type).hash_code()] = component;
 	OnComponentAdded(component);
 	return component;
 
@@ -97,7 +97,7 @@ inline std::shared_ptr<Type>  GameObject::GetComponent()
 	//get hashcode key to look for
 	if (HasCompoenent<Type>())
 	{
-		return std::dynamic_pointer_cast<Type>(_components[typeid(Type).hash_code()]);
+		return std::dynamic_pointer_cast<Type>(m_Components[typeid(Type).hash_code()]);
 	}
 	return nullptr;
 }
@@ -109,6 +109,6 @@ inline void GameObject::RemoveComponent()
 	if (component != nullptr)
 	{
 		OnComponentRemoved(component);
-		_components.erase(typeid(Type).hash_code());
+		m_Components.erase(typeid(Type).hash_code());
 	}
 }

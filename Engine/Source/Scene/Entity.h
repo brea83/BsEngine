@@ -24,6 +24,6 @@ public:
 	void RemoveComponent();
 
 protected:
-	entt::entity m_entityHandle;
+	entt::entity m_EntityHandle;
 };
 

@@ -16,21 +16,21 @@ public:
 	FrameBuffer(const FrameBufferSpecification& specification);
 	virtual ~FrameBuffer();
 
-	const FrameBufferSpecification& GetSpecification() { return  _specification;  }
+	const FrameBufferSpecification& GetSpecification() { return  m_Specification;  }
 	static std::shared_ptr<FrameBuffer> Create(const FrameBufferSpecification& specification);
 
 	// if need a new size invalidate and recreate with new size
 	void Bind();
 	void UnBind();
 
-	uint32_t GetColorAttachmentRendererId() const { return _colorAttatchment; }
+	uint32_t GetColorAttachmentRendererId() const { return m_ColorAttatchment; }
 
 	void Resize();
 	void Resize(uint32_t width, uint32_t height);
 private:
-	uint32_t _rendererId{ 0 };
-	uint32_t _colorAttatchment{ 0 };
-	uint32_t _depthAttachment{ 0 };
-	FrameBufferSpecification _specification;
+	uint32_t m_RendererId{ 0 };
+	uint32_t m_ColorAttatchment{ 0 };
+	uint32_t m_DepthAttachment{ 0 };
+	FrameBufferSpecification m_Specification;
 };
 

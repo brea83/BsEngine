@@ -26,14 +26,14 @@ public:
 	~Window();
 
 	int Init();
-	int WindowWidth() const { return _data.Width; }
+	int WindowWidth() const { return m_Data.Width; }
 	/*bool SetWindowWidth(int value)
 	{
 		bool valueIsPositive = value > 0;
 		_windowWidth = valueIsPositive ? value : _windowWidth;
 		return valueIsPositive;
 	}*/
-	int WindowHeight() const { return _data.Height; }
+	int WindowHeight() const { return m_Data.Height; }
 	/*bool SetWindowHeight(int value)
 	{
 		bool valueIsPositive = value > 0;
@@ -41,9 +41,9 @@ public:
 		return valueIsPositive;
 	}*/
 
-	GLFWwindow* GetGlfwWindow() const { return _window; }
+	GLFWwindow* GetGlfwWindow() const { return m_Window; }
 
-	void SetEventCallback(const EventCallbackFunction& callback) { _data.EventCallback = callback; }
+	void SetEventCallback(const EventCallbackFunction& callback) { m_Data.EventCallback = callback; }
 
 	// behavior methods
 	void OnUpdate();
@@ -59,8 +59,8 @@ private:
 		EventCallbackFunction EventCallback;
 	};
 
-	WindowData _data;
-	GLFWwindow* _window{ nullptr };
+	WindowData m_Data;
+	GLFWwindow* m_Window{ nullptr };
 	//int _windowWidth{ 800 };
 	//int _windowHeight{ 600 };
 

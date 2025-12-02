@@ -12,14 +12,14 @@ public:
 	glm::mat4 ViewMatrix() const override;
 
 protected:
-	glm::vec3 _position{ 0.0f, 0.0f, 10.0f };
-	glm::vec3 _target{ 0.0f };
-	glm::vec3 _up;
-	glm::vec3 _right;
-	glm::vec3 _forward;
+	glm::vec3 m_Position{ 0.0f, 0.0f, 10.0f };
+	glm::vec3 m_Target{ 0.0f };
+	glm::vec3 m_Up;
+	glm::vec3 m_Right;
+	glm::vec3 m_Forward;
 
-	float _yaw = -90.0f;
-	float _pitch = 0.0f;
+	float m_Yaw = -90.0f;
+	float m_Pitch = 0.0f;
 
 	void UpdateCameraVectors();
 };

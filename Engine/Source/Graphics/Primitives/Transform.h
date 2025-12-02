@@ -18,7 +18,7 @@ public:
 	void UnParent(bool bKeepWorldPosition = true);
 	std::shared_ptr<Transform> ParentTransform;
 
-	void SetPosition(glm::vec3 value) { _position = value; _positionDirty = true; }
+	void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
 	glm::vec3 GetPosition();
 
 	glm::vec3 Forward() const;
@@ -33,31 +33,31 @@ public:
 
 	glm::vec3 GetRotationEuler(AngleType angleType = AngleType::Degrees);
 	
-	void SetScale(glm::vec3 value) { _scale = value; _scaleDirty = true; }
+	void SetScale(glm::vec3 value) { m_Scale = value; m_ScaleDirty = true; }
 	glm::vec3 GetScale();
 	
 	// methods
 	glm::mat4& GetObjectToWorldMatrix();
 
-	glm::mat4 GetLocal() const { return _localMatrix; }
-	glm::mat4 GetWorld() const { return _worldMatrix; }
+	glm::mat4 GetLocal() const { return m_LocalMatrix; }
+	glm::mat4 GetWorld() const { return m_WorldMatrix; }
 
 private:
-	glm::vec3 _position { 0.0f };
-	bool _positionDirty { true };
+	glm::vec3 m_Position { 0.0f };
+	bool m_PositionDirty { true };
 
 	//Note to self: store rotations as radians for easier import
-	glm::vec3 _eulerRotation { 0.0f };
-	glm::quat _orientation;
-	bool _rotationDirty { false };
+	glm::vec3 m_EulerRotation { 0.0f };
+	glm::quat m_Orientation;
+	bool m_RotationDirty { false };
 
-	glm::vec3 _scale { 1.0f };
-	bool _scaleDirty { false };
+	glm::vec3 m_Scale { 1.0f };
+	bool m_ScaleDirty { false };
 	
 	void RecalculateModelMatrix();
-	glm::mat4 _localMatrix;
+	glm::mat4 m_LocalMatrix;
 
-	glm::mat4 _worldMatrix;
+	glm::mat4 m_WorldMatrix;
 
 	void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
 

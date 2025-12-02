@@ -7,69 +7,69 @@
 
 #define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
 
-EngineContext* EngineContext::_engine = nullptr;
+EngineContext* EngineContext::m_Engine = nullptr;
 //EngineContext* EngineContext::NextUID = 0;
 
 EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer)
-	: _mainWindow(startingWindow), _activeScene(startingScene), _renderer(startingRenderer)
+	: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer)
 { }
 
 bool EngineContext::Init()
 {
 	// configure glfw and glad state in Window class
-	if (!_mainWindow->Init()) return false;
-	_mainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
+	if (!m_MainWindow->Init()) return false;
+	m_MainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
 	// don't start making render passes if we have no window
-	_renderer->Init();
-	_activeScene->GetActiveCamera()->SetAspectRatio((float)_mainWindow->WindowWidth()/ (float)_mainWindow->WindowHeight());
+	m_Renderer->Init();
+	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
 
-	_imGuiLayer = new ImGuiLayer();
-	_imGuiLayer->OnAttach();
+	m_ImGuiLayer = new ImGuiLayer();
+	m_ImGuiLayer->OnAttach();
 
-	_prevMouseX = _mainWindow->WindowWidth() / 2.0f;
-	_prevMouseY = _mainWindow->WindowHeight() / 2.0f;
+	m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
+	m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
 
 	return true;
 }
 
 EngineContext* EngineContext::GetEngine()
 {
-	if (_engine == NULL)
+	if (m_Engine == NULL)
 	{
-		_engine = new EngineContext();
-		return _engine;
+		m_Engine = new EngineContext();
+		return m_Engine;
 	}
-	return _engine;
+	return m_Engine;
 }
 
 void EngineContext::Update()
 {
 	//TODO: plan out what gets updated when window is minimized and what doesn't
-	if (!_bMinimized)
+	if (!m_IsMinimized)
 	{
 		float currentFrame = (float)glfwGetTime();
-		_deltaTime = currentFrame - _lastFrameTime;
-		_lastFrameTime = currentFrame;
+		m_DeltaTime = currentFrame - m_LastFrameTime;
+		m_LastFrameTime = currentFrame;
 	}
 
-	_imGuiLayer->OnUpdate(_deltaTime);
+	m_ImGuiLayer->OnUpdate(m_DeltaTime);
 
-	_mainWindow->OnUpdate();
+	m_MainWindow->OnUpdate();
 }
 
 
 void EngineContext::Draw()
 {
-	if (!_bMinimized)
+	if (!m_IsMinimized)
 	{
-		_renderer->BeginFrame(*_activeScene);
-		_renderer->RenderFrame(*_activeScene);
-		_renderer->EndFrame(*_activeScene);
+		m_Renderer->BeginFrame(*m_ActiveScene);
+		m_Renderer->RenderFrame(*m_ActiveScene);
+		m_Renderer->EndFrame(*m_ActiveScene);
 	}
 
-	_imGuiLayer->Begin();
-	_imGuiLayer->OnImGuiRender();
-	_imGuiLayer->End();
+	m_ImGuiLayer->Begin();
+	m_ImGuiLayer->OnImGuiRender();
+	m_ImGuiLayer->End();
 }
 void EngineContext::DrawConsole()
 {}
@@ -94,17 +94,17 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 	int height = event.GetHeight();
 	if (width < 1 || height < 1)
 	{
-		_bMinimized = true;
+		m_IsMinimized = true;
 		return false;
 	}
-	_bMinimized = false;
-	_activeScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
+	m_IsMinimized = false;
+	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return true;
 }
 
 bool EngineContext::OnWindowClosed(WindowClosedEvent& event)
 {
-	_bRunning = false;
+	m_IsRunning = false;
 	return true;
 }
 
@@ -117,34 +117,34 @@ bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
 bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 {
 	float yOffset = event.GetYOffset();
-	if (_camFlyMode)
+	if (m_CamFlyMode)
 	{
-		return _activeScene->GetActiveCamera()->Zoom(yOffset);
+		return m_ActiveScene->GetActiveCamera()->Zoom(yOffset);
 	}
 	return false;
 }
 
 bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 {
-	if (_camFlyMode)
+	if (m_CamFlyMode)
 	{
 		float xPosition = event.GetX();
 		float yPosition = event.GetY();
 
-		if (_firstMouse)
+		if (m_FirstMouse)
 		{
-			_prevMouseX = xPosition;
-			_prevMouseY = yPosition;
-			_firstMouse = false;
+			m_PrevMouseX = xPosition;
+			m_PrevMouseY = yPosition;
+			m_FirstMouse = false;
 		}
 
-		float xOffset = xPosition - _prevMouseX;
-		float yOffset = yPosition - _prevMouseY;
+		float xOffset = xPosition - m_PrevMouseX;
+		float yOffset = yPosition - m_PrevMouseY;
 
-		_prevMouseX = xPosition;
-		_prevMouseY = yPosition;
+		m_PrevMouseX = xPosition;
+		m_PrevMouseY = yPosition;
 
-		return _activeScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, _deltaTime);
+		return m_ActiveScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, m_DeltaTime);
 	}
 	return false;
 }
@@ -165,13 +165,13 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	}*/
 
 	// TODO: refactor this into a proper input system
-	if ( _camFlyMode &&
+	if ( m_CamFlyMode &&
 		(keyCode == GLFW_KEY_W 
 		|| keyCode == GLFW_KEY_S
 		|| keyCode == GLFW_KEY_A
 		|| keyCode == GLFW_KEY_D))
 	{
-		return _activeScene->GetActiveCamera()->HandleMoveWasd(keyCode, _deltaTime);
+		return m_ActiveScene->GetActiveCamera()->HandleMoveWasd(keyCode, m_DeltaTime);
 	}
 	
 	if (keyCode == GLFW_KEY_TAB)
@@ -179,21 +179,21 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
 		ToggleCamFlyMode();
 	}
-	//_activeScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
+	//m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return false;
 }
 
 
 void EngineContext::ToggleCamFlyMode()
 {
-	_camFlyMode = !_camFlyMode;
-	if (_camFlyMode)
+	m_CamFlyMode = !m_CamFlyMode;
+	if (m_CamFlyMode)
 	{
-		_firstMouse = true;
-		glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_FirstMouse = true;
+		glfwSetInputMode(m_MainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else
 	{
-		glfwSetInputMode(_mainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(m_MainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 }

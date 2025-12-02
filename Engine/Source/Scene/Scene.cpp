@@ -1,17 +1,19 @@
 #include "BsPrecompileHeader.h"
 #include "Scene.h"
 #include "GameObject.h"
+#include "Scene/Components/Component.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Editor/EditorCamera.h"
 #include "Components/CameraComponent.h"
 #include "EngineContext.h"
+#include "Entity.h"
 
 Scene::Scene()
 { 
 
-	GameObject* cameraObject = CreateEmptyGameObject();
+	/*GameObject* cameraObject = CreateEmptyGameObject();
 	cameraObject->Name = "Main Camera";
 	std::shared_ptr<Transform> transform = cameraObject->GetTransform();
 	transform->SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
@@ -19,7 +21,15 @@ Scene::Scene()
 	
 	m_ActiveCamera = cameraObject->AddComponent<CameraComponent>();
 
-	m_ActiveCamera->BIsSceneViewCam = true;
+	m_ActiveCamera->BIsSceneViewCam = true;*/
+}
+
+void Scene::Initialize()
+{
+	Entity mainCam = CreateEntity("Main Camera");
+	NewCameraComponent& camera = mainCam.AddComponent<NewCameraComponent>();
+	m_DefaultCamera = std::make_shared<EditorCamera>(camera.Cam);
+	m_ActiveCamera = m_DefaultCamera;
 }
 
 Scene::~Scene()
@@ -69,9 +79,13 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 	
 }
 
-entt::entity Scene::CreateEntity()
+Entity Scene::CreateEntity(const std::string& name)
 {
-	return m_Registry.create();
+	Entity entity = { m_Registry.create(), this };
+	entity.AddComponent<Transform>();
+	TagComponent& tag = entity.AddComponent<TagComponent>();
+	tag.Tag = name.empty() ? "Empty Object" : name;
+	return entity;
 }
 
 void Scene::CreateCube()

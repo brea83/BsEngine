@@ -11,7 +11,6 @@
 
 
 //class Renderer;
-class Scene;
 class Window;
 struct GLFWwindow;
 //class DebugConsole;

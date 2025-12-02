@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Scene/Components/Component.h"
+//#include "Scene/Components/Component.h"
 
 class Camera 
 {

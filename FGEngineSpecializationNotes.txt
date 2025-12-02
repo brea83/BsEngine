@@ -620,3 +620,65 @@ use a static string for error return msg
 
 can use serialize deserialize to duplicate objects
 
+================================
+LECTURE 16 (week 6) strings and localization
+================================
+
+usefull to know ascii
+	space  32 (0x20)
+	uppercase 65-90
+	lowercase 97 -0122
+
+	new line 10 ()
+	carriage return 13
+
+
+new line in windows vs linuz
+ windows  \r\n 
+ linux \n
+
+hexadecimal vs decimal
+ discussion of how colors are packed into hex
+ can write 0xFF and most ides will pares it into to an ints?
+
+Review of Bitwise operators and bitflags
+
+
+back to strings
+windows has also wchar which is 16bit unicode characters
+	std::wcout << L"Hello\n";
+
+wchar_t use often for windows drag and drop file names
+
+mbstowcs(wtext, text, strlen(text)+1) = multi byte string to wide char string
+
+UTF-8
+	each character can e represented by 1, 2, 3, or 4 bytes
+	1 byte for ascii, and common wester characters up to 0x7F
+
+	if first byte has value  0xC2 to 0xDF it means the character is a 2 byte character
+		the first byte specifies the page which the second byte indexes in
+
+	examples of utf-8 codes in the slides
+
+	3 byte characters the first 2 bytes are page addresses
+
+	see slides for intro to converting byte values into the unicode number
+	once you have the u+XXXX unicode number you look the glyph in the font rendering system
+		freetype.org has tutorials about font rendering
+
+good to assume that all your visual strings need to be localized
+	where do you store these?
+
+	use language codes for keys
+	store all keys and values in easily parsed files
+		csv, xml, json
+	use localized values for the displayed strings
+
+detect operating system language or allow user selection on first start
+	then parse the right language file
+
+for debugging print the keys or english since cout doesn't support all international symbols
+
+
+	

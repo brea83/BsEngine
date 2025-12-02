@@ -2,13 +2,13 @@
 
 #include <vector>
 #include <EnTT/entt.hpp>
-//#include <memory>
 
 class GameObject;
 class MeshComponent;
 class Camera;
 class CameraComponent;
 class EditorCamera;
+class Entity;
 
 class Scene
 {
@@ -25,7 +25,7 @@ public:
 	void Initialize();
 
 	entt::registry& GetRegistry() { return m_Registry; }
-	entt::entity CreateEntity();
+	Entity CreateEntity(const std::string& name = "");
 
 	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { m_MeshComponents.push_back(newRenderable); }
 	void CreateCube();
@@ -40,6 +40,7 @@ private:
 	entt::registry m_Registry;
 	std::shared_ptr<Camera> m_ActiveCamera;
 	std::shared_ptr<Camera> m_DefaultCamera{ nullptr };
+	//Entity m_EditorCamera;
 	bool m_IsInitiated{ false };
 
 	std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;

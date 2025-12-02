@@ -1,6 +1,7 @@
 #pragma once
 #include "BsPrecompileHeader.h"
 #include <typeinfo>
+#include "Editor/EditorCamera.h"
 class GameObject;
 
 class Component
@@ -47,12 +48,24 @@ struct ComponentHash
     }
 };
 
-class TagComponent : public Component
+struct TagComponent
 {
-public:
+
     TagComponent() = default;
     TagComponent(const TagComponent&) = default;
     TagComponent(const std::string& tag) : Tag(tag) { }
 
-    std::string Tag;
+    std::string Tag{"Default Tag"};
+
+    // Inherited via Component
+    std::string Name{ "Tag Component" };
+};
+
+struct NewCameraComponent
+{
+public:
+    NewCameraComponent() = default;
+    NewCameraComponent(const NewCameraComponent&) = default;
+    
+    EditorCamera Cam;
 };

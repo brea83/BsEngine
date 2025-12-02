@@ -5,7 +5,8 @@
 //#include "GlfwWrapper.h"
 //#include <GLFW/glfw3.h>
 
-#define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
+//#define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
+#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}
 
 EngineContext* EngineContext::m_Engine = nullptr;
 //EngineContext* EngineContext::NextUID = 0;
@@ -21,6 +22,7 @@ bool EngineContext::Init()
 	m_MainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
 	// don't start making render passes if we have no window
 	m_Renderer->Init();
+	m_ActiveScene->Initialize();
 	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
 
 	m_ImGuiLayer = new ImGuiLayer();

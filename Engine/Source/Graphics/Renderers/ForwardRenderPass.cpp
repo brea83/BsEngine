@@ -28,8 +28,10 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	m_Shader->SetUniformInt("Texture1", 0);
 
 	std::shared_ptr<Camera> mainCam = sceneToRender.GetActiveCamera();
+	
 	m_Shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
+	
 
 	entt::registry& registry = sceneToRender.GetRegistry();
 

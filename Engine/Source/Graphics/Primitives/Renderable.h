@@ -2,7 +2,7 @@
 #include "BsPrecompileHeader.h"
 #include "../Shaders/Shader.h"
 #include <glm/glm.hpp>
-#include "Resource.h"
+#include "Resources/Resource.h"
 #include "Graphics/Primitives/Transform.h"
 
 class Renderable: public Resource

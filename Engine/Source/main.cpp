@@ -5,12 +5,12 @@
 #include <GLFW/glfw3.h>
 #include "GlfwWrapper.h"
 #include "EngineContext.h"
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
-#include "Graphics/Model.h"
-#include "GameObject.h"
+#include "Scene/Components/MeshComponent.h"
+#include "Scene/GameObject.h"
 
 //void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 void PopulateStartingScene(EngineContext* engine);
@@ -60,7 +60,7 @@ void PopulateStartingScene(EngineContext* engine)
 	std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();
 	gameObjectTransform->SetScale(glm::vec3(20.0f));
 	startingScene->AddGameObject(testObject);
-	testObject->AddComponent<Model, const  std::string&>("Assets/Meshes/Viking_House.obj");
+	testObject->AddComponent<MeshComponent, const  std::string&>("Assets/Meshes/Viking_House.obj");
 
 	GameObject* testObject2 = new GameObject("Empty");
 	std::shared_ptr<Transform> gameObjectTransform2 = testObject2->GetTransform();

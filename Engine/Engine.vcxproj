@@ -181,19 +181,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\CameraComponent.cpp" />
+    <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
     <ClCompile Include="Source\Editor\EditorCamera.cpp" />
     <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp" />
-    <ClCompile Include="Source\Component.cpp" />
-    <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\Scene\Components\Component.cpp" />
+    <ClCompile Include="Source\Scene\GameObject.cpp" />
     <ClCompile Include="Source\Events\KeyCodes.cpp" />
     <ClCompile Include="Source\Assimp\AssimpGlmHelpers.cpp" />
-    <ClCompile Include="Source\Graphics\Model.cpp" />
+    <ClCompile Include="Source\Scene\Components\MeshComponent.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Mesh.cpp" />
     <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp" />
     <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp" />
-    <ClCompile Include="Source\AssetLoader.cpp" />
-    <ClCompile Include="Source\Resource.cpp" />
+    <ClCompile Include="Source\Resources\AssetLoader.cpp" />
+    <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
     <ClCompile Include="Source\Events\KeyboardEvents.cpp" />
     <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
@@ -212,19 +212,19 @@
     <ClCompile Include="Source\Editor\ImGuiLayer.cpp" />
     <ClCompile Include="Source\Layer.cpp" />
     <ClCompile Include="Source\LayerStack.cpp" />
-    <ClCompile Include="Source\StbImageWrapper.cpp" />
+    <ClCompile Include="Source\Resources\StbImageWrapper.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\RenderPass.cpp" />
-    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Graphics\Shaders\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Texture.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Transform.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
     <ClCompile Include="Source\GlfwWrapper.cpp" />
-    <ClCompile Include="Source\TextResource.cpp" />
+    <ClCompile Include="Source\Resources\TextResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.h" />
@@ -238,19 +238,19 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
-    <ClInclude Include="Source\CameraComponent.h" />
+    <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />
     <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h" />
-    <ClInclude Include="Source\Component.h" />
-    <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\Scene\Components\Component.h" />
+    <ClInclude Include="Source\Scene\GameObject.h" />
     <ClInclude Include="Source\Events\KeyCodes.h" />
     <ClInclude Include="Source\Assimp\AssimpGlmHelpers.h" />
-    <ClInclude Include="Source\Graphics\Model.h" />
+    <ClInclude Include="Source\Scene\Components\MeshComponent.h" />
     <ClInclude Include="Source\Graphics\Primitives\Mesh.h" />
     <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h" />
     <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h" />
-    <ClInclude Include="Source\AssetLoader.h" />
-    <ClInclude Include="Source\Resource.h" />
+    <ClInclude Include="Source\Resources\AssetLoader.h" />
+    <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Graphics\FrameBuffer.h" />
     <ClInclude Include="Source\Events\KeyboardEvents.h" />
     <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
@@ -267,18 +267,18 @@
     <ClInclude Include="Source\Layer.h" />
     <ClInclude Include="Source\LayerStack.h" />
     <ClInclude Include="Source\Events\MouseCodes.h" />
-    <ClInclude Include="Source\StbImageWrapper.h" />
+    <ClInclude Include="Source\Resources\StbImageWrapper.h" />
     <ClInclude Include="Source\Graphics\Primitives\QuadMesh.h" />
     <ClInclude Include="Source\Graphics\Primitives\Renderable.h" />
     <ClInclude Include="Source\Graphics\Renderers\Renderer.h" />
     <ClInclude Include="Source\Graphics\Renderers\RenderPass.h" />
-    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Graphics\Shaders\Shader.h" />
     <ClInclude Include="Source\Graphics\Texture.h" />
     <ClInclude Include="Source\Graphics\Primitives\Transform.h" />
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
     <ClInclude Include="Source\GlfwWrapper.h" />
-    <ClInclude Include="Source\TextResource.h" />
+    <ClInclude Include="Source\Resources\TextResource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

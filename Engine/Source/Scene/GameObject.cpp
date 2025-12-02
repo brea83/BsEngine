@@ -1,10 +1,10 @@
 #include "BsPrecompileHeader.h"
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "EngineContext.h"
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Graphics/Primitives/Transform.h"
-#include "Graphics/Model.h"
-#include "CameraComponent.h"
+#include "Scene/Components/MeshComponent.h"
+#include "Scene/Components/CameraComponent.h"
 
 static int s_NumGameObjects = 1;
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
@@ -15,7 +15,7 @@ GameObject::~GameObject()
 {
 	for (auto pair : _components)
 	{
-		std::shared_ptr<Model> model = std::dynamic_pointer_cast<Model>(pair.second);
+		std::shared_ptr<MeshComponent> model = std::dynamic_pointer_cast<MeshComponent>(pair.second);
 		if (model)
 		{
 			EngineContext::GetEngine()->GetScene()->RemoveRenderable(model);
@@ -94,9 +94,9 @@ void GameObject::Init()
 
 void GameObject::OnComponentAdded(std::shared_ptr<Component> component)
 {
-	if (std::dynamic_pointer_cast<Model>(component))
+	if (std::dynamic_pointer_cast<MeshComponent>(component))
 	{
-		EngineContext::GetEngine()->GetScene()->AddRenderable(std::dynamic_pointer_cast<Model>(component));
+		EngineContext::GetEngine()->GetScene()->AddRenderable(std::dynamic_pointer_cast<MeshComponent>(component));
 	}
 
 	//if (std::dynamic_pointer_cast<CameraComponent>(component))
@@ -108,9 +108,9 @@ void GameObject::OnComponentAdded(std::shared_ptr<Component> component)
 void GameObject::OnComponentRemoved(std::shared_ptr<Component> component)
 {
 	//Scene* scene = EngineContext::GetEngine()->GetScene();
-	if (std::dynamic_pointer_cast<Model>(component))
+	if (std::dynamic_pointer_cast<MeshComponent>(component))
 	{
-		EngineContext::GetEngine()->GetScene()->RemoveRenderable(std::dynamic_pointer_cast<Model>(component));
+		EngineContext::GetEngine()->GetScene()->RemoveRenderable(std::dynamic_pointer_cast<MeshComponent>(component));
 	}
 
 	/*if (std::dynamic_pointer_cast<CameraComponent>(component))

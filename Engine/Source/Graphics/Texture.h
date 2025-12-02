@@ -1,7 +1,7 @@
 #pragma once
-#include "Resource.h"
+#include "Resources/Resource.h"
 #include <string>
-#include "StbImageWrapper.h"
+#include "Resources/StbImageWrapper.h"
 
 enum class Min_FilterType
 {

@@ -57,7 +57,7 @@
     <ClCompile Include="Source\Graphics\Shaders\Shader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene.cpp">
+    <ClCompile Include="Source\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\EngineContext.cpp">
@@ -96,7 +96,7 @@
     <ClCompile Include="Source\Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StbImageWrapper.cpp">
+    <ClCompile Include="Source\Resources\StbImageWrapper.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Source\Layer.cpp">
@@ -153,13 +153,13 @@
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AssetLoader.cpp">
+    <ClCompile Include="Source\Resources\AssetLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Resource.cpp">
+    <ClCompile Include="Source\Resources\Resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\TextResource.cpp">
+    <ClCompile Include="Source\Resources\TextResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp">
@@ -171,7 +171,7 @@
     <ClCompile Include="Source\Graphics\Primitives\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\Model.cpp">
+    <ClCompile Include="Source\Scene\Components\MeshComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Assimp\AssimpGlmHelpers.cpp">
@@ -180,10 +180,10 @@
     <ClCompile Include="Source\Events\KeyCodes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameObject.cpp">
+    <ClCompile Include="Source\Scene\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component.cpp">
+    <ClCompile Include="Source\Scene\Components\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp">
@@ -192,7 +192,7 @@
     <ClCompile Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CameraComponent.cpp">
+    <ClCompile Include="Source\Scene\Components\CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\EditorCamera.cpp">
@@ -200,7 +200,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Scene.h">
+    <ClInclude Include="Source\Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\EngineContext.h">
@@ -242,7 +242,7 @@
     <ClInclude Include="Source\Graphics\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StbImageWrapper.h">
+    <ClInclude Include="Source\Resources\StbImageWrapper.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Layer.h">
@@ -311,13 +311,13 @@
     <ClInclude Include="Source\Graphics\FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AssetLoader.h">
+    <ClInclude Include="Source\Resources\AssetLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Resource.h">
+    <ClInclude Include="Source\Resources\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\TextResource.h">
+    <ClInclude Include="Source\Resources\TextResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h">
@@ -329,7 +329,7 @@
     <ClInclude Include="Source\Graphics\Primitives\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\Model.h">
+    <ClInclude Include="Source\Scene\Components\MeshComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Assimp\AssimpGlmHelpers.h">
@@ -338,10 +338,10 @@
     <ClInclude Include="Source\Events\KeyCodes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameObject.h">
+    <ClInclude Include="Source\Scene\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Component.h">
+    <ClInclude Include="Source\Scene\Components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h">
@@ -350,7 +350,7 @@
     <ClInclude Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\CameraComponent.h">
+    <ClInclude Include="Source\Scene\Components\CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Editor\EditorCamera.h">

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "../../Scene.h"
+#include "Scene/Scene.h"
 #include "RenderPass.h"
 #include "Graphics/FrameBuffer.h"
 

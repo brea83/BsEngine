@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "Graphics/Primitives/Transform.h"
 
 Camera::Camera()

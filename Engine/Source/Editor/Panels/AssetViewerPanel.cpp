@@ -1,9 +1,9 @@
 #include "BsPrecompileHeader.h"
 #include "AssetViewerPanel.h"
-#include "AssetLoader.h"
+#include "Resources/AssetLoader.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Shaders/Shader.h"
-#include "TextResource.h"
+#include "Resources/TextResource.h"
 
 //std::string AssetViewerPanel::SelectedAsset{ "" };
 
@@ -54,7 +54,7 @@ void AssetViewerPanel::Draw()
 		case ResourceType::Texture:
 			DrawTextureEditor(SelectedAsset, std::dynamic_pointer_cast<Texture>(resource));
 			break;
-		case ResourceType::Model:
+		case ResourceType::Mesh:
 			break;
 		default:
 			break;

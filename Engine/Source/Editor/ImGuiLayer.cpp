@@ -5,7 +5,7 @@
 #include "GlfwWrapper.h"
 #include "Graphics/Camera.h"
 #include "Graphics/FrameBuffer.h"
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "Graphics/Primitives/Transform.h"
 //#include "glad/glad.h"
 

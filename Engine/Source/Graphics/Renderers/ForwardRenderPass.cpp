@@ -1,12 +1,12 @@
 #include "BsPrecompileHeader.h"
 #include "ForwardRenderPass.h"
 #include "Graphics/Shaders/Shader.h"
-#include "Graphics/Model.h"
-#include "Scene.h"
+#include "Scene/Components/MeshComponent.h"
+#include "Scene/Scene.h"
 #include "Graphics/Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Graphics/Texture.h"
-#include "AssetLoader.h"
+#include "Resources/AssetLoader.h"
 
 ForwardRenderPass::ForwardRenderPass()
 {
@@ -20,7 +20,7 @@ ForwardRenderPass::~ForwardRenderPass()
 
 void ForwardRenderPass::Execute(Scene& sceneToRender)
 {
-	std::vector<std::shared_ptr<Model>>& objectsToRender = sceneToRender.GetRenderables();
+	std::vector<std::shared_ptr<MeshComponent>>& objectsToRender = sceneToRender.GetRenderables();
 
 	_shader->Use();
 

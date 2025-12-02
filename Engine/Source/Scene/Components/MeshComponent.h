@@ -1,7 +1,7 @@
 #pragma once
 #include "BsPrecompileHeader.h"
 //#include "Graphics/Primitives/Renderable.h"
-#include "Component.h"
+#include "Scene/Components/Component.h"
 #include "Graphics/Primitives/Mesh.h"
 #include "Graphics/Texture.h"
 
@@ -11,13 +11,13 @@
 
 //class Texture;
 
-class Model : public Component
+class MeshComponent : public Component
 {
 public:
-	Model(GameObject* parent);
-	Model(GameObject* parent, PrimitiveMeshType primitiveMesh);
-	Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
-	~Model();
+	MeshComponent(GameObject* parent);
+	MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh);
+	MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
+	~MeshComponent();
 
 	bool Reload();
 
@@ -52,7 +52,7 @@ protected:
 
 	
 	//methods
-	void LoadModelAssimp(const std::string& filePath);
+	void LoadMeshAssimp(const std::string& filePath);
 
 	//TODO: refactor this to look for matching models and meshes in the assetloader
 	// and move the actual loading and processing to the asset loader

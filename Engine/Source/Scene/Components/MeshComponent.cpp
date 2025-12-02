@@ -1,25 +1,25 @@
 #include "BsPrecompileHeader.h"
-#include "Model.h"
-#include "AssetLoader.h"
+#include "MeshComponent.h"
+#include "Resources/AssetLoader.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Graphics/Primitives/Mesh.h"
 #include <glm/glm.hpp>
 #include "Assimp/AssimpGlmHelpers.h"
 #include <filesystem>
 #include <fstream>
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "EngineContext.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-Model::Model(GameObject* parent)
+MeshComponent::MeshComponent(GameObject* parent)
  : _parentObject(parent), _name("Model Component"), _filePath(""), _texturePath("")
 {
 
 }
 
-Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
+MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh)
 : _parentObject(parent), _name("Model Component"), _texturePath("")
 {
 	
@@ -49,7 +49,7 @@ Model::Model(GameObject* parent, PrimitiveMeshType primitiveMesh)
 	}
 }
 
-Model::Model(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
+MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
 	: _parentObject(parent), _name("Model Component"), _filePath(modelFilePath), _texturePath(textureFilePath)
 {
 
@@ -57,12 +57,12 @@ Model::Model(GameObject* parent, const std::string& modelFilePath, const std::st
 }
 
 
-bool Model::Reload()
+bool MeshComponent::Reload()
 {
 	std::string fileExtension = _filePath.substr(_filePath.find_last_of('.'));
 	if (fileExtension == ".fbx")
 	{
-		LoadModelAssimp(_filePath);
+		LoadMeshAssimp(_filePath);
 		return false;
 	}
 	else if (fileExtension == ".obj")
@@ -72,13 +72,13 @@ bool Model::Reload()
 	return false;
 }
 
-Model::~Model()
+MeshComponent::~MeshComponent()
 {
 	std::cout << "DELETING MODEL " << _name << std::endl;
 	//delete[] _meshes;
 }
 
-void Model::LoadModelAssimp(const std::string & filePath)
+void MeshComponent::LoadMeshAssimp(const std::string & filePath)
 {
 	// TODO: turn this into a function
 	Assimp::Importer importer;
@@ -91,7 +91,7 @@ void Model::LoadModelAssimp(const std::string & filePath)
 	}
 
 	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-	std::cout << "IMPORTING MODEL " << _name << std::endl;
+	std::cout << "IMPORTING MESH " << _name << std::endl;
 	std::cout << " DIRECTORY: " << _filePath << std::endl;
 	/*for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
 	{
@@ -130,7 +130,7 @@ void Model::LoadModelAssimp(const std::string & filePath)
 	return;
 }
 
-bool Model::LoadObj(const std::string& filePath, const std::string& textureFileName)
+bool MeshComponent::LoadObj(const std::string& filePath, const std::string& textureFileName)
 {
 	std::shared_ptr<Mesh> mesh = AssetLoader::LoadMesh(filePath);
 	if (mesh == nullptr)
@@ -149,7 +149,7 @@ bool Model::LoadObj(const std::string& filePath, const std::string& textureFileN
 	return true;
 }
 
-void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
+void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
 {
 
 	if (parentNode) 
@@ -167,7 +167,7 @@ void Model::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> 
 	localTransform->SetRotationEuler(AssimpGlmHelpers::GetGlmVec(rotation), AngleType::Radians);
 }
 
-aiMatrix4x4 Model::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
+aiMatrix4x4 MeshComponent::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
 {
 	if (parentNode)
 	{
@@ -180,7 +180,7 @@ aiMatrix4x4 Model::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode
 	 
 }
 
-void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 combinedParentMatrices)
+void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 combinedParentMatrices)
 {
 	// the recursion starts with an identity matrix in combined parent matrices so this should be fine
 	aiMatrix4x4 nodeTransform = CombineTransformsToRoot(node->mParent, node); // node->mTransformation;//
@@ -226,7 +226,7 @@ void Model::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 
 	}
 }
 
-std::shared_ptr<Mesh>  Model::processMesh(aiMesh * mesh, const aiScene * assimpScene)
+std::shared_ptr<Mesh>  MeshComponent::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 {
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -300,7 +300,7 @@ std::shared_ptr<Mesh>  Model::processMesh(aiMesh * mesh, const aiScene * assimpS
 	return std::make_shared<Mesh>(/*_uid, */vertices, indices, /*textures,*/ mesh->mName.C_Str());
 }
 
-std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
+std::vector<std::shared_ptr<Texture>> MeshComponent::loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType)
 {
 	std::vector<std::shared_ptr<Texture>> textures;
 	for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
@@ -320,26 +320,26 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* ma
 	return textures;
 }
 
-void Model::Initialize()
+void MeshComponent::Initialize()
 {
 
 }
 
-void Model::CleanUp()
+void MeshComponent::CleanUp()
 {}
 
-std::shared_ptr<Component> Model::Clone()
+std::shared_ptr<Component> MeshComponent::Clone()
 {
 	return std::shared_ptr<Component>();
 }
 
-void Model::SetParentObject(GameObject* newParent)
+void MeshComponent::SetParentObject(GameObject* newParent)
 {}
 
-void Model::OnUpdate()
+void MeshComponent::OnUpdate()
 {}
 
-void Model::Render(Shader& currentShader)
+void MeshComponent::Render(Shader& currentShader)
 {
 
 	currentShader.SetUniformMat4("transform", _parentObject->GetTransform()->GetObjectToWorldMatrix());

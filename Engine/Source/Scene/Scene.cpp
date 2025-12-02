@@ -1,11 +1,11 @@
 #include "BsPrecompileHeader.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "Graphics/Model.h"
+#include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Editor/EditorCamera.h"
-#include "CameraComponent.h"
+#include "Components/CameraComponent.h"
 
 Scene::Scene()
 { 
@@ -73,10 +73,10 @@ void Scene::CreateCube()
 	//_meshComponents.emplace_back(new Cube());
 	GameObject* object = new GameObject("Cube");
 	AddGameObject(object);
-	object->AddComponent<Model, PrimitiveMeshType>(PrimitiveMeshType::Cube);
+	object->AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
 }
 
-void Scene::RemoveRenderable(std::shared_ptr<Model> modelToRemove)
+void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)
 {
 	auto foundItterator = std::find(_meshComponents.begin(), _meshComponents.end(), modelToRemove);
 

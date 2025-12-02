@@ -1,15 +1,15 @@
 #include "BsPrecompileHeader.h"
 #include "DetailsViewPanel.h"
-#include "Scene.h"
-#include "GameObject.h"
+#include "Scene/Scene.h"
+#include "Scene/GameObject.h"
 #include "Graphics/Primitives/Transform.h"
-#include "Component.h"
-#include "Graphics/Model.h"
-#include "CameraComponent.h"
+#include "Scene/Components/Component.h"
+#include "Scene/Components/MeshComponent.h"
+#include "Scene/Components/CameraComponent.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
-#include "AssetLoader.h"
+#include "Resources/AssetLoader.h"
 
 //DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
 //	:_currentScene(scene), _selected(selectedObjectIndex)
@@ -35,7 +35,7 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 		{
 			if (ImGui::Selectable("Mesh Component"))
 			{
-				selectedObject->AddComponent<Model>();
+				selectedObject->AddComponent<MeshComponent>();
 			}
 
 			if (ImGui::Selectable("CameraComponent"))
@@ -239,11 +239,11 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 {
 
-	if (selectedObject->HasCompoenent<Model>())
+	if (selectedObject->HasCompoenent<MeshComponent>())
 	{
 		ImGui::PushID("MeshComponent");
 		ImGui::Separator();
-		std::shared_ptr<Model> component = selectedObject->GetComponent<Model>();
+		std::shared_ptr<MeshComponent> component = selectedObject->GetComponent<MeshComponent>();
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
 		strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
@@ -255,7 +255,7 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 
 		if (ImGui::Button("X"))
 		{
-			selectedObject->RemoveComponent<Model>();
+			selectedObject->RemoveComponent<MeshComponent>();
 		}
 
 		ImGui::Separator();

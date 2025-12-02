@@ -1,7 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "SceneHierarchyPanel.h"
-#include "Scene.h"
-#include "GameObject.h"
+#include "Scene/Scene.h"
+#include "Scene/GameObject.h"
 //#include <imgui_internal.h>
 //#include "misc/cpp/imgui_stdlib.cpp"
 //#include "Graphics/Primitives/Renderable.h"

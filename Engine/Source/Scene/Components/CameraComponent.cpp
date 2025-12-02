@@ -1,6 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "CameraComponent.h"
-#include "GameObject.h"
+#include "Scene/GameObject.h"
 #include "Graphics/Primitives/Transform.h"
 #include <GLFW/glfw3.h>
 

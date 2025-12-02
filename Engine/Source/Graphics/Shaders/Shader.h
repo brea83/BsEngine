@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-#include "Resource.h"
+#include "Resources/Resource.h"
 
 class TextResource;
 

@@ -1,7 +1,7 @@
 #pragma once
 //#include <GLFW/glfw3.h>
 #include "GlfwWrapper.h"
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"

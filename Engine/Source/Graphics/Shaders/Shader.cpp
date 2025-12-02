@@ -1,6 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "Shader.h"
-#include "AssetLoader.h"
+#include "Resources/AssetLoader.h"
 #include <fstream>
 
 #include <glad/glad.h>

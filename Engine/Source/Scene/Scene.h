@@ -4,7 +4,7 @@
 //#include <memory>
 
 class GameObject;
-class Model;
+class MeshComponent;
 class Camera;
 class CameraComponent;
 class EditorCamera;
@@ -22,10 +22,10 @@ public:
 	GameObject* GetGameObjectByIndex(int index);
 	
 
-	void AddRenderable(std::shared_ptr<Model> newRenderable) { _meshComponents.push_back(newRenderable); }
+	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { _meshComponents.push_back(newRenderable); }
 	void CreateCube();
-	void RemoveRenderable(std::shared_ptr<Model> modelToRemove);
-	std::vector<std::shared_ptr<Model>>& GetRenderables() { return _meshComponents; }
+	void RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove);
+	std::vector<std::shared_ptr<MeshComponent>>& GetRenderables() { return _meshComponents; }
 
 	void AddCamera(std::shared_ptr<CameraComponent> camera) { _cameraComponents.push_back(camera); }
 	bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
@@ -36,7 +36,7 @@ private:
 	std::shared_ptr<Camera> _defaultCamera{ nullptr };
 
 	std::vector<std::shared_ptr<CameraComponent>> _cameraComponents;
-	std::vector<std::shared_ptr<Model>> _meshComponents;
+	std::vector<std::shared_ptr<MeshComponent>> _meshComponents;
 	std::vector<GameObject*> _gameObjects;
 
 	friend class SceneHierarchyPanel;

@@ -4,7 +4,7 @@
 #include "TextResource.h"
 #include "Graphics/Shaders/Shader.h"
 #include "Graphics/Texture.h"
-#include "Graphics/Model.h"
+#include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Mesh.h"
 
 #include <assimp/scene.h>

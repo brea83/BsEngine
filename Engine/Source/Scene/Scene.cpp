@@ -6,6 +6,7 @@
 #include "Graphics/Primitives/Transform.h"
 #include "Editor/EditorCamera.h"
 #include "Components/CameraComponent.h"
+#include "EngineContext.h"
 
 Scene::Scene()
 { 
@@ -66,6 +67,12 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 
 	return _gameObjects[index];
 	
+}
+
+entt::entity Scene::CreateEntity()
+{
+	EngineContext* engine = EngineContext::GetEngine();
+	return engine->GetRegistry().create();
 }
 
 void Scene::CreateCube()

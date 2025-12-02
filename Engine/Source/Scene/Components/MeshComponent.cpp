@@ -49,6 +49,35 @@ MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh
 	}
 }
 
+MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
+: _parentObject(nullptr), _name("Model Component"), _texturePath("")
+{
+	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
+	if (mesh != nullptr)
+	{
+		_meshes.push_back(mesh);
+
+		switch (primitiveMesh)
+		{
+		case PrimitiveMeshType::Triangle:
+			_filePath = "PrimitiveMesh_Triangle";
+			break;
+		case PrimitiveMeshType::Quad:
+			_filePath = "PrimitiveMesh_Quad";
+			break;
+		case PrimitiveMeshType::Cube:
+			_filePath = "PrimitiveMesh_Cube";
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		_filePath = "";
+	}
+}
+
 MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
 	: _parentObject(parent), _name("Model Component"), _filePath(modelFilePath), _texturePath(textureFilePath)
 {
@@ -341,8 +370,16 @@ void MeshComponent::OnUpdate()
 
 void MeshComponent::Render(Shader& currentShader)
 {
+	if (_parentObject == nullptr)
+	{
+		//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
+		//registry.
+	}
+	else
+	{
+		currentShader.SetUniformMat4("transform", _parentObject->GetTransform()->GetObjectToWorldMatrix());
+	}
 
-	currentShader.SetUniformMat4("transform", _parentObject->GetTransform()->GetObjectToWorldMatrix());
 	if (_texture != nullptr)
 	{
 		_texture->Bind();
@@ -358,5 +395,27 @@ void MeshComponent::Render(Shader& currentShader)
 	{
 		_texture->UnBind();
 		//currentShader.SetUniformInt("Texture1", 0);
+	}
+}
+
+void MeshComponent::Render(Shader& currentShader, Transform& transform)
+{
+	currentShader.SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
+	
+
+	if (_texture != nullptr)
+	{
+		_texture->Bind();
+		currentShader.SetUniformInt("Texture1", 0);
+	}
+
+	for (unsigned int i = 0; i < _meshes.size(); i++)
+	{
+		_meshes[i]->Render(currentShader);
+	}
+
+	if (_texture != nullptr)
+	{
+		_texture->UnBind();
 	}
 }

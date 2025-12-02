@@ -16,6 +16,7 @@ class MeshComponent : public Component
 public:
 	MeshComponent(GameObject* parent);
 	MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh);
+	MeshComponent(PrimitiveMeshType primitiveMesh);
 	MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
 	~MeshComponent();
 
@@ -37,6 +38,8 @@ public:
 	void OnUpdate() override;
 	
 	void Render(Shader& currentShader);
+
+	void Render(Shader& currentShader, Transform& transform);
 
 protected:
 	//properties

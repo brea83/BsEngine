@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Graphics/Texture.h"
 #include "Resources/AssetLoader.h"
+#include "EngineContext.h"
 
 ForwardRenderPass::ForwardRenderPass()
 {
@@ -30,10 +31,23 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	_shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
 	_shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 
+	entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
+
+	auto group = registry.group<Transform>(entt::get<MeshComponent>);
+	for (auto entity : group)
+	{
+		Transform& transform = group.get<Transform>(entity);
+		MeshComponent& mesh = group.get<MeshComponent>(entity);
+
+		_fallbackTexture->Bind(0);
+		mesh.Render(*_shader, transform);
+	}
+	
 	for (auto object : objectsToRender)
 	{
 		_fallbackTexture->Bind(0);
 		object->Render(*_shader);
 	}
+
 	_shader->EndUse();
 }

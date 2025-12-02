@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <EnTT/entt.hpp>
 //#include <memory>
 
 class GameObject;
@@ -21,6 +22,9 @@ public:
 	int NumGameObjects() { return _gameObjects.size(); }
 	GameObject* GetGameObjectByIndex(int index);
 	
+	void Initialize();
+
+	entt::entity CreateEntity();
 
 	void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { _meshComponents.push_back(newRenderable); }
 	void CreateCube();
@@ -34,6 +38,7 @@ public:
 private:
 	std::shared_ptr<Camera> _activeCamera;
 	std::shared_ptr<Camera> _defaultCamera{ nullptr };
+	bool _hasInitiated{ false };
 
 	std::vector<std::shared_ptr<CameraComponent>> _cameraComponents;
 	std::vector<std::shared_ptr<MeshComponent>> _meshComponents;

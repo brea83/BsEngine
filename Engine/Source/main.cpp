@@ -11,6 +11,7 @@
 #include "Graphics/Primitives/Transform.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/GameObject.h"
+#include <EnTT/entt.hpp>
 
 //void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 void PopulateStartingScene(EngineContext* engine);
@@ -69,4 +70,11 @@ void PopulateStartingScene(EngineContext* engine)
 	startingScene->AddGameObject(testObject2);
 	
 	testObject->AddChild(testObject2);
+
+	//entt::registry& registry = engine->GetRegistry();
+	//entt::entity testEntity = registry.create();
+	//
+	//Transform transform = registry.emplace<Transform>(testEntity);
+	//MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
+
 }

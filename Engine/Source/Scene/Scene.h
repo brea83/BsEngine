@@ -1,6 +1,5 @@
 #pragma once
-
-#include <vector>
+#include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
 
 class GameObject;
@@ -32,18 +31,20 @@ public:
 	void RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove);
 	std::vector<std::shared_ptr<MeshComponent>>& GetRenderables() { return m_MeshComponents; }
 
-	void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
-	bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
-	std::shared_ptr<Camera> GetActiveCamera() { return m_ActiveCamera; }
+	//void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
+	//bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
+	Camera& GetActiveCamera();
+	Camera& GetActiveCamera(glm::mat4& viewMatrix);
+	//Transform& GetActiveCameraTransform();
 
 private:
 	entt::registry m_Registry;
-	std::shared_ptr<Camera> m_ActiveCamera;
-	std::shared_ptr<Camera> m_DefaultCamera{ nullptr };
+	entt::entity m_ActiveCamera;
+	entt::entity m_DefaultCamera;
 	//Entity m_EditorCamera;
 	bool m_IsInitiated{ false };
 
-	std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
+	//std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
 	std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;
 	std::vector<GameObject*> m_GameObjects;
 

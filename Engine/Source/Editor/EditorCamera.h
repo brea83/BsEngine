@@ -9,7 +9,7 @@ public:
 	//void LookAt(const glm::vec3& target, const glm::vec3& up) override;
 	bool HandleMoveWasd(int keyCode, float deltaTime) override;
 	bool HandleLookMouse(float xOffset, float yOffset, float deltaTime) override;
-	glm::mat4 ViewMatrix() const override;
+	glm::mat4 ViewMatrix() const;
 
 protected:
 	glm::vec3 m_Position{ 0.0f, 0.0f, 10.0f };

@@ -23,7 +23,7 @@ bool EngineContext::Init()
 	// don't start making render passes if we have no window
 	m_Renderer->Init();
 	m_ActiveScene->Initialize();
-	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
+	m_ActiveScene->GetActiveCamera().SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
 
 	m_ImGuiLayer = new ImGuiLayer();
 	m_ImGuiLayer->OnAttach();
@@ -100,7 +100,7 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 		return false;
 	}
 	m_IsMinimized = false;
-	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
+	m_ActiveScene->GetActiveCamera().SetAspectRatio((float)width / (float)height);
 	return true;
 }
 
@@ -121,7 +121,7 @@ bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 	float yOffset = event.GetYOffset();
 	if (m_CamFlyMode)
 	{
-		return m_ActiveScene->GetActiveCamera()->Zoom(yOffset);
+		return m_ActiveScene->GetActiveCamera().Zoom(yOffset);
 	}
 	return false;
 }
@@ -146,7 +146,7 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 		m_PrevMouseX = xPosition;
 		m_PrevMouseY = yPosition;
 
-		return m_ActiveScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, m_DeltaTime);
+		return m_ActiveScene->GetActiveCamera().HandleLookMouse(xOffset, yOffset, m_DeltaTime);
 	}
 	return false;
 }
@@ -173,7 +173,7 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		|| keyCode == GLFW_KEY_A
 		|| keyCode == GLFW_KEY_D))
 	{
-		return m_ActiveScene->GetActiveCamera()->HandleMoveWasd(keyCode, m_DeltaTime);
+		return m_ActiveScene->GetActiveCamera().HandleMoveWasd(keyCode, m_DeltaTime);
 	}
 	
 	if (keyCode == GLFW_KEY_TAB)

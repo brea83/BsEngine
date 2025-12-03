@@ -27,8 +27,11 @@ Scene::Scene()
 void Scene::Initialize()
 {
 	Entity mainCam = CreateEntity("Main Camera");
-	NewCameraComponent& camera = mainCam.AddComponent<NewCameraComponent>();
-	m_DefaultCamera = std::make_shared<EditorCamera>(camera.Cam);
+	CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
+	Transform& transform = mainCam.GetComponent<Transform>();
+	transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
+	transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
+	m_DefaultCamera = mainCam.GetEnttHandle();//std::make_shared<EditorCamera>(camera.Cam);
 	m_ActiveCamera = m_DefaultCamera;
 }
 
@@ -79,6 +82,46 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 	
 }
 
+Camera& Scene::GetActiveCamera()
+{
+	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
+	for (auto entity : group)
+	{
+		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
+
+		if (camera.IsPrimaryCamera)
+		{
+			return camera.Cam;
+		}
+	}
+}
+
+Camera& Scene::GetActiveCamera(glm::mat4& viewMatrix)
+{
+	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
+	for (auto entity : group)
+	{
+		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
+
+		if (camera.IsPrimaryCamera)
+		{
+			glm::vec3 position = transform.GetPosition();
+			glm::vec3 rotation = transform.GetRotationEuler(AngleType::Radians);
+			glm::vec3 direction;
+			direction.x = cos(rotation.x * cos(rotation.y));
+			direction.y = sin(rotation.y);
+			direction.z = sin(rotation.x) * cos(rotation.y);
+			glm::vec3 forward = glm::normalize(direction);
+
+			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::vec3 up = glm::normalize(glm::cross(right, forward));
+
+			viewMatrix = glm::lookAt(position, position + forward, up);
+			return camera.Cam;
+		}
+	}
+}
+
 Entity Scene::CreateEntity(const std::string& name)
 {
 	Entity entity = { m_Registry.create(), this };
@@ -111,35 +154,35 @@ void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)
 	}
 }
 
-bool Scene::TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove)
-{
-	if (m_CameraComponents.size() < 2)
-	{
-		std::cout << "Error: tried to delete last camera component, but scene requires minimum of one camera" << std::endl;
-		return false;
-	}
-
-	auto foundItterator = std::find(m_CameraComponents.begin(), m_CameraComponents.end(), cameraToRemove);
-
-	if (foundItterator == m_CameraComponents.end())
-	{
-		std::cout << cameraToRemove->Name() << ", NOT FOUND, can't remove it" << std::endl;
-		return false;
-	}
-
-	bool bNeedNewActiveCam = cameraToRemove->BIsSceneViewCam;
-	bool bNeedNewDefaultCam = (m_DefaultCamera == nullptr) || (m_DefaultCamera == cameraToRemove);
-
-
-	std::cout << "Erasing component: " << cameraToRemove->Name() << std::endl;
-	m_CameraComponents.erase(foundItterator);
-	
-	if (bNeedNewActiveCam)
-	{
-		if (bNeedNewDefaultCam) m_DefaultCamera = std::dynamic_pointer_cast<Camera>(m_CameraComponents[0]); 
-		m_ActiveCamera = m_DefaultCamera;
-		m_ActiveCamera->BIsSceneViewCam = true;
-	}
-
-	return false;
-}
+//bool Scene::TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove)
+//{
+//	if (m_CameraComponents.size() < 2)
+//	{
+//		std::cout << "Error: tried to delete last camera component, but scene requires minimum of one camera" << std::endl;
+//		return false;
+//	}
+//
+//	auto foundItterator = std::find(m_CameraComponents.begin(), m_CameraComponents.end(), cameraToRemove);
+//
+//	if (foundItterator == m_CameraComponents.end())
+//	{
+//		//std::cout << cameraToRemove->Name() << ", NOT FOUND, can't remove it" << std::endl;
+//		return false;
+//	}
+//
+//	//bool bNeedNewActiveCam = cameraToRemove->BIsSceneViewCam;
+//	bool bNeedNewDefaultCam = (m_DefaultCamera == nullptr) || (m_DefaultCamera == cameraToRemove);
+//
+//
+//	//std::cout << "Erasing component: " << cameraToRemove->Name() << std::endl;
+//	m_CameraComponents.erase(foundItterator);
+//	
+//	/*if (bNeedNewActiveCam)
+//	{
+//		if (bNeedNewDefaultCam) m_DefaultCamera = std::dynamic_pointer_cast<Camera>(m_CameraComponents[0]); 
+//		m_ActiveCamera = m_DefaultCamera;
+//		m_ActiveCamera->BIsSceneViewCam = true;
+//	}*/
+//
+//	return false;
+//}

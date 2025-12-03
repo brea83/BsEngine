@@ -40,7 +40,7 @@ bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 
 			if (ImGui::Selectable("CameraComponent"))
 			{
-				selectedObject->AddComponent<CameraComponent>();
+				//selectedObject->AddComponent<CameraComponent>();
 			}
 			ImGui::EndPopup();
 		}
@@ -296,52 +296,52 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 		ImGui::PopID();
 	}
 
-	if (selectedObject->HasCompoenent<CameraComponent>())
-	{
-		ImGui::PushID("CameraComponent");
-		ImGui::Separator();
-		std::shared_ptr<CameraComponent> component = selectedObject->GetComponent<CameraComponent>();
-		char buffer[256];
-		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
-		ImGui::Text(buffer);
-		ImGui::SameLine();
+	//if (selectedObject->HasCompoenent<CameraComponent>())
+	//{
+		//ImGui::PushID("CameraComponent");
+		//ImGui::Separator();
+		//std::shared_ptr<CameraComponent> component = selectedObject->GetComponent<CameraComponent>();
+		//char buffer[256];
+		//memset(buffer, 0, sizeof(buffer));
+		//strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
+		//ImGui::Text(buffer);
+		//ImGui::SameLine();
 
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+		//float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
+		//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
 
-		if (ImGui::Button("X"))
-		{
-			selectedObject->RemoveComponent<CameraComponent>();
-		}
+		//if (ImGui::Button("X"))
+		//{
+		//	selectedObject->RemoveComponent<CameraComponent>();
+		//}
 
-		ImGui::Separator();
+		//ImGui::Separator();
 
-		float labelWidth = ( ImGui::GetFontSize() * 10.0f);
-		std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
-		std::vector<float*> values{ &component->m_Fov, &component->m_Near, &component->m_Far };
-		if(ImGui::BeginTable("##CameraProperties", 2))
-		{
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);
-			ImGui::TableSetupColumn("Values");
+		//float labelWidth = ( ImGui::GetFontSize() * 10.0f);
+		//std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
+		//std::vector<float*> values{ &component->m_Fov, &component->m_Near, &component->m_Far };
+		//if(ImGui::BeginTable("##CameraProperties", 2))
+		//{
+		//	ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);
+		//	ImGui::TableSetupColumn("Values");
 
-			for (int i = 0; i < labels.size(); i++)
-			{
-				ImGui::PushID(i);
-				ImGui::TableNextRow();
-				// the label
-				ImGui::TableSetColumnIndex(0);
-				ImGui::Text(labels[i].c_str());
+		//	for (int i = 0; i < labels.size(); i++)
+		//	{
+		//		ImGui::PushID(i);
+		//		ImGui::TableNextRow();
+		//		// the label
+		//		ImGui::TableSetColumnIndex(0);
+		//		ImGui::Text(labels[i].c_str());
 
-				// the values
-				ImGui::TableSetColumnIndex(1);
-				ImGui::DragFloat("##Value", values[i]);
-				ImGui::PopID();
+		//		// the values
+		//		ImGui::TableSetColumnIndex(1);
+		//		ImGui::DragFloat("##Value", values[i]);
+		//		ImGui::PopID();
 
-			}
+		//	}
 
-			ImGui::EndTable();
-		}
-		ImGui::PopID();
-	}
+		//	ImGui::EndTable();
+		//}
+		//ImGui::PopID();
+	//}
 }

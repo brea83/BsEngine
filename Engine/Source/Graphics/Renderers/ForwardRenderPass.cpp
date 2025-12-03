@@ -3,11 +3,13 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Scene.h"
-#include "Graphics/Camera.h"
+#include "Scene/Components/CameraComponent.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Graphics/Texture.h"
 #include "Resources/AssetLoader.h"
 #include "EngineContext.h"
+#include "Scene/Entity.h"
+
 
 ForwardRenderPass::ForwardRenderPass()
 {
@@ -27,15 +29,17 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 	m_Shader->SetUniformInt("Texture1", 0);
 
-	std::shared_ptr<Camera> mainCam = sceneToRender.GetActiveCamera();
+	glm::mat4 viewMatrix{1.0f};
+	Camera& mainCam = sceneToRender.GetActiveCamera(viewMatrix);
 	
-	m_Shader->SetUniformMat4("view", (mainCam->ViewMatrix()));
-	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
+	m_Shader->SetUniformMat4("view", viewMatrix);
+	m_Shader->SetUniformMat4("projection", mainCam.ProjectionMatrix());
 	
 
 	entt::registry& registry = sceneToRender.GetRegistry();
 
-	auto group = registry.group<Transform>(entt::get<MeshComponent>);
+	/*auto group = registry.group<Transform>(entt::get<MeshComponent>);
+
 	for (auto entity : group)
 	{
 		Transform& transform = group.get<Transform>(entity);
@@ -43,7 +47,7 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 		m_FallbackTexture->Bind(0);
 		mesh.Render(*m_Shader, transform);
-	}
+	}*/
 	
 	for (auto object : objectsToRender)
 	{

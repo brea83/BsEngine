@@ -9,6 +9,7 @@ public:
 	Entity(entt::entity handle, Scene* scene);
 	Entity(const Entity& other) = default;
 
+	entt::entity GetEnttHandle() const { return m_EntityHandle; }
 
 	template <typename Type>
 	bool HasCompoenent()

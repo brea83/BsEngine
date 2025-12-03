@@ -16,7 +16,7 @@ public:
 	Transform(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 	// properties
 	void UnParent(bool bKeepWorldPosition = true);
-	std::shared_ptr<Transform> ParentTransform;
+	std::shared_ptr<Transform> ParentTransform{ nullptr };
 
 	void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
 	glm::vec3 GetPosition();

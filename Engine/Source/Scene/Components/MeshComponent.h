@@ -10,6 +10,7 @@
 #include <assimp/postprocess.h>
 
 //class Texture;
+class GameObject;
 
 class MeshComponent : public Component
 {
@@ -23,19 +24,19 @@ public:
 	bool Reload();
 
 	// Inherited via Component
-	void Initialize() override;
-	void CleanUp() override;
-	std::shared_ptr<Component> Clone() override;
+	void Initialize() ;
+	void CleanUp() ;
+	std::shared_ptr<Component> Clone() ;
 
-	std::string Name() const override { return m_Name; }
-	void SetName(const std::string& name) override { m_Name = name; }
-	GameObject* GetParentObject() const override { return m_ParentObject; }
-	void SetParentObject(GameObject* newParent) override;
+	const std::string& Name() const  override{ return m_Name; }
+	void SetName(const std::string& name)  { m_Name = name; }
+	GameObject* GetParentObject() const  { return m_ParentObject; }
+	void SetParentObject(GameObject* newParent) ;
 
 	void SetFilePath(const std::string& modelFilePath) { }
 	std::string GetFilePath() { return m_FilePath; }
 
-	void OnUpdate() override;
+	void OnUpdate() ;
 	
 	void Render(Shader& currentShader);
 

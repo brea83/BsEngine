@@ -111,7 +111,9 @@ void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
 {
 	ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 	DrawSceneTools();
-	std::shared_ptr<Camera> camera = m_CurrentScene->GetActiveCamera();
+	glm::mat4 viewMatrix{ 1.0f };
+	Camera& camera = m_CurrentScene->GetActiveCamera(viewMatrix);
+	//Transform& camTransform = m_CurrentScene->GetActiveCameraTransform();
 	//DrawGridLines(camera);
 
 	std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
@@ -122,10 +124,10 @@ void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
 	{
 		m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
 		frameBuffer->Resize(currentSize.x, currentSize.y);
-		camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
+		camera.SetAspectRatio((float)currentSize.x / (float)currentSize.y);
 	}
 	ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
-	DrawGizmos(camera, selected);
+	DrawGizmos(camera, viewMatrix, selected);
 
 	if (ImGui::IsWindowHovered())
 	{
@@ -210,14 +212,14 @@ void ImGuiLayer::DrawSceneTools()
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
 			ImGui::Text("Cam Speed");
-			ImGui::DragFloat("##Speed", &m_CurrentScene->GetActiveCamera()->m_CameraSpeed);
+			ImGui::DragFloat("##Speed", &m_CurrentScene->GetActiveCamera().m_CameraSpeed);
 			ImGui::Text("Look Sensitivity");
-			ImGui::DragFloat("##Sensitivity", &m_CurrentScene->GetActiveCamera()->m_MouseLookSesitivity);
+			ImGui::DragFloat("##Sensitivity", &m_CurrentScene->GetActiveCamera().m_MouseLookSesitivity);
 			ImGui::Text("FOV");
-			ImGui::DragFloat("##FoVvalue", &m_CurrentScene->GetActiveCamera()->m_Fov);
+			ImGui::DragFloat("##FoVvalue", &m_CurrentScene->GetActiveCamera().m_Fov);
 			if(ImGui::Button("ResetFoV"))
 			{
-				m_CurrentScene->GetActiveCamera()->m_Fov = 45.0f;
+				m_CurrentScene->GetActiveCamera().m_Fov = 45.0f;
 			}
 			ImGui::PopItemWidth();
 			ImGui::EndMenuBar();
@@ -227,11 +229,11 @@ void ImGuiLayer::DrawSceneTools()
 	
 }
 
-void ImGuiLayer::DrawGridLines(std::shared_ptr<Camera> camera)
+void ImGuiLayer::DrawGridLines(Camera& camera)
 {
 }
 
-void ImGuiLayer::DrawGizmos(std::shared_ptr<Camera> camera, int selectedObjectIndex)
+void ImGuiLayer::DrawGizmos(Camera& camera, glm::mat4 viewMatrix/*Transform& camTransform*/, int selectedObjectIndex)
 {
 	GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
 	if (selectedObject == nullptr) return;
@@ -243,7 +245,7 @@ void ImGuiLayer::DrawGizmos(std::shared_ptr<Camera> camera, int selectedObjectIn
 	std::shared_ptr<Transform> transform = selectedObject->GetTransform();
 	glm::mat4 transformMatrix = transform->GetLocal();
 
-	ImGuizmo::Manipulate(glm::value_ptr(camera->ViewMatrix()), glm::value_ptr(camera->ProjectionMatrix()),
+	ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(camera.ProjectionMatrix()),
 		ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix));
 	
 	if (ImGuizmo::IsUsing())

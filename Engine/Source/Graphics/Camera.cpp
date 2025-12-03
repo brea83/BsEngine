@@ -1,15 +1,13 @@
 #include "BsPrecompileHeader.h"
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
-//#include <GLFW/glfw3.h>
-//#include "Scene/GameObject.h"
-//#include "Graphics/Primitives/Transform.h"
 
-Camera::Camera()
+Camera::Camera(float fov, float aspectRatio, float nearClip, float farClip)
+	:   m_Fov(fov), m_AspectRatio(aspectRatio), m_Near(nearClip), m_Far(farClip)
 {}
 
-////TODO REFACTOR THIS INTO A MOVEMENT COMPONENT TO BE USED BY SCENE CAM AND OTHER THINGS
-//	// AND REFACTOR THE SCENE EDIT CAMERA TO BE DIFFERENT FROM THE SCENE'S MAIN GAMEPLAY CAM
+//////TODO REFACTOR THIS INTO A MOVEMENT COMPONENT TO BE USED BY SCENE CAM AND OTHER THINGS
+////	// AND REFACTOR THE SCENE EDIT CAMERA TO BE DIFFERENT FROM THE SCENE'S MAIN GAMEPLAY CAM
 //bool Camera::HandleMoveWasd(int keyCode, float deltaTime)
 //{
 //	float velocity = m_CameraSpeed * deltaTime; // adjust accordingly
@@ -47,7 +45,7 @@ Camera::Camera()
 //
 //	return true;
 //}
-
+//
 //glm::mat4 Camera::ViewMatrix() const
 //{
 //	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();

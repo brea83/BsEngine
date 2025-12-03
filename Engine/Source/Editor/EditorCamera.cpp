@@ -1,21 +1,63 @@
 #include "BsPrecompileHeader.h"
 #include "EditorCamera.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <GLFW/glfw3.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 
-EditorCamera::EditorCamera()
+#include "Input/Input.h"
+#include "Events/MouseEvents.h"
+#include "Events/KeyboardEvents.h"
+
+EditorCamera::EditorCamera(float fov, float aspectRatio, float nearClip, float farClip)
+	: Camera(fov, aspectRatio, nearClip, farClip)
 {
-	glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	m_Forward = glm::vec3(0.0f, 0.0f, -1.0f);
-	m_Right = glm::normalize(glm::cross(worldUp, m_Forward));
-	m_Up = glm::cross(m_Forward, m_Right);
+	UpdateView();
 }
 
-//void EditorCamera::LookAt(const glm::vec3& target, const glm::vec3& up)
-//{
-//	m_Target = target;
-//	m_Up = up;
-//}
+void EditorCamera::OnUpdate(float deltaTime)
+{
+	if (Input::IsKeyPressed(Inputs::Keyboard::LeftAlt))
+	{
+		const glm::vec2& mouse{ Input::GetMousePosition()};
+		glm::vec2 delta = (mouse - m_InitialMousePosition) * 0.003f;
+		m_InitialMousePosition = mouse;
+
+		if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonMiddle))
+			MousePan(delta);
+		else if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonLeft))
+			MouseRotate(delta);
+		else if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonRight))
+			MouseZoom(delta.y);
+	}
+
+	UpdateView();
+}
+
+void EditorCamera::OnEvent(Event& event)
+{
+	EventDispatcher dispatcher(event);
+	dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EditorCamera::OnMouseScrolled));
+}
+
+glm::vec3 EditorCamera::GetUpDirection() const
+{
+	return glm::rotate(GetOrientation(), glm::vec3(0.0f, 1.0f, 0.0f));
+}
+
+glm::vec3 EditorCamera::GetRightDirection() const
+{
+	return glm::rotate(GetOrientation(), glm::vec3(1.0f, 0.0f, 0.0f));
+}
+
+glm::vec3 EditorCamera::GetForwardDirection() const
+{
+	return glm::rotate(GetOrientation(), glm::vec3(0.0f, 0.0f, -1.0f));
+}
+
+glm::quat EditorCamera::GetOrientation() const
+{
+	return glm::quat(glm::vec3(-m_Pitch, -m_Yaw, 0.0f));
+}
 
 bool EditorCamera::HandleMoveWasd(int keyCode, float deltaTime)
 {
@@ -69,4 +111,78 @@ void EditorCamera::UpdateCameraVectors()
 
 	m_Right = glm::normalize(glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f)));
 	m_Up = glm::normalize(glm::cross(m_Right, m_Forward));
+}
+
+void EditorCamera::UpdateProjection()
+{
+	m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
+	m_ProjectionMatrix = ProjectionMatrix();
+}
+
+void EditorCamera::UpdateView()
+{
+	m_Position = CalculatePosition();
+
+	UpdateCameraVectors();
+	m_ViewMatrix = ViewMatrix();
+}
+
+bool EditorCamera::OnMouseScrolled(MouseScrolledEvent& event)
+{
+	float delta = event.GetYOffset() * 0.1f;
+	MouseZoom(delta);
+	UpdateView();
+	return false;
+}
+
+void EditorCamera::MousePan(const glm::vec2& delta)
+{
+	glm::vec2 speed = PanSpeed();
+	m_FocalPoint += -GetRightDirection() * delta.x * speed.x * m_Distance;
+	m_FocalPoint += GetUpDirection() * delta.y * speed.y * m_Distance;
+}
+
+void EditorCamera::MouseRotate(const glm::vec2 & delta)
+{
+	float yawSign = GetUpDirection().y < 0 ? -1.0f : 1.0f;
+
+	m_Yaw += yawSign * delta.x * RotationSpeed();
+	m_Pitch += delta.y * RotationSpeed();
+}
+
+void EditorCamera::MouseZoom(float delta)
+{
+	m_Distance -= delta * ZoomSpeed();
+	if (m_Distance < 1.0f)
+	{
+		m_FocalPoint += GetForwardDirection();
+		m_Distance = 1.0f;
+	}
+}
+
+glm::vec3 EditorCamera::CalculatePosition() const
+{
+	return m_FocalPoint - GetForwardDirection() * m_Distance;
+}
+
+// constant values based on Cherno's hazel engine
+glm::vec2 EditorCamera::PanSpeed() const
+{
+	float x = std::min(m_ViewportWidth / 1000.0f, 2.4f); // max = 2.4f
+	float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
+
+	float y = std::min(m_ViewportHeight / 1000.0f, 2.4f); // max = 2.4f
+	float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
+
+	return { xFactor, yFactor };
+}
+
+// constant values based on Cherno's hazel engine
+float EditorCamera::ZoomSpeed() const
+{
+	float distance = m_Distance * 0.2f;
+	distance = std::max(distance, 0.0f);
+	float speed = distance * distance;
+	speed = std::min(speed, 100.0f); // max speed = 100
+	return speed;
 }

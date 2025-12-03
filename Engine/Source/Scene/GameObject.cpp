@@ -1,10 +1,11 @@
 #include "BsPrecompileHeader.h"
 #include "Scene/GameObject.h"
+#define GLFW_INCLUDE_NONE
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Scene/Components/MeshComponent.h"
-#include "Scene/Components/CameraComponent.h"
+//#include "Scene/Components/CameraComponent.h"
 
 static int s_NumGameObjects = 1;
 GameObject::GameObject(std::string name, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)

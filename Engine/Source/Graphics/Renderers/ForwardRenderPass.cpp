@@ -30,10 +30,16 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 	m_Shader->SetUniformInt("Texture1", 0);
 
 	glm::mat4 viewMatrix{1.0f};
-	Camera& mainCam = sceneToRender.GetActiveCamera(viewMatrix);
-	
+	Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
+
+	if (mainCam == nullptr)
+	{
+		std::cout << "No Camera in the scene is set to active" << std::endl;
+		return;
+	}
+
 	m_Shader->SetUniformMat4("view", viewMatrix);
-	m_Shader->SetUniformMat4("projection", mainCam.ProjectionMatrix());
+	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 	
 
 	entt::registry& registry = sceneToRender.GetRegistry();

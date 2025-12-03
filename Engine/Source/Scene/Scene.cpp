@@ -5,7 +5,7 @@
 #include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Graphics/Primitives/Transform.h"
-#include "Editor/EditorCamera.h"
+#include "Graphics/CameraController.h"
 #include "Components/CameraComponent.h"
 #include "EngineContext.h"
 #include "Entity.h"
@@ -31,6 +31,9 @@ void Scene::Initialize()
 	Transform& transform = mainCam.GetComponent<Transform>();
 	transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
 	transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
+
+	mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
+
 	m_DefaultCamera = mainCam.GetEnttHandle();//std::make_shared<EditorCamera>(camera.Cam);
 	m_ActiveCamera = m_DefaultCamera;
 }
@@ -45,6 +48,11 @@ Scene::~Scene()
 			delete gameObject;
 		}
 	}
+}
+
+void Scene::OnUpdate(float deltaTime)
+{
+	
 }
 
 GameObject* Scene::CreateEmptyGameObject()
@@ -82,8 +90,10 @@ GameObject* Scene::GetGameObjectByIndex(int index)
 	
 }
 
-Camera& Scene::GetActiveCamera()
+Camera* Scene::GetActiveCamera()
 {
+	Camera* mainCamera = nullptr;
+
 	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
 	for (auto entity : group)
 	{
@@ -91,13 +101,18 @@ Camera& Scene::GetActiveCamera()
 
 		if (camera.IsPrimaryCamera)
 		{
-			return camera.Cam;
+			mainCamera = &camera.Cam;
+			break;
 		}
 	}
+
+	return mainCamera;
 }
 
-Camera& Scene::GetActiveCamera(glm::mat4& viewMatrix)
+Camera* Scene::GetActiveCamera(glm::mat4& viewMatrix)
 {
+	Camera* mainCamera = nullptr;
+
 	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
 	for (auto entity : group)
 	{
@@ -117,9 +132,13 @@ Camera& Scene::GetActiveCamera(glm::mat4& viewMatrix)
 			glm::vec3 up = glm::normalize(glm::cross(right, forward));
 
 			viewMatrix = glm::lookAt(position, position + forward, up);
-			return camera.Cam;
+			
+			mainCamera = &camera.Cam;
+			break;
 		}
 	}
+
+	return mainCamera;
 }
 
 Entity Scene::CreateEntity(const std::string& name)

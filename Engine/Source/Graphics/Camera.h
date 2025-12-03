@@ -4,7 +4,7 @@
 class Camera 
 {
 public:
-	Camera();
+	Camera(float fov = 45.0f, float aspectRatio = 1280.0f / 720.0f, float nearClip = 0.1f, float farClip = 100.0f);
 
 	//bool BIsSceneViewCam{ false };
 
@@ -42,6 +42,8 @@ protected:
 
 	float m_CameraSpeed{ 10.0f };
 	float m_MouseLookSesitivity{ 1.0f };
+
+	glm::mat4 m_ProjectionMatrix{ 1.0f };
 
 	friend class ImGuiLayer;
 	friend class DetailsViewPanel;

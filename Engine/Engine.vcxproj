@@ -181,6 +181,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp" />
+    <ClCompile Include="Source\Graphics\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
     <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
     <ClCompile Include="Source\Editor\EditorCamera.cpp" />
@@ -226,6 +228,7 @@
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
     <ClCompile Include="Source\GlfwWrapper.cpp" />
     <ClCompile Include="Source\Resources\TextResource.cpp" />
+    <ClCompile Include="Source\Input\WindowsInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.h" />
@@ -239,6 +242,8 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Source\Input\Input.h" />
+    <ClInclude Include="Source\Graphics\CameraController.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
     <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />
@@ -281,6 +286,7 @@
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
     <ClInclude Include="Source\GlfwWrapper.h" />
     <ClInclude Include="Source\Resources\TextResource.h" />
+    <ClInclude Include="Source\Input\WindowsInput.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

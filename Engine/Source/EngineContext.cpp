@@ -1,12 +1,17 @@
 #include "BsPrecompileHeader.h"
 #include "EngineContext.h"
+#define GLFW_INCLUDE_NONE
+#include "GlfwWrapper.h"
+#include "Scene/Scene.h"
+#include "Graphics/Renderers/ForwardRenderer.h"
+#include "Editor/ImGuiLayer.h"
+#include "Graphics/CameraController.h"
+#include "Scene/Components/CameraComponent.h"
+#include "Graphics/Primitives/Transform.h"
 
-#include "Graphics/Camera.h"
-//#include "GlfwWrapper.h"
-//#include <GLFW/glfw3.h>
 
 //#define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
-#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}
+//#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}
 
 EngineContext* EngineContext::m_Engine = nullptr;
 //EngineContext* EngineContext::NextUID = 0;
@@ -17,13 +22,18 @@ EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Rende
 
 bool EngineContext::Init()
 {
+	if (m_MainWindow == nullptr) m_MainWindow = std::make_shared<Window>();
 	// configure glfw and glad state in Window class
 	if (!m_MainWindow->Init()) return false;
 	m_MainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
 	// don't start making render passes if we have no window
+
+	if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 	m_Renderer->Init();
+
+	if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 	m_ActiveScene->Initialize();
-	m_ActiveScene->GetActiveCamera().SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
+	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
 
 	m_ImGuiLayer = new ImGuiLayer();
 	m_ImGuiLayer->OnAttach();
@@ -32,6 +42,11 @@ bool EngineContext::Init()
 	m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
 
 	return true;
+}
+
+GLFWwindow* EngineContext::GetGlfwWindow()
+{
+	return m_MainWindow->GetGlfwWindow();
 }
 
 EngineContext* EngineContext::GetEngine()
@@ -52,6 +67,8 @@ void EngineContext::Update()
 		float currentFrame = (float)glfwGetTime();
 		m_DeltaTime = currentFrame - m_LastFrameTime;
 		m_LastFrameTime = currentFrame;
+
+		m_ActiveScene->OnUpdate(m_DeltaTime);
 	}
 
 	m_ImGuiLayer->OnUpdate(m_DeltaTime);
@@ -90,6 +107,7 @@ void EngineContext::OnEvent(Event& event)
 	//std::cout << event.ToString() << std::endl;
 }
 
+
 bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 {
 	int width = event.GetWidth();
@@ -100,7 +118,7 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 		return false;
 	}
 	m_IsMinimized = false;
-	m_ActiveScene->GetActiveCamera().SetAspectRatio((float)width / (float)height);
+	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return true;
 }
 
@@ -121,10 +139,11 @@ bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 	float yOffset = event.GetYOffset();
 	if (m_CamFlyMode)
 	{
-		return m_ActiveScene->GetActiveCamera().Zoom(yOffset);
+		return m_ActiveScene->GetActiveCamera()->Zoom(yOffset);
 	}
 	return false;
 }
+
 
 bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 {
@@ -146,7 +165,17 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 		m_PrevMouseX = xPosition;
 		m_PrevMouseY = yPosition;
 
-		return m_ActiveScene->GetActiveCamera().HandleLookMouse(xOffset, yOffset, m_DeltaTime);
+		//return m_ActiveScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, m_DeltaTime);
+
+		entt::registry& registry = m_ActiveScene->GetRegistry();
+		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraEntity();
+
+		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
+		Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
+
+		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
+
+		return cameraComponent->HandleMouseLook(cameraTransform, xOffset, yOffset, m_DeltaTime);
 	}
 	return false;
 }
@@ -173,7 +202,15 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		|| keyCode == GLFW_KEY_A
 		|| keyCode == GLFW_KEY_D))
 	{
-		return m_ActiveScene->GetActiveCamera().HandleMoveWasd(keyCode, m_DeltaTime);
+		entt::registry& registry = m_ActiveScene->GetRegistry();
+		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraEntity();
+		
+		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
+		Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
+
+		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
+
+		return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
 	}
 	
 	if (keyCode == GLFW_KEY_TAB)

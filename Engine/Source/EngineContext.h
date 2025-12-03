@@ -1,19 +1,14 @@
 #pragma once
-//#include <GLFW/glfw3.h>
-#include "GlfwWrapper.h"
-#include "Scene/Scene.h"
-#include "Graphics/Renderers/ForwardRenderer.h"
+
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
-#include "Editor/ImGuiLayer.h"
-#include <EnTT/entt.hpp>
 
-
-//class Renderer;
 class Window;
 struct GLFWwindow;
-//class DebugConsole;
+class Scene;
+class Renderer;
+class ImGuiLayer;
 
 class EngineContext
 {
@@ -26,8 +21,8 @@ public:
 	
 	static int NextUID;
 
-	Window& GetWindow() { return *m_MainWindow; }
-	GLFWwindow* GetGlfwWindow() { return m_MainWindow->GetGlfwWindow(); }
+	std::shared_ptr<Window> GetWindow() { return m_MainWindow; }
+	GLFWwindow* GetGlfwWindow();
 
 	void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
 	Scene* GetScene() { return m_ActiveScene; }
@@ -52,7 +47,7 @@ public:
 
 private:
 	// constructors, properties, getters and setters
-	EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
+	EngineContext(Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr);
 
 	static EngineContext* m_Engine;
 	
@@ -69,11 +64,11 @@ private:
 	float m_DeltaTime{ 0.0f };
 	float m_LastFrameTime{ 0.0f };
 
-	std::unique_ptr<Window> m_MainWindow;
+	std::shared_ptr<Window> m_MainWindow;
 	Scene* m_ActiveScene;
 	Renderer* m_Renderer;
 
-	ImGuiLayer* m_ImGuiLayer;
+	ImGuiLayer* m_ImGuiLayer{ nullptr };
 
 	// DebugConsole* _console;
 	// methods

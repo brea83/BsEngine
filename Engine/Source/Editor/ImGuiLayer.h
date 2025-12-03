@@ -39,7 +39,7 @@ class Scene;
 
 		void DrawSceneTools();
 
-		void DrawGridLines(Camera& camera);
-		void DrawGizmos(Camera& camera, glm::mat4 viewMatrix/*Transform& camTransform*/, int selectedObjectIndex);
+		void DrawGridLines(Camera* camera);
+		void DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, int selectedObjectIndex);
 
 	};

@@ -57,24 +57,24 @@ void PopulateStartingScene(EngineContext* engine)
 {
 	Scene* startingScene = engine->GetScene();
 
-	GameObject* testObject = new GameObject("Viking House");
-	std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();
-	gameObjectTransform->SetScale(glm::vec3(20.0f));
-	startingScene->AddGameObject(testObject);
-	testObject->AddComponent<MeshComponent, const  std::string&>("Assets/Meshes/Viking_House.obj");
+	//GameObject* testObject = new GameObject("Viking House");
+	//std::shared_ptr<Transform> gameObjectTransform = testObject->GetTransform();
+	//gameObjectTransform->SetScale(glm::vec3(20.0f));
+	//startingScene->AddGameObject(testObject);
+	//testObject->AddComponent<MeshComponent, const  std::string&>("Assets/Meshes/Viking_House.obj");
 
-	GameObject* testObject2 = new GameObject("Empty");
-	std::shared_ptr<Transform> gameObjectTransform2 = testObject2->GetTransform();
-	gameObjectTransform2->SetScale(glm::vec3(2.0f));
-	gameObjectTransform2->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-	startingScene->AddGameObject(testObject2);
-	
-	testObject->AddChild(testObject2);
-
-	//entt::registry& registry = engine->GetRegistry();
-	//entt::entity testEntity = registry.create();
+	//GameObject* testObject2 = new GameObject("Empty");
+	//std::shared_ptr<Transform> gameObjectTransform2 = testObject2->GetTransform();
+	//gameObjectTransform2->SetScale(glm::vec3(2.0f));
+	//gameObjectTransform2->SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+	//startingScene->AddGameObject(testObject2);
 	//
-	//Transform transform = registry.emplace<Transform>(testEntity);
-	//MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
+	//testObject->AddChild(testObject2);
+
+	entt::registry& registry = startingScene->GetRegistry();
+	entt::entity testEntity = startingScene->CreateEntity();
+
+	Transform transform = registry.get<Transform>(testEntity);
+	MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
 
 }

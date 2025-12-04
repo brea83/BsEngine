@@ -100,7 +100,7 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	int selected = SceneHierarchyPanel::Draw(m_CurrentScene);
+	entt::entity selected = SceneHierarchyPanel::Draw(m_CurrentScene);
 
 	DetailsViewPanel::Draw(m_CurrentScene, selected);
 	AssetViewerPanel::Draw();
@@ -108,7 +108,7 @@ void ImGuiLayer::OnImGuiRender()
 	DrawViewport(engine, selected);
 }
 
-void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
+void ImGuiLayer::DrawViewport(EngineContext& engine, entt::entity selected)
 {
 	ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 	DrawSceneTools();
@@ -163,8 +163,8 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 		{
 			if (ImGui::MenuItem("Empty GameObject"))
 			{
-				GameObject* testObject = new GameObject();
-				m_CurrentScene->AddGameObject(testObject);
+				//GameObject* testObject = new GameObject();
+				m_CurrentScene->CreateEntity("Empty Entity");
 			}
 
 			if (ImGui::MenuItem("Create Cube")) m_CurrentScene->CreateCube();
@@ -234,20 +234,27 @@ void ImGuiLayer::DrawGridLines(Camera* camera)
 {
 }
 
-void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, int selectedObjectIndex)
+void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, entt::entity selected)
 {
-	GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
-	if (selectedObject == nullptr) return;
+	//GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
+	//if (selectedObject == nullptr) return;
+	
+	entt::registry& registry = m_CurrentScene->m_Registry;
+	if (!registry.valid(selected))
+	{
+		return;
+	}
 
 	ImGuizmo::SetDrawlist();
 
 	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 	
-	std::shared_ptr<Transform> transform = selectedObject->GetTransform();
+	Transform* transform = registry.try_get<Transform>(selected);
+	if (transform == nullptr) return;
 	glm::mat4 transformMatrix = transform->GetLocal();
 
 	ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(camera->ProjectionMatrix()),
-		ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix));
+	ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix));
 	
 	if (ImGuizmo::IsUsing())
 	{

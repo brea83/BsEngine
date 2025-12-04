@@ -32,3 +32,13 @@ struct TagComponent
     // Inherited via Component
     std::string Name{ "Tag Component" };
 };
+
+struct NameComponent
+{
+    NameComponent() = default;
+    NameComponent(const NameComponent&) = default;
+    NameComponent(const std::string& name) : Name(name) {}
+
+    // Inherited via Component
+    std::string Name{ "Name" };
+};

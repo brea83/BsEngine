@@ -15,9 +15,10 @@ public:
 	Scene();
 	~Scene();
 	
-	GameObject* CreateEmptyGameObject();
+	GameObject CreateEmptyGameObject(const std::string& name);
 	void AddGameObject(GameObject* gameObject) { m_GameObjects.push_back(gameObject); }
 	void RemoveGameObject(GameObject* objectToRemove);
+	void RevoveObjectByEntity(entt::entity entityHandle) {}
 	int NumGameObjects() { return m_GameObjects.size(); }
 	GameObject* GetGameObjectByIndex(int index);
 	
@@ -52,5 +53,6 @@ private:
 
 	friend class SceneHierarchyPanel;
 	friend class DetailsViewPanel;
+	friend class ImGuiLayer;
 };
 

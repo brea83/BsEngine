@@ -55,11 +55,13 @@ void Scene::OnUpdate(float deltaTime)
 	
 }
 
-GameObject* Scene::CreateEmptyGameObject()
+GameObject Scene::CreateEmptyGameObject(const std::string& name)
 {
-	GameObject* newObject = new GameObject();
-	m_GameObjects.push_back(newObject);
-	return newObject;
+	GameObject gameObject = { m_Registry.create(), this };
+	gameObject.AddComponent<Transform>();
+	NameComponent& nameComponent = gameObject.AddComponent<NameComponent>();
+	nameComponent.Name = name.empty() ? "Empty Object" : name;
+	return gameObject;
 }
 
 void Scene::RemoveGameObject(GameObject* objectToRemove)
@@ -145,17 +147,17 @@ Entity Scene::CreateEntity(const std::string& name)
 {
 	Entity entity = { m_Registry.create(), this };
 	entity.AddComponent<Transform>();
-	TagComponent& tag = entity.AddComponent<TagComponent>();
-	tag.Tag = name.empty() ? "Empty Object" : name;
+	NameComponent& nameComponent = entity.AddComponent<NameComponent>();
+	nameComponent.Name = name.empty() ? "Empty Object" : name;
 	return entity;
 }
 
 void Scene::CreateCube()
 {
 	//m_MeshComponents.emplace_back(new Cube());
-	GameObject* object = new GameObject("Cube");
-	AddGameObject(object);
-	object->AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
+	GameObject object = CreateEmptyGameObject("Cube");
+	//AddGameObject(object);
+	object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
 }
 
 void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)

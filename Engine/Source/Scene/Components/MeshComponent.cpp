@@ -183,7 +183,7 @@ void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Tra
 
 	if (parentNode) 
 	{ 
-		localTransform->ParentTransform = m_ParentObject->GetTransform();
+		//localTransform->ParentTransform = m_ParentObject->GetTransform();
 	}
 	
 	aiVector3D scaling;
@@ -216,7 +216,7 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 	//if root node set model's transform
 	if (!node->mParent)
 	{
-		ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
+		//ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "Set MODEL transform" << std::endl;
 		//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
@@ -240,7 +240,7 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 		std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
 
 		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-		ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
+		//ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
 		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
@@ -377,7 +377,7 @@ void MeshComponent::Render(Shader& currentShader)
 	}
 	else
 	{
-		currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
+		//currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
 	}
 
 	if (m_Texture != nullptr)

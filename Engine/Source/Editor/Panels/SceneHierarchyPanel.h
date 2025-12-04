@@ -1,6 +1,6 @@
 #pragma once
 #include "ImGuiPanel.h"
-
+#include "Scene/Entity.h"
 class Scene; 
 
 class SceneHierarchyPanel// : public ImGuiPanel
@@ -12,11 +12,10 @@ public:
 
 	//void SetSelected();
 
-	static int Draw(Scene* _currentScene = nullptr);
+	static entt::entity Draw(Scene* currentScene = nullptr);
 	//std::size_t GetSelectedIndex() const { return _selected; }
-
 private:
-	//Scene* _currentScene{ nullptr };
+	//Scene* currentScene{ nullptr };
 	//std::size_t _selected{ 0 };
 
 	

@@ -22,7 +22,7 @@ class Scene;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
 
-		void DrawViewport(EngineContext& engine, int selected);
+		void DrawViewport(EngineContext& engine, entt::entity selected);
 
 		void DrawEditorMenu(EngineContext* engine);
 
@@ -40,6 +40,6 @@ class Scene;
 		void DrawSceneTools();
 
 		void DrawGridLines(Camera* camera);
-		void DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, int selectedObjectIndex);
+		void DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, entt::entity selected);
 
 	};

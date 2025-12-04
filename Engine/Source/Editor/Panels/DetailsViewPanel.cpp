@@ -15,72 +15,72 @@
 //	:_currentScene(scene), _selected(selectedObjectIndex)
 //{}
 
-bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
+bool DetailsViewPanel::Draw(Scene* _currentScene, entt::entity selected)
 {
-	if (_selected < 0 || _currentScene->m_GameObjects.size() <= _selected)
-	{
-		return false;
-	}
-	
-	ImGui::Begin("Details View");
-	{
-		GameObject* selectedObject = _currentScene->m_GameObjects[_selected];
-		
-		static bool bIsEditing = false;
-		static std::string editingValue1;
-		DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
+	//if (_selected < 0 || _currentScene->m_GameObjects.size() <= _selected)
+	//{
+	//	return false;
+	//}
+	//
+	//ImGui::Begin("Details View");
+	//{
+	//	GameObject* selectedObject = _currentScene->m_GameObjects[_selected];
+	//	
+	//	static bool bIsEditing = false;
+	//	static std::string editingValue1;
+	//	DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
 
 
-		if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
-		{
-			if (ImGui::Selectable("Mesh Component"))
-			{
-				selectedObject->AddComponent<MeshComponent>();
-			}
+	//	if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
+	//	{
+	//		if (ImGui::Selectable("Mesh Component"))
+	//		{
+	//			selectedObject->AddComponent<MeshComponent>();
+	//		}
 
-			if (ImGui::Selectable("CameraComponent"))
-			{
-				//selectedObject->AddComponent<CameraComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		if(ImGui::Button("AddComponent"))
-		{
-			// To Do make pop up to select component type. 
-			// for now we only have one component tho so test add and remove with that
-			ImGui::OpenPopup("AddComponentPopUp");
+	//		if (ImGui::Selectable("CameraComponent"))
+	//		{
+	//			//selectedObject->AddComponent<CameraComponent>();
+	//		}
+	//		ImGui::EndPopup();
+	//	}
+	//	if(ImGui::Button("AddComponent"))
+	//	{
+	//		// To Do make pop up to select component type. 
+	//		// for now we only have one component tho so test add and remove with that
+	//		ImGui::OpenPopup("AddComponentPopUp");
 
-		}
+	//	}
 
-		ImGui::SeparatorText("Transform");
+	//	ImGui::SeparatorText("Transform");
 
-		std::shared_ptr<Transform> transform = selectedObject->GetTransform();
-		//glm::vec3 position = transform->GetPosition();
-		glm::vec3 rotation = transform->GetRotationEuler();
-		glm::vec3 scale = transform->GetScale();
-		if (DrawVec3Control("Position", transform->m_Position))
-		{
-			transform->m_PositionDirty = true;
-		}
+	//	std::shared_ptr<Transform> transform = selectedObject->GetTransform();
+	//	//glm::vec3 position = transform->GetPosition();
+	//	glm::vec3 rotation = transform->GetRotationEuler();
+	//	glm::vec3 scale = transform->GetScale();
+	//	if (DrawVec3Control("Position", transform->m_Position))
+	//	{
+	//		transform->m_PositionDirty = true;
+	//	}
 
-		//translate rotation from radians to degrees
-		glm::vec3 eulerDegrees = transform->GetRotationEuler();
-		if (DrawVec3Control("Rotation", eulerDegrees))
-		{
-			transform->SetRotationEuler(eulerDegrees);
-		}
-		if (DrawVec3Control("Scale", transform->m_Scale, 1.0f))
-		{
-			transform->m_ScaleDirty = true;
-		}
+	//	//translate rotation from radians to degrees
+	//	glm::vec3 eulerDegrees = transform->GetRotationEuler();
+	//	if (DrawVec3Control("Rotation", eulerDegrees))
+	//	{
+	//		transform->SetRotationEuler(eulerDegrees);
+	//	}
+	//	if (DrawVec3Control("Scale", transform->m_Scale, 1.0f))
+	//	{
+	//		transform->m_ScaleDirty = true;
+	//	}
 
-		
+	//	
 
-		ImGui::SeparatorText("Componenets");
-		DrawComponents(selectedObject/*selectedObject->GetAllComponents()*/);
-		
-	}
-	ImGui::End();
+	//	ImGui::SeparatorText("Componenets");
+	//	DrawComponents(selectedObject/*selectedObject->GetAllComponents()*/);
+	//	
+	//}
+	//ImGui::End();
 	return true;
 }
 
@@ -236,65 +236,65 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 	return bValueSubmitted;
 }
 
-void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
+void DetailsViewPanel::DrawComponents(entt::entity selected)
 {
 
-	if (selectedObject->HasCompoenent<MeshComponent>())
-	{
-		ImGui::PushID("MeshComponent");
-		ImGui::Separator();
-		std::shared_ptr<MeshComponent> component = selectedObject->GetComponent<MeshComponent>();
-		char buffer[256];
-		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
-		ImGui::Text(buffer);
-		ImGui::SameLine();
-		
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+	//if (selectedObject->HasCompoenent<MeshComponent>())
+	//{
+	//	ImGui::PushID("MeshComponent");
+	//	ImGui::Separator();
+	//	std::shared_ptr<MeshComponent> component = selectedObject->GetComponent<MeshComponent>();
+	//	char buffer[256];
+	//	memset(buffer, 0, sizeof(buffer));
+	//	strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
+	//	ImGui::Text(buffer);
+	//	ImGui::SameLine();
+	//	
+	//	float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
+	//	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
 
-		if (ImGui::Button("X"))
-		{
-			selectedObject->RemoveComponent<MeshComponent>();
-		}
+	//	if (ImGui::Button("X"))
+	//	{
+	//		selectedObject->RemoveComponent<MeshComponent>();
+	//	}
 
-		ImGui::Separator();
+	//	ImGui::Separator();
 
-		//ImGui::Text(component->GetFilePath().c_str());
-		static bool bIsEditing2 = false;
-		static std::string  editingValue2;
-		std::string previousValue2 = component->m_FilePath;
-		if (DrawStringProperty("Mesh File", component->m_FilePath, editingValue2, bIsEditing2))
-		{
+	//	//ImGui::Text(component->GetFilePath().c_str());
+	//	static bool bIsEditing2 = false;
+	//	static std::string  editingValue2;
+	//	std::string previousValue2 = component->m_FilePath;
+	//	if (DrawStringProperty("Mesh File", component->m_FilePath, editingValue2, bIsEditing2))
+	//	{
 
-			if (!component->Reload())
-			{
-				std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
-				component->m_FilePath = previousValue2;
-			}
-		}
+	//		if (!component->Reload())
+	//		{
+	//			std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
+	//			component->m_FilePath = previousValue2;
+	//		}
+	//	}
 
-		static bool bIsEditing = false;
-		static std::string  editingValue1;
-		std::string previousValue = component->m_TexturePath;
-		if (DrawStringProperty("Texture File", component->m_TexturePath, editingValue1, bIsEditing))
-		{
-			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->m_TexturePath);
-			if (newTexture == nullptr)
-			{
-				std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
-				component->m_TexturePath = previousValue;
-			}
-			else
-			{
-				if (component->m_Texture != nullptr)
-				{
-					component->m_Texture = newTexture;
-				}
-			}
-		}
-		ImGui::PopID();
-	}
+	//	static bool bIsEditing = false;
+	//	static std::string  editingValue1;
+	//	std::string previousValue = component->m_TexturePath;
+	//	if (DrawStringProperty("Texture File", component->m_TexturePath, editingValue1, bIsEditing))
+	//	{
+	//		std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->m_TexturePath);
+	//		if (newTexture == nullptr)
+	//		{
+	//			std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
+	//			component->m_TexturePath = previousValue;
+	//		}
+	//		else
+	//		{
+	//			if (component->m_Texture != nullptr)
+	//			{
+	//				component->m_Texture = newTexture;
+	//			}
+	//		}
+	//	}
+	//	ImGui::PopID();
+	//}
 
 	//if (selectedObject->HasCompoenent<CameraComponent>())
 	//{

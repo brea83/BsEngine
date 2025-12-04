@@ -37,7 +37,8 @@ void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
 	}
 
 	family.Parent = newParent;
-	//m_Transform->ParentTransform = m_Parent->GetTransform();
+	Transform& transform = GetComponent<Transform>();
+	transform.ParentEntityHandle = newParent;
 
 	if (!bSentFromAddChild)
 	{
@@ -49,10 +50,10 @@ void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
 
 void GameObject::UnParent(entt::entity grandParent, bool bKeepWorldPosition)
 {
-	//if (!m_Scene->GetRegistry().valid(child)) return;
 
 	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-	//m_Transform->UnParent();
+	Transform& transform = GetComponent<Transform>();
+	transform.UnParent(m_Scene, *this, grandParent);
 	family.Parent = grandParent;
 }
 

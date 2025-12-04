@@ -3,7 +3,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #define  GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
-
+#include "Scene/Scene.h"
+#include "Scene/GameObject.h"
+#include "EngineContext.h"
 //
 
 Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
@@ -12,11 +14,13 @@ Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
     m_LocalMatrix(glm::mat4(1.0f)), m_WorldMatrix(glm::mat4(1.0f))
 { }
 
-void Transform::UnParent(bool bKeepWorldPosition)
+void Transform::UnParent(Scene* scene, entt::entity parent, entt::entity grandParent, bool bKeepWorldPosition)
 {
-    if (ParentTransform != nullptr)
+
+    if (bKeepWorldPosition && scene->GetRegistry().valid(parent))
     {
-        glm::mat4 parentMatrix = ParentTransform->m_LocalMatrix;
+        Transform& parentTransform = scene->GetRegistry().get<Transform>(grandParent);
+        glm::mat4 parentMatrix = parentTransform.m_LocalMatrix;
 
         m_LocalMatrix = parentMatrix * m_LocalMatrix;
 
@@ -24,13 +28,13 @@ void Transform::UnParent(bool bKeepWorldPosition)
 
         SetRotationQuaternion(m_Orientation, AngleType::Radians);
 
-        if (ParentTransform->ParentTransform != nullptr)
+        if (scene->GetRegistry().valid(grandParent))
         {
-            ParentTransform = ParentTransform->ParentTransform;
+            ParentEntityHandle = grandParent;
             return;
         }
     }
-    ParentTransform = nullptr;
+    ParentEntityHandle = entt::null;
 }
 
 glm::vec3 Transform::GetPosition()
@@ -173,9 +177,11 @@ glm::mat4& Transform::GetObjectToWorldMatrix()
         RecalculateModelMatrix();
     } 
 
-    if (ParentTransform != nullptr)
+    if (ParentEntityHandle != entt::null)
     {
-        m_WorldMatrix = ParentTransform->GetObjectToWorldMatrix() * m_LocalMatrix;
+        Scene* scene = EngineContext::GetEngine()->GetScene();
+        Transform& parentTransform = scene->GetRegistry().get<Transform>(ParentEntityHandle);
+        m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
         return m_WorldMatrix;
     }
 

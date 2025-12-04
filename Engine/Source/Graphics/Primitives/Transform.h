@@ -2,6 +2,9 @@
 //#include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <EnTT/entt.hpp>
+
+class Scene;
 
 enum class AngleType
 {
@@ -15,8 +18,9 @@ class Transform
 public:
 	Transform(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
 	// properties
-	void UnParent(bool bKeepWorldPosition = true);
-	std::shared_ptr<Transform> ParentTransform{ nullptr };
+	void UnParent(Scene* scene, entt::entity parent, entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
+	entt::entity ParentEntityHandle{ entt::null };
+	entt::entity EntityHandle{ entt::null };
 
 	void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
 	glm::vec3 GetPosition();

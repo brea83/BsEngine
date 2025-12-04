@@ -3,6 +3,7 @@
 #define GLFW_INCLUDE_NONE
 #include "GlfwWrapper.h"
 #include "Scene/Scene.h"
+#include "Scene/GameObject.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Editor/ImGuiLayer.h"
 #include "Graphics/CameraController.h"
@@ -168,7 +169,7 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 		//return m_ActiveScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, m_DeltaTime);
 
 		entt::registry& registry = m_ActiveScene->GetRegistry();
-		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraEntity();
+		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraGameObject();
 
 		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
 		Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
@@ -203,10 +204,10 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		|| keyCode == GLFW_KEY_D))
 	{
 		entt::registry& registry = m_ActiveScene->GetRegistry();
-		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraEntity();
+		GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
 		
-		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
-		Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
+		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
+		Transform* cameraTransform = registry.try_get<Transform>(activeCamObject);
 
 		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 

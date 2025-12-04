@@ -13,6 +13,8 @@ public:
 	//void SetSelected();
 
 	static entt::entity Draw(Scene* currentScene = nullptr);
+	static entt::entity DrawTree(Scene* currentScene = nullptr);
+	static void DrawNode(Entity& selected, Entity& entity);
 	//std::size_t GetSelectedIndex() const { return _selected; }
 private:
 	//Scene* currentScene{ nullptr };

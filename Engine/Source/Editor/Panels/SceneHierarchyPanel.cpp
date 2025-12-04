@@ -71,7 +71,7 @@ entt::entity SceneHierarchyPanel::Draw(Scene* currentScene)
 			ImGui::PushID(int(entity));
 			if (ImGui::Button("X"))
 			{
-				currentScene->RevoveObjectByEntity(entity);
+				currentScene->RemoveEntity(entity);
 			}
 			ImGui::PopID();
 		}
@@ -83,4 +83,81 @@ entt::entity SceneHierarchyPanel::Draw(Scene* currentScene)
 	
 	return selected;
 	
+}
+
+entt::entity SceneHierarchyPanel::DrawTree(Scene* currentScene)
+{
+	ImGui::Begin("HierarchyTree");
+	if (currentScene == nullptr)
+	{
+		ImGui::End();
+		return entt::null;
+	}
+
+	static Entity selected = Entity();
+	entt::registry& registry = currentScene->m_Registry;
+
+
+	auto view = registry.view<Transform>();
+	for (entt::entity entity : view)
+	{
+		GameObject currentObject{ entity, currentScene };
+		HeirarchyComponent& family = currentObject.GetComponent<HeirarchyComponent>();
+		if (family.Parent != entt::null) continue;
+
+		DrawNode(selected, currentObject);
+			
+	}
+
+	ImGui::End();
+
+	return selected;
+}
+
+void SceneHierarchyPanel::DrawNode(Entity& selected, Entity& entity)
+{
+	std::string& name = entity.GetComponent<NameComponent>().Name;
+
+	ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+	flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+	bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
+	if (ImGui::IsItemClicked())
+	{
+		selected = entity;
+	}
+
+	bool entityDeleted = false;
+	if (ImGui::BeginPopupContextItem())
+	{
+		if (ImGui::MenuItem("Delete Entity"))
+			entityDeleted = true;
+
+		ImGui::EndPopup();
+	}
+
+	if (opened)
+	{
+		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+		HeirarchyComponent& family = entity.GetComponent<HeirarchyComponent>();
+		if ( family.Children.size() > 0)
+		{
+			for (auto childHandle : family.Children)
+			{
+				Entity child{ childHandle, entity.m_Scene };
+				DrawNode(selected, child);
+			}
+		}
+		/*bool opened = ImGui::TreeNodeEx((void*)9817239, flags, "test");
+		if (opened)
+			ImGui::TreePop();*/
+		ImGui::TreePop();
+	}
+
+	if (entityDeleted)
+	{
+		entity.m_Scene->RemoveEntity(entity);
+		if (selected == entity)
+			selected = {};
+	}
+
 }

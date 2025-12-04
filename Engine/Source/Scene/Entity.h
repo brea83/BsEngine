@@ -50,6 +50,9 @@ protected:
 	Scene* m_Scene{ nullptr };
 	entt::entity m_EntityHandle{ entt::null };
 
+private:
+	friend class SceneHierarchyPanel;
+
 };
 
 

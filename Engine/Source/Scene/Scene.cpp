@@ -27,6 +27,7 @@ Scene::Scene()
 void Scene::Initialize()
 {
 	Entity mainCam = CreateEntity("Main Camera");
+	mainCam.AddComponent<HeirarchyComponent>();
 	CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
 	Transform& transform = mainCam.GetComponent<Transform>();
 	transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
@@ -41,13 +42,7 @@ void Scene::Initialize()
 Scene::~Scene()
 {
 	// unload scene objects that do not persist across scenes
-	if (!m_GameObjects.empty())
-	{
-		for (GameObject* gameObject : m_GameObjects)
-		{
-			delete gameObject;
-		}
-	}
+
 }
 
 void Scene::OnUpdate(float deltaTime)
@@ -59,47 +54,75 @@ GameObject Scene::CreateEmptyGameObject(const std::string& name)
 {
 	GameObject gameObject = { m_Registry.create(), this };
 	gameObject.AddComponent<Transform>();
+	gameObject.AddComponent<HeirarchyComponent>();
 	NameComponent& nameComponent = gameObject.AddComponent<NameComponent>();
 	nameComponent.Name = name.empty() ? "Empty Object" : name;
 	return gameObject;
 }
+//
+//void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
+//{
+//	m_GameObjects.push_back(gameObject);
+//}
 
-void Scene::RemoveGameObject(GameObject* objectToRemove)
+void Scene::RemoveGameObject(GameObject objectToRemove)
 {
-	if (objectToRemove == nullptr) return;
-
-	auto itterator = std::find(m_GameObjects.begin(), m_GameObjects.end(), objectToRemove);
-	if (itterator != m_GameObjects.end())
+	if (m_Registry.valid(objectToRemove))
 	{
-
-		m_GameObjects.erase(itterator);
-		delete objectToRemove;
-
+		std::cout << "Tried to remove game object entt handle: " << int(objectToRemove) << ", from Scene, but could not find it" << std::endl;
 		return;
 	}
-	std::cout << "Tried to remove: " << objectToRemove << ", from Scene, but could not find it" << std::endl;
+
+	m_Registry.destroy(objectToRemove);
 }
 
-GameObject* Scene::GetGameObjectByIndex(int index)
+void Scene::RemoveEntity(entt::entity entityHandle)
 {
-	
-	if (index < 0 || NumGameObjects() <= index)
+	if (m_Registry.valid(entityHandle))
 	{
-		return nullptr;
+		std::cout << "Tried to remove game object entt handle: " << int(entityHandle) << ", from Scene, but could not find it" << std::endl;
+		return;
 	}
 
-	return m_GameObjects[index];
-	
+}
+
+GameObject Scene::GetGameObjectByEntityHandle(entt::entity entityHandle)
+{
+	if (m_Registry.valid(entityHandle))
+	{
+		return GameObject(entityHandle, this);
+	}
+	return GameObject();
+}
+
+GameObject Scene::FindGameObjectByName(const std::string& name)
+{
+	auto view = m_Registry.view<NameComponent>();
+	for (auto entity : view)
+	{
+		const NameComponent& component = view.get<NameComponent>(entity);
+		if (component.Name == name)
+		{
+			return GameObject(entity, this);
+		}
+	}
+
+	return GameObject();
+}
+
+GameObject Scene::DuplicateGameObject(GameObject object)
+{
+	return GameObject();
 }
 
 Camera* Scene::GetActiveCamera()
 {
 	Camera* mainCamera = nullptr;
 
-	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
+	auto group = m_Registry.group<CameraComponent>(entt::get<Transform>);
 	for (auto entity : group)
 	{
-		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
+		auto [camera, transform] = group.get<CameraComponent, Transform>(entity);
 
 		if (camera.IsPrimaryCamera)
 		{
@@ -115,10 +138,10 @@ Camera* Scene::GetActiveCamera(glm::mat4& viewMatrix)
 {
 	Camera* mainCamera = nullptr;
 
-	auto group = m_Registry.group<Transform>(entt::get<CameraComponent>);
+	auto group = m_Registry.group<CameraComponent>(entt::get<Transform>);
 	for (auto entity : group)
 	{
-		auto [transform, camera] = group.get<Transform, CameraComponent>(entity);
+		auto [camera, transform] = group.get<CameraComponent, Transform>(entity);
 
 		if (camera.IsPrimaryCamera)
 		{
@@ -143,6 +166,11 @@ Camera* Scene::GetActiveCamera(glm::mat4& viewMatrix)
 	return mainCamera;
 }
 
+GameObject Scene::GetActiveCameraGameObject()
+{
+	return GameObject(m_ActiveCamera, this);
+}
+
 Entity Scene::CreateEntity(const std::string& name)
 {
 	Entity entity = { m_Registry.create(), this };
@@ -152,28 +180,29 @@ Entity Scene::CreateEntity(const std::string& name)
 	return entity;
 }
 
-void Scene::CreateCube()
+GameObject Scene::CreateCube()
 {
 	//m_MeshComponents.emplace_back(new Cube());
 	GameObject object = CreateEmptyGameObject("Cube");
-	//AddGameObject(object);
 	object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
+	//m_GameObjects.push_back(std::make_shared<GameObject>(object));
+	return object;
 }
-
-void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)
-{
-	auto foundItterator = std::find(m_MeshComponents.begin(), m_MeshComponents.end(), modelToRemove);
-
-	if (foundItterator != m_MeshComponents.end())
-	{
-		std::cout << "FOUND OBJECT: " << modelToRemove->Name() << std::endl;
-		m_MeshComponents.erase(foundItterator);
-	}
-	else
-	{
-		std::cout << modelToRemove->Name() << ", NOT FOUND" << std::endl;
-	}
-}
+//
+//void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)
+//{
+//	auto foundItterator = std::find(m_MeshComponents.begin(), m_MeshComponents.end(), modelToRemove);
+//
+//	if (foundItterator != m_MeshComponents.end())
+//	{
+//		std::cout << "FOUND OBJECT: " << modelToRemove->Name() << std::endl;
+//		m_MeshComponents.erase(foundItterator);
+//	}
+//	else
+//	{
+//		std::cout << modelToRemove->Name() << ", NOT FOUND" << std::endl;
+//	}
+//}
 
 //bool Scene::TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove)
 //{

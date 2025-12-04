@@ -36,6 +36,8 @@ public:
 	void SetFilePath(const std::string& modelFilePath) { }
 	std::string GetFilePath() { return m_FilePath; }
 
+	bool HasTexture() { return (m_Texture != nullptr ) && (m_Texture->TextureObject != 0); }
+
 	void OnUpdate() ;
 	
 	void Render(Shader& currentShader);
@@ -44,13 +46,13 @@ public:
 
 protected:
 	//properties
-	std::string m_Name;
-	GameObject* m_ParentObject;
-	std::string m_FilePath;
-	std::string m_TexturePath;
+	std::string m_Name{ "Mesh Component" };
+	GameObject* m_ParentObject{ nullptr };
+	std::string m_FilePath{""};
+	std::string m_TexturePath{ "" };
 	std::vector<std::shared_ptr<Mesh>> m_Meshes;
 	//Todo: replace textures with materials.
-	std::shared_ptr<Texture> m_Texture;
+	std::shared_ptr<Texture> m_Texture{nullptr};
 
 	bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 

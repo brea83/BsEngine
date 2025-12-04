@@ -42,6 +42,8 @@ MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh
 		default:
 			break;
 		}
+
+		m_Meshes.push_back(mesh);
 	}
 	else
 	{
@@ -71,6 +73,8 @@ MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
 		default:
 			break;
 		}
+
+		m_Meshes.push_back(mesh);
 	}
 	else
 	{
@@ -79,7 +83,7 @@ MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
 }
 
 MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
-	: m_ParentObject(parent), m_Name("Model Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
+	: m_ParentObject(parent), m_Name("Mesh Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
 {
 
 	Reload();
@@ -103,7 +107,7 @@ bool MeshComponent::Reload()
 
 MeshComponent::~MeshComponent()
 {
-	std::cout << "DELETING MODEL " << m_Name << std::endl;
+	std::cout << "DELETING " << m_Name << std::endl;
 	//delete[] m_Meshes;
 }
 

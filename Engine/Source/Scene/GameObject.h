@@ -15,19 +15,19 @@ public:
 	virtual void Init();
 	//virtual Transform& GetTransform();
 
-	void SetParent(GameObject* newParent, bool bSentFromAddChild = false);
-	GameObject* GetParent() { return m_Parent; }
+	void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
+	GameObject GetParent();
 
-	void UnParent(GameObject* grandParent = nullptr, bool bKeepWorldPosition = true);
+	void UnParent(entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
 
-	void AddChild(GameObject* child, bool bSentFromSetParent = false);
-	void RemoveChild(GameObject* child);
-	std::vector< GameObject*>& GetChildren() { return m_Children; }
+	void AddChild(entt::entity child, bool bSentFromSetParent = false);
+	void RemoveChild(entt::entity child);
+	std::vector< GameObject>& GetChildren();
 
 	virtual void OnUpdate(){ }
 
 protected:
-	GameObject* m_Parent{ nullptr };
-	std::vector<GameObject*> m_Children;
+	//GameObject* m_Parent{ nullptr };
+	//std::vector<GameObject*> m_Children;
 
 };

@@ -2,6 +2,7 @@
 #include "BsPrecompileHeader.h"
 
 #include "Editor/EditorCamera.h"
+#include <EnTT/entt.hpp>
 
 class Component
 {
@@ -41,4 +42,13 @@ struct NameComponent
 
     // Inherited via Component
     std::string Name{ "Name" };
+};
+
+struct HeirarchyComponent
+{
+    HeirarchyComponent() = default;
+    HeirarchyComponent(const HeirarchyComponent&) = default;
+
+    entt::entity Parent{ entt::null };
+    std::vector<entt::entity> Children{};
 };

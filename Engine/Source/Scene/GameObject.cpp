@@ -13,16 +13,7 @@ GameObject::GameObject(entt::entity entity, Scene* scene)
 {}
 
 GameObject::~GameObject()
-{
-	if (m_Children.size() > 0)
-	{
-		for (GameObject* child : m_Children)
-		{
-			child->UnParent(m_Parent);
-		}
-	}
-
-}
+{}
 
 //TODO: update this to read in serialized data for loading scenes etc
 void GameObject::Init()
@@ -36,56 +27,65 @@ void GameObject::Init()
 //	
 //}
 
-void GameObject::SetParent(GameObject* newParent, bool bSentFromAddChild)
+void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
 {
-	if (newParent == nullptr || m_Parent == newParent) return;
-
-	if (m_Parent != nullptr)
+	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+	if (family.Parent != entt::null)
 	{
-		m_Parent->RemoveChild(this);
+		GameObject parentObject{ family.Parent, m_Scene };
+		parentObject.RemoveChild(*this);
 	}
 
-	m_Parent = newParent;
+	family.Parent = newParent;
 	//m_Transform->ParentTransform = m_Parent->GetTransform();
 
 	if (!bSentFromAddChild)
 	{
-		m_Parent->AddChild(this);
+		GameObject parentObject{ family.Parent, m_Scene };
+		parentObject.AddChild(*this);
 	}
 }
 
 
-void GameObject::UnParent(GameObject* grandParent, bool bKeepWorldPosition)
+void GameObject::UnParent(entt::entity grandParent, bool bKeepWorldPosition)
 {
+	//if (!m_Scene->GetRegistry().valid(child)) return;
+
+	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 	//m_Transform->UnParent();
-	m_Parent = grandParent;
+	family.Parent = grandParent;
 }
 
-void GameObject::AddChild(GameObject* child, bool bSentFromSetParent)
+void GameObject::AddChild(entt::entity child, bool bSentFromSetParent)
 {
-	if (child == nullptr) return;
+	if (!m_Scene->GetRegistry().valid(child)) return;
 
-	if (std::find(m_Children.begin(), m_Children.end(), child) != m_Children.end())
+	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+	auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+	if (itterator != family.Children.end())
 	{
 		// already is a child. do nothing
 		return;
 	}
 
-	m_Children.push_back(child);
+	family.Children.push_back(child);
 
 	if (!bSentFromSetParent)
 	{
-		child->SetParent(this, true);
+		GameObject childObject{ child, m_Scene };
+		childObject.SetParent(*this, true);
 	}
 }
 
-void GameObject::RemoveChild(GameObject* child)
+void GameObject::RemoveChild(entt::entity child)
 {
-	if (child == nullptr) return;
-	auto foundItterator = std::find(m_Children.begin(), m_Children.end(), child);
+	if (!m_Scene->GetRegistry().valid(child)) return;
+	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 
-	if (foundItterator != m_Children.end())
+	if (family.Children.empty()) return;
+	auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+	if (itterator != family.Children.end())
 	{
-		m_Children.erase(foundItterator);
+		family.Children.erase(itterator);
 	}
 }

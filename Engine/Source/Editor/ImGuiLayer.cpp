@@ -100,7 +100,7 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	entt::entity selected = SceneHierarchyPanel::Draw(m_CurrentScene);
+	entt::entity selected = SceneHierarchyPanel::DrawTree(m_CurrentScene);
 
 	DetailsViewPanel::Draw(m_CurrentScene, selected);
 	AssetViewerPanel::Draw();

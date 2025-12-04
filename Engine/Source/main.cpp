@@ -72,9 +72,11 @@ void PopulateStartingScene(EngineContext* engine)
 	//testObject->AddChild(testObject2);
 
 	entt::registry& registry = startingScene->GetRegistry();
-	entt::entity testEntity = startingScene->CreateEntity();
+	GameObject cube1 = startingScene->CreateCube();
 
-	Transform transform = registry.get<Transform>(testEntity);
-	MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
+	GameObject cube2 = startingScene->CreateCube();
+	cube1.AddChild(cube2);
+	//Transform transform = registry.get<Transform>(testEntity);
+	//MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
 
 }

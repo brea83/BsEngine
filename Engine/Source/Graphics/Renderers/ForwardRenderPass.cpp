@@ -23,7 +23,6 @@ ForwardRenderPass::~ForwardRenderPass()
 
 void ForwardRenderPass::Execute(Scene& sceneToRender)
 {
-	std::vector<std::shared_ptr<MeshComponent>>& objectsToRender = sceneToRender.GetRenderables();
 
 	m_Shader->Use();
 
@@ -44,21 +43,19 @@ void ForwardRenderPass::Execute(Scene& sceneToRender)
 
 	entt::registry& registry = sceneToRender.GetRegistry();
 
-	/*auto group = registry.group<Transform>(entt::get<MeshComponent>);
+	auto group = registry.group<MeshComponent>(entt::get<Transform>);
 
 	for (auto entity : group)
 	{
 		Transform& transform = group.get<Transform>(entity);
 		MeshComponent& mesh = group.get<MeshComponent>(entity);
 
-		m_FallbackTexture->Bind(0);
+		if (!mesh.HasTexture())
+		{
+			m_FallbackTexture->Bind(0);
+		}
+
 		mesh.Render(*m_Shader, transform);
-	}*/
-	
-	for (auto object : objectsToRender)
-	{
-		m_FallbackTexture->Bind(0);
-		object->Render(*m_Shader);
 	}
 
 	m_Shader->EndUse();

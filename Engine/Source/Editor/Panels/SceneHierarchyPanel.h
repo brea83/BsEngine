@@ -6,19 +6,9 @@ class Scene;
 class SceneHierarchyPanel// : public ImGuiPanel
 {
 public:
-	//SceneHierarchyPanel( );
-
-	//void SetContext( Scene* scene);
-
-	//void SetSelected();
-
-	static entt::entity Draw(Scene* currentScene = nullptr);
-	static entt::entity DrawTree(Scene* currentScene = nullptr);
-	static void DrawNode(Entity& selected, Entity& entity);
-	//std::size_t GetSelectedIndex() const { return _selected; }
+	static void Draw(Scene* currentScene, GameObject& selected);
+	static void DrawNode(GameObject& selected, GameObject& entity);
 private:
-	//Scene* currentScene{ nullptr };
-	//std::size_t _selected{ 0 };
 
 	
 };

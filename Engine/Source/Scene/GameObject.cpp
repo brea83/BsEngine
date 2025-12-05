@@ -22,10 +22,10 @@ void GameObject::Init()
 	// or do those components do that themselves?
 }
 
-//Transform& GetTransform()
-//{
-//	
-//}
+Transform& GameObject::GetTransform()
+{
+	return m_Scene->GetRegistry().get_or_emplace<Transform>(*this);
+}
 
 void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
 {

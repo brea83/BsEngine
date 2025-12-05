@@ -16,7 +16,9 @@ class Transform
 {
 
 public:
-	Transform(glm::vec3 position = glm::vec3(0.0f), glm::vec3 rotation = glm::vec3(0.0f), glm::vec3 scale = glm::vec3(1.0f));
+	Transform() = default;
+	Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
+	Transform(const Transform&) = default;
 	// properties
 	void UnParent(Scene* scene, entt::entity parent, entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
 	entt::entity ParentEntityHandle{ entt::null };
@@ -46,22 +48,32 @@ public:
 	glm::mat4 GetLocal() const { return m_LocalMatrix; }
 	glm::mat4 GetWorld() const { return m_WorldMatrix; }
 
+	//operator overrides
+	bool operator==(const Transform& other) const
+	{
+		return EntityHandle == other.EntityHandle;
+	}
+
+	bool operator!=(const Transform& other) const
+	{
+		return !(*this == other);
+	}
 private:
 	glm::vec3 m_Position { 0.0f };
 	bool m_PositionDirty { true };
 
 	//Note to self: store rotations as radians for easier import
 	glm::vec3 m_EulerRotation { 0.0f };
-	glm::quat m_Orientation;
+	glm::quat m_Orientation{ 0.0f, 0.0f, 0.0f, 0.0f };
 	bool m_RotationDirty { false };
 
 	glm::vec3 m_Scale { 1.0f };
 	bool m_ScaleDirty { false };
 	
 	void RecalculateModelMatrix();
-	glm::mat4 m_LocalMatrix;
+	glm::mat4 m_LocalMatrix{ 1.0f };
 
-	glm::mat4 m_WorldMatrix;
+	glm::mat4 m_WorldMatrix{ 1.0f };
 
 	void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
 

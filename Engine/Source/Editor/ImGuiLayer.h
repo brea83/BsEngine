@@ -4,6 +4,7 @@
 #include "Editor/Panels/SceneHierarchyPanel.h"
 #include "Editor/Panels/ImGuiPanel.h"
 #include <glm/glm.hpp>
+#include "Scene/GameObject.h"
 
 class EngineContext;
 class Camera;
@@ -31,11 +32,13 @@ class Scene;
 
 	private:
 		float m_Time{ 0.0f };
-		Scene* m_CurrentScene;
+		Scene* m_CurrentScene{ nullptr };
 		glm::vec2 m_ViewportPanelSize{ 0.0f };
 
-		SceneHierarchyPanel m_Hierarchy;
-		ImGuiPanel* m_AssetViewer;
+		//SceneHierarchyPanel m_Hierarchy;
+		GameObject m_Selected{entt::null, nullptr};
+
+		ImGuiPanel* m_AssetViewer{ nullptr };
 
 		void DrawSceneTools();
 

@@ -67,7 +67,7 @@ GameObject Scene::CreateEmptyGameObject(const std::string& name)
 
 void Scene::RemoveGameObject(GameObject objectToRemove)
 {
-	if (m_Registry.valid(objectToRemove))
+	if (!m_Registry.valid(objectToRemove))
 	{
 		std::cout << "Tried to remove game object entt handle: " << int(objectToRemove) << ", from Scene, but could not find it" << std::endl;
 		return;
@@ -78,12 +78,12 @@ void Scene::RemoveGameObject(GameObject objectToRemove)
 
 void Scene::RemoveEntity(entt::entity entityHandle)
 {
-	if (m_Registry.valid(entityHandle))
+	if (!m_Registry.valid(entityHandle))
 	{
 		std::cout << "Tried to remove game object entt handle: " << int(entityHandle) << ", from Scene, but could not find it" << std::endl;
 		return;
 	}
-
+	m_Registry.destroy(entityHandle);
 }
 
 GameObject Scene::GetGameObjectByEntityHandle(entt::entity entityHandle)

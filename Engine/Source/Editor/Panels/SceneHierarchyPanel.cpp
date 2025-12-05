@@ -5,121 +5,59 @@
 #include "Scene/Components/Component.h"
 #include "Graphics/Primitives/Transform.h"
 
-//#include <imgui_internal.h>
-//#include "misc/cpp/imgui_stdlib.cpp"
-//#include "Graphics/Primitives/Renderable.h"
-
-//#include <glm/gtc/type_ptr.hpp>
-
-//
-//SceneHierarchyPanel::SceneHierarchyPanel()
-//{ }
-//
-//void SceneHierarchyPanel::SetContext( Scene* scene)
-//{
-//	currentScene = scene;
-//}
-
-entt::entity SceneHierarchyPanel::Draw(Scene* currentScene)
-{
-
-	ImGui::Begin("Hierarchy");
-	if (currentScene == nullptr)
-	{
-		ImGui::End();
-		return entt::null;
-	}
-
-	static entt::entity selected = entt::null;
-	entt::registry& registry = currentScene->m_Registry;
-
-	if (ImGui::BeginTable("##HierarchyTable", 2))
-	{
-
-		float fontSize = ImGui::GetFontSize();
-		ImGui::TableSetupColumn("Objects", ImGuiTableColumnFlags_WidthFixed, fontSize * 20.0f);
-		ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch);
-
-		auto view = registry.view<Transform>();
-		for (entt::entity entity : view)
-		{
-			ImGui::TableNextRow();
-			// Column 1
-			ImGui::TableSetColumnIndex(0);
-
-			static const std::string emptyName = "_NameEmpty_";
-
-			NameComponent* nameComponent = registry.try_get<NameComponent>(entity);
-			if (nameComponent == nullptr || nameComponent->Name.empty())
-			{
-				if (ImGui::Selectable(emptyName.c_str(), selected == entity, ImGuiSelectableFlags_SelectOnNav))
-				{
-					selected = entity;
-				}
-			}
-			else
-			{
-				if (ImGui::Selectable(nameComponent->Name.c_str(), selected == entity, ImGuiSelectableFlags_SelectOnNav))
-				{
-					selected = entity;
-				}
-			}
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-
-			ImGui::PushID(int(entity));
-			if (ImGui::Button("X"))
-			{
-				currentScene->RemoveEntity(entity);
-			}
-			ImGui::PopID();
-		}
-		
-		ImGui::EndTable();
-	}
-	
-	ImGui::End();
-	
-	return selected;
-	
-}
-
-entt::entity SceneHierarchyPanel::DrawTree(Scene* currentScene)
+void SceneHierarchyPanel::Draw(Scene* currentScene, GameObject& selected)
 {
 	ImGui::Begin("HierarchyTree");
 	if (currentScene == nullptr)
 	{
 		ImGui::End();
-		return entt::null;
+		return;// entt::null;
 	}
 
-	static Entity selected = Entity();
+	//static Entity selected = Entity();
 	entt::registry& registry = currentScene->m_Registry;
 
 
-	auto view = registry.view<Transform>();
+	auto view = registry.view<HeirarchyComponent>();
+	if (!view)
+	{
+		ImGui::End();
+		return;// selected;
+	}
+
 	for (entt::entity entity : view)
 	{
 		GameObject currentObject{ entity, currentScene };
-		HeirarchyComponent& family = currentObject.GetComponent<HeirarchyComponent>();
+		auto [family] = view.get(entity);
 		if (family.Parent != entt::null) continue;
 
 		DrawNode(selected, currentObject);
-			
 	}
 
 	ImGui::End();
 
-	return selected;
+	//return selected;
 }
 
-void SceneHierarchyPanel::DrawNode(Entity& selected, Entity& entity)
+void SceneHierarchyPanel::DrawNode(GameObject& selected, GameObject& entity)
 {
-	std::string& name = entity.GetComponent<NameComponent>().Name;
+	std::string& entityName = entity.GetComponent<NameComponent>().Name;
+	std::string name = (entityName.empty()) ? "_NameEmpty_" : entityName;
+	
+	//is entity a leaf node ie, no children
+	HeirarchyComponent& family = entity.GetComponent<HeirarchyComponent>();
+	bool bLeafNode = family.Children.empty();
 
-	ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-	flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+	ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
+	if (bLeafNode)
+	{
+		flags |= ImGuiTreeNodeFlags_Leaf;
+	}
+	else
+	{
+		flags |= ImGuiTreeNodeFlags_OpenOnArrow;
+	}
+
 	bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
 	if (ImGui::IsItemClicked())
 	{
@@ -137,19 +75,15 @@ void SceneHierarchyPanel::DrawNode(Entity& selected, Entity& entity)
 
 	if (opened)
 	{
-		ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-		HeirarchyComponent& family = entity.GetComponent<HeirarchyComponent>();
-		if ( family.Children.size() > 0)
+		if (!bLeafNode)
 		{
 			for (auto childHandle : family.Children)
 			{
-				Entity child{ childHandle, entity.m_Scene };
+				GameObject child{ childHandle, entity.m_Scene };
 				DrawNode(selected, child);
 			}
 		}
-		/*bool opened = ImGui::TreeNodeEx((void*)9817239, flags, "test");
-		if (opened)
-			ImGui::TreePop();*/
+		
 		ImGui::TreePop();
 	}
 
@@ -159,5 +93,4 @@ void SceneHierarchyPanel::DrawNode(Entity& selected, Entity& entity)
 		if (selected == entity)
 			selected = {};
 	}
-
 }

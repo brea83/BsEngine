@@ -1,16 +1,15 @@
 #pragma once
 #include "ImGuiPanel.h"
 #include <glm/vec3.hpp>
-#include "Scene/Entity.h"
+#include "Scene/GameObject.h"
 
 class Scene;
-class GameObject;
 class Component;
 
 class DetailsViewPanel 
 {
 public:
-    static bool Draw(Scene* _currentScene = nullptr, entt::entity selected = entt::null) ;
+    static bool Draw(Scene* scene, GameObject& selcected) ;
 
 protected:
     ///Returns true if one of the vector values is changed
@@ -18,6 +17,7 @@ protected:
 
     static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth = 10.0f);
 
-    static void DrawComponents(entt::entity selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+    static void DrawComponents(GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+
 };
 

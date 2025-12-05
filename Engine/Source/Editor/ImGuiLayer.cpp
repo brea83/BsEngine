@@ -100,12 +100,14 @@ void ImGuiLayer::OnImGuiRender()
 
 	ImGui::End();
 
-	entt::entity selected = SceneHierarchyPanel::DrawTree(m_CurrentScene);
+	// this function will change which entity m_Selected represents
+	SceneHierarchyPanel::Draw(m_CurrentScene, m_Selected);
 
-	DetailsViewPanel::Draw(m_CurrentScene, selected);
+	//Details view can't change which entity m_Selected represents, but its components can be changed
+	DetailsViewPanel::Draw(m_CurrentScene, m_Selected);
 	AssetViewerPanel::Draw();
 
-	DrawViewport(engine, selected);
+	DrawViewport(engine, m_Selected);
 }
 
 void ImGuiLayer::DrawViewport(EngineContext& engine, entt::entity selected)

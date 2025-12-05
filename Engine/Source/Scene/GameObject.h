@@ -2,7 +2,8 @@
 #include "BsPrecompileHeader.h"
 #include <glm/glm.hpp>
 #include "Scene/Entity.h"
-//class Transform;
+
+class Transform;
 
 
 class GameObject : public Entity
@@ -13,7 +14,7 @@ public:
 	virtual ~GameObject();
 	
 	virtual void Init();
-	//virtual Transform& GetTransform();
+	virtual Transform& GetTransform();
 
 	void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
 	GameObject GetParent();
@@ -27,7 +28,5 @@ public:
 	virtual void OnUpdate(){ }
 
 protected:
-	//GameObject* m_Parent{ nullptr };
-	//std::vector<GameObject*> m_Children;
 
 };

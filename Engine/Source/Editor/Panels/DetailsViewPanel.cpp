@@ -238,7 +238,9 @@ void DetailsViewPanel::DrawComponents(GameObject& selected)
 		{
 			transform.m_ScaleDirty = true;
 		}
-
+		
+		ImGui::TextWrapped("There is a known issue with ImGuizmo's Rotation gizmo:");
+		ImGui::TextWrapped("If the camera forward and right vectors are paralel to one of the gizmo circle planes those handles will not behave.");
 	}
 
 	if (selected.HasCompoenent<MeshComponent>())

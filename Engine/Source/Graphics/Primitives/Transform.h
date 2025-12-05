@@ -33,6 +33,9 @@ public:
 	glm::vec3 Right() const;
 	glm::vec3 Down() const;
 
+	static void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
+	static bool Decompose(glm::mat4 const& transform, glm::vec3& scale, glm::vec3& rotation, glm::vec3& translation);
+
 	void Rotate(float angle, glm::vec3 axis, AngleType angleType = AngleType::Degrees);
 	void SetRotationEuler(glm::vec3 value, AngleType angleType = AngleType::Degrees);
 	void SetRotationQuaternion(glm::quat orientation, AngleType angleType = AngleType::Degrees);
@@ -75,7 +78,6 @@ private:
 
 	glm::mat4 m_WorldMatrix{ 1.0f };
 
-	void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
 
 	friend class DetailsViewPanel;
 };

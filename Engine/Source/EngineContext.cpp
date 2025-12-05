@@ -218,7 +218,10 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	{
 		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
 		ToggleCamFlyMode();
+		return false;
 	}
+
+	m_ImGuiLayer->OnEvent(event);
 	//m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return false;
 }

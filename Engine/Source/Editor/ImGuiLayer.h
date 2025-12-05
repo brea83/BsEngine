@@ -5,6 +5,7 @@
 #include "Editor/Panels/ImGuiPanel.h"
 #include <glm/glm.hpp>
 #include "Scene/GameObject.h"
+#include "Events/KeyboardEvents.h"
 
 class EngineContext;
 class Camera;
@@ -22,8 +23,9 @@ class Scene;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
+		virtual void OnEvent(Event& event) override;
 
-		void DrawViewport(EngineContext& engine, entt::entity selected);
+		void DrawViewport(EngineContext& engine, GameObject& selected);
 
 		void DrawEditorMenu(EngineContext* engine);
 
@@ -34,15 +36,19 @@ class Scene;
 		float m_Time{ 0.0f };
 		Scene* m_CurrentScene{ nullptr };
 		glm::vec2 m_ViewportPanelSize{ 0.0f };
+		glm::vec2 m_ViewportBounds[2];
+		bool m_bViewportResized{ true };
 
 		//SceneHierarchyPanel m_Hierarchy;
 		GameObject m_Selected{entt::null, nullptr};
+		int m_GizmoType{ -1 };
 
 		ImGuiPanel* m_AssetViewer{ nullptr };
 
 		void DrawSceneTools();
 
 		void DrawGridLines(Camera* camera);
-		void DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, entt::entity selected);
+		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix/*Transform& camTransform*/, GameObject& selected);
 
+		bool OnKeyPressed(KeyPressedEvent& event);
 	};

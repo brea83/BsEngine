@@ -11,6 +11,9 @@
 #include "Graphics/Primitives/Transform.h"
 //#include "glad/glad.h"
 
+#include "Input/WindowsInput.h"
+//#include "Events/KeyCodes.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
@@ -110,7 +113,13 @@ void ImGuiLayer::OnImGuiRender()
 	DrawViewport(engine, m_Selected);
 }
 
-void ImGuiLayer::DrawViewport(EngineContext& engine, entt::entity selected)
+void ImGuiLayer::OnEvent(Event& event)
+{
+	EventDispatcher dispatcher(event);
+	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(ImGuiLayer::OnKeyPressed));
+}
+
+void ImGuiLayer::DrawViewport(EngineContext& engine, GameObject& selected)
 {
 	ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 	DrawSceneTools();
@@ -128,6 +137,8 @@ void ImGuiLayer::DrawViewport(EngineContext& engine, entt::entity selected)
 		m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
 		frameBuffer->Resize(currentSize.x, currentSize.y);
 		camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
+
+		
 	}
 	ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
 	DrawGizmos(camera, viewMatrix, selected);
@@ -236,30 +247,94 @@ void ImGuiLayer::DrawGridLines(Camera* camera)
 {
 }
 
-void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4& viewMatrix/*Transform& camTransform*/, entt::entity selected)
+void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& selected)
 {
-	//GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
-	//if (selectedObject == nullptr) return;
+	auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
+	auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
+	auto viewportOffset = ImGui::GetWindowPos();
+	m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
+	m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 	
 	entt::registry& registry = m_CurrentScene->m_Registry;
-	if (!registry.valid(selected))
+	if (!registry.valid(selected) || m_GizmoType == -1)
 	{
 		return;
 	}
 
 	ImGuizmo::SetDrawlist();
 
-	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-	
-	Transform* transform = registry.try_get<Transform>(selected);
-	if (transform == nullptr) return;
-	glm::mat4 transformMatrix = transform->GetLocal();
+	//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
+	ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y, 
+		m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
+	Transform& transform = selected.GetTransform();
+	//if (transform == nullptr) return;
+	glm::mat4 transformMatrix = transform.GetLocal();
+	/*ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(transform.GetPosition()), 
+		glm::value_ptr(transform.GetRotationEuler(AngleType::Degrees)), 
+		glm::value_ptr(transform.GetScale()), 
+		glm::value_ptr(transformMatrix));*/
+
+	//glm::mat4 deltaMatrix{ 1.0f };
+
+	
+	float snapValues[3] = { 0.01f, 0.01f, 0.01f };
 	ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(camera->ProjectionMatrix()),
-	ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix));
+		(ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transformMatrix), nullptr, snapValues);
 	
 	if (ImGuizmo::IsUsing())
 	{
-		transform->SetPosition(glm::vec3(transformMatrix[3]));
+		glm::vec3 translation;
+		glm::vec3 rotation;
+		glm::vec3 scale;
+		Transform::Decompose(transformMatrix, scale, rotation, translation);
+
+		glm::vec3 oldRotation = transform.GetRotationEuler(AngleType::Radians);
+		glm::vec3 deltaRotation = rotation - oldRotation;
+
+		transform.SetPosition(translation);
+		transform.SetScale(scale);
+		transform.SetRotationEuler(oldRotation + deltaRotation, AngleType::Radians);
+
+		if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+		{
+			std::cout << "NEW ROTATION == " << transform.GetRotationEuler().x << ", " << transform.GetRotationEuler().y << ", " << transform.GetRotationEuler().z << std::endl;
+		}
 	}
+}
+
+bool ImGuiLayer::OnKeyPressed(KeyPressedEvent& event)
+{
+	if (event.IsRepeat())
+	{
+		return false;
+	}
+
+	bool control = Input::IsKeyPressed(Inputs::Keyboard::LeftControl) 
+		|| Input::IsKeyPressed(Inputs::Keyboard::RightControl);
+
+	bool shift = Input::IsKeyPressed(Inputs::Keyboard::LeftShift)
+		|| Input::IsKeyPressed(Inputs::Keyboard::RightShift);
+
+	using Key = Inputs::Keyboard;
+
+	if (!ImGuizmo::IsUsing())
+	{
+		switch ((Inputs::Keyboard)event.GetKeyCode())
+		{
+			case Key::G:
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			case Key::R:
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			case Key::S:
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			default:
+				break;
+		}
+	}
+
+	return false;
 }

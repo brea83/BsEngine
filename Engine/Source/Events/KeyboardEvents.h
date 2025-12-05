@@ -5,19 +5,19 @@
 class KeyEvent : public Event
 {
 public:
-	int GetKeyCode() const { return m_KeyCode; }
+	KeyCode GetKeyCode() const { return m_KeyCode; }
 
 	EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 protected:
-	KeyEvent(const int keyCode): m_KeyCode(keyCode) { }
+	KeyEvent(const KeyCode keyCode): m_KeyCode(keyCode) { }
 
-	int m_KeyCode;
+	KeyCode m_KeyCode;
 };
 
 class KeyPressedEvent : public KeyEvent
 {
 public:
-	KeyPressedEvent(const int keyCode, bool isRepeat = false)
+	KeyPressedEvent(const KeyCode keyCode, bool isRepeat = false)
 		: KeyEvent(keyCode), m_IsRepeat(isRepeat)
 	{ }
 
@@ -28,6 +28,8 @@ public:
 		return ss.str();
 	}
 
+	bool IsRepeat() const { return m_IsRepeat; }
+
 	EVENT_CLASS_TYPE(KeyPressed)
 
 private:
@@ -37,7 +39,7 @@ private:
 class KeyReleasedEvent : public KeyEvent
 {
 public:
-	KeyReleasedEvent(const int keyCode)
+	KeyReleasedEvent(const KeyCode keyCode)
 		: KeyEvent(keyCode)
 	{}
 

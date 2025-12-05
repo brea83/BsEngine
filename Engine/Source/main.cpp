@@ -77,6 +77,7 @@ void PopulateStartingScene(EngineContext* engine)
 	GameObject cube2 = startingScene->CreateCube();
 	Transform& transform2 = cube2.GetComponent<Transform>();
 	transform2.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+	transform2.SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
 	cube1.AddChild(cube2);
 	//Transform transform = registry.get<Transform>(testEntity);
 	//MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);

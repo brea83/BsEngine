@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "EngineContext.h"
 #define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include "GlfwWrapper.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
@@ -240,7 +241,7 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 {
 	//m_EventQueue.push_back(std::make_shared<KeyPressedEvent>(event));
-	KeyCode keyCode = event.GetKeyCode();
+	Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
 	
 	//Inputs::Keyboard key = static_cast<Inputs::Keyboard>(keyCode);
 
@@ -255,10 +256,10 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 
 	// TODO: refactor this into a proper input system
 	if ( m_CamFlyMode &&
-		(keyCode == GLFW_KEY_W 
-		|| keyCode == GLFW_KEY_S
-		|| keyCode == GLFW_KEY_A
-		|| keyCode == GLFW_KEY_D))
+		(keyCode == Inputs::Keyboard::W
+		|| keyCode == Inputs::Keyboard::S
+		|| keyCode == Inputs::Keyboard::A
+		|| keyCode == Inputs::Keyboard::D))
 	{
 		entt::registry& registry = m_ActiveScene->GetRegistry();
 		GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
@@ -271,7 +272,7 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 		return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
 	}
 	
-	if (keyCode == GLFW_KEY_TAB)
+	if (keyCode == Inputs::Keyboard::Tab)
 	{
 		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
 		ToggleCamFlyMode();

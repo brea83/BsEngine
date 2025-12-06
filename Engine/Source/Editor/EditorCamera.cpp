@@ -63,18 +63,18 @@ bool EditorCamera::HandleMoveWasd(int keyCode, float deltaTime)
 {
 	float velocity = m_CameraSpeed * deltaTime; // adjust accordingly
 
-	switch (keyCode)
+	switch ((Inputs::Keyboard)keyCode)
 	{
-	case GLFW_KEY_W:
+	case Inputs::Keyboard::W:
 		m_Position += velocity * m_Forward;
 		return true;
-	case GLFW_KEY_S:
+	case Inputs::Keyboard::S:
 		m_Position -= velocity * m_Forward;
 		return true;
-	case GLFW_KEY_A:
+	case Inputs::Keyboard::A:
 		m_Position -= glm::normalize(glm::cross(m_Forward, m_Up)) * velocity;
 		return true;
-	case GLFW_KEY_D:
+	case Inputs::Keyboard::D:
 		m_Position += glm::normalize(glm::cross(m_Forward, m_Up)) * velocity;
 		return true;
 	default:

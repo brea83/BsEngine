@@ -32,23 +32,23 @@ bool CameraController::OnEvent(Transform* transform, Event& event, float deltaTi
 	//dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 }
 
-bool CameraController::HandleKeyInput(Transform* transform, int keyCode, float deltaTime)
+bool CameraController::HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime)
 {
 	float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
 
 	glm::vec3 currentPosition = transform->GetPosition();
 	switch (keyCode)
 	{
-	case GLFW_KEY_W:
+	case Inputs::Keyboard::W:
 		transform->SetPosition(currentPosition + (velocity * transform->Forward()));
 		return true;
-	case GLFW_KEY_S:
+	case Inputs::Keyboard::S:
 		transform->SetPosition(currentPosition + (velocity * transform->Forward() * -1.0f));
 		return true;
-	case GLFW_KEY_A:
+	case Inputs::Keyboard::A:
 		transform->SetPosition(currentPosition + (velocity * transform->Left()));
 		return true;
-	case GLFW_KEY_D:
+	case Inputs::Keyboard::D:
 		transform->SetPosition(currentPosition + (velocity * transform->Right()));
 		return true;
 	default:

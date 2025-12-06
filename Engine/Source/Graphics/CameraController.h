@@ -16,7 +16,7 @@ public:
 	void OnUpdate(float deltaTime);
 
 	bool OnEvent(Transform* transform, Event& event, float deltaTime);
-	bool HandleKeyInput(Transform* transform, int keyCode, float deltaTime);
+	bool HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime);
 	bool HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime);
 
 	//void OnResize(float width, float height);

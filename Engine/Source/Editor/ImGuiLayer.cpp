@@ -298,7 +298,7 @@ void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& se
 
 		if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 		{
-			std::cout << "NEW ROTATION == " << transform.GetRotationEuler().x << ", " << transform.GetRotationEuler().y << ", " << transform.GetRotationEuler().z << std::endl;
+			//std::cout << "NEW ROTATION == " << transform.GetRotationEuler().x << ", " << transform.GetRotationEuler().y << ", " << transform.GetRotationEuler().z << std::endl;
 		}
 	}
 }

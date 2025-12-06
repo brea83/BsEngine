@@ -39,7 +39,7 @@ int main()
 		// input moved into engine events
 		//ProcessInput(glfw);
 
-
+		engine->DispatchEvents();
 		//this is where we do the engine context
 		engine->Draw();
 

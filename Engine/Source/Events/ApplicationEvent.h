@@ -23,8 +23,8 @@ public:
 	EVENT_CLASS_CATEGORY(EventCategoryApplication)
 
 private:
-	unsigned int m_Width;
-	unsigned int m_Height;
+	unsigned int m_Width{ 0 };
+	unsigned int m_Height{ 0 };
  };
 
 class WindowClosedEvent : public Event

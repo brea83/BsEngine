@@ -30,6 +30,8 @@ enum EventCategory
 class Event
 {
 public:
+	Event() = default;
+	Event(const Event&) = default;
 	virtual ~Event() = default;
 
 	bool Handled{ false };

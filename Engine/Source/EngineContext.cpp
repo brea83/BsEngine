@@ -91,17 +91,68 @@ void EngineContext::Draw()
 	m_ImGuiLayer->OnImGuiRender();
 	m_ImGuiLayer->End();
 }
+
 void EngineContext::DrawConsole()
 {}
 
 void EngineContext::OnEvent(Event& event)
 {
+	if (event.GetEventType() == WindowClosedEvent::GetStaticType())
+	{
+		EnqueEvent<WindowClosedEvent>(static_cast<WindowClosedEvent&>(event));
+	}
+
+	if (event.GetEventType() == WindowResizedEvent::GetStaticType())
+	{
+		EnqueEvent<WindowResizedEvent>(static_cast<WindowResizedEvent&>(event));
+	}
+
+	if (event.GetEventType() == KeyPressedEvent::GetStaticType())
+	{
+		EnqueEvent<KeyPressedEvent>(static_cast<KeyPressedEvent&>(event));
+	}
+
+	if (event.GetEventType() == MouseButtonPressedEvent::GetStaticType())
+	{
+		EnqueEvent<MouseButtonPressedEvent>(static_cast<MouseButtonPressedEvent&>(event));
+	}
+
+	if (event.GetEventType() == MouseScrolledEvent::GetStaticType())
+	{
+		EnqueEvent<MouseScrolledEvent>(static_cast<MouseScrolledEvent&>(event));
+	}
+
+	if (event.GetEventType() == MouseMovedEvent::GetStaticType())
+	{
+		EnqueEvent<MouseMovedEvent>(static_cast<MouseMovedEvent&>(event));
+	}
+}
+
+void EngineContext::DispatchEvents()
+{
+	//if(!m_EventQueue.empty()) std::cout << "----------------------------------"  << std::endl;
+	
+	while (!m_EventQueue.empty())
+	{
+		//std::cout << "Event queue count: " << m_EventQueue.size() << std::endl;
+		std::shared_ptr<Event> eventptr = m_EventQueue.front();
+		DispatchEvent(eventptr);
+		m_EventQueue.pop_front();
+		//if (m_EventQueue.empty()) std::cout << "Event queue count: " << m_EventQueue.size() << std::endl;
+	}
+	//if (!m_EventQueue.empty()) 	std::cout << "WARNING EVENT QUEUE NOT EMPTY AFTER DISPATCH, CONTAINS COUNT: " << m_EventQueue.size() << std::endl;
+}
+
+void EngineContext::DispatchEvent(std::shared_ptr<Event> eventptr)
+{
+
+	Event& event = *eventptr.get();
 	EventDispatcher dispatcher{ event };
 	dispatcher.Dispatch<WindowClosedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnWindowClosed));
 	dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnFrameBufferSize));
 
 	dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnKeyPressedEvent));
-	
+
 	dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseButtonPressedEvent));
 	dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseScrolled));
 	dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
@@ -111,6 +162,7 @@ void EngineContext::OnEvent(Event& event)
 
 bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<WindowResizedEvent>(event));
 	int width = event.GetWidth();
 	int height = event.GetHeight();
 	if (width < 1 || height < 1)
@@ -120,23 +172,26 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 	}
 	m_IsMinimized = false;
 	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
+
 	return true;
 }
 
 bool EngineContext::OnWindowClosed(WindowClosedEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<WindowClosedEvent>(event));
 	m_IsRunning = false;
 	return true;
 }
 
-
 bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<MouseButtonPressedEvent>(event));
 	return false;
 }
 
 bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<MouseScrolledEvent>(event));
 	float yOffset = event.GetYOffset();
 	if (m_CamFlyMode)
 	{
@@ -148,6 +203,7 @@ bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 
 bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<MouseMovedEvent>(event));
 	if (m_CamFlyMode)
 	{
 		float xPosition = event.GetX();
@@ -183,6 +239,7 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 
 bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 {
+	//m_EventQueue.push_back(std::make_shared<KeyPressedEvent>(event));
 	KeyCode keyCode = event.GetKeyCode();
 	
 	//Inputs::Keyboard key = static_cast<Inputs::Keyboard>(keyCode);

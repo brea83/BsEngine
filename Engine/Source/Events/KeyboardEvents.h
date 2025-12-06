@@ -11,7 +11,7 @@ public:
 protected:
 	KeyEvent(const KeyCode keyCode): m_KeyCode(keyCode) { }
 
-	KeyCode m_KeyCode;
+	KeyCode m_KeyCode{ 32 };
 };
 
 class KeyPressedEvent : public KeyEvent

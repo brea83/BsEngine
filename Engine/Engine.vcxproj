@@ -229,6 +229,7 @@
     <ClCompile Include="Source\GlfwWrapper.cpp" />
     <ClCompile Include="Source\Resources\TextResource.cpp" />
     <ClCompile Include="Source\Input\WindowsInput.cpp" />
+    <ClCompile Include="SubscribableEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.h" />
@@ -242,6 +243,7 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Graphics\CameraController.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
@@ -287,6 +289,7 @@
     <ClInclude Include="Source\GlfwWrapper.h" />
     <ClInclude Include="Source\Resources\TextResource.h" />
     <ClInclude Include="Source\Input\WindowsInput.h" />
+    <ClInclude Include="SubscribableEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
@@ -295,6 +298,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />
+    <Text Include="..\Planning.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

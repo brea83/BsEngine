@@ -76,14 +76,39 @@ void Scene::RemoveGameObject(GameObject objectToRemove)
 	m_Registry.destroy(objectToRemove);
 }
 
-void Scene::RemoveEntity(entt::entity entityHandle)
+void Scene::RemoveEntity(entt::entity entityToDelete)
 {
-	if (!m_Registry.valid(entityHandle))
+	if (!m_Registry.valid(entityToDelete))
 	{
-		std::cout << "Tried to remove game object entt handle: " << int(entityHandle) << ", from Scene, but could not find it" << std::endl;
+		std::cout << "Tried to remove game object entt handle: " << int(entityToDelete) << ", from Scene, but could not find it" << std::endl;
 		return;
 	}
-	m_Registry.destroy(entityHandle);
+
+	auto view = m_Registry.view<CameraComponent>();
+	if (view.size() < 2)
+	{
+		std::cout << "Tried to remove Camera Object with handle: " << int(entityToDelete) << ", from Scene, but there are not any cameras to replace it with" << std::endl;
+		return;
+	}
+	
+	if (entityToDelete == m_DefaultCamera)
+	{
+		for (auto entity : view)
+		{
+			if (entity != entityToDelete)
+			{
+				m_DefaultCamera = entity;
+				break;
+			}
+		}
+	}
+
+	if( entityToDelete == m_ActiveCamera)
+	{
+		m_ActiveCamera == m_DefaultCamera;
+	}
+
+	m_Registry.destroy(entityToDelete);
 }
 
 GameObject Scene::GetGameObjectByEntityHandle(entt::entity entityHandle)

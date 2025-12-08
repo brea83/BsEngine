@@ -29,6 +29,8 @@ class Scene;
 
 		void DrawEditorMenu(EngineContext* engine);
 
+		glm::vec2 GetViewportSize() const { return m_ViewportPanelSize; }
+
 		void Begin();
 		void End();
 

@@ -9,7 +9,7 @@ struct CameraComponent
 
 	Camera Cam;
 	std::string Name{ "Camera Component" };
-	bool IsPrimaryCamera{ true };
+	bool IsPrimaryCamera{ false };
 
 };
 

@@ -42,21 +42,30 @@ public:
 	Camera* GetActiveCamera();
 	Camera* GetActiveCamera(glm::mat4& viewMatrix);
 	GameObject GetActiveCameraGameObject();
+	void SetActiveCamera(GameObject& gameObject);
+	void SetDefaultCamera(GameObject& gameObject);
 	//Transform& GetActiveCameraTransform();
+
+	bool TryRemoveCamera(entt::entity entityHandle);
 
 private:
 	entt::registry m_Registry;
-	entt::entity m_ActiveCamera;
-	entt::entity m_DefaultCamera;
-	EditorCamera m_EditorCamera;
+	entt::entity m_ActiveCamera{ entt::null };
+	entt::entity m_DefaultCamera{ entt::null };
+	//EditorCamera m_EditorCamera;
 	bool m_IsInitiated{ false };
 
 	//std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
 	/*std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;
 	std::vector<std::shared_ptr<GameObject>> m_GameObjects;*/
 
+	template<typename T>
+	void OnComponentAdded(Entity entity, T& component);
+	template<>
+	void OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component);
+
 	friend class SceneHierarchyPanel;
 	friend class DetailsViewPanel;
 	friend class ImGuiLayer;
+	friend class Entity;
 };
-

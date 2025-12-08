@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include <EnTT/entt.hpp>
+#include "Scene/Components/CameraComponent.h"
 
 class Entity
 {
@@ -28,6 +29,8 @@ public:
 
 	template <typename Type>
 	void RemoveComponent();
+	template<>
+	void RemoveComponent<CameraComponent>();
 
 	// operator overrides
 
@@ -68,14 +71,16 @@ template <typename Type, typename... Args>
 inline Type& Entity::AddComponent(Args&&... args)
 {
 	if (HasCompoenent<Type>()) std::cout << "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT" << std::endl;
-	return m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
+	Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
+	m_Scene->OnComponentAdded<Type>(*this, component);
+	return component;
 }
 
 template<typename Type, typename... Args>
 inline Type& Entity::AddOrReplaceComponent(Args&&... args)
 {
 	Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
-	//m_Scene->OnComponentAdded<Type>(*this, component);
+	m_Scene->OnComponentAdded<Type>(*this, component);
 	return component;
 }
 
@@ -90,5 +95,16 @@ template <typename Type>
 inline void Entity::RemoveComponent()
 {
 	if (!HasCompoenent<Type>()) return;
+
 	m_Scene->GetRegistry().remove<Type>(m_EntityHandle);
+}
+
+template <>
+inline void Entity::RemoveComponent<CameraComponent>()
+{
+	if (!HasCompoenent<CameraComponent>()) return;
+
+	// error msging if unable to remove cam is handled in TryRemoveCamera()
+	m_Scene->TryRemoveCamera(m_EntityHandle);
+
 }

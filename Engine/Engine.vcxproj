@@ -181,6 +181,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Graphics\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h" />
     <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="CameraManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Graphics\CameraController.h" />

@@ -34,6 +34,21 @@ void SceneHierarchyPanel::Draw(Scene* currentScene, GameObject& selected)
 		DrawNode(selected, currentObject);
 	}
 
+	if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+	{
+		selected = {};
+	}
+
+	// right click on blank space
+	if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_NoOpenOverItems))
+	{
+		if (ImGui::MenuItem("Create Empty"))
+		{
+			currentScene->CreateEmptyGameObject("Empty Object");
+		}
+		ImGui::EndPopup();
+	}
+
 	ImGui::End();
 
 	//return selected;

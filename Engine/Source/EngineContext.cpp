@@ -33,11 +33,11 @@ bool EngineContext::Init()
 	if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 	m_Renderer->Init();
 
+	m_ImGuiLayer = new ImGuiLayer();
+
 	if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 	m_ActiveScene->Initialize();
 	m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
-
-	m_ImGuiLayer = new ImGuiLayer();
 	m_ImGuiLayer->OnAttach();
 
 	m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
@@ -59,6 +59,16 @@ EngineContext* EngineContext::GetEngine()
 		return m_Engine;
 	}
 	return m_Engine;
+}
+
+glm::vec2 EngineContext::GetViewportSize() const
+{
+	return m_ImGuiLayer->GetViewportSize();
+}
+
+glm::vec2 EngineContext::GetWindowSize() const
+{
+	return { glm::vec2(m_MainWindow->WindowWidth(), m_MainWindow->WindowHeight()) };
 }
 
 void EngineContext::Update()

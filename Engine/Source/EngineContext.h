@@ -4,6 +4,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
+#include <glm/glm.hpp>
 
 class Window;
 struct GLFWwindow;
@@ -24,6 +25,9 @@ public:
 
 	std::shared_ptr<Window> GetWindow() { return m_MainWindow; }
 	GLFWwindow* GetGlfwWindow();
+	glm::vec2 GetViewportSize() const;
+
+	glm::vec2 GetWindowSize() const;
 
 	void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
 	Scene* GetScene() { return m_ActiveScene; }
@@ -35,6 +39,7 @@ public:
 	// methods
 	bool IsRunning()const { return m_IsRunning; }
 	void StopApplication() { m_IsRunning = false; }
+	bool IsEditorEnabled() { return m_EditorEnabled; }
 	// called in main loop before draw and update
 	// itterates trhough event queue and sends them to appropriate systems
 	void DispatchEvents();
@@ -63,6 +68,7 @@ private:
 	// properties
 	bool m_IsRunning{ true };
 	bool m_IsMinimized{ false };
+	bool m_EditorEnabled{ true };
 
 	bool m_CamFlyMode{ false };
 	bool m_FirstMouse{ false };

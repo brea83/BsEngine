@@ -16,10 +16,10 @@
 void CameraController::OnUpdate(float deltaTime)
 { }
 
-entt::registry& CameraController::GetRegistry()
-{
-	return EngineContext::GetEngine()->GetScene()->GetRegistry();
-}
+//entt::registry& CameraController::GetRegistry()
+//{
+//	return EngineContext::GetEngine()->GetScene()->GetRegistry();
+//}
 
 bool CameraController::OnEvent(Transform* transform, Event& event, float deltaTime)
 {

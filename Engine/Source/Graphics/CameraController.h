@@ -24,15 +24,15 @@ public:
 	//Camera& GetCamera() { return m_Camera; }
 	//const Camera& GetCamera() const { return m_Camera; }
 
-	float GetZoomLevel() const { return m_ZoomLevel; }
-	void SetZoomLevel(float value) { m_ZoomLevel = value; }
+	//float GetZoomLevel() const { return m_ZoomLevel; }
+	//void SetZoomLevel(float value) { m_ZoomLevel = value; }
 
 
 
 private:
 	entt::entity m_CameraEntity{ entt::null };
-	float m_AspectRatio{ 1280.0f / 720.0f };
-	float m_ZoomLevel{ 1.0f };
+	//float m_AspectRatio{ 1280.0f / 720.0f };
+	//float m_ZoomLevel{ 1.0f };
 
 	bool m_Rotation{ false };
 	glm::vec3 m_CameraPosition{ 0.0f };
@@ -44,7 +44,7 @@ private:
 	// rotation speed in degrees
 	float m_RotationSpeed{ 10.0f };
 
-	entt::registry& GetRegistry();
+	//entt::registry& GetRegistry();
 
 	bool OnKeyPressed(KeyPressedEvent& event);
 	bool OnMouseButtonPressed(MouseButtonPressedEvent& event);

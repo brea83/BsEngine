@@ -177,7 +177,7 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 			if (ImGui::MenuItem("Empty GameObject"))
 			{
 				//GameObject* testObject = new GameObject();
-				m_CurrentScene->CreateEntity("Empty Entity");
+				m_CurrentScene->CreateEmptyGameObject("Empty");
 			}
 
 			if (ImGui::MenuItem("Create Cube")) m_CurrentScene->CreateCube();

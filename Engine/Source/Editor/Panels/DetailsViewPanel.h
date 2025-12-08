@@ -17,7 +17,7 @@ protected:
 
     static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth = 10.0f);
 
-    static void DrawComponents(GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+    static void DrawComponents(Scene* scene, GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
 
 };
 

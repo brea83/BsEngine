@@ -15,10 +15,10 @@ class GameObject;
 class MeshComponent : public Component
 {
 public:
-	MeshComponent(GameObject* parent);
-	MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh);
+	MeshComponent(/*GameObject* parent*/);
+	//MeshComponent(/*GameObject* parent,*/ PrimitiveMeshType primitiveMesh);
 	MeshComponent(PrimitiveMeshType primitiveMesh);
-	MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
+	MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
 	~MeshComponent();
 
 	bool Reload();
@@ -30,8 +30,8 @@ public:
 
 	const std::string& Name() const  override{ return m_Name; }
 	void SetName(const std::string& name)  { m_Name = name; }
-	GameObject* GetParentObject() const  { return m_ParentObject; }
-	void SetParentObject(GameObject* newParent) ;
+	//GameObject* GetParentObject() const  { return m_ParentObject; }
+	//void SetParentObject(GameObject* newParent) ;
 
 	void SetFilePath(const std::string& modelFilePath) { }
 	std::string GetFilePath() { return m_FilePath; }
@@ -47,7 +47,7 @@ public:
 protected:
 	//properties
 	std::string m_Name{ "Mesh Component" };
-	GameObject* m_ParentObject{ nullptr };
+	//GameObject* m_ParentObject{ nullptr };
 	std::string m_FilePath{""};
 	std::string m_TexturePath{ "" };
 	std::vector<std::shared_ptr<Mesh>> m_Meshes;

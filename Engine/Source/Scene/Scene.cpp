@@ -10,6 +10,7 @@
 #include "EngineContext.h"
 #include "Entity.h"
 
+
 Scene::Scene()
 { 
 
@@ -26,8 +27,7 @@ Scene::Scene()
 
 void Scene::Initialize()
 {
-	Entity mainCam = CreateEntity("Main Camera");
-	mainCam.AddComponent<HeirarchyComponent>();
+	GameObject mainCam = CreateEmptyGameObject("Main Camera");
 	CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
 	Transform& transform = mainCam.GetComponent<Transform>();
 	transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
@@ -35,8 +35,8 @@ void Scene::Initialize()
 
 	mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
 
-	m_DefaultCamera = mainCam.GetEnttHandle();//std::make_shared<EditorCamera>(camera.Cam);
-	m_ActiveCamera = m_DefaultCamera;
+	m_DefaultCamera = mainCam;//std::make_shared<EditorCamera>(camera.Cam);
+	SetActiveCamera(mainCam);
 }
 
 Scene::~Scene()
@@ -84,28 +84,12 @@ void Scene::RemoveEntity(entt::entity entityToDelete)
 		return;
 	}
 
-	auto view = m_Registry.view<CameraComponent>();
-	if (view.size() < 2)
+	if (m_Registry.try_get<CameraComponent>(entityToDelete))
 	{
-		std::cout << "Tried to remove Camera Object with handle: " << int(entityToDelete) << ", from Scene, but there are not any cameras to replace it with" << std::endl;
-		return;
-	}
-	
-	if (entityToDelete == m_DefaultCamera)
-	{
-		for (auto entity : view)
+		if (!TryRemoveCamera(entityToDelete))
 		{
-			if (entity != entityToDelete)
-			{
-				m_DefaultCamera = entity;
-				break;
-			}
+			return;
 		}
-	}
-
-	if( entityToDelete == m_ActiveCamera)
-	{
-		m_ActiveCamera == m_DefaultCamera;
 	}
 
 	m_Registry.destroy(entityToDelete);
@@ -144,10 +128,10 @@ Camera* Scene::GetActiveCamera()
 {
 	Camera* mainCamera = nullptr;
 
-	auto group = m_Registry.group<CameraComponent>(entt::get<Transform>);
-	for (auto entity : group)
+	auto view = m_Registry.view<CameraComponent>();
+	for (auto entity : view)
 	{
-		auto [camera, transform] = group.get<CameraComponent, Transform>(entity);
+		CameraComponent& camera = view.get<CameraComponent>(entity);
 
 		if (camera.IsPrimaryCamera)
 		{
@@ -196,6 +180,60 @@ GameObject Scene::GetActiveCameraGameObject()
 	return GameObject(m_ActiveCamera, this);
 }
 
+void Scene::SetActiveCamera(GameObject& gameObject)
+{
+	if (m_ActiveCamera == gameObject) return;
+	
+	if (m_ActiveCamera != entt::null)
+	{
+		CameraComponent& previousCamera = m_Registry.get<CameraComponent>(m_ActiveCamera);
+		previousCamera.IsPrimaryCamera = false;
+	}
+
+	CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
+	nextCamera.IsPrimaryCamera = true;
+	m_ActiveCamera = gameObject;
+}
+
+void Scene::SetDefaultCamera(GameObject& gameObject)
+{
+	if (m_DefaultCamera == gameObject) return;
+
+	CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
+	m_DefaultCamera = gameObject;
+}
+
+bool Scene::TryRemoveCamera(entt::entity entityHandle)
+{
+	auto view = m_Registry.view<CameraComponent>();
+	if (view.size() < 2)
+	{
+		std::cout << "Tried to remove Camera Object with handle: " << int(entityHandle) << ", from Scene, but there are not any cameras to replace it with" << std::endl;
+		return false;
+	}
+
+	if (entityHandle == m_DefaultCamera)
+	{
+		for (auto entity : view)
+		{
+			if (entity != entityHandle)
+			{
+				m_DefaultCamera = entity;
+				break;
+			}
+		}
+	}
+
+	if (entityHandle == m_ActiveCamera)
+	{
+		m_ActiveCamera = m_DefaultCamera;
+		m_Registry.get<CameraComponent>(m_ActiveCamera).IsPrimaryCamera = true;
+	}
+
+	m_Registry.remove<CameraComponent>(entityHandle);
+	return true;
+}
+
 Entity Scene::CreateEntity(const std::string& name)
 {
 	Entity entity = { m_Registry.create(), this };
@@ -213,51 +251,18 @@ GameObject Scene::CreateCube()
 	//m_GameObjects.push_back(std::make_shared<GameObject>(object));
 	return object;
 }
-//
-//void Scene::RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove)
-//{
-//	auto foundItterator = std::find(m_MeshComponents.begin(), m_MeshComponents.end(), modelToRemove);
-//
-//	if (foundItterator != m_MeshComponents.end())
-//	{
-//		std::cout << "FOUND OBJECT: " << modelToRemove->Name() << std::endl;
-//		m_MeshComponents.erase(foundItterator);
-//	}
-//	else
-//	{
-//		std::cout << modelToRemove->Name() << ", NOT FOUND" << std::endl;
-//	}
-//}
 
-//bool Scene::TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove)
-//{
-//	if (m_CameraComponents.size() < 2)
-//	{
-//		std::cout << "Error: tried to delete last camera component, but scene requires minimum of one camera" << std::endl;
-//		return false;
-//	}
-//
-//	auto foundItterator = std::find(m_CameraComponents.begin(), m_CameraComponents.end(), cameraToRemove);
-//
-//	if (foundItterator == m_CameraComponents.end())
-//	{
-//		//std::cout << cameraToRemove->Name() << ", NOT FOUND, can't remove it" << std::endl;
-//		return false;
-//	}
-//
-//	//bool bNeedNewActiveCam = cameraToRemove->BIsSceneViewCam;
-//	bool bNeedNewDefaultCam = (m_DefaultCamera == nullptr) || (m_DefaultCamera == cameraToRemove);
-//
-//
-//	//std::cout << "Erasing component: " << cameraToRemove->Name() << std::endl;
-//	m_CameraComponents.erase(foundItterator);
-//	
-//	/*if (bNeedNewActiveCam)
-//	{
-//		if (bNeedNewDefaultCam) m_DefaultCamera = std::dynamic_pointer_cast<Camera>(m_CameraComponents[0]); 
-//		m_ActiveCamera = m_DefaultCamera;
-//		m_ActiveCamera->BIsSceneViewCam = true;
-//	}*/
-//
-//	return false;
-//}
+
+template<typename T>
+inline void Scene::OnComponentAdded(Entity entity, T& component)
+{
+
+}
+
+template<>
+inline void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+{
+	glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+	component.Cam.SetAspectRatio(viewport.x / viewport.y);
+	
+}

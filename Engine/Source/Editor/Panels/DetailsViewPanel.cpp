@@ -5,6 +5,7 @@
 #include "Scene/Components/Component.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Components/CameraComponent.h"
+#include "Graphics/CameraController.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
@@ -19,6 +20,11 @@ bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
 	
 	ImGui::Begin("Details View");
 	{
+		if (scene == nullptr)
+		{
+			ImGui::End();
+			return false;
+		}
 		entt::registry& registry = scene->GetRegistry();
 		if (!registry.valid(selected))
 		{
@@ -36,12 +42,13 @@ bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
 		{
 			if (ImGui::Selectable("Mesh Component"))
 			{
-				//selected.AddComponent<MeshComponent>();
+				selected.AddComponent<MeshComponent>();
 			}
 
 			if (ImGui::Selectable("CameraComponent"))
 			{
-				//selectedObject->AddComponent<CameraComponent>();
+				selected.AddComponent<CameraComponent>();
+				selected.AddComponent<CameraController, entt::entity>(selected.GetEnttHandle());
 			}
 			ImGui::EndPopup();
 		}
@@ -54,7 +61,7 @@ bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
 	//	
 
 		ImGui::SeparatorText("Componenets");
-		DrawComponents(selected/*selectedObject->GetAllComponents()*/);
+		DrawComponents(scene, selected/*selectedObject->GetAllComponents()*/);
 		
 	}
 	ImGui::End();
@@ -213,8 +220,9 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 	return bValueSubmitted;
 }
 
-void DetailsViewPanel::DrawComponents(GameObject& selected)
+void DetailsViewPanel::DrawComponents(Scene* scene, GameObject& selected)
 {
+	entt::registry& registry = scene->m_Registry;
 	if (selected.HasCompoenent<Transform>())
 	{
 		ImGui::SeparatorText("Transform");
@@ -252,14 +260,15 @@ void DetailsViewPanel::DrawComponents(GameObject& selected)
 		memset(buffer, 0, sizeof(buffer));
 		strcpy_s(buffer, sizeof(buffer), component.Name().c_str());
 		ImGui::Text(buffer);
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 		
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
-
-		if (ImGui::Button("X"))
+		ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+		ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+		
+		bool removeComponent{ false };
+		if (ImGui::Button("X", buttonSize))
 		{
-			selected.RemoveComponent<MeshComponent>();
+			removeComponent = true;
 		}
 
 		ImGui::Separator();
@@ -296,6 +305,11 @@ void DetailsViewPanel::DrawComponents(GameObject& selected)
 				}
 			}
 		}
+
+		if (removeComponent)
+		{
+			selected.RemoveComponent<MeshComponent>();
+		}
 		ImGui::PopID();
 	}
 
@@ -308,17 +322,51 @@ void DetailsViewPanel::DrawComponents(GameObject& selected)
 		memset(buffer, 0, sizeof(buffer));
 		strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 		ImGui::Text(buffer);
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+		ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+		ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 
-		if (ImGui::Button("X"))
+		bool removeComponent{ false };
+		if (ImGui::Button("X", buttonSize))
 		{
-			selected.RemoveComponent<CameraComponent>();
+			removeComponent = true;
 		}
 
 		ImGui::Separator();
+
+		if(scene->m_ActiveCamera != selected)
+		{
+			if (ImGui::Button("Make Active")) // once cam manager is set up turn this into a Possess button
+			{
+				scene->SetActiveCamera(selected);
+			}
+		}
+		else
+		{
+			ImGui::BeginDisabled();
+			ImGui::Button("Is Active"); // once cam manager is set up turn this into an Unpossess button
+			ImGui::EndDisabled();
+		}
+		
+		std::string buttonText = scene->m_DefaultCamera != selected ? "Make Default" : "Is Default";
+		float textWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - textWidth);
+		if (scene->m_DefaultCamera != selected)
+		{
+			if (ImGui::Button(buttonText.c_str()))
+			{
+				scene->SetDefaultCamera(selected);
+			}
+		}
+		else
+		{
+			ImGui::BeginDisabled();
+			ImGui::Button(buttonText.c_str());
+			ImGui::EndDisabled();
+		}
+
+
 
 		float labelWidth = ( ImGui::GetFontSize() * 10.0f);
 		std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
@@ -344,6 +392,11 @@ void DetailsViewPanel::DrawComponents(GameObject& selected)
 			}
 
 			ImGui::EndTable();
+		}
+
+		if (removeComponent)
+		{
+			selected.RemoveComponent<CameraComponent>();
 		}
 		ImGui::PopID();
 	}

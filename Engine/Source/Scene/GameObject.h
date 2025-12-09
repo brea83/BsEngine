@@ -14,7 +14,7 @@ public:
 	virtual ~GameObject();
 	
 	virtual void Init();
-	virtual Transform& GetTransform();
+	Transform& GetTransform();
 
 	void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
 	GameObject GetParent();
@@ -25,7 +25,7 @@ public:
 	void RemoveChild(entt::entity child);
 	std::vector< GameObject>& GetChildren();
 
-	virtual void OnUpdate(){ }
+	virtual void OnUpdate(float deltaTime);
 
 protected:
 

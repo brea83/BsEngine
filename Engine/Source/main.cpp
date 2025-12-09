@@ -24,31 +24,23 @@ int main()
 	{
 		return -1;
 	}
-	//GLFWwindow* glfw = engine->GetGlfwWindow();
 
 //#pragma region AddMeshesToStartScene
 	PopulateStartingScene(engine);
 //#pragma endregion 1 triangles, 1 cube
 
-	// uncomment this call to draw in wireframe polygons.
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	// loop until the user closes window
-	while (engine->IsRunning()/*!glfwWindowShouldClose(glfw)*/)
+	while (engine->IsRunning())
 	{
-		// input moved into engine events
-		//ProcessInput(glfw);
-
+		// events collected durring the prev frame are distributed before the next frame
 		engine->DispatchEvents();
-		//this is where we do the engine context
-		engine->Draw();
 
-		// glfw: swap buffers and poll IO events moved into window class OnUpdate()
 		engine->Update();
-	}
 
-	// clean up GLFW
-	//glfwTerminate();
+		//draw previous frame
+		engine->Draw();
+		
+	}
 
 	return 0;
 }
@@ -74,11 +66,14 @@ void PopulateStartingScene(EngineContext* engine)
 	entt::registry& registry = startingScene->GetRegistry();
 	GameObject cube1 = startingScene->CreateCube();
 
-	GameObject cube2 = startingScene->CreateCube();
-	Transform& transform2 = cube2.GetComponent<Transform>();
+	GameObject house = startingScene->CreateEmptyGameObject("Viking House");
+	Transform& transform2 = house.GetComponent<Transform>();
 	transform2.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
-	transform2.SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
-	cube1.AddChild(cube2);
+	transform2.SetScale(glm::vec3(20.0f));
+	house.AddComponent<MeshComponent, const  std::string&>("Assets/Meshes/Viking_House.obj");
+	
+
+	cube1.AddChild(house);
 	//Transform transform = registry.get<Transform>(testEntity);
 	//MeshComponent mesh = registry.emplace<MeshComponent, PrimitiveMeshType>(testEntity, PrimitiveMeshType::Cube);
 

@@ -5,7 +5,7 @@
 #include "Scene/Scene.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Scene/Components/MeshComponent.h"
-//#include "Scene/Components/CameraComponent.h"
+#include "Graphics/CameraController.h"
 
 static int s_NumGameObjects = 1;
 GameObject::GameObject(entt::entity entity, Scene* scene)
@@ -20,6 +20,11 @@ void GameObject::Init()
 {
 	// send renderable components to graphics pipeline? 
 	// or do those components do that themselves?
+}
+
+void GameObject::OnUpdate(float deltaTime)
+{
+	//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;
 }
 
 Transform& GameObject::GetTransform()

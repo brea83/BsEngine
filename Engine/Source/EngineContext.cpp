@@ -85,6 +85,7 @@ void EngineContext::Update()
 
 	m_ImGuiLayer->OnUpdate(m_DeltaTime);
 
+	//swap glfw buffers and poll events
 	m_MainWindow->OnUpdate();
 }
 
@@ -173,7 +174,6 @@ void EngineContext::DispatchEvent(std::shared_ptr<Event> eventptr)
 
 bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<WindowResizedEvent>(event));
 	int width = event.GetWidth();
 	int height = event.GetHeight();
 	if (width < 1 || height < 1)
@@ -189,20 +189,17 @@ bool EngineContext::OnFrameBufferSize(WindowResizedEvent& event)
 
 bool EngineContext::OnWindowClosed(WindowClosedEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<WindowClosedEvent>(event));
 	m_IsRunning = false;
 	return true;
 }
 
 bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<MouseButtonPressedEvent>(event));
 	return false;
 }
 
 bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<MouseScrolledEvent>(event));
 	float yOffset = event.GetYOffset();
 	if (m_CamFlyMode)
 	{
@@ -214,7 +211,6 @@ bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 
 bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<MouseMovedEvent>(event));
 	if (m_CamFlyMode)
 	{
 		float xPosition = event.GetX();
@@ -233,8 +229,6 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 		m_PrevMouseX = xPosition;
 		m_PrevMouseY = yPosition;
 
-		//return m_ActiveScene->GetActiveCamera()->HandleLookMouse(xOffset, yOffset, m_DeltaTime);
-
 		entt::registry& registry = m_ActiveScene->GetRegistry();
 		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraGameObject();
 
@@ -250,10 +244,8 @@ bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 
 bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 {
-	//m_EventQueue.push_back(std::make_shared<KeyPressedEvent>(event));
 	Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
-	
-	//Inputs::Keyboard key = static_cast<Inputs::Keyboard>(keyCode);
+
 
 	/*if (Inputs::KeyboardNames.find(key) != Inputs::KeyboardNames.end())
 	{
@@ -290,7 +282,6 @@ bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	}
 
 	m_ImGuiLayer->OnEvent(event);
-	//m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 	return false;
 }
 

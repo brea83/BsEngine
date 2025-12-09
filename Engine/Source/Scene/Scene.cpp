@@ -47,7 +47,13 @@ Scene::~Scene()
 
 void Scene::OnUpdate(float deltaTime)
 {
-	
+	//std::cout << "Scene update" << std::endl;
+
+	//for (auto entity : m_Registry.view<entt::entity>())
+	//{
+	//	GameObject(entity, this).OnUpdate(deltaTime);
+	//}
+
 }
 
 GameObject Scene::CreateEmptyGameObject(const std::string& name)
@@ -90,6 +96,14 @@ void Scene::RemoveEntity(entt::entity entityToDelete)
 		{
 			return;
 		}
+	}
+
+	//check if need to unparent
+	HeirarchyComponent* family = m_Registry.try_get<HeirarchyComponent>(entityToDelete);
+	if (family && family->Parent != entt::null)
+	{
+		GameObject parent{ family->Parent, this };
+		parent.RemoveChild(entityToDelete);
 	}
 
 	m_Registry.destroy(entityToDelete);

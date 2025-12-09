@@ -26,6 +26,8 @@ public:
 
 	template <typename Type>
 	Type& GetComponent();
+	template <typename Type>
+	Type* TryGetComponent();
 
 	template <typename Type>
 	void RemoveComponent();
@@ -90,6 +92,13 @@ inline Type& Entity::GetComponent()
 	if (!HasCompoenent<Type>()) std::cout << "WARNING: COULD NOT FIND COMPONENT" << std::endl;
 	return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 }
+
+template <typename Type>
+inline Type* Entity::TryGetComponent()
+{
+	return m_Scene->GetRegistry().try_get<Type>(m_EntityHandle);
+}
+
 
 template <typename Type>
 inline void Entity::RemoveComponent()

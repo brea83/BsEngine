@@ -299,10 +299,7 @@ void DetailsViewPanel::DrawComponents(Scene* scene, GameObject& selected)
 			}
 			else
 			{
-				if (component.m_Texture != nullptr)
-				{
-					component.m_Texture = newTexture;
-				}
+				component.m_Texture = newTexture;
 			}
 		}
 

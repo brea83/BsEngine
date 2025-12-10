@@ -2,13 +2,16 @@
 #include "Renderable.h"
 #include "Transform.h"
 
-Renderable::Renderable(const std::string& name )
-	: Resource(ResourceType::Renderable), Name(name)
+namespace Pixie
 {
+	Renderable::Renderable(const std::string& name)
+		: Resource(ResourceType::Renderable), Name(name)
+	{
 
-}
+	}
 
-Renderable::~Renderable()
-{
-	
+	Renderable::~Renderable()
+	{
+
+	}
 }

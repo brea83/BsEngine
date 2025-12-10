@@ -1,9 +1,12 @@
 #pragma once
 #include "Scene/Scene.h"
 
-class RenderPass
+namespace Pixie
 {
-public:
-	virtual void Execute(Scene& sceneToRender) = 0;
-};
+	class RenderPass
+	{
+	public:
+		virtual void Execute(Scene& sceneToRender) = 0;
+	};
 
+}

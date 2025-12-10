@@ -2,45 +2,49 @@
 #include "LayerStack.h"
 #include "Layer.h"
 
-LayerStack::LayerStack()
+namespace Pixie
 {
-	
-}
 
-LayerStack::~LayerStack()
-{
-	for (Layer* layer : m_Layers)
+	LayerStack::LayerStack()
 	{
-		delete layer;
+
 	}
-}
 
-void LayerStack::PushLayer(Layer * layer)
-{
-	m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
-	m_LayerInsertIndex++;
-}
-
-void LayerStack::PushOverlay(Layer * overlay)
-{
-	m_Layers.emplace_back(overlay);
-}
-
-void LayerStack::PopLayer(Layer * layer)
-{
-	auto itterator = std::find(m_Layers.begin(), m_Layers.end(), layer);
-	if (itterator != m_Layers.end())
+	LayerStack::~LayerStack()
 	{
-		m_Layers.erase(itterator);
-		m_LayerInsertIndex--;
+		for (Layer* layer : m_Layers)
+		{
+			delete layer;
+		}
 	}
-}
 
-void LayerStack::PopOverlay(Layer * overlay)
-{
-	auto itterator = std::find(m_Layers.begin(), m_Layers.end(), overlay);
-	if (itterator != m_Layers.end())
+	void LayerStack::PushLayer(Layer* layer)
 	{
-		m_Layers.erase(itterator);
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer);
+		m_LayerInsertIndex++;
+	}
+
+	void LayerStack::PushOverlay(Layer* overlay)
+	{
+		m_Layers.emplace_back(overlay);
+	}
+
+	void LayerStack::PopLayer(Layer* layer)
+	{
+		auto itterator = std::find(m_Layers.begin(), m_Layers.end(), layer);
+		if (itterator != m_Layers.end())
+		{
+			m_Layers.erase(itterator);
+			m_LayerInsertIndex--;
+		}
+	}
+
+	void LayerStack::PopOverlay(Layer* overlay)
+	{
+		auto itterator = std::find(m_Layers.begin(), m_Layers.end(), overlay);
+		if (itterator != m_Layers.end())
+		{
+			m_Layers.erase(itterator);
+		}
 	}
 }

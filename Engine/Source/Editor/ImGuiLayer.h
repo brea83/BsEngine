@@ -5,33 +5,34 @@
 #include "Editor/Panels/ImGuiPanel.h"
 #include <glm/glm.hpp>
 
-class EngineContext;
-class Camera;
-
-class Scene;
-
+namespace Pixie
+{
+	class EngineContext;
+	class Camera;
+	class Scene;
+}
 	//may need key, mouse, and application events
-	class ImGuiLayer : public Layer
+	class ImGuiLayer : public Pixie::Layer
 	{
 	public:
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; }
+		void OnSceneChange(Pixie::Scene* newScene) { m_CurrentScene = newScene; }
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
 
-		void DrawViewport(EngineContext& engine, int selected);
+		void DrawViewport(Pixie::EngineContext& engine, int selected);
 
-		void DrawEditorMenu(EngineContext* engine);
+		void DrawEditorMenu(Pixie::EngineContext* engine);
 
 		void Begin();
 		void End();
 
 	private:
 		float m_Time{ 0.0f };
-		Scene* m_CurrentScene;
+		Pixie::Scene* m_CurrentScene;
 		glm::vec2 m_ViewportPanelSize{ 0.0f };
 
 		SceneHierarchyPanel m_Hierarchy;
@@ -39,7 +40,7 @@ class Scene;
 
 		void DrawSceneTools();
 
-		void DrawGridLines(std::shared_ptr<Camera> camera);
-		void DrawGizmos(std::shared_ptr<Camera> camera, int selectedObjectIndex);
+		void DrawGridLines(std::shared_ptr<Pixie::Camera> camera);
+		void DrawGizmos(std::shared_ptr<Pixie::Camera> camera, int selectedObjectIndex);
 
 	};

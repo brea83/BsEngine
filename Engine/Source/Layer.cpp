@@ -1,9 +1,12 @@
 #include "BsPrecompileHeader.h"
 #include "Layer.h"
 
-Layer::Layer(const std::string& name)
-	: m_DebugName(name)
-{}
+namespace Pixie
+{
+	Layer::Layer(const std::string& name)
+		: m_DebugName(name)
+	{}
 
-Layer::~Layer()
-{}
+	Layer::~Layer()
+	{}
+}

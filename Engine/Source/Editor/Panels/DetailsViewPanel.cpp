@@ -15,6 +15,8 @@
 //	:_currentScene(scene), _selected(selectedObjectIndex)
 //{}
 
+using namespace Pixie;
+
 bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
 {
 	if (_selected < 0 || _currentScene->m_GameObjects.size() <= _selected)

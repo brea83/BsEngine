@@ -1,8 +1,10 @@
 #pragma once
 #include "ImGuiPanel.h"
 
-class Scene; 
-
+namespace Pixie
+{
+	class Scene;
+}
 class SceneHierarchyPanel// : public ImGuiPanel
 {
 public:
@@ -12,7 +14,7 @@ public:
 
 	//void SetSelected();
 
-	static int Draw(Scene* _currentScene = nullptr);
+	static int Draw(Pixie::Scene* _currentScene = nullptr);
 	//std::size_t GetSelectedIndex() const { return _selected; }
 
 private:

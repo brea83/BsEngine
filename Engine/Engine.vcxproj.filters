@@ -105,32 +105,8 @@
     <ClCompile Include="Source\LayerStack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_demo.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_draw.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_tables.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\imgui_widgets.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Editor\ImGuiLayer.cpp">
       <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>Source Files\Dependancies\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Graphics\Camera.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -189,9 +165,6 @@
     <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Scene\Components\CameraComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -199,6 +172,36 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Scene\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -254,41 +257,11 @@
     <ClInclude Include="Source\LayerStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imgui.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_glfw.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\backends\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imgui_internal.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\misc\cpp\imgui_stdlib.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_rectpack.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_textedit.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imstb_truetype.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Editor\ImGuiLayer.h">
       <Filter>Header Files\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Camera.h">
       <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\imgui\imconfig.h">
-      <Filter>Header Files\dependencies\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Source\BsPrecompileHeader.h">
       <Filter>Header Files</Filter>
@@ -350,9 +323,6 @@
     <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Dependencies\includes\ImGuizmo\ImGuizmo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Scene\Components\CameraComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -360,6 +330,69 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Scene\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pixie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\glad\glad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\EnTT\entt.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\ImGuizmo\ImGuizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\stb\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\KHR\khrplatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -370,11 +403,15 @@
     <None Include="Source\Graphics\Shaders\FragmentShader.glsl">
       <Filter>Source Files\Rendering</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
+    <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt">
       <Filter>Header Files</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Dependencies\GLFW\glfw3.lib" />
+    <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />
   </ItemGroup>
 </Project>

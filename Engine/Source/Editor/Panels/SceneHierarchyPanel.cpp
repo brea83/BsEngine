@@ -2,20 +2,7 @@
 #include "SceneHierarchyPanel.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
-//#include <imgui_internal.h>
-//#include "misc/cpp/imgui_stdlib.cpp"
-//#include "Graphics/Primitives/Renderable.h"
-
-//#include <glm/gtc/type_ptr.hpp>
-
-//
-//SceneHierarchyPanel::SceneHierarchyPanel()
-//{ }
-//
-//void SceneHierarchyPanel::SetContext( Scene* scene)
-//{
-//	_currentScene = scene;
-//}
+using namespace Pixie;
 
 int SceneHierarchyPanel::Draw(Scene* _currentScene)
 {

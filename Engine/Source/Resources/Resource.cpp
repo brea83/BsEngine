@@ -1,5 +1,8 @@
 #include "BsPrecompileHeader.h"
 #include "Resource.h"
 
-Resource::~Resource()
-{}
+namespace Pixie
+{
+	Resource::~Resource()
+	{}
+}

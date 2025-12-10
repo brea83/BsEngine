@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 
 using KeyCode = uint16_t;
-namespace Inputs
+namespace Pixie::Inputs
 {
 /* NOTES COPPIED FROM GLFW3.H
 *  ... Keyboard key tokens.

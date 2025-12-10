@@ -55,13 +55,13 @@ void ImGuiLayer::OnAttach()
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
 
-	EngineContext* engine = EngineContext::GetEngine();
+	Pixie::EngineContext* engine = Pixie::EngineContext::GetEngine();
 
 	// set up imgui connection to glfw and open gl
 	ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 	ImGui_ImplOpenGL3_Init();
 
-	m_CurrentScene = EngineContext::GetEngine()->GetScene();
+	m_CurrentScene = Pixie::EngineContext::GetEngine()->GetScene();
 	//m_Hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
 
 	//m_AssetViewer = new AssetViewerPanel();
@@ -82,7 +82,7 @@ void ImGuiLayer::Begin()
 
 void ImGuiLayer::OnImGuiRender()
 {
-	EngineContext& engine = *EngineContext::GetEngine();
+	Pixie::EngineContext& engine = *Pixie::EngineContext::GetEngine();
 	static bool show = true;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport()/*, ImGuiDockNodeFlags_PassthruCentralNode*/);
@@ -92,7 +92,7 @@ void ImGuiLayer::OnImGuiRender()
 	ImGuiIO& io = ImGui::GetIO();
 	ImGui::Text("%.3f", io.Framerate);
 	ImGui::SeparatorText("from Window Class");
-	Window& window = engine.GetWindow();
+	Pixie::Window& window = engine.GetWindow();
 	ImGui::Text("Width: %d", window.WindowWidth());
 	ImGui::Text("Height: %d", window.WindowHeight());
 	ImGui::Text("AspectRatio: %f", ((float) window.WindowWidth() / (float)window.WindowHeight()));
@@ -107,14 +107,14 @@ void ImGuiLayer::OnImGuiRender()
 	DrawViewport(engine, selected);
 }
 
-void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
+void ImGuiLayer::DrawViewport(Pixie::EngineContext& engine, int selected)
 {
 	ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 	DrawSceneTools();
-	std::shared_ptr<Camera> camera = m_CurrentScene->GetActiveCamera();
+	std::shared_ptr<Pixie::Camera> camera = m_CurrentScene->GetActiveCamera();
 	//DrawGridLines(camera);
 
-	std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
+	std::shared_ptr<Pixie::FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
 	uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
 	ImVec2 currentSize = ImGui::GetContentRegionAvail();
 
@@ -144,7 +144,7 @@ void ImGuiLayer::DrawViewport(EngineContext& engine, int selected)
 	ImGui::End();
 }
 
-void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
+void ImGuiLayer::DrawEditorMenu(Pixie::EngineContext* engine)
 {
 	
 	if (ImGui::BeginMainMenuBar())
@@ -160,7 +160,7 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 		{
 			if (ImGui::MenuItem("Empty GameObject"))
 			{
-				GameObject* testObject = new GameObject();
+				Pixie::GameObject* testObject = new Pixie::GameObject();
 				m_CurrentScene->AddGameObject(testObject);
 			}
 
@@ -176,7 +176,7 @@ void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
 void ImGuiLayer::End()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	EngineContext& engine = *EngineContext::GetEngine();
+	Pixie::EngineContext& engine = *Pixie::EngineContext::GetEngine();
 	io.DisplaySize = ImVec2(engine.GetWindow().WindowWidth(), engine.GetWindow().WindowHeight());
 
 	 //rendering
@@ -203,7 +203,7 @@ void ImGuiLayer::DrawSceneTools()
 		{
 			if(ImGui::Button("CamFlyMode"))
 			{
-				EngineContext* engine = EngineContext::GetEngine();
+				Pixie::EngineContext* engine = Pixie::EngineContext::GetEngine();
 				engine->ToggleCamFlyMode();
 			}
 			ImGui::SetItemTooltip("Tab to toggle fly controlls");
@@ -227,20 +227,20 @@ void ImGuiLayer::DrawSceneTools()
 	
 }
 
-void ImGuiLayer::DrawGridLines(std::shared_ptr<Camera> camera)
+void ImGuiLayer::DrawGridLines(std::shared_ptr<Pixie::Camera> camera)
 {
 }
 
-void ImGuiLayer::DrawGizmos(std::shared_ptr<Camera> camera, int selectedObjectIndex)
+void ImGuiLayer::DrawGizmos(std::shared_ptr<Pixie::Camera> camera, int selectedObjectIndex)
 {
-	GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
+	Pixie::GameObject* selectedObject = m_CurrentScene->GetGameObjectByIndex(selectedObjectIndex);
 	if (selectedObject == nullptr) return;
 
 	ImGuizmo::SetDrawlist();
 
 	ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
 	
-	std::shared_ptr<Transform> transform = selectedObject->GetTransform();
+	std::shared_ptr<Pixie::Transform> transform = selectedObject->GetTransform();
 	glm::mat4 transformMatrix = transform->GetLocal();
 
 	ImGuizmo::Manipulate(glm::value_ptr(camera->ViewMatrix()), glm::value_ptr(camera->ProjectionMatrix()),

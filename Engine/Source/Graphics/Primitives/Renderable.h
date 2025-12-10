@@ -5,18 +5,21 @@
 #include "Resources/Resource.h"
 #include "Graphics/Primitives/Transform.h"
 
-class Renderable: public Resource
+namespace Pixie
 {
-public:
+	class Renderable : public Resource
+	{
+	public:
 
-	Renderable(/*unsigned int uid, */const std::string& name = "Default Name");
-	virtual ~Renderable();
+		Renderable(/*unsigned int uid, */const std::string& name = "Default Name");
+		virtual ~Renderable();
 
-	std::string Name;
+		std::string Name;
 
-	virtual void Render(Shader& currentShader) = 0;
+		virtual void Render(Shader& currentShader) = 0;
 
-protected:
-	// methods
-	virtual void Init() = 0;
-};
+	protected:
+		// methods
+		virtual void Init() = 0;
+	};
+}

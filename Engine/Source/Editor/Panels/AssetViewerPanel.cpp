@@ -5,7 +5,7 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Resources/TextResource.h"
 
-//std::string AssetViewerPanel::SelectedAsset{ "" };
+using namespace Pixie;
 
 void AssetViewerPanel::Draw()
 {

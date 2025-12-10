@@ -1,19 +1,16 @@
 #pragma once
-//#include <GLFW/glfw3.h>
-#include "GlfwWrapper.h"
-#include "Scene/Scene.h"
-#include "Graphics/Renderers/ForwardRenderer.h"
+
+#include <deque>
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
-#include "Editor/ImGuiLayer.h"
-#include <EnTT/entt.hpp>
+#include <glm/glm.hpp>
 
-
-//class Renderer;
 class Window;
 struct GLFWwindow;
-//class DebugConsole;
+class Scene;
+class Renderer;
+class ImGuiLayer;
 
 class EngineContext
 {
@@ -26,8 +23,11 @@ public:
 	
 	static int NextUID;
 
-	Window& GetWindow() { return *m_MainWindow; }
-	GLFWwindow* GetGlfwWindow() { return m_MainWindow->GetGlfwWindow(); }
+	std::shared_ptr<Window> GetWindow() { return m_MainWindow; }
+	GLFWwindow* GetGlfwWindow();
+	glm::vec2 GetViewportSize() const;
+
+	glm::vec2 GetWindowSize() const;
 
 	void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
 	Scene* GetScene() { return m_ActiveScene; }
@@ -39,27 +39,36 @@ public:
 	// methods
 	bool IsRunning()const { return m_IsRunning; }
 	void StopApplication() { m_IsRunning = false; }
-	void Update();
+	bool IsEditorEnabled() { return m_EditorEnabled; }
+	// called in main loop before draw and update
+	// itterates trhough event queue and sends them to appropriate systems
+	void DispatchEvents();
+	// called in main loop after Dispatch Events, before Update
 	void Draw();
+	// called in main loop after Events, and Draw
+	void Update();
 	void DrawConsole();
 
 	void ToggleCamFlyMode();
 
-	// Window event callbacks
+	// callback sent to GLFW window system that collects events each frame 
+	// to be processed at the top of next frame in DispatchEvents
 	void OnEvent(Event& event);
+
 	bool OnFrameBufferSize(WindowResizedEvent& event);
 	bool OnWindowClosed(WindowClosedEvent& event);
 
 private:
 	// constructors, properties, getters and setters
-	EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
+	EngineContext(Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr);
 
 	static EngineContext* m_Engine;
-	
+	std::deque<std::shared_ptr<Event>> m_EventQueue;
 
 	// properties
 	bool m_IsRunning{ true };
 	bool m_IsMinimized{ false };
+	bool m_EditorEnabled{ true };
 
 	bool m_CamFlyMode{ false };
 	bool m_FirstMouse{ false };
@@ -69,15 +78,20 @@ private:
 	float m_DeltaTime{ 0.0f };
 	float m_LastFrameTime{ 0.0f };
 
-	std::unique_ptr<Window> m_MainWindow;
+	std::shared_ptr<Window> m_MainWindow;
 	Scene* m_ActiveScene;
 	Renderer* m_Renderer;
 
-	ImGuiLayer* m_ImGuiLayer;
+	ImGuiLayer* m_ImGuiLayer{ nullptr };
 
 	// DebugConsole* _console;
 	// methods
-
+	template <typename T>
+	void EnqueEvent(T& event)
+	{
+		m_EventQueue.push_back(std::make_shared<T>(event));
+	}
+	void DispatchEvent(std::shared_ptr<Event> eventptr);
 	bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
 	bool OnMouseScrolled(MouseScrolledEvent& event);
 	bool OnMouseMoved(MouseMovedEvent& event);

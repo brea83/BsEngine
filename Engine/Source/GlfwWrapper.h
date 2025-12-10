@@ -1,11 +1,12 @@
 #pragma once
 #include "BsPrecompileHeader.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 #include "Events/Event.h"
 
 const unsigned int START_WIDTH = 800;
 const unsigned int START_HEIGHT = 600;
+
+struct GLFWwindow;
 
 struct WindowProperties
 {
@@ -13,7 +14,7 @@ struct WindowProperties
 	unsigned int Width;
 	unsigned int Height;
 
-	WindowProperties(const std::string& title = "Bs Engine", unsigned int width = 800, unsigned int height = 600)
+	WindowProperties(const std::string& title = "Pixie Engine", unsigned int width = 800, unsigned int height = 600)
 		: Title(title), Width(width), Height(height)
 	{ }
 };

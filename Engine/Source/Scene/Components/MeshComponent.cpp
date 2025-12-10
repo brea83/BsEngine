@@ -13,44 +13,46 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/matrix_decompose.hpp>
 
-MeshComponent::MeshComponent(GameObject* parent)
- : m_ParentObject(parent), m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
+MeshComponent::MeshComponent(/*GameObject* parent*/)
+ : /*m_ParentObject(parent),*/ m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
 {
 
 }
 
-MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh)
-: m_ParentObject(parent), m_Name("Model Component"), m_TexturePath("")
-{
-	
-	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
-	if (mesh != nullptr)
-	{
-		m_Meshes.push_back(mesh);
-
-		switch (primitiveMesh)
-		{
-		case PrimitiveMeshType::Triangle:
-			m_FilePath = "PrimitiveMesh_Triangle";
-			break;
-		case PrimitiveMeshType::Quad:
-			m_FilePath = "PrimitiveMesh_Quad";
-			break;
-		case PrimitiveMeshType::Cube:
-			m_FilePath = "PrimitiveMesh_Cube";
-			break;
-		default:
-			break;
-		}
-	}
-	else
-	{
-		m_FilePath = "";
-	}
-}
+//MeshComponent::MeshComponent(/*GameObject* parent, */PrimitiveMeshType primitiveMesh)
+//: /*m_ParentObject(parent),*/ m_Name("Model Component"), m_TexturePath("")
+//{
+//	
+//	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
+//	if (mesh != nullptr)
+//	{
+//		m_Meshes.push_back(mesh);
+//
+//		switch (primitiveMesh)
+//		{
+//		case PrimitiveMeshType::Triangle:
+//			m_FilePath = "PrimitiveMesh_Triangle";
+//			break;
+//		case PrimitiveMeshType::Quad:
+//			m_FilePath = "PrimitiveMesh_Quad";
+//			break;
+//		case PrimitiveMeshType::Cube:
+//			m_FilePath = "PrimitiveMesh_Cube";
+//			break;
+//		default:
+//			break;
+//		}
+//
+//		m_Meshes.push_back(mesh);
+//	}
+//	else
+//	{
+//		m_FilePath = "";
+//	}
+//}
 
 MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-: m_ParentObject(nullptr), m_Name("Model Component"), m_TexturePath("")
+: /*m_ParentObject(nullptr),*/ m_Name("Model Component"), m_TexturePath("")
 {
 	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 	if (mesh != nullptr)
@@ -71,6 +73,8 @@ MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
 		default:
 			break;
 		}
+
+		m_Meshes.push_back(mesh);
 	}
 	else
 	{
@@ -78,8 +82,8 @@ MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
 	}
 }
 
-MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
-	: m_ParentObject(parent), m_Name("Model Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
+MeshComponent::MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath)
+	:/* m_ParentObject(parent),*/ m_Name("Mesh Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
 {
 
 	Reload();
@@ -103,7 +107,7 @@ bool MeshComponent::Reload()
 
 MeshComponent::~MeshComponent()
 {
-	std::cout << "DELETING MODEL " << m_Name << std::endl;
+	std::cout << "DELETING " << m_Name << std::endl;
 	//delete[] m_Meshes;
 }
 
@@ -183,7 +187,7 @@ void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Tra
 
 	if (parentNode) 
 	{ 
-		localTransform->ParentTransform = m_ParentObject->GetTransform();
+		//localTransform->ParentTransform = m_ParentObject->GetTransform();
 	}
 	
 	aiVector3D scaling;
@@ -216,7 +220,7 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 	//if root node set model's transform
 	if (!node->mParent)
 	{
-		ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
+		//ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "Set MODEL transform" << std::endl;
 		//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
@@ -240,7 +244,7 @@ void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMa
 		std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
 
 		//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-		ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
+		//ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
 		//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 		//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 		//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
@@ -361,24 +365,24 @@ std::shared_ptr<Component> MeshComponent::Clone()
 {
 	return std::shared_ptr<Component>();
 }
-
-void MeshComponent::SetParentObject(GameObject* newParent)
-{}
+//
+//void MeshComponent::SetParentObject(GameObject* newParent)
+//{}
 
 void MeshComponent::OnUpdate()
 {}
 
 void MeshComponent::Render(Shader& currentShader)
 {
-	if (m_ParentObject == nullptr)
-	{
-		//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
-		//registry.
-	}
-	else
-	{
-		currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
-	}
+	//if (m_ParentObject == nullptr)
+	//{
+	//	//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
+	//	//registry.
+	//}
+	//else
+	//{
+	//	//currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
+	//}
 
 	if (m_Texture != nullptr)
 	{

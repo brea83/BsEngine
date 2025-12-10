@@ -1,5 +1,2 @@
 #include "BsPrecompileHeader.h"
-#include "CameraComponent.h"
-
-
-
+#include "Input.h"

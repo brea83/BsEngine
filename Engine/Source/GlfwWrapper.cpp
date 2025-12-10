@@ -1,5 +1,8 @@
 #include "BsPrecompileHeader.h"
 #include "GlfwWrapper.h"
+//#include <glad/glad.h>
+
+#include <GLFW/glfw3.h>
 #include "EngineContext.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvents.h"

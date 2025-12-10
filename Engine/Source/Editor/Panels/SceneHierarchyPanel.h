@@ -1,23 +1,14 @@
 #pragma once
 #include "ImGuiPanel.h"
-
+#include "Scene/Entity.h"
 class Scene; 
 
 class SceneHierarchyPanel// : public ImGuiPanel
 {
 public:
-	//SceneHierarchyPanel( );
-
-	//void SetContext( Scene* scene);
-
-	//void SetSelected();
-
-	static int Draw(Scene* _currentScene = nullptr);
-	//std::size_t GetSelectedIndex() const { return _selected; }
-
+	static void Draw(Scene* currentScene, GameObject& selected);
+	static void DrawNode(GameObject& selected, GameObject& entity);
 private:
-	//Scene* _currentScene{ nullptr };
-	//std::size_t _selected{ 0 };
 
 	
 };

@@ -24,8 +24,8 @@ public:
 	EVENT_CLASS_CATEGORY( EventCategoryMouse | EventCategoryInput)
 
 private:
-	float m_PositionX;
-	float m_PositionY;
+	float m_PositionX{ 0.0f };
+	float m_PositionY{ 0.0f };
 };
 
 class MouseScrolledEvent : public Event
@@ -48,8 +48,8 @@ public:
 	EVENT_CLASS_TYPE(MouseScrolled)
 	EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 private:
-	float m_OffsetX;
-	float m_OffsetY;
+	float m_OffsetX{ 0.0f };
+	float m_OffsetY{ 0.0f };
 };
 
 class MouseButtonEvent : public Event
@@ -63,7 +63,7 @@ protected:
 		: m_Button(button)
 	{ }
 
-	MouseCode m_Button;
+	MouseCode m_Button{ 0};
 };
 
 class MouseButtonPressedEvent : public MouseButtonEvent

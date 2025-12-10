@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene/GameObject.h"
+#include "Events/KeyboardEvents.h"
+#include "Events/MouseEvents.h"
 
 class Scene;
 class Event;
@@ -16,7 +18,10 @@ public:
 	//void OnPlayModeUpdate();
 	void OnEndPlayMode();
 
-	bool OnCameraAdded(Entity& entity);
+	void OnEditorUpdate(float deltaTime);
+
+	// start new cameras with an apect ratio that matches the curent rendering viewport
+	bool OnCameraAdded(CameraComponent& cameraComponent);
 	bool IsCameraRemovable(Entity& entity);
 	bool TryRemoveCameraComponent(Entity& entity);
 
@@ -35,6 +40,8 @@ private:
 	GameObject m_ActiveCamera{};
 	GameObject m_DefaultCamera{};
 	GameObject m_EditorCamera{};
+
+	bool OnKeyPressed(KeyPressedEvent& event);
 
 };
 

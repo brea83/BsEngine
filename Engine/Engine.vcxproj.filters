@@ -1,452 +1,147 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Rendering">
-      <UniqueIdentifier>{afa02a67-9285-435a-892d-cc8f0336511a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Rendering">
-      <UniqueIdentifier>{08ca094e-6359-4803-accc-dbc520b99334}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Primitives">
-      <UniqueIdentifier>{f48c9053-3e33-4445-be20-688bb07edf55}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Primitives">
-      <UniqueIdentifier>{46e23afc-4857-4862-a769-93804dbb4ead}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Dependancies">
-      <UniqueIdentifier>{d41cb015-593f-4bff-9778-7ddeb2d3b55d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Dependancies\GLAD">
-      <UniqueIdentifier>{d076c279-d71f-411f-b418-2d32dd3368ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Dependancies\imgui">
-      <UniqueIdentifier>{6756d545-6a9b-45ce-86c1-75e1c66d9b46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ImGui">
-      <UniqueIdentifier>{2b43dc74-12a2-437f-ba47-502feacfcd8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\dependencies">
-      <UniqueIdentifier>{b3de4ae0-c138-461e-819e-b3ada68dec91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\dependencies\imgui">
-      <UniqueIdentifier>{9ecb1c73-6519-470d-ae15-5faaf9d38b6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ImGui">
-      <UniqueIdentifier>{0e2a1340-6242-4f85-8b4f-6a512b8278de}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="Source\Input\Input.cpp" />
+    <ClCompile Include="Source\Graphics\CameraController.cpp" />
+    <ClCompile Include="Source\Scene\Entity.cpp" />
+    <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
+    <ClCompile Include="Source\Editor\EditorCamera.cpp" />
+    <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp" />
+    <ClCompile Include="Source\Scene\Components\Component.cpp" />
+    <ClCompile Include="Source\Scene\GameObject.cpp" />
+    <ClCompile Include="Source\Events\KeyCodes.cpp" />
+    <ClCompile Include="Source\Assimp\AssimpGlmHelpers.cpp" />
+    <ClCompile Include="Source\Scene\Components\MeshComponent.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Mesh.cpp" />
+    <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp" />
+    <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp" />
+    <ClCompile Include="Source\Resources\AssetLoader.cpp" />
+    <ClCompile Include="Source\Resources\Resource.cpp" />
+    <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
+    <ClCompile Include="Source\Events\KeyboardEvents.cpp" />
+    <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
+    <ClCompile Include="Source\Events\MouseEvents.cpp" />
+    <ClCompile Include="Source\Events\ApplicationEvent.cpp" />
+    <ClCompile Include="Source\Events\Event.cpp" />
+    <ClCompile Include="Source\Graphics\Camera.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Cube.cpp" />
+    <ClCompile Include="Source\EngineContext.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderPass.cpp" />
+    <ClCompile Include="GLAD\glad.c" />
+    <ClCompile Include="Source\Editor\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Layer.cpp" />
+    <ClCompile Include="Source\LayerStack.cpp" />
+    <ClCompile Include="Source\Resources\StbImageWrapper.cpp" />
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\RenderPass.cpp" />
+    <ClCompile Include="Source\Scene\Scene.cpp" />
+    <ClCompile Include="Source\Graphics\Shaders\Shader.cpp" />
+    <ClCompile Include="Source\Graphics\Texture.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Transform.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
+    <ClCompile Include="Source\GlfwWrapper.cpp" />
+    <ClCompile Include="Source\Resources\TextResource.cpp" />
+    <ClCompile Include="Source\Input\WindowsInput.cpp" />
+    <ClCompile Include="SubscribableEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GLAD\glad.c">
-      <Filter>Source Files\Dependancies\GLAD</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Shaders\Shader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EngineContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderers\RenderPass.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Renderers\ForwardRenderPass.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Cube.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp">
-      <Filter>Source Files\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GlfwWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Resources\StbImageWrapper.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LayerStack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\ImGuiLayer.cpp">
-      <Filter>Source Files\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Camera.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Events\Event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Events\ApplicationEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Events\MouseEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Events\KeyboardEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\FrameBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Resources\AssetLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Resources\Resource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Resources\TextResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\Primitives\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Components\MeshComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Assimp\AssimpGlmHelpers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Events\KeyCodes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Components\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Components\CameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Editor\EditorCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Scene\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\backends\imgui_impl_opengl3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp">
-    <ClCompile Include="Source\Graphics\CameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Input\Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Input\WindowsInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SubscribableEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Dependencies\EnTT\entt.hpp" />
+    <ClInclude Include="Dependencies\glad\glad.h" />
+    <ClInclude Include="Dependencies\GLFW\glfw3.h" />
+    <ClInclude Include="Dependencies\GLFW\glfw3native.h" />
+    <ClInclude Include="Dependencies\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h" />
+    <ClInclude Include="Dependencies\KHR\khrplatform.h" />
+    <ClInclude Include="Dependencies\stb\stb_image.h" />
+    <ClInclude Include="Source\EntryPoint.h" />
+    <ClInclude Include="Pixie.h" />
+    <ClInclude Include="Source\Core.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Input\Input.h" />
+    <ClInclude Include="Source\Graphics\CameraController.h" />
+    <ClInclude Include="Source\Scene\Entity.h" />
+    <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
+    <ClInclude Include="Source\Editor\EditorCamera.h" />
+    <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h" />
+    <ClInclude Include="Source\Scene\Components\Component.h" />
+    <ClInclude Include="Source\Scene\GameObject.h" />
+    <ClInclude Include="Source\Events\KeyCodes.h" />
+    <ClInclude Include="Source\Assimp\AssimpGlmHelpers.h" />
+    <ClInclude Include="Source\Scene\Components\MeshComponent.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Mesh.h" />
+    <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h" />
+    <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h" />
+    <ClInclude Include="Source\Resources\AssetLoader.h" />
+    <ClInclude Include="Source\Resources\Resource.h" />
+    <ClInclude Include="Source\Graphics\FrameBuffer.h" />
+    <ClInclude Include="Source\Events\KeyboardEvents.h" />
+    <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="Source\Events\MouseEvents.h" />
+    <ClInclude Include="Source\Events\ApplicationEvent.h" />
+    <ClInclude Include="Source\Events\Event.h" />
+    <ClInclude Include="Source\Graphics\Camera.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Cube.h" />
+    <ClInclude Include="Source\EngineContext.h" />
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h" />
+    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h" />
+    <ClInclude Include="Source\BsPrecompileHeader.h" />
+    <ClInclude Include="Source\Editor\ImGuiLayer.h" />
+    <ClInclude Include="Source\Layer.h" />
+    <ClInclude Include="Source\LayerStack.h" />
+    <ClInclude Include="Source\Events\MouseCodes.h" />
+    <ClInclude Include="Source\Resources\StbImageWrapper.h" />
+    <ClInclude Include="Source\Graphics\Primitives\QuadMesh.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Renderable.h" />
+    <ClInclude Include="Source\Graphics\Renderers\Renderer.h" />
+    <ClInclude Include="Source\Graphics\Renderers\RenderPass.h" />
+    <ClInclude Include="Source\Scene\Scene.h" />
+    <ClInclude Include="Source\Graphics\Shaders\Shader.h" />
+    <ClInclude Include="Source\Graphics\Texture.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Transform.h" />
+    <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
+    <ClInclude Include="Source\GlfwWrapper.h" />
+    <ClInclude Include="Source\Resources\TextResource.h" />
+    <ClInclude Include="Source\Input\WindowsInput.h" />
+    <ClInclude Include="SubscribableEvent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Scene\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EngineContext.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderers\Renderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Renderers\RenderPass.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Shaders\Shader.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Cube.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\QuadMesh.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Triangle.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Renderable.h">
-      <Filter>Header Files\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GlfwWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Resources\StbImageWrapper.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LayerStack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\ImGuiLayer.h">
-      <Filter>Header Files\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Camera.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\BsPrecompileHeader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\Event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\ApplicationEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\MouseEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\MouseCodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\KeyboardEvents.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\FrameBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Resources\AssetLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Resources\Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Resources\TextResource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\Primitives\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\Components\MeshComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Assimp\AssimpGlmHelpers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Events\KeyCodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\Components\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\Components\CameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Editor\EditorCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pixie.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EntryPoint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_glfw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\backends\imgui_impl_opengl3_loader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\GLFW\glfw3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\GLFW\glfw3native.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\glad\glad.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\EnTT\entt.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\ImGuizmo\ImGuizmo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\stb\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Dependencies\KHR\khrplatform.h">
-    <ClInclude Include="Source\Graphics\CameraController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Input\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Input\WindowsInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SubscribableEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Source\Graphics\Shaders\VertexShader.glsl">
-      <Filter>Source Files\Rendering</Filter>
-    </None>
-    <None Include="Source\Graphics\Shaders\FragmentShader.glsl">
-      <Filter>Source Files\Rendering</Filter>
-    </None>
-    <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\FGEngineSpecializationNotes.txt">
-      <Filter>Header Files</Filter>
-    </Text>
-    <Text Include="..\Planning.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Engine.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="Dependencies\GLFW\glfw3.lib" />
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />
+    <Library Include="Dependencies\GLFW\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
+    <None Include="Source\Graphics\Shaders\FragmentShader.glsl" />
+    <None Include="Source\Graphics\Shaders\VertexShader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\FGEngineSpecializationNotes.txt" />
+    <Text Include="..\Planning.txt" />
   </ItemGroup>
 </Project>

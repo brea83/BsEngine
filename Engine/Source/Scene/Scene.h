@@ -30,6 +30,7 @@ namespace Pixie
 		GameObject DuplicateGameObject(GameObject object);
 		
 		void Initialize();
+		void PopulateWithTestObjects();
 
 		//TODO figure out if an interface might solve sending updates to all updateable components?
 		void OnUpdate(float deltaTime);

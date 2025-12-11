@@ -132,7 +132,6 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="CameraManager.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Graphics\CameraController.cpp" />
@@ -204,7 +203,6 @@
     <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Source\EntryPoint.h" />
     <ClInclude Include="Pixie.h" />
-    <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Core.h" />
     <ClInclude Include="CameraManager.h" />
     <ClInclude Include="resource.h" />

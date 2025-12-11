@@ -188,11 +188,20 @@ namespace Pixie
 		if (width < 1 || height < 1)
 		{
 			m_IsMinimized = true;
-			return false;
+			return true;
 		}
 		m_IsMinimized = false;
-		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width / (float)height);
 
+		//glm::vec2 viewportSize;
+		if (m_EditorEnabled && m_ImGuiLayer != nullptr)
+		{
+			//viewportSize = m_ImGuiLayer->GetViewportSize();
+			// resize gets handled by imgui ?
+			return false;
+		}
+
+		//viewportSize = glm::vec2(width, height);
+		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width/ (float)height);
 		return true;
 	}
 

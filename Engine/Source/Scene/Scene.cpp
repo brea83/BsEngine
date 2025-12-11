@@ -13,18 +13,7 @@
 namespace Pixie
 {
 	Scene::Scene()
-	{ 
-
-		/*GameObject* cameraObject = CreateEmptyGameObject();
-		cameraObject->Name = "Main Camera";
-		std::shared_ptr<Transform> transform = cameraObject->GetTransform();
-		transform->SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
-		transform->SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
-		
-		m_ActiveCamera = cameraObject->AddComponent<CameraComponent>();
-
-		m_ActiveCamera->BIsSceneViewCam = true;*/
-	}
+	{ }
 
 	void Scene::Initialize()
 	{
@@ -36,8 +25,21 @@ namespace Pixie
 
 		mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
 
-		m_DefaultCamera = mainCam;//std::make_shared<EditorCamera>(camera.Cam);
+		m_DefaultCamera = mainCam;
 		SetActiveCamera(mainCam);
+	}
+
+	void Scene::PopulateWithTestObjects()
+	{
+		GameObject cube1 = CreateCube();
+
+		GameObject house = CreateEmptyGameObject("Viking House");
+		Transform& transform2 = house.GetComponent<Transform>();
+		transform2.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+		transform2.SetScale(glm::vec3(20.0f));
+		house.AddComponent<MeshComponent, const  std::string&>("../Assets/Meshes/Viking_House.obj");
+
+		cube1.AddChild(house);
 	}
 
 	Scene::~Scene()

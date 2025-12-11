@@ -3,45 +3,48 @@
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
 
-class Scene;
-class Event;
-class Camera;
-class EditorCamera;
-
-class CameraManager
+namespace Pixie
 {
-public:
-	CameraManager(Scene* scene, bool isFlyModeOn = false) : m_Scene(scene), m_EditorFlyMode(isFlyModeOn) {}
+	class Scene;
+	class Event;
+	class Camera;
+	class EditorCamera;
 
-	bool OnEvent(Event& event);
-	void OnBeginPlayMode();
-	//void OnPlayModeUpdate();
-	void OnEndPlayMode();
+	class CameraManager
+	{
+	public:
+		CameraManager(Scene* scene, bool isFlyModeOn = false) : m_Scene(scene), m_EditorFlyMode(isFlyModeOn) {}
 
-	void OnEditorUpdate(float deltaTime);
+		bool OnEvent(Event& event);
+		void OnBeginPlayMode();
+		//void OnPlayModeUpdate();
+		void OnEndPlayMode();
 
-	// start new cameras with an apect ratio that matches the curent rendering viewport
-	bool OnCameraAdded(CameraComponent& cameraComponent);
-	bool IsCameraRemovable(Entity& entity);
-	bool TryRemoveCameraComponent(Entity& entity);
+		void OnEditorUpdate(float deltaTime);
 
-	Camera* GetActiveCamera();
-	GameObject& GetActiveCameraObject() { return m_ActiveCamera; }
-	void SetActiveCamera(GameObject& gameObject);
-	void SetDefaultCamera(GameObject& gameObject);
+		// start new cameras with an apect ratio that matches the curent rendering viewport
+		bool OnCameraAdded(CameraComponent& cameraComponent);
+		bool IsCameraRemovable(Entity& entity);
+		bool TryRemoveCameraComponent(Entity& entity);
 
-	// Todo Add camera blend stuff. 
-	// I think that will mean I'll need update methods for lerping?
+		Camera* GetActiveCamera();
+		GameObject& GetActiveCameraObject() { return m_ActiveCamera; }
+		void SetActiveCamera(GameObject& gameObject);
+		void SetDefaultCamera(GameObject& gameObject);
 
-private:
-	Scene* m_Scene{ nullptr };
-	bool m_EditorFlyMode{ false };
+		// Todo Add camera blend stuff. 
+		// I think that will mean I'll need update methods for lerping?
 
-	GameObject m_ActiveCamera{};
-	GameObject m_DefaultCamera{};
-	GameObject m_EditorCamera{};
+	private:
+		Scene* m_Scene{ nullptr };
+		bool m_EditorFlyMode{ false };
 
-	bool OnKeyPressed(KeyPressedEvent& event);
+		GameObject m_ActiveCamera{};
+		GameObject m_DefaultCamera{};
+		GameObject m_EditorCamera{};
 
-};
+		bool OnKeyPressed(KeyPressedEvent& event);
 
+	};
+
+}

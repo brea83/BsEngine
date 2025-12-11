@@ -12,15 +12,15 @@ namespace Pixie
 	class EngineContext;
 	class Camera;
 	class Scene;
-}
+
 	//may need key, mouse, and application events
-	class ImGuiLayer : public Pixie::Layer
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnSceneChange(Pixie::Scene* newScene) { m_CurrentScene = newScene; }
+		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; }
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
@@ -28,7 +28,7 @@ namespace Pixie
 
 		void DrawViewport(EngineContext& engine, GameObject& selected);
 
-		void DrawEditorMenu(Pixie::EngineContext* engine);
+		void DrawEditorMenu(EngineContext* engine);
 
 		glm::vec2 GetViewportSize() const { return m_ViewportPanelSize; }
 
@@ -43,7 +43,7 @@ namespace Pixie
 		bool m_bViewportResized{ true };
 
 		//SceneHierarchyPanel m_Hierarchy;
-		GameObject m_Selected{entt::null, nullptr};
+		GameObject m_Selected{ entt::null, nullptr };
 		int m_GizmoType{ -1 };
 
 		ImGuiPanel* m_AssetViewer{ nullptr };
@@ -55,3 +55,4 @@ namespace Pixie
 
 		bool OnKeyPressed(KeyPressedEvent& event);
 	};
+}

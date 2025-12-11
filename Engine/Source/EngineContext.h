@@ -1,10 +1,5 @@
 #pragma once
-//#include <GLFW/glfw3.h>
 #include "Core.h"
-#include "GlfwWrapper.h"
-#include "Scene/Scene.h"
-#include "Graphics/Renderers/ForwardRenderer.h"
-
 #include <deque>
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
@@ -22,24 +17,25 @@ namespace Pixie
 	class EngineContext
 	{
 	public:
-		// delete copy constructor
-		EngineContext(const EngineContext& obj) = delete;
 
 		static EngineContext* GetEngine();
 		bool Init();
-		
-		
+
 		static int NextUID;
-		
-		Window& GetWindow() { return m_MainWindow; }
-		GLFWwindow* GetGlfwWindow(); 
+
+		std::shared_ptr<Window> GetWindow() { return m_MainWindow; }
+		GLFWwindow* GetGlfwWindow();
 		glm::vec2 GetViewportSize() const;
+
 		glm::vec2 GetWindowSize() const;
 
 		void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
 		Scene* GetScene() { return m_ActiveScene; }
 
 		Renderer* GetRenderer() { return m_Renderer; }
+
+
+
 		// methods
 		bool IsRunning()const { return m_IsRunning; }
 		void StopApplication() { m_IsRunning = false; }
@@ -53,8 +49,8 @@ namespace Pixie
 		void Update();
 		void DrawConsole();
 
-
 		void ToggleCamFlyMode();
+
 		// callback sent to GLFW window system that collects events each frame 
 		// to be processed at the top of next frame in DispatchEvents
 		void OnEvent(Event& event);
@@ -105,7 +101,6 @@ namespace Pixie
 				glfwSetWindowShouldClose(window, true);
 		}*/
 	};
-
 	// To be defined in Client (ie SandBox)
 	EngineContext* CreateApplication();
 }

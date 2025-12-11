@@ -20,8 +20,8 @@ namespace Pixie
 		m_Passes.push_back(std::move(pass));
 
 		FrameBufferSpecification frameBufferData;
-		frameBufferData.Width = EngineContext::GetEngine()->GetWindow().WindowWidth();
-		frameBufferData.Height = EngineContext::GetEngine()->GetWindow().WindowHeight();
+		frameBufferData.Width = EngineContext::GetEngine()->GetWindow()->WindowWidth();
+		frameBufferData.Height = EngineContext::GetEngine()->GetWindow()->WindowHeight();
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);

@@ -23,7 +23,7 @@ namespace Pixie
 	EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer)
 		: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer)
 	{
-		if (m_Engine == NULL)
+		if (m_Engine == NULL/* || m_Engine == nullptr*/)
 		{
 			m_Engine = this;
 			return;
@@ -46,13 +46,18 @@ namespace Pixie
 
 		if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 		m_ActiveScene->Initialize();
-		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth()/ (float)m_MainWindow->WindowHeight());
+		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth() / (float)m_MainWindow->WindowHeight());
 		m_ImGuiLayer->OnAttach();
 
 		m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
 		m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
 
 		return true;
+	}
+
+	GLFWwindow* EngineContext::GetGlfwWindow()
+	{
+		return m_MainWindow->GetGlfwWindow();
 	}
 
 	EngineContext* EngineContext::GetEngine()
@@ -63,11 +68,6 @@ namespace Pixie
 			return m_Engine;
 		}
 		return m_Engine;
-	}
-
-	GLFWwindow* EngineContext::GetGlfwWindow()
-	{
-		return m_MainWindow->GetGlfwWindow();
 	}
 
 	glm::vec2 EngineContext::GetViewportSize() const
@@ -152,7 +152,7 @@ namespace Pixie
 	void EngineContext::DispatchEvents()
 	{
 		//if(!m_EventQueue.empty()) std::cout << "----------------------------------"  << std::endl;
-		
+
 		while (!m_EventQueue.empty())
 		{
 			//std::cout << "Event queue count: " << m_EventQueue.size() << std::endl;
@@ -251,54 +251,49 @@ namespace Pixie
 		return false;
 	}
 
-bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
-{
-	Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
-
-
-	/*if (Inputs::KeyboardNames.find(key) != Inputs::KeyboardNames.end())
+	bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	{
-		std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
-	}
-	else
-	{
-		std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
-	}*/
+		Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
 
-	// TODO: refactor this into a proper input system
-	if ( m_CamFlyMode &&
-		(keyCode == Inputs::Keyboard::W
-		|| keyCode == Inputs::Keyboard::S
-		|| keyCode == Inputs::Keyboard::A
-		|| keyCode == Inputs::Keyboard::D))
-	{
-		entt::registry& registry = m_ActiveScene->GetRegistry();
-		GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
-		
-		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
-		Transform* cameraTransform = registry.try_get<Transform>(activeCamObject);
 
-		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
+		/*if (Inputs::KeyboardNames.find(key) != Inputs::KeyboardNames.end())
+		{
+			std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
+		}
+		else
+		{
+			std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
+		}*/
 
-		return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
-	}
-	
-	if (keyCode == Inputs::Keyboard::Tab)
-	{
-		//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
-		ToggleCamFlyMode();
+		// TODO: refactor this into a proper input system
+		if (m_CamFlyMode &&
+			(keyCode == Inputs::Keyboard::W
+				|| keyCode == Inputs::Keyboard::S
+				|| keyCode == Inputs::Keyboard::A
+				|| keyCode == Inputs::Keyboard::D))
+		{
+			entt::registry& registry = m_ActiveScene->GetRegistry();
+			GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
+
+			CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
+			Transform* cameraTransform = registry.try_get<Transform>(activeCamObject);
+
+			if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
+
+			return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
+		}
+
+		if (keyCode == Inputs::Keyboard::Tab)
+		{
+			//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
+			ToggleCamFlyMode();
+			return false;
+		}
+
+		m_ImGuiLayer->OnEvent(event);
 		return false;
 	}
 
-	m_ImGuiLayer->OnEvent(event);
-	return false;
-}
-
-
-	bool EngineContext::OnMouseButtonPressedEvent(MouseButtonPressedEvent& event)
-	{
-		return false;
-	}
 
 	void EngineContext::ToggleCamFlyMode()
 	{

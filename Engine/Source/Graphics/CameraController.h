@@ -5,42 +5,45 @@
 #include "Events/KeyboardEvents.h"
 #include <EnTT/entt.hpp>
 
-class Transform;
-class GameObject;
-
-class CameraController
+namespace Pixie
 {
-public:
-	CameraController() = default;
-	CameraController(entt::entity entity) : m_CameraEntity(entity) {}
+	class Transform;
+	class GameObject;
 
-	void OnUpdate(float deltaTime, GameObject& gameObject);
+	class CameraController
+	{
+	public:
+		CameraController() = default;
+		CameraController(entt::entity entity) : m_CameraEntity(entity) {}
 
-	bool OnEvent(Event& event);
-	bool HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime);
-	bool HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime);
+		void OnUpdate(float deltaTime, GameObject& gameObject);
 
-private:
-	entt::entity m_CameraEntity{ entt::null };
+		bool OnEvent(Event& event);
+		bool HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime);
+		bool HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime);
 
-	bool m_Rotation{ false };
-	glm::vec3 m_CameraPosition{ 0.0f };
+	private:
+		entt::entity m_CameraEntity{ entt::null };
 
-	/*float m_Yaw{ 0.0f };
-	float m_Pitch{ 0.0f };*/
-	// rotation speed in degrees
-	float m_RotationSpeed{ 10.0f };
-	glm::vec2 m_prevMousePosition{ 0.0f };
-	glm::vec2 m_MouseDelta{ 0.0f };
-	bool m_FirstMouseFrame{ true };
+		bool m_Rotation{ false };
+		glm::vec3 m_CameraPosition{ 0.0f };
 
-	glm::vec3 m_TranslationDirection{ 0.0f };
-	float m_TranslationSpeed{ 10.0f };
+		/*float m_Yaw{ 0.0f };
+		float m_Pitch{ 0.0f };*/
+		// rotation speed in degrees
+		float m_RotationSpeed{ 10.0f };
+		glm::vec2 m_prevMousePosition{ 0.0f };
+		glm::vec2 m_MouseDelta{ 0.0f };
+		bool m_FirstMouseFrame{ true };
 
-	bool OnKeyPressed(KeyPressedEvent& event);
-	bool OnMouseMoved(MouseMovedEvent& event);
-	bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
-	bool OnMouseScrolled(MouseScrolledEvent& event);
-	bool OnWindowResized(WindowResizedEvent& event);
-};
+		glm::vec3 m_TranslationDirection{ 0.0f };
+		float m_TranslationSpeed{ 10.0f };
 
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseMoved(MouseMovedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+		bool OnMouseScrolled(MouseScrolledEvent& event);
+		bool OnWindowResized(WindowResizedEvent& event);
+	};
+
+}

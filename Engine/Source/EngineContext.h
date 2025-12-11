@@ -50,7 +50,7 @@ namespace Pixie
 		bool OnFrameBufferSize(WindowResizedEvent& event);
 		bool OnWindowClosed(WindowClosedEvent& event);
 
-	private:
+	protected:
 		// constructors, properties, getters and setters
 		EngineContext(Window* startingWindow = new Window(), Scene* startingScene = new Scene(), Renderer* startingRenderer = new ForwardRenderer());
 
@@ -89,5 +89,5 @@ namespace Pixie
 	};
 
 	// To be defined in Client (ie Sandbox)
-	//EngineContext* CreateApplication();
+	EngineContext* CreateApplication();
 }

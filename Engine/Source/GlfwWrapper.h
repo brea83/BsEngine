@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-
+#include "BsPrecompileHeader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Events/Event.h"
@@ -63,7 +63,7 @@ namespace Pixie
 		};
 
 		WindowData m_Data;
-		GLFWwindow* m_Window{ nullptr };
+		GLFWwindow* m_Window;
 		//int _windowWidth{ 800 };
 		//int _windowHeight{ 600 };
 

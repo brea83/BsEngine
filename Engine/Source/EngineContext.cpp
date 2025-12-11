@@ -15,7 +15,14 @@ namespace Pixie
 
 	EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer)
 		: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer)
-	{}
+	{
+		if (m_Engine == NULL)
+		{
+			m_Engine = this;
+			return;
+		}
+		std::cerr << "Error: more than one Engine contexts has been created, only the first is saved as a singleton" << std::endl;
+	}
 
 	bool EngineContext::Init()
 	{

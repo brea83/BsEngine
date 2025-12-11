@@ -1,5 +1,6 @@
 #pragma once
 //precompiled header
+
 #include <iostream>
 #include <memory>
 #include <utility>

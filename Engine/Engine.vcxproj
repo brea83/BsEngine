@@ -57,7 +57,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PIXIE_PLATFORM_WINDOWS;PIXIE_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\assimp\include\;$(SolutionDir)Engine\Source;C:\glm;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\assimp\include;$(SolutionDir)Engine\Source;C:\glm;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>BsPrecompileHeader.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>

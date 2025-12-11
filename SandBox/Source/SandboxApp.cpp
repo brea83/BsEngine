@@ -1,14 +1,14 @@
 #include <Pixie.h>
 #include <Source/EntryPoint.h>
 
-class SandboxApp : public Pixie::Application
+class SandboxApp : public Pixie::EngineContext
 {
 public:
-	SandboxApp() {}
+	SandboxApp() : EngineContext(){}
 	~SandboxApp() {}
 };
 
-Pixie::Application* Pixie::CreateApplication()
+Pixie::EngineContext* Pixie::CreateApplication()
 {
 
 	return new SandboxApp();

@@ -13,9 +13,9 @@ namespace Pixie
 {
 	ForwardRenderPass::ForwardRenderPass()
 	{
-		m_FallbackTexture = AssetLoader::LoadTexture("Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
+		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
 
-		m_Shader = AssetLoader::LoadShader("Source/Graphics/Shaders/VertexShader.glsl", "Source/Graphics/Shaders/FragmentShader.glsl");
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentShader.glsl");
 	}
 
 	ForwardRenderPass::~ForwardRenderPass()

@@ -119,8 +119,14 @@ namespace Pixie
 			//return (Shader*)_resources.at(vertPath + "|" + fragPath);
 		}
 
-		std::string vertexGlsl = LoadTextFile(vertPath)->Text;
-		std::string fragmentGlsl = LoadTextFile(fragPath)->Text;
+		std::shared_ptr<TextResource> vertexFile = LoadTextFile(vertPath);
+		std::shared_ptr<TextResource> fragmentFile = LoadTextFile(fragPath);
+		if (vertexFile == nullptr || fragmentFile == nullptr)
+		{
+			return nullptr;
+		}
+		std::string vertexGlsl = vertexFile->Text;
+		std::string fragmentGlsl = fragmentFile->Text;
 
 
 		// no stored shader made from those file paths, so make one
@@ -469,7 +475,7 @@ namespace Pixie
 
 		if (inPath.substr(0, inPath.find_first_of('\\')) == "..")
 		{
-			outPath = "Assets" + inPath.substr(inPath.find_first_of('\\'));
+			outPath = "../Assets" + inPath.substr(inPath.find_first_of('\\'));
 			//std::cout << "PATH WAS RELATIVE, AND STARTED WITH .." << std::endl;
 			//std::cout << "path modified to: " << outPath << std::endl;
 			return;

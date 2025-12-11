@@ -13,5 +13,5 @@ namespace Pixie
 	};
 
 	// To be defined in Client (ie Sandbox)
-	Application* CreateApplication();
+	//Application* CreateApplication();
 }

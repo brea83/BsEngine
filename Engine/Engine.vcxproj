@@ -133,6 +133,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="Source\Input\Input.cpp" />
+    <ClCompile Include="Source\Graphics\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
     <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
     <ClCompile Include="Source\Editor\EditorCamera.cpp" />
@@ -178,6 +181,8 @@
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
     <ClCompile Include="Source\GlfwWrapper.cpp" />
     <ClCompile Include="Source\Resources\TextResource.cpp" />
+    <ClCompile Include="Source\Input\WindowsInput.cpp" />
+    <ClCompile Include="SubscribableEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -201,6 +206,10 @@
     <ClInclude Include="Pixie.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Core.h" />
+    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\Input\Input.h" />
+    <ClInclude Include="Source\Graphics\CameraController.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
     <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />
@@ -243,6 +252,8 @@
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
     <ClInclude Include="Source\GlfwWrapper.h" />
     <ClInclude Include="Source\Resources\TextResource.h" />
+    <ClInclude Include="Source\Input\WindowsInput.h" />
+    <ClInclude Include="SubscribableEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
@@ -251,6 +262,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />
+    <Text Include="..\Planning.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

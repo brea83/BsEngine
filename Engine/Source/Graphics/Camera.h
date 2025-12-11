@@ -6,14 +6,18 @@ namespace Pixie
 	class Camera
 	{
 	public:
-		Camera();
+		Camera(float fov = 45.0f, float aspectRatio = 1280.0f / 720.0f, float nearClip = 0.1f, float farClip = 100.0f);
 
-		bool BIsSceneViewCam{ false };
+		//bool BIsSceneViewCam{ false };
 
-		virtual bool HandleMoveWasd(int keyCode, float deltaTime) = 0;
-		virtual bool HandleLookMouse(float xOffset, float yOffset, float deltaTime) = 0;
+		virtual bool HandleMoveWasd(int keyCode, float deltaTime) { return false; }
+
+		virtual bool HandleLookMouse(float xOffset, float yOffset, float deltaTime) { return false; }
 		bool Zoom(float amount);
-		virtual glm::mat4 ViewMatrix() const = 0;
+		
+		// view matrix is handled by entity's transform component now!
+		//virtual glm::mat4 ViewMatrix() const = 0;
+		// calculates a projection matrix
 		glm::mat4 ProjectionMatrix() const;
 
 		void SetFov(float fov) { m_Fov = fov; }
@@ -22,6 +26,15 @@ namespace Pixie
 		float GetAspectRatio() { return m_AspectRatio; }
 		void SetNearFar(float nearPlane, float farPlane) { m_Near = nearPlane; m_Far = farPlane; }
 
+
+		bool operator ==(const Camera& other)
+		{
+			return /* UID or something*/
+				m_Fov == other.m_Fov
+				&& m_AspectRatio == other.m_AspectRatio
+				&& m_Near == other.m_Near
+				&& m_Far == other.m_Far;
+		}
 	protected:
 
 		float m_Fov{ 45.0f };
@@ -31,6 +44,8 @@ namespace Pixie
 
 		float m_CameraSpeed{ 10.0f };
 		float m_MouseLookSesitivity{ 1.0f };
+
+		glm::mat4 m_ProjectionMatrix{ 1.0f };
 
 		friend class ImGuiLayer;
 		friend class DetailsViewPanel;

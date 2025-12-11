@@ -1,6 +1,7 @@
 #pragma once
 #include "ImGuiPanel.h"
 #include <glm/vec3.hpp>
+#include "Scene/GameObject.h"
 
 namespace Pixie
 {
@@ -8,10 +9,11 @@ namespace Pixie
     class GameObject;
     class Component;
 }
+
 class DetailsViewPanel 
 {
 public:
-    static bool Draw(Pixie::Scene* _currentScene = nullptr, int _selected = 0) ;
+    static bool Draw(Scene* scene, GameObject& selcected) ;
 
 protected:
     ///Returns true if one of the vector values is changed
@@ -19,6 +21,7 @@ protected:
 
     static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth = 10.0f);
 
-    static void DrawComponents(Pixie::GameObject* selectedObject/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+    static void DrawComponents(Scene* scene, GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+
 };
 

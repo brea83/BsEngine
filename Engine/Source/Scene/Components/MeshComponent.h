@@ -10,53 +10,57 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-//class Texture;
 
 namespace Pixie
 {
+	//class Texture;
+	class GameObject;
+
 	class MeshComponent : public Component
 	{
 	public:
-		MeshComponent(GameObject* parent);
-		MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh);
+		MeshComponent(/*GameObject* parent*/);
+		//MeshComponent(/*GameObject* parent,*/ PrimitiveMeshType primitiveMesh);
 		MeshComponent(PrimitiveMeshType primitiveMesh);
-		MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath = "../Assets/Textures/Viking_House.png");
+		MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath = "Assets/Textures/Viking_House.png");
 		~MeshComponent();
 
 		bool Reload();
 
 		// Inherited via Component
-		void Initialize() override;
-		void CleanUp() override;
-		std::shared_ptr<Component> Clone() override;
+		void Initialize() ;
+		void CleanUp() ;
+		std::shared_ptr<Component> Clone() ;
 
-		std::string Name() const override { return m_Name; }
-		void SetName(const std::string& name) override { m_Name = name; }
-		GameObject* GetParentObject() const override { return m_ParentObject; }
-		void SetParentObject(GameObject* newParent) override;
+		const std::string& Name() const  override{ return m_Name; }
+		void SetName(const std::string& name)  { m_Name = name; }
+		//GameObject* GetParentObject() const  { return m_ParentObject; }
+		//void SetParentObject(GameObject* newParent) ;
 
-		void SetFilePath(const std::string& modelFilePath) {}
+		void SetFilePath(const std::string& modelFilePath) { }
 		std::string GetFilePath() { return m_FilePath; }
 
-		void OnUpdate() override;
+		bool HasTexture() { return (m_Texture != nullptr ) && (m_Texture->TextureObject != 0); }
 
+		void OnUpdate() ;
+		
 		void Render(Shader& currentShader);
 
 		void Render(Shader& currentShader, Transform& transform);
 
 	protected:
 		//properties
-		std::string m_Name;
-		GameObject* m_ParentObject;
-		std::string m_FilePath;
-		std::string m_TexturePath;
+		std::string m_Name{ "Mesh Component" };
+		//GameObject* m_ParentObject{ nullptr };
+		std::string m_FilePath{""};
+		std::string m_TexturePath{ "" };
 		std::vector<std::shared_ptr<Mesh>> m_Meshes;
 		//Todo: replace textures with materials.
-		std::shared_ptr<Texture> m_Texture;
+		std::shared_ptr<Texture> m_Texture{nullptr};
 
 		bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 
-
+		
 		//methods
 		void LoadMeshAssimp(const std::string& filePath);
 
@@ -71,12 +75,13 @@ namespace Pixie
 
 		friend class DetailsViewPanel;
 	};
-}
-// what does a model component need to know to tell the renderer where to render its meshes?
-// how many meshes it has
-// a ref to each unique mesh (data about verts in object space)
-// a way to track and adjust transform offsets from the model root instead of the world root
 
-//easy for single mesh. model just uses the game object's transform
+	// what does a model component need to know to tell the renderer where to render its meshes?
+	// how many meshes it has
+	// a ref to each unique mesh (data about verts in object space)
+	// a way to track and adjust transform offsets from the model root instead of the world root
+
+	//easy for single mesh. model just uses the game object's transform
+}
 
 

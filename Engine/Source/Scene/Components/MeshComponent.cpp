@@ -16,44 +16,46 @@
 
 namespace Pixie
 {
-	MeshComponent::MeshComponent(GameObject* parent)
-		: m_ParentObject(parent), m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
+	MeshComponent::MeshComponent(/*GameObject* parent*/)
+ : /*m_ParentObject(parent),*/ m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
 	{
 
 	}
 
-	MeshComponent::MeshComponent(GameObject* parent, PrimitiveMeshType primitiveMesh)
-		: m_ParentObject(parent), m_Name("Model Component"), m_TexturePath("")
-	{
-
-		std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
-		if (mesh != nullptr)
-		{
-			m_Meshes.push_back(mesh);
-
-			switch (primitiveMesh)
-			{
-			case PrimitiveMeshType::Triangle:
-				m_FilePath = "PrimitiveMesh_Triangle";
-				break;
-			case PrimitiveMeshType::Quad:
-				m_FilePath = "PrimitiveMesh_Quad";
-				break;
-			case PrimitiveMeshType::Cube:
-				m_FilePath = "PrimitiveMesh_Cube";
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			m_FilePath = "";
-		}
-	}
+	//MeshComponent::MeshComponent(/*GameObject* parent, */PrimitiveMeshType primitiveMesh)
+	//: /*m_ParentObject(parent),*/ m_Name("Model Component"), m_TexturePath("")
+	//{
+	//	
+	//	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
+	//	if (mesh != nullptr)
+	//	{
+	//		m_Meshes.push_back(mesh);
+	//
+	//		switch (primitiveMesh)
+	//		{
+	//		case PrimitiveMeshType::Triangle:
+	//			m_FilePath = "PrimitiveMesh_Triangle";
+	//			break;
+	//		case PrimitiveMeshType::Quad:
+	//			m_FilePath = "PrimitiveMesh_Quad";
+	//			break;
+	//		case PrimitiveMeshType::Cube:
+	//			m_FilePath = "PrimitiveMesh_Cube";
+	//			break;
+	//		default:
+	//			break;
+	//		}
+	//
+	//		m_Meshes.push_back(mesh);
+	//	}
+	//	else
+	//	{
+	//		m_FilePath = "";
+	//	}
+	//}
 
 	MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-		: m_ParentObject(nullptr), m_Name("Model Component"), m_TexturePath("")
+	: /*m_ParentObject(nullptr),*/ m_Name("Model Component"), m_TexturePath("")
 	{
 		std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 		if (mesh != nullptr)
@@ -74,6 +76,8 @@ namespace Pixie
 			default:
 				break;
 			}
+
+			m_Meshes.push_back(mesh);
 		}
 		else
 		{
@@ -81,8 +85,8 @@ namespace Pixie
 		}
 	}
 
-	MeshComponent::MeshComponent(GameObject* parent, const std::string& modelFilePath, const std::string& textureFilePath)
-		: m_ParentObject(parent), m_Name("Model Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
+	MeshComponent::MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath)
+		:/* m_ParentObject(parent),*/ m_Name("Mesh Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
 	{
 
 		Reload();
@@ -106,11 +110,11 @@ namespace Pixie
 
 	MeshComponent::~MeshComponent()
 	{
-		std::cout << "DELETING MODEL " << m_Name << std::endl;
+		std::cout << "DELETING " << m_Name << std::endl;
 		//delete[] m_Meshes;
 	}
 
-	void MeshComponent::LoadMeshAssimp(const std::string& filePath)
+	void MeshComponent::LoadMeshAssimp(const std::string & filePath)
 	{
 		// TODO: turn this into a function
 		Assimp::Importer importer;
@@ -184,11 +188,11 @@ namespace Pixie
 	void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
 	{
 
-		if (parentNode)
-		{
-			localTransform->ParentTransform = m_ParentObject->GetTransform();
+		if (parentNode) 
+		{ 
+			//localTransform->ParentTransform = m_ParentObject->GetTransform();
 		}
-
+		
 		aiVector3D scaling;
 		aiVector3D rotation;
 		aiVector3D position;
@@ -209,17 +213,17 @@ namespace Pixie
 		}
 
 		return childNode->mTransformation.Inverse();
-
+		
 	}
 
-	void MeshComponent::ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices)
+	void MeshComponent::ProcessNode(aiNode * node, const aiScene * assimpScene, aiMatrix4x4 combinedParentMatrices)
 	{
 		// the recursion starts with an identity matrix in combined parent matrices so this should be fine
 		aiMatrix4x4 nodeTransform = CombineTransformsToRoot(node->mParent, node); // node->mTransformation;//
 		//if root node set model's transform
 		if (!node->mParent)
 		{
-			ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
+			//ProcessTransform(node->mTransformation, m_ParentObject->GetTransform(), nullptr);
 			//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 			//std::cout << "Set MODEL transform" << std::endl;
 			//std::cout << "Position: " << _transform->GetPosition().x << ", " << _transform->GetPosition().y << ", " << _transform->GetPosition().z << std::endl;
@@ -229,7 +233,7 @@ namespace Pixie
 		else
 		{
 			//nodeTransform = node->mParent->mTransformation.Inverse() * nodeTransform;
-
+			
 		}
 
 
@@ -243,7 +247,7 @@ namespace Pixie
 			std::shared_ptr<Mesh> mesh = processMesh(aiMesh, assimpScene);
 
 			//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-			ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
+			//ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
 			//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
 			//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
 			//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
@@ -258,7 +262,7 @@ namespace Pixie
 		}
 	}
 
-	std::shared_ptr<Mesh>  MeshComponent::processMesh(aiMesh* mesh, const aiScene* assimpScene)
+	std::shared_ptr<Mesh>  MeshComponent::processMesh(aiMesh * mesh, const aiScene * assimpScene)
 	{
 		std::vector<Mesh::Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -268,7 +272,7 @@ namespace Pixie
 		{
 
 			Mesh::Vertex vertex;
-
+			
 			//process position 
 			aiVector3D sourcePosition = mesh->mVertices[i];
 			vertex.Position = glm::vec3(sourcePosition.x, sourcePosition.y, sourcePosition.z);
@@ -302,7 +306,7 @@ namespace Pixie
 			vertices.emplace_back(vertex);
 		}
 		// process indices
-
+		
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
 			aiFace face = mesh->mFaces[i];
@@ -339,7 +343,7 @@ namespace Pixie
 		{
 			aiString filePath;
 			material->GetTexture(type, i, &filePath);
-
+			
 			/*std::string typeName = TextureTypeToString.at(bsTextureType);
 			std::cout << "TEXTURE PATH: " << filePath.C_Str() << std::endl;
 			std::cout << "TYPE: " << typeName << std::endl;*/
@@ -364,24 +368,24 @@ namespace Pixie
 	{
 		return std::shared_ptr<Component>();
 	}
-
-	void MeshComponent::SetParentObject(GameObject* newParent)
-	{}
+	//
+	//void MeshComponent::SetParentObject(GameObject* newParent)
+	//{}
 
 	void MeshComponent::OnUpdate()
 	{}
 
 	void MeshComponent::Render(Shader& currentShader)
 	{
-		if (m_ParentObject == nullptr)
-		{
-			//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
-			//registry.
-		}
-		else
-		{
-			currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
-		}
+		//if (m_ParentObject == nullptr)
+		//{
+		//	//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
+		//	//registry.
+		//}
+		//else
+		//{
+		//	//currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
+		//}
 
 		if (m_Texture != nullptr)
 		{
@@ -404,7 +408,7 @@ namespace Pixie
 	void MeshComponent::Render(Shader& currentShader, Transform& transform)
 	{
 		currentShader.SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
-
+		
 
 		if (m_Texture != nullptr)
 		{

@@ -1,46 +1,20 @@
 #pragma once
 #include "Core.h"
 #include "BsPrecompileHeader.h"
-#include <typeinfo>
+
 #include "Editor/EditorCamera.h"
+#include <EnTT/entt.hpp>
 
 
 namespace Pixie
 {
-    class GameObject;
-
     class Component
     {
     public:
-        Component();
-
-        virtual ~Component() {}
-
-        virtual std::string Name() const = 0;
-        virtual void SetName(const std::string& name) = 0;
-
-        //might want to make an init that takes some kind of struct for data if what I'm seeing in zenith engine is accurate
-        virtual void Initialize() = 0;
-
-        virtual void CleanUp() = 0;
-        virtual std::shared_ptr<Component> Clone() = 0;
-
-        virtual GameObject* GetParentObject() const = 0;
-        virtual void SetParentObject(GameObject* newParent) = 0;
-
-        bool operator ==(const Component& otherComponent)
-        {
-            return Name() == otherComponent.Name()
-                && typeid(*this) == typeid(otherComponent)
-                && GetParentObject() == otherComponent.GetParentObject();
-        }
-
-        virtual void OnUpdate() = 0;
-
-    protected:
+        virtual const std::string& Name() const = 0;
+        virtual std::string ToString() const { return Name(); }
 
     };
-
 
     // components are hashed by their name and their typeid.hash_code()
     struct ComponentHash
@@ -52,26 +26,34 @@ namespace Pixie
             return NameHash(component.Name()) ^ typeid(component).hash_code();
         }
     };
-
     struct TagComponent
     {
-
         TagComponent() = default;
         TagComponent(const TagComponent&) = default;
-        TagComponent(const std::string& tag) : Tag(tag) {}
+        TagComponent(const std::string& tag) : Tag(tag) { }
 
-        std::string Tag{ "Default Tag" };
+        std::string Tag{"Default Tag"};
 
         // Inherited via Component
         std::string Name{ "Tag Component" };
     };
 
-    struct NewCameraComponent
+    struct NameComponent
     {
-    public:
-        NewCameraComponent() = default;
-        NewCameraComponent(const NewCameraComponent&) = default;
+        NameComponent() = default;
+        NameComponent(const NameComponent&) = default;
+        NameComponent(const std::string& name) : Name(name) {}
 
-        EditorCamera Cam;
+        // Inherited via Component
+        std::string Name{ "Name" };
+    };
+
+    struct HeirarchyComponent
+    {
+        HeirarchyComponent() = default;
+        HeirarchyComponent(const HeirarchyComponent&) = default;
+
+        entt::entity Parent{ entt::null };
+        std::vector<entt::entity> Children{};
     };
 }

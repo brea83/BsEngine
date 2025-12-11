@@ -3,7 +3,7 @@
 
 namespace Pixie
 {
-#define BIT(x) (1 << x)
+	#define BIT(x) (1 << x)
 
 	enum class EventType
 	{
@@ -23,16 +23,18 @@ namespace Pixie
 		EventCategoryMouseButton = BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
-								virtual EventType GetEventType() const override { return GetStaticType(); }\
-								virtual const char* GetName() const override { return #type; }
+	#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
+									virtual EventType GetEventType() const override { return GetStaticType(); }\
+									virtual const char* GetName() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
+	#define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 
 	class Event
 	{
 	public:
+		Event() = default;
+		Event(const Event&) = default;
 		virtual ~Event() = default;
 
 		bool Handled{ false };
@@ -51,16 +53,20 @@ namespace Pixie
 
 	class EventDispatcher
 	{
+		template<typename T>
+		using EventFunction = std::function<bool(T&)>;
+
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)
-		{}
+		{ }
 
-		template<typename T, typename F> bool Dispatch(const F& function)
+		template<typename T/*, typename F*/>
+		bool Dispatch(const /*F&*/ EventFunction<T> function)
 		{
-			if (m_Event.GetEventType() == T::GetStaticType())
+			if (m_Event.GetEventType() == T::GetStaticType() && !m_Event.Handled)
 			{
-				m_Event.Handled |= function(static_cast<T&>(m_Event));
+				m_Event.Handled = function(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

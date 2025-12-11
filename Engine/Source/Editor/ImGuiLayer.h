@@ -4,6 +4,8 @@
 #include "Editor/Panels/SceneHierarchyPanel.h"
 #include "Editor/Panels/ImGuiPanel.h"
 #include <glm/glm.hpp>
+#include "Scene/GameObject.h"
+#include "Events/KeyboardEvents.h"
 
 namespace Pixie
 {
@@ -22,25 +24,34 @@ namespace Pixie
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
+		virtual void OnEvent(Event& event) override;
 
-		void DrawViewport(Pixie::EngineContext& engine, int selected);
+		void DrawViewport(EngineContext& engine, GameObject& selected);
 
 		void DrawEditorMenu(Pixie::EngineContext* engine);
+
+		glm::vec2 GetViewportSize() const { return m_ViewportPanelSize; }
 
 		void Begin();
 		void End();
 
 	private:
 		float m_Time{ 0.0f };
-		Pixie::Scene* m_CurrentScene;
+		Scene* m_CurrentScene{ nullptr };
 		glm::vec2 m_ViewportPanelSize{ 0.0f };
+		glm::vec2 m_ViewportBounds[2];
+		bool m_bViewportResized{ true };
 
-		SceneHierarchyPanel m_Hierarchy;
-		ImGuiPanel* m_AssetViewer;
+		//SceneHierarchyPanel m_Hierarchy;
+		GameObject m_Selected{entt::null, nullptr};
+		int m_GizmoType{ -1 };
+
+		ImGuiPanel* m_AssetViewer{ nullptr };
 
 		void DrawSceneTools();
 
-		void DrawGridLines(std::shared_ptr<Pixie::Camera> camera);
-		void DrawGizmos(std::shared_ptr<Pixie::Camera> camera, int selectedObjectIndex);
+		void DrawGridLines(Camera* camera);
+		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix/*Transform& camTransform*/, GameObject& selected);
 
+		bool OnKeyPressed(KeyPressedEvent& event);
 	};

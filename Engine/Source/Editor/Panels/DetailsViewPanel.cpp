@@ -1,11 +1,11 @@
 #include "BsPrecompileHeader.h"
 #include "DetailsViewPanel.h"
 #include "Scene/Scene.h"
-#include "Scene/GameObject.h"
 #include "Graphics/Primitives/Transform.h"
 #include "Scene/Components/Component.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Components/CameraComponent.h"
+#include "Graphics/CameraController.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
@@ -14,72 +14,54 @@
 //DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
 //	:_currentScene(scene), _selected(selectedObjectIndex)
 //{}
-
 using namespace Pixie;
-
-bool DetailsViewPanel::Draw(Scene* _currentScene, int _selected)
+bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
 {
-	if (_selected < 0 || _currentScene->m_GameObjects.size() <= _selected)
-	{
-		return false;
-	}
 	
 	ImGui::Begin("Details View");
 	{
-		GameObject* selectedObject = _currentScene->m_GameObjects[_selected];
+		if (scene == nullptr)
+		{
+			ImGui::End();
+			return false;
+		}
+		entt::registry& registry = scene->GetRegistry();
+		if (!registry.valid(selected))
+		{
+			ImGui::End();
+			return false;
+		}
 		
 		static bool bIsEditing = false;
 		static std::string editingValue1;
-		DrawStringProperty("Name", selectedObject->Name, editingValue1, bIsEditing);
+		NameComponent& nameComp = selected.GetComponent<NameComponent>();
+		DrawStringProperty("Name", nameComp.Name, editingValue1, bIsEditing);
 
 
 		if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
 		{
 			if (ImGui::Selectable("Mesh Component"))
 			{
-				selectedObject->AddComponent<MeshComponent>();
+				selected.AddComponent<MeshComponent>();
 			}
 
 			if (ImGui::Selectable("CameraComponent"))
 			{
-				selectedObject->AddComponent<CameraComponent>();
+				selected.AddComponent<CameraComponent>();
+				selected.AddComponent<CameraController, entt::entity>(selected.GetEnttHandle());
 			}
 			ImGui::EndPopup();
 		}
 		if(ImGui::Button("AddComponent"))
 		{
-			// To Do make pop up to select component type. 
-			// for now we only have one component tho so test add and remove with that
 			ImGui::OpenPopup("AddComponentPopUp");
-
 		}
 
-		ImGui::SeparatorText("Transform");
-
-		std::shared_ptr<Transform> transform = selectedObject->GetTransform();
-		//glm::vec3 position = transform->GetPosition();
-		glm::vec3 rotation = transform->GetRotationEuler();
-		glm::vec3 scale = transform->GetScale();
-		if (DrawVec3Control("Position", transform->m_Position))
-		{
-			transform->m_PositionDirty = true;
-		}
-
-		//translate rotation from radians to degrees
-		glm::vec3 eulerDegrees = transform->GetRotationEuler();
-		if (DrawVec3Control("Rotation", eulerDegrees))
-		{
-			transform->SetRotationEuler(eulerDegrees);
-		}
-		if (DrawVec3Control("Scale", transform->m_Scale, 1.0f))
-		{
-			transform->m_ScaleDirty = true;
-		}
-
-		
+	
+	//	
 
 		ImGui::SeparatorText("Componenets");
-		DrawComponents(selectedObject/*selectedObject->GetAllComponents()*/);
+		DrawComponents(scene, selected/*selectedObject->GetAllComponents()*/);
 		
 	}
 	ImGui::End();
@@ -238,26 +220,55 @@ bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string&
 	return bValueSubmitted;
 }
 
-void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
+void DetailsViewPanel::DrawComponents(Scene* scene, GameObject& selected)
 {
+	entt::registry& registry = scene->m_Registry;
+	if (selected.HasCompoenent<Transform>())
+	{
+		ImGui::SeparatorText("Transform");
 
-	if (selectedObject->HasCompoenent<MeshComponent>())
+		Transform& transform = selected.GetTransform();
+		//glm::vec3 position = transform->GetPosition();
+		//glm::vec3 rotation = transform.GetRotationEuler();
+		//glm::vec3 scale = transform.GetScale();
+		if (DrawVec3Control("Position", transform.m_Position))
+		{
+			transform.m_PositionDirty = true;
+		}
+
+		//translate rotation from radians to degrees
+		glm::vec3 eulerDegrees = transform.GetRotationEuler();
+		if (DrawVec3Control("Rotation", eulerDegrees))
+		{
+			transform.SetRotationEuler(eulerDegrees);
+		}
+		if (DrawVec3Control("Scale", transform.m_Scale, 1.0f))
+		{
+			transform.m_ScaleDirty = true;
+		}
+		
+		ImGui::TextWrapped("There is a known issue with ImGuizmo's Rotation gizmo:");
+		ImGui::TextWrapped("If the camera forward and right vectors are paralel to one of the gizmo circle planes those handles will not behave.");
+	}
+
+	if (selected.HasCompoenent<MeshComponent>())
 	{
 		ImGui::PushID("MeshComponent");
 		ImGui::Separator();
-		std::shared_ptr<MeshComponent> component = selectedObject->GetComponent<MeshComponent>();
+		MeshComponent& component = selected.GetComponent<MeshComponent>();
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
+		strcpy_s(buffer, sizeof(buffer), component.Name().c_str());
 		ImGui::Text(buffer);
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 		
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
-
-		if (ImGui::Button("X"))
+		ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+		ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+		
+		bool removeComponent{ false };
+		if (ImGui::Button("X", buttonSize))
 		{
-			selectedObject->RemoveComponent<MeshComponent>();
+			removeComponent = true;
 		}
 
 		ImGui::Separator();
@@ -265,63 +276,98 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 		//ImGui::Text(component->GetFilePath().c_str());
 		static bool bIsEditing2 = false;
 		static std::string  editingValue2;
-		std::string previousValue2 = component->m_FilePath;
-		if (DrawStringProperty("Mesh File", component->m_FilePath, editingValue2, bIsEditing2))
+		std::string previousValue2 = component.m_FilePath;
+		if (DrawStringProperty("Mesh File", component.m_FilePath, editingValue2, bIsEditing2))
 		{
-
-			if (!component->Reload())
+			if (!component.Reload())
 			{
 				std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
-				component->m_FilePath = previousValue2;
+				component.m_FilePath = previousValue2;
 			}
 		}
 
 		static bool bIsEditing = false;
 		static std::string  editingValue1;
-		std::string previousValue = component->m_TexturePath;
-		if (DrawStringProperty("Texture File", component->m_TexturePath, editingValue1, bIsEditing))
+		std::string previousValue = component.m_TexturePath;
+		if (DrawStringProperty("Texture File", component.m_TexturePath, editingValue1, bIsEditing))
 		{
-			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component->m_TexturePath);
+			std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component.m_TexturePath);
 			if (newTexture == nullptr)
 			{
 				std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
-				component->m_TexturePath = previousValue;
+				component.m_TexturePath = previousValue;
 			}
 			else
 			{
-				if (component->m_Texture != nullptr)
-				{
-					component->m_Texture = newTexture;
-				}
+				component.m_Texture = newTexture;
 			}
+		}
+
+		if (removeComponent)
+		{
+			selected.RemoveComponent<MeshComponent>();
 		}
 		ImGui::PopID();
 	}
 
-	if (selectedObject->HasCompoenent<CameraComponent>())
+	if (selected.HasCompoenent<CameraComponent>())
 	{
 		ImGui::PushID("CameraComponent");
 		ImGui::Separator();
-		std::shared_ptr<CameraComponent> component = selectedObject->GetComponent<CameraComponent>();
+		CameraComponent& component = selected.GetComponent<CameraComponent>();
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
-		strcpy_s(buffer, sizeof(buffer), component->Name().c_str());
+		strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
 		ImGui::Text(buffer);
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
-		float buttonWidth = ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.f);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+		ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+		ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 
-		if (ImGui::Button("X"))
+		bool removeComponent{ false };
+		if (ImGui::Button("X", buttonSize))
 		{
-			selectedObject->RemoveComponent<CameraComponent>();
+			removeComponent = true;
 		}
 
 		ImGui::Separator();
 
+		if(scene->m_ActiveCamera != selected)
+		{
+			if (ImGui::Button("Make Active")) // once cam manager is set up turn this into a Possess button
+			{
+				scene->SetActiveCamera(selected);
+			}
+		}
+		else
+		{
+			ImGui::BeginDisabled();
+			ImGui::Button("Is Active"); // once cam manager is set up turn this into an Unpossess button
+			ImGui::EndDisabled();
+		}
+		
+		std::string buttonText = scene->m_DefaultCamera != selected ? "Make Default" : "Is Default";
+		float textWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f);
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - textWidth);
+		if (scene->m_DefaultCamera != selected)
+		{
+			if (ImGui::Button(buttonText.c_str()))
+			{
+				scene->SetDefaultCamera(selected);
+			}
+		}
+		else
+		{
+			ImGui::BeginDisabled();
+			ImGui::Button(buttonText.c_str());
+			ImGui::EndDisabled();
+		}
+
+
+
 		float labelWidth = ( ImGui::GetFontSize() * 10.0f);
 		std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
-		std::vector<float*> values{ &component->m_Fov, &component->m_Near, &component->m_Far };
+		std::vector<float*> values{ &component.Cam.m_Fov, &component.Cam.m_Near, &component.Cam.m_Far };
 		if(ImGui::BeginTable("##CameraProperties", 2))
 		{
 			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);
@@ -343,6 +389,11 @@ void DetailsViewPanel::DrawComponents(GameObject* selectedObject)
 			}
 
 			ImGui::EndTable();
+		}
+
+		if (removeComponent)
+		{
+			selected.RemoveComponent<CameraComponent>();
 		}
 		ImGui::PopID();
 	}

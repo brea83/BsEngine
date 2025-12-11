@@ -1,9 +1,10 @@
 #pragma once
 #include "Core.h"
 #include "BsPrecompileHeader.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+
 #include "Events/Event.h"
+
+struct GLFWwindow;
 
 namespace Pixie
 {
@@ -16,9 +17,9 @@ namespace Pixie
 		unsigned int Width;
 		unsigned int Height;
 
-		WindowProperties(const std::string& title = "Bs Engine", unsigned int width = 800, unsigned int height = 600)
+		WindowProperties(const std::string& title = "Pixie Engine", unsigned int width = 800, unsigned int height = 600)
 			: Title(title), Width(width), Height(height)
-		{}
+		{ }
 	};
 
 	class Window
@@ -63,11 +64,10 @@ namespace Pixie
 		};
 
 		WindowData m_Data;
-		GLFWwindow* m_Window;
+		GLFWwindow* m_Window{ nullptr };
 		//int _windowWidth{ 800 };
 		//int _windowHeight{ 600 };
 
 
 	};
-
 }

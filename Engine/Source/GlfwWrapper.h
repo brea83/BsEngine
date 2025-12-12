@@ -31,27 +31,16 @@ namespace Pixie
 
 		int Init();
 		int WindowWidth() const { return m_Data.Width; }
-		/*bool SetWindowWidth(int value)
-		{
-			bool valueIsPositive = value > 0;
-			_windowWidth = valueIsPositive ? value : _windowWidth;
-			return valueIsPositive;
-		}*/
 		int WindowHeight() const { return m_Data.Height; }
-		/*bool SetWindowHeight(int value)
-		{
-			bool valueIsPositive = value > 0;
-			_windowHeight = valueIsPositive ? value : _windowHeight;
-			return valueIsPositive;
-		}*/
 
 		GLFWwindow* GetGlfwWindow() const { return m_Window; }
 
 		void SetEventCallback(const EventCallbackFunction& callback) { m_Data.EventCallback = callback; }
 
-		// behavior methods
+		// currently empty
 		void OnUpdate();
-
+		// swap glfw buffers and poll events
+		void EndFrame();
 
 	private:
 		struct WindowData

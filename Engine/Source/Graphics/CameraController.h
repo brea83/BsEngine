@@ -22,6 +22,13 @@ namespace Pixie
 		bool HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime);
 		bool HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime);
 
+		float GetTranslationSpeed() const { return m_TranslationSpeed; }
+		void SetTranslationSpeed(float value) { m_TranslationSpeed = value; }
+
+		float GetRotationSpeed() const { return m_RotationSpeed; }
+		void SetRotationSpeed(float value) { m_RotationSpeed = value; }
+
+		// TODO decide if zoom should go through cam controller or not?
 	private:
 		entt::entity m_CameraEntity{ entt::null };
 

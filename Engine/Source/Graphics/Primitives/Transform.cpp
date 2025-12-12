@@ -157,6 +157,7 @@ namespace Pixie
             return m_EulerRotation;
             break;
         default:
+            return m_EulerRotation;
             break;
         }
     }
@@ -246,7 +247,8 @@ namespace Pixie
         translation = vec3(LocalMatrix[3]);
         LocalMatrix[3] = vec4(0, 0, 0, LocalMatrix[3].w);
 
-        vec3 Row[3], Pdum3;
+        vec3 Row[3];
+        vec3 Pdum3;
 
         // Now get scale and shear.
         for (length_t i = 0; i < 3; ++i)

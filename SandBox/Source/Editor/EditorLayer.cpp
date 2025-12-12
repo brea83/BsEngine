@@ -1,43 +1,43 @@
+#include "EditorLayer.h"
 #include "BsPrecompileHeader.h"
-#include "ImGuiLayer.h"
-
-#include "EngineContext.h"
-#include "GlfwWrapper.h"
-#include "Graphics/Renderers/Renderer.h"
-#include "Graphics/Camera.h"
-#include "Graphics/FrameBuffer.h"
-#include "Scene/Scene.h"
-#include "Scene/GameObject.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Pixie.h"
+//#include "EngineContext.h"
+//#include "GlfwWrapper.h"
+//#include "Graphics/Renderers/Renderer.h"
+//#include "Graphics/Camera.h"
+//#include "Graphics/FrameBuffer.h"
+//#include "Scene/Scene.h"
+//#include "Scene/GameObject.h"
+//#include "Graphics/Primitives/Transform.h"
 //#include "glad/glad.h"
 
-#include "Input/WindowsInput.h"
+//#include "Input/WindowsInput.h"
 //#include "Events/KeyCodes.h"
 
-#include <imgui.h>
+#include <Editor/Panels/ImGuiPanel.h>
 #include <imgui_internal.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
+
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "GLFW/glfw3.h"
+//#include "GLFW/glfw3.h"
 
 #include "Editor/Panels/AssetViewerPanel.h"
+#include "Editor/Panels/SceneHierarchyPanel.h"
 #include "Editor/Panels/DetailsViewPanel.h"
 
 namespace Pixie
 {
-	ImGuiLayer::ImGuiLayer()
+	EditorLayer::EditorLayer() : ImGuiLayer()
 	{}
 
-	ImGuiLayer::~ImGuiLayer()
+	EditorLayer::~EditorLayer()
 	{
 		delete m_AssetViewer;
 	}
 
-	void ImGuiLayer::OnAttach()
+	void EditorLayer::OnAttach()
 	{
 		// setup dear imgui context
 		IMGUI_CHECKVERSION();
@@ -72,20 +72,12 @@ namespace Pixie
 		//m_AssetViewer = new AssetViewerPanel();
 	}
 
-	void ImGuiLayer::OnDetach()
+	void EditorLayer::OnDetach()
 	{}
 
-	void ImGuiLayer::Begin()
-	{
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-		//ToDo hook this up to detect perspective changes
-		ImGuizmo::BeginFrame();
-		ImGuizmo::SetOrthographic(false);
-	}
 
-	void ImGuiLayer::OnImGuiRender()
+
+	void EditorLayer::OnImGuiRender()
 	{
 		EngineContext& engine = *EngineContext::GetEngine();
 		static bool show = true;
@@ -114,13 +106,13 @@ namespace Pixie
 		DrawViewport(engine, m_Selected);
 	}
 
-	void ImGuiLayer::OnEvent(Event& event)
+	void EditorLayer::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(ImGuiLayer::OnKeyPressed));
+		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
 	}
 
-	void ImGuiLayer::DrawViewport(EngineContext& engine, GameObject& selected)
+	void EditorLayer::DrawViewport(EngineContext& engine, GameObject& selected)
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 		DrawSceneTools();
@@ -161,7 +153,7 @@ namespace Pixie
 		ImGui::End();
 	}
 
-	void ImGuiLayer::DrawEditorMenu(EngineContext* engine)
+	void EditorLayer::DrawEditorMenu(EngineContext* engine)
 	{
 
 		if (ImGui::BeginMainMenuBar())
@@ -177,7 +169,6 @@ namespace Pixie
 			{
 				if (ImGui::MenuItem("Empty GameObject"))
 				{
-					//GameObject* testObject = new GameObject();
 					m_CurrentScene->CreateEmptyGameObject("Empty");
 				}
 
@@ -185,31 +176,18 @@ namespace Pixie
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Windows"))
+			{
+				if (ImGui::MenuItem("Show ImGui Metrics")) ImGui::ShowMetricsWindow();
+				ImGui::EndMenu();
+			}
 			ImGui::EndMainMenuBar();
 		}
 
 	}
 
-	void ImGuiLayer::End()
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		EngineContext& engine = *EngineContext::GetEngine();
-		io.DisplaySize = ImVec2(engine.GetWindow()->WindowWidth(), engine.GetWindow()->WindowHeight());
 
-		//rendering
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
-	}
-
-	void ImGuiLayer::DrawSceneTools()
+	void EditorLayer::DrawSceneTools()
 	{
 		ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
@@ -223,18 +201,35 @@ namespace Pixie
 					EngineContext* engine = EngineContext::GetEngine();
 					engine->ToggleCamFlyMode();
 				}
+
+				GameObject activeCam = m_CurrentScene->GetActiveCameraGameObject();
+				CameraController& camController = activeCam.GetComponent<CameraController>();
+				Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
+				static float translationSpeed = camController.GetTranslationSpeed();
+				static float rotationSpeed = camController.GetRotationSpeed();
+				static float fov = camera.GetFov();
+
 				ImGui::SetItemTooltip("Tab to toggle fly controlls");
 
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
 				ImGui::Text("Cam Speed");
-				ImGui::DragFloat("##Speed", &m_CurrentScene->GetActiveCamera()->m_CameraSpeed);
+				if (ImGui::DragFloat("##Speed", &translationSpeed))
+				{
+					camController.SetTranslationSpeed(translationSpeed);
+				}
 				ImGui::Text("Look Sensitivity");
-				ImGui::DragFloat("##Sensitivity", &m_CurrentScene->GetActiveCamera()->m_MouseLookSesitivity);
+				if (ImGui::DragFloat("##Sensitivity", &rotationSpeed))
+				{
+					camController.SetRotationSpeed(rotationSpeed);
+				}
 				ImGui::Text("FOV");
-				ImGui::DragFloat("##FoVvalue", &m_CurrentScene->GetActiveCamera()->m_Fov);
+				if (ImGui::DragFloat("##FoVvalue", &fov))
+				{
+					camera.SetFov(fov);
+				}
 				if (ImGui::Button("ResetFoV"))
 				{
-					m_CurrentScene->GetActiveCamera()->m_Fov = 45.0f;
+					camera.SetFov(45.0f);
 				}
 				ImGui::PopItemWidth();
 				ImGui::EndMenuBar();
@@ -244,10 +239,10 @@ namespace Pixie
 
 	}
 
-	void ImGuiLayer::DrawGridLines(Camera* camera)
+	void EditorLayer::DrawGridLines(Camera* camera)
 	{}
 
-	void ImGuiLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& selected)
+	void EditorLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& selected)
 	{
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -255,7 +250,7 @@ namespace Pixie
 		m_ViewportBounds[0] = { viewportMinRegion.x + viewportOffset.x, viewportMinRegion.y + viewportOffset.y };
 		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
-		entt::registry& registry = m_CurrentScene->m_Registry;
+		entt::registry& registry = m_CurrentScene->GetRegistry();
 		if (!registry.valid(selected) || m_GizmoType == -1)
 		{
 			return;
@@ -303,7 +298,7 @@ namespace Pixie
 		}
 	}
 
-	bool ImGuiLayer::OnKeyPressed(KeyPressedEvent& event)
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
 	{
 		if (event.IsRepeat())
 		{

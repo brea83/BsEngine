@@ -132,7 +132,7 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="CameraManager.cpp" />
+    <ClCompile Include="Source\CameraManager.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
     <ClCompile Include="Source\Graphics\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
@@ -164,9 +164,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Source\Editor\ImGuiLayer.cpp" />
-    <ClCompile Include="Source\Layer.cpp" />
-    <ClCompile Include="Source\LayerStack.cpp" />
+    <ClCompile Include="Source\Layers\ImGuiLayer.cpp" />
+    <ClCompile Include="Source\Layers\Layer.cpp" />
+    <ClCompile Include="Source\Layers\LayerStack.cpp" />
     <ClCompile Include="Source\Resources\StbImageWrapper.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp" />
@@ -181,7 +181,7 @@
     <ClCompile Include="Source\GlfwWrapper.cpp" />
     <ClCompile Include="Source\Resources\TextResource.cpp" />
     <ClCompile Include="Source\Input\WindowsInput.cpp" />
-    <ClCompile Include="SubscribableEvent.cpp" />
+    <ClCompile Include="Source\Events\SubscribableEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -204,7 +204,7 @@
     <ClInclude Include="Source\EntryPoint.h" />
     <ClInclude Include="Pixie.h" />
     <ClInclude Include="Source\Core.h" />
-    <ClInclude Include="CameraManager.h" />
+    <ClInclude Include="Source\CameraManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Input\Input.h" />
     <ClInclude Include="Source\Graphics\CameraController.h" />
@@ -234,9 +234,9 @@
     <ClInclude Include="Source\Graphics\Renderers\ForwardRenderer.h" />
     <ClInclude Include="Source\Graphics\Renderers\ForwardRenderPass.h" />
     <ClInclude Include="Source\BsPrecompileHeader.h" />
-    <ClInclude Include="Source\Editor\ImGuiLayer.h" />
-    <ClInclude Include="Source\Layer.h" />
-    <ClInclude Include="Source\LayerStack.h" />
+    <ClInclude Include="Source\Layers\ImGuiLayer.h" />
+    <ClInclude Include="Source\Layers\Layer.h" />
+    <ClInclude Include="Source\Layers\LayerStack.h" />
     <ClInclude Include="Source\Events\MouseCodes.h" />
     <ClInclude Include="Source\Resources\StbImageWrapper.h" />
     <ClInclude Include="Source\Graphics\Primitives\QuadMesh.h" />
@@ -251,7 +251,7 @@
     <ClInclude Include="Source\GlfwWrapper.h" />
     <ClInclude Include="Source\Resources\TextResource.h" />
     <ClInclude Include="Source\Input\WindowsInput.h" />
-    <ClInclude Include="SubscribableEvent.h" />
+    <ClInclude Include="Source\Events\SubscribableEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />

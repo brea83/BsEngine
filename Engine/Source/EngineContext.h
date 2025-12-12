@@ -17,8 +17,8 @@ namespace Pixie
 	class EngineContext
 	{
 	public:
-
 		static EngineContext* GetEngine();
+		virtual ~EngineContext() { }
 		bool Init();
 
 		static int NextUID;
@@ -34,7 +34,7 @@ namespace Pixie
 
 		Renderer* GetRenderer() { return m_Renderer; }
 
-
+		void SetImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }
 
 		// methods
 		bool IsRunning()const { return m_IsRunning; }
@@ -60,7 +60,7 @@ namespace Pixie
 
 	protected:
 		// constructors, properties, getters and setters
-		EngineContext(Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr);
+		EngineContext(Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr, ImGuiLayer* startingImGuiLayer = nullptr);
 
 		static EngineContext* m_Engine;
 		std::deque<std::shared_ptr<Event>> m_EventQueue;

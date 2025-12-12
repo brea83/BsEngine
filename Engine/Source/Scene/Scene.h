@@ -9,7 +9,7 @@ namespace Pixie
 	class GameObject;
 	class MeshComponent;
 	class Camera;
-	class CameraComponent;
+	struct CameraComponent;
 	class Entity;
 
 	class Scene

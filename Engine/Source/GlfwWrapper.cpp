@@ -188,6 +188,11 @@ namespace Pixie
 
 	void Window::OnUpdate()
 	{
+		
+	}
+
+	void Window::EndFrame()
+	{
 		// glfw: swap buffers and poll IO events
 		glfwSwapBuffers(m_Window);
 		glfwPollEvents();

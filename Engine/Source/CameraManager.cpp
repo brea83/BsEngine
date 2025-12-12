@@ -30,6 +30,7 @@ namespace Pixie
             m_EditorFlyMode = !m_EditorFlyMode;
             return true;
         }
+        return false;
     }
     void CameraManager::OnBeginPlayMode()
     {

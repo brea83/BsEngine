@@ -6,7 +6,7 @@
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
-#include "Editor/ImGuiLayer.h"
+#include "Layers/ImGuiLayer.h"
 #include "Graphics/CameraController.h"
 #include "Scene/Components/CameraComponent.h"
 #include "Graphics/Primitives/Transform.h"
@@ -20,8 +20,8 @@ namespace Pixie
 	EngineContext* EngineContext::m_Engine = nullptr;
 	//EngineContext* EngineContext::NextUID = 0;
 
-	EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer)
-		: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer)
+	EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer, ImGuiLayer* startingImGuiLayer)
+		: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer), m_ImGuiLayer(startingImGuiLayer)
 	{
 		if (m_Engine == NULL/* || m_Engine == nullptr*/)
 		{
@@ -42,7 +42,7 @@ namespace Pixie
 		if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 		m_Renderer->Init();
 
-		m_ImGuiLayer = new ImGuiLayer();
+		if(m_ImGuiLayer == nullptr)	m_ImGuiLayer = new ImGuiLayer();
 
 		if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 		m_ActiveScene->Initialize();
@@ -94,7 +94,7 @@ namespace Pixie
 
 		m_ImGuiLayer->OnUpdate(m_DeltaTime);
 
-		//swap glfw buffers and poll events
+		
 		m_MainWindow->OnUpdate();
 	}
 
@@ -111,6 +111,9 @@ namespace Pixie
 		m_ImGuiLayer->Begin();
 		m_ImGuiLayer->OnImGuiRender();
 		m_ImGuiLayer->End();
+
+		//swap glfw buffers and poll events
+		m_MainWindow->EndFrame();
 	}
 
 	void EngineContext::DrawConsole()

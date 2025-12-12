@@ -14,7 +14,7 @@
 //#include "Input/WindowsInput.h"
 //#include "Events/KeyCodes.h"
 
-#include <Editor/Panels/ImGuiPanel.h>
+#include "ImGui/ImGuiPanel.h"
 #include <imgui_internal.h>
 
 #include <ImGuizmo/ImGuizmo.h>
@@ -23,9 +23,9 @@
 #include <glm/gtc/type_ptr.hpp>
 //#include "GLFW/glfw3.h"
 
-#include "Editor/Panels/AssetViewerPanel.h"
-#include "Editor/Panels/SceneHierarchyPanel.h"
-#include "Editor/Panels/DetailsViewPanel.h"
+#include "Panels/AssetViewerPanel.h"
+#include "Panels/SceneHierarchyPanel.h"
+#include "Panels/DetailsViewPanel.h"
 
 namespace Pixie
 {

@@ -1,7 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "ImGuiLayer.h"
 #include "EngineContext.h"
-#include "Editor/Panels/ImGuiPanel.h"
+#include "ImGui/ImGuiPanel.h"
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/matrix.hpp>

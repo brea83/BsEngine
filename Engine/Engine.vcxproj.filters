@@ -15,21 +15,17 @@
     <ClCompile Include="Source\Graphics\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
     <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
-    <ClCompile Include="Source\Editor\EditorCamera.cpp" />
-    <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp" />
     <ClCompile Include="Source\Scene\Components\Component.cpp" />
     <ClCompile Include="Source\Scene\GameObject.cpp" />
     <ClCompile Include="Source\Events\KeyCodes.cpp" />
     <ClCompile Include="Source\Assimp\AssimpGlmHelpers.cpp" />
     <ClCompile Include="Source\Scene\Components\MeshComponent.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Mesh.cpp" />
-    <ClCompile Include="Source\Editor\Panels\AssetViewerPanel.cpp" />
-    <ClCompile Include="Source\Editor\Panels\ImGuiPanel.cpp" />
+    <ClCompile Include="Source\ImGui\ImGuiPanel.cpp" />
     <ClCompile Include="Source\Resources\AssetLoader.cpp" />
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Graphics\FrameBuffer.cpp" />
     <ClCompile Include="Source\Events\KeyboardEvents.cpp" />
-    <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\Events\MouseEvents.cpp" />
     <ClCompile Include="Source\Events\ApplicationEvent.cpp" />
     <ClCompile Include="Source\Events\Event.cpp" />
@@ -57,6 +53,7 @@
     <ClCompile Include="Source\Resources\TextResource.cpp" />
     <ClCompile Include="Source\Input\WindowsInput.cpp" />
     <ClCompile Include="Source\Events\SubscribableEvent.cpp" />
+    <ClCompile Include="Source\Editor\EditorCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -85,21 +82,17 @@
     <ClInclude Include="Source\Graphics\CameraController.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
     <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
-    <ClInclude Include="Source\Editor\EditorCamera.h" />
-    <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h" />
     <ClInclude Include="Source\Scene\Components\Component.h" />
     <ClInclude Include="Source\Scene\GameObject.h" />
     <ClInclude Include="Source\Events\KeyCodes.h" />
     <ClInclude Include="Source\Assimp\AssimpGlmHelpers.h" />
     <ClInclude Include="Source\Scene\Components\MeshComponent.h" />
     <ClInclude Include="Source\Graphics\Primitives\Mesh.h" />
-    <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h" />
-    <ClInclude Include="Source\Editor\Panels\ImGuiPanel.h" />
+    <ClInclude Include="Source\ImGui\ImGuiPanel.h" />
     <ClInclude Include="Source\Resources\AssetLoader.h" />
     <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Graphics\FrameBuffer.h" />
     <ClInclude Include="Source\Events\KeyboardEvents.h" />
-    <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="Source\Events\MouseEvents.h" />
     <ClInclude Include="Source\Events\ApplicationEvent.h" />
     <ClInclude Include="Source\Events\Event.h" />
@@ -127,6 +120,7 @@
     <ClInclude Include="Source\Resources\TextResource.h" />
     <ClInclude Include="Source\Input\WindowsInput.h" />
     <ClInclude Include="Source\Events\SubscribableEvent.h" />
+    <ClInclude Include="Source\Editor\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

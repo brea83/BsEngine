@@ -21,7 +21,7 @@ namespace Pixie
 		virtual ~EngineContext() { }
 		bool Init();
 
-		static int NextUID;
+		//static int NextUID;
 
 		std::shared_ptr<Window> GetWindow() { return m_MainWindow; }
 		GLFWwindow* GetGlfwWindow();
@@ -53,10 +53,10 @@ namespace Pixie
 
 		// callback sent to GLFW window system that collects events each frame 
 		// to be processed at the top of next frame in DispatchEvents
-		void OnEvent(Event& event);
+		virtual void OnEvent(Event& event);
 
-		bool OnFrameBufferSize(WindowResizedEvent& event);
-		bool OnWindowClosed(WindowClosedEvent& event);
+		virtual bool OnFrameBufferSize(WindowResizedEvent& event);
+		virtual bool OnWindowClosed(WindowClosedEvent& event);
 
 	protected:
 		// constructors, properties, getters and setters
@@ -92,14 +92,11 @@ namespace Pixie
 			m_EventQueue.push_back(std::make_shared<T>(event));
 		}
 		void DispatchEvent(std::shared_ptr<Event> eventptr);
-		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
-		bool OnMouseScrolled(MouseScrolledEvent& event);
-		bool OnMouseMoved(MouseMovedEvent& event);
-		bool OnKeyPressedEvent(KeyPressedEvent& event);
-		/*{
-			if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-				glfwSetWindowShouldClose(window, true);
-		}*/
+		virtual bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
+		virtual bool OnMouseScrolled(MouseScrolledEvent& event);
+		virtual bool OnMouseMoved(MouseMovedEvent& event);
+		virtual bool OnKeyPressedEvent(KeyPressedEvent& event);
+
 	};
 	// To be defined in Client (ie SandBox)
 	EngineContext* CreateApplication();

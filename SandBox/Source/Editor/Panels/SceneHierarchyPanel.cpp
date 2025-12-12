@@ -1,9 +1,12 @@
 #include "BsPrecompileHeader.h"
 #include "SceneHierarchyPanel.h"
-#include "Scene/Scene.h"
-#include "Scene/GameObject.h"
-#include "Scene/Components/Component.h"
-#include "Graphics/Primitives/Transform.h"
+#include <Pixie.h>
+#include "ImGui/ImGuiPanel.h"
+
+//#include "Scene/Scene.h"
+//#include "Scene/GameObject.h"
+//#include "Scene/Components/Component.h"
+//#include "Graphics/Primitives/Transform.h"
 
 namespace Pixie
 {

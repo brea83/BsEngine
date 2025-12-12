@@ -1,5 +1,4 @@
 #pragma once
-#include "ImGuiPanel.h"
 #include <glm/vec3.hpp>
 #include "Scene/GameObject.h"
 

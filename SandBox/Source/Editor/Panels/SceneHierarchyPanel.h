@@ -1,10 +1,10 @@
 #pragma once
-#include "ImGuiPanel.h"
-#include "Scene/GameObject.h"
+//#include "Scene/GameObject.h"
 
 namespace Pixie
 {
 	class Scene;
+	class GameObject;
 
 	class SceneHierarchyPanel
 	{

@@ -2,7 +2,7 @@
 #include "ImGuiLayer.h"
 #include "EngineContext.h"
 #include "Editor/Panels/ImGuiPanel.h"
-
+#include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/matrix.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -47,6 +47,9 @@ namespace Pixie
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		ImGuizmo::BeginFrame();
+		ImGuizmo::SetOrthographic(false);
 	}
 
 	void ImGuiLayer::End()

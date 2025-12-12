@@ -10,8 +10,8 @@ namespace Pixie
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer();
-		virtual ~ImGuiLayer();
+		ImGuiLayer(){ }
+		virtual ~ImGuiLayer(){}
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override {}
@@ -26,7 +26,7 @@ namespace Pixie
 		float m_Time{ 0.0f };
 
 		glm::vec2 m_ViewportPanelSize{ 0.0f };
-		glm::vec2 m_ViewportBounds[2];
+		glm::vec2 m_ViewportBounds[2]{ {glm::vec2(0.0f, 0.0f)}, {glm::vec2(1.0f, 1.0f) } };
 		bool m_bViewportResized{ true };
 	};
 }

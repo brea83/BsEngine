@@ -6,7 +6,7 @@
 //#include "Scene/Scene.h"
 //#include "Scene/GameObject.h"
 //#include "Scene/Components/Component.h"
-//#include "Graphics/Primitives/Transform.h"
+//#include "Graphics/Primitives/TransformComponent.h"
 
 namespace Pixie
 {

@@ -14,13 +14,13 @@ namespace Pixie
 		Radians
 	};
 
-	class Transform
+	class TransformComponent
 	{
 
 	public:
-		Transform() = default;
-		Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
-		Transform(const Transform&) = default;
+		TransformComponent() = default;
+		TransformComponent(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
+		TransformComponent(const TransformComponent&) = default;
 		// properties
 		void UnParent(Scene* scene, entt::entity parent, entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
 		entt::entity ParentEntityHandle{ entt::null };
@@ -54,12 +54,12 @@ namespace Pixie
 		glm::mat4 GetWorld() const { return m_WorldMatrix; }
 
 		//operator overrides
-		bool operator==(const Transform& other) const
+		bool operator==(const TransformComponent& other) const
 		{
 			return EntityHandle == other.EntityHandle;
 		}
 
-		bool operator!=(const Transform& other) const
+		bool operator!=(const TransformComponent& other) const
 		{
 			return !(*this == other);
 		}

@@ -8,7 +8,7 @@
 //#include "Graphics/FrameBuffer.h"
 //#include "Scene/Scene.h"
 //#include "Scene/GameObject.h"
-//#include "Graphics/Primitives/Transform.h"
+//#include "Graphics/Primitives/TransformComponent.h"
 //#include "glad/glad.h"
 
 //#include "Input/WindowsInput.h"
@@ -118,7 +118,7 @@ namespace Pixie
 		DrawSceneTools();
 		glm::mat4 viewMatrix{ 1.0f };
 		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
-		//Transform& camTransform = m_CurrentScene->GetActiveCameraTransform();
+		//TransformComponent& camTransform = m_CurrentScene->GetActiveCameraTransform();
 		//DrawGridLines(camera);
 
 		std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
@@ -262,7 +262,7 @@ namespace Pixie
 		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 			m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
-		Transform& transform = selected.GetTransform();
+		TransformComponent& transform = selected.GetTransform();
 		//if (transform == nullptr) return;
 		glm::mat4 transformMatrix = transform.GetLocal();
 		/*ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(transform.GetPosition()),
@@ -282,7 +282,7 @@ namespace Pixie
 			glm::vec3 translation;
 			glm::vec3 rotation;
 			glm::vec3 scale;
-			Transform::Decompose(transformMatrix, scale, rotation, translation);
+			TransformComponent::Decompose(transformMatrix, scale, rotation, translation);
 
 			glm::vec3 oldRotation = transform.GetRotationEuler(AngleType::Radians);
 			glm::vec3 deltaRotation = rotation - oldRotation;

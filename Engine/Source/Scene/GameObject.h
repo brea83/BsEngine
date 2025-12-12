@@ -6,7 +6,7 @@
 
 namespace Pixie
 {
-	class Transform;
+	class TransformComponent;
 
 	class GameObject : public Entity
 	{
@@ -16,7 +16,7 @@ namespace Pixie
 		virtual ~GameObject();
 		
 		virtual void Init();
-		Transform& GetTransform();
+		TransformComponent& GetTransform();
 
 		void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
 		GameObject GetParent();

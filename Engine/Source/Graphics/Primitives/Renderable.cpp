@@ -1,6 +1,5 @@
 #include "BsPrecompileHeader.h"
 #include "Renderable.h"
-#include "Transform.h"
 
 namespace Pixie
 {

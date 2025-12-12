@@ -50,7 +50,7 @@ namespace Pixie
 		GameObject GetActiveCameraGameObject();
 		void SetActiveCamera(GameObject& gameObject);
 		void SetDefaultCamera(GameObject& gameObject);
-		//Transform& GetActiveCameraTransform();
+		//TransformComponent& GetActiveCameraTransform();
 
 		bool TryRemoveCamera(entt::entity entityHandle);
 

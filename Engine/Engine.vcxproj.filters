@@ -47,7 +47,7 @@
     <ClCompile Include="Source\Scene\Scene.cpp" />
     <ClCompile Include="Source\Graphics\Shaders\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Texture.cpp" />
-    <ClCompile Include="Source\Graphics\Primitives\Transform.cpp" />
+    <ClCompile Include="Source\Scene\Components\Transform.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Triangle.cpp" />
     <ClCompile Include="Source\GlfwWrapper.cpp" />
     <ClCompile Include="Source\Resources\TextResource.cpp" />
@@ -114,7 +114,7 @@
     <ClInclude Include="Source\Scene\Scene.h" />
     <ClInclude Include="Source\Graphics\Shaders\Shader.h" />
     <ClInclude Include="Source\Graphics\Texture.h" />
-    <ClInclude Include="Source\Graphics\Primitives\Transform.h" />
+    <ClInclude Include="Source\Scene\Components\Transform.h" />
     <ClInclude Include="Source\Graphics\Primitives\Triangle.h" />
     <ClInclude Include="Source\GlfwWrapper.h" />
     <ClInclude Include="Source\Resources\TextResource.h" />

@@ -46,7 +46,7 @@ namespace Pixie
 		
 		void Render(Shader& currentShader);
 
-		void Render(Shader& currentShader, Transform& transform);
+		void Render(Shader& currentShader, TransformComponent& transform);
 
 	protected:
 		//properties
@@ -67,7 +67,7 @@ namespace Pixie
 		//TODO: refactor this to look for matching models and meshes in the assetloader
 		// and move the actual loading and processing to the asset loader
 		// for now just following tutorial to see if I can get importing to work at all
-		void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode);
+		void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
 		aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 		void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 		std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);

@@ -9,18 +9,18 @@
 //
 namespace Pixie
 {
-    Transform::Transform(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
+    TransformComponent::TransformComponent(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale)
     : m_Position(position), m_EulerRotation(glm::radians(rotation)), 
     m_Orientation(glm::quat(glm::radians(rotation))), m_Scale(scale), 
     m_LocalMatrix(glm::mat4(1.0f)), m_WorldMatrix(glm::mat4(1.0f))
     { }
 
-    void Transform::UnParent(Scene* scene, entt::entity parent, entt::entity grandParent, bool bKeepWorldPosition)
+    void TransformComponent::UnParent(Scene* scene, entt::entity parent, entt::entity grandParent, bool bKeepWorldPosition)
     {
 
         if (bKeepWorldPosition && scene->GetRegistry().valid(parent))
         {
-            Transform& parentTransform = scene->GetRegistry().get<Transform>(grandParent);
+            TransformComponent& parentTransform = scene->GetRegistry().get<TransformComponent>(grandParent);
             glm::mat4 parentMatrix = parentTransform.m_LocalMatrix;
 
             m_LocalMatrix = parentMatrix * m_LocalMatrix;
@@ -38,7 +38,7 @@ namespace Pixie
         ParentEntityHandle = entt::null;
     }
 
-    glm::vec3 Transform::GetPosition()
+    glm::vec3 TransformComponent::GetPosition()
     {
         if(!m_PositionDirty) return m_Position;
 
@@ -47,7 +47,7 @@ namespace Pixie
         return m_Position;
     }
 
-    glm::vec3 Transform::Forward() const
+    glm::vec3 TransformComponent::Forward() const
     {
         glm::vec3 direction;
 
@@ -58,27 +58,27 @@ namespace Pixie
         return glm::normalize(direction);
     }
 
-    glm::vec3 Transform::Up() const
+    glm::vec3 TransformComponent::Up() const
     {
         return glm::normalize(glm::cross(Right(), Forward()));
     }
 
-    glm::vec3 Transform::Left() const
+    glm::vec3 TransformComponent::Left() const
     {
         return Right() * -1.0f;
     }
 
-    glm::vec3 Transform::Right() const
+    glm::vec3 TransformComponent::Right() const
     {
         return  glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
-    glm::vec3 Transform::Down() const
+    glm::vec3 TransformComponent::Down() const
     {
         return Up() * -1.0f;
     }
 
-    void Transform::Rotate(float angle, glm::vec3 axis, AngleType angleType)
+    void TransformComponent::Rotate(float angle, glm::vec3 axis, AngleType angleType)
     {
         if (angleType == AngleType::Degrees)
         {
@@ -98,7 +98,7 @@ namespace Pixie
         m_RotationDirty;
     }
 
-    void Transform::SetRotationEuler(glm::vec3 value, AngleType angleType)
+    void TransformComponent::SetRotationEuler(glm::vec3 value, AngleType angleType)
     {
         if (angleType == AngleType::Degrees)
         {
@@ -114,7 +114,7 @@ namespace Pixie
         m_RotationDirty = true;
     }
 
-    void Transform::SetRotationQuaternion(glm::quat orientation, AngleType angleType)
+    void TransformComponent::SetRotationQuaternion(glm::quat orientation, AngleType angleType)
     {
         if (angleType == AngleType::Degrees)
         {
@@ -141,7 +141,7 @@ namespace Pixie
         m_RotationDirty = true;
     }
 
-    glm::vec3 Transform::GetRotationEuler(AngleType angleType)
+    glm::vec3 TransformComponent::GetRotationEuler(AngleType angleType)
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
         {
@@ -162,7 +162,7 @@ namespace Pixie
         }
     }
 
-    glm::vec3 Transform::GetScale()
+    glm::vec3 TransformComponent::GetScale()
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
         {
@@ -172,7 +172,7 @@ namespace Pixie
         return m_Scale;
     }
 
-    glm::mat4& Transform::GetObjectToWorldMatrix()
+    glm::mat4& TransformComponent::GetObjectToWorldMatrix()
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
         {
@@ -182,7 +182,7 @@ namespace Pixie
         if (ParentEntityHandle != entt::null)
         {
             Scene* scene = EngineContext::GetEngine()->GetScene();
-            Transform& parentTransform = scene->GetRegistry().get<Transform>(ParentEntityHandle);
+            TransformComponent& parentTransform = scene->GetRegistry().get<TransformComponent>(ParentEntityHandle);
             m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
             return m_WorldMatrix;
         }
@@ -190,7 +190,7 @@ namespace Pixie
         return m_LocalMatrix;
     }
 
-    void Transform::RecalculateModelMatrix()
+    void TransformComponent::RecalculateModelMatrix()
     {
         glm::mat4 identity = glm::mat4(1.0f);
         glm::mat4 translation = glm::translate(identity, m_Position);
@@ -212,14 +212,14 @@ namespace Pixie
         m_RotationDirty = false;
     }
 
-    void Transform::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)
+    void TransformComponent::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)
     {
         glm::vec3 skew;
         glm::vec4 perspective;
         glm::decompose(modelMatrix, scale, orientation, translation, skew, perspective);
     }
 
-    bool Transform::Decompose(glm::mat4 const& transform, glm::vec3& scale, glm::vec3& rotation, glm::vec3& translation)
+    bool TransformComponent::Decompose(glm::mat4 const& transform, glm::vec3& scale, glm::vec3& rotation, glm::vec3& translation)
     {
         // From glm::decompose in matrix_decompose.inl and Hazel engine
 

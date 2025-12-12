@@ -1,6 +1,5 @@
 #include "BsPrecompileHeader.h"
 #include "Mesh.h"
-#include "Transform.h"
 #include "Graphics/Texture.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

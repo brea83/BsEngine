@@ -10,7 +10,7 @@
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Scene/Components/Transform.h"
 #include "Scene/Components/CameraComponent.h"
 
 //#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}
@@ -20,7 +20,7 @@ namespace Pixie
 	void CameraController::OnUpdate(float deltaTime, GameObject& gameObject)
 	{
 		std::cout << "Camera Controller Component update" << std::endl;
-		Transform& transform = gameObject.GetTransform();
+		TransformComponent& transform = gameObject.GetTransform();
 
 		float sensitivity = m_RotationSpeed * deltaTime;
 		glm::vec2 offset = m_MouseDelta * sensitivity;
@@ -49,7 +49,7 @@ namespace Pixie
 		//dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 	}
 
-	bool CameraController::HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime)
+	bool CameraController::HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime)
 	{
 		float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
 
@@ -122,7 +122,7 @@ namespace Pixie
 		return false;
 	}
 
-	bool CameraController::HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime)
+	bool CameraController::HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime)
 	{
 		float sensitivity = m_RotationSpeed * deltaTime;
 		xOffset *= sensitivity;

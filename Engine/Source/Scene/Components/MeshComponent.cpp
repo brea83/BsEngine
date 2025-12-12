@@ -1,7 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "MeshComponent.h"
 #include "Resources/AssetLoader.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Scene/Components/Transform.h"
 #include "Graphics/Primitives/Mesh.h"
 #include <glm/glm.hpp>
 #include "Assimp/AssimpGlmHelpers.h"
@@ -185,7 +185,7 @@ namespace Pixie
 		return true;
 	}
 
-	void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode)
+	void MeshComponent::ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode)
 	{
 
 		if (parentNode) 
@@ -405,7 +405,7 @@ namespace Pixie
 		}
 	}
 
-	void MeshComponent::Render(Shader& currentShader, Transform& transform)
+	void MeshComponent::Render(Shader& currentShader, TransformComponent& transform)
 	{
 		currentShader.SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
 		

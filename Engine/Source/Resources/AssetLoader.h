@@ -45,7 +45,7 @@ namespace Pixie
 
 		static void ProcessNode(std::vector<Mesh>& meshes, aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
 		//static std::shared_ptr<Mesh> LoadMesh(aiMesh& mesh, const aiScene& assimpScene);
-		//static void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<Transform> localTransform, aiNode* parentNode);
+		//static void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
 		//static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 		//static std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
 		//static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);

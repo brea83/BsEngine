@@ -1,6 +1,5 @@
 #include "BsPrecompileHeader.h"
 #include "QuadMesh.h"
-#include "Transform.h"
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 

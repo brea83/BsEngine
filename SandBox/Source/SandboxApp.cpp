@@ -67,7 +67,7 @@ bool SandboxApp::OnMouseMoved(MouseMovedEvent& event)
 		entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraGameObject();
 
 		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
-		Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
+		TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamEntity);
 
 		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 
@@ -101,7 +101,7 @@ bool SandboxApp::OnKeyPressedEvent(KeyPressedEvent& event)
 		GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
 
 		CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
-		Transform* cameraTransform = registry.try_get<Transform>(activeCamObject);
+		TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamObject);
 
 		if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 

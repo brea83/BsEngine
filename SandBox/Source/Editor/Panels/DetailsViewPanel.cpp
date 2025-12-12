@@ -3,7 +3,7 @@
 #include "Pixie.h"
 #include "ImGui/ImGuiPanel.h"
 //#include "Scene/Scene.h"
-//#include "Graphics/Primitives/Transform.h"
+//#include "Graphics/Primitives/TransformComponent.h"
 //#include "Scene/Components/Component.h"
 //#include "Scene/Components/MeshComponent.h"
 //#include "Scene/Components/CameraComponent.h"
@@ -226,11 +226,11 @@ namespace Pixie
 	void DetailsViewPanel::DrawComponents(Scene* scene, GameObject& selected)
 	{
 		entt::registry& registry = scene->m_Registry;
-		if (selected.HasCompoenent<Transform>())
+		if (selected.HasCompoenent<TransformComponent>())
 		{
 			ImGui::SeparatorText("Transform");
 
-			Transform& transform = selected.GetTransform();
+			TransformComponent& transform = selected.GetTransform();
 			//glm::vec3 position = transform->GetPosition();
 			//glm::vec3 rotation = transform.GetRotationEuler();
 			//glm::vec3 scale = transform.GetScale();

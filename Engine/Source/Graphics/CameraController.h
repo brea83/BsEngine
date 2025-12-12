@@ -7,7 +7,7 @@
 
 namespace Pixie
 {
-	class Transform;
+	class TransformComponent;
 	class GameObject;
 
 	class CameraController
@@ -19,8 +19,8 @@ namespace Pixie
 		void OnUpdate(float deltaTime, GameObject& gameObject);
 
 		bool OnEvent(Event& event);
-		bool HandleKeyInput(Transform* transform, Inputs::Keyboard keyCode, float deltaTime);
-		bool HandleMouseLook(Transform* transform, float xOffset, float yOffset, float deltaTime);
+		bool HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime);
+		bool HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime);
 
 		float GetTranslationSpeed() const { return m_TranslationSpeed; }
 		void SetTranslationSpeed(float value) { m_TranslationSpeed = value; }

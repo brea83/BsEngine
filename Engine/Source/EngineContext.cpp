@@ -9,7 +9,7 @@
 #include "Layers/ImGuiLayer.h"
 #include "Graphics/CameraController.h"
 #include "Scene/Components/CameraComponent.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Scene/Components/Transform.h"
 
 
 //#define BIND_EVENT_FUNCTION(x) std::bind(&x, this,  std::placeholders::_1)
@@ -254,7 +254,7 @@ namespace Pixie
 			entt::entity activeCamEntity = m_ActiveScene->GetActiveCameraGameObject();
 
 			CameraController* cameraComponent = registry.try_get<CameraController>(activeCamEntity);
-			Transform* cameraTransform = registry.try_get<Transform>(activeCamEntity);
+			TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamEntity);
 
 			if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 
@@ -288,7 +288,7 @@ namespace Pixie
 			GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
 
 			CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
-			Transform* cameraTransform = registry.try_get<Transform>(activeCamObject);
+			TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamObject);
 
 			if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 

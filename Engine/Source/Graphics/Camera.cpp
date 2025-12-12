@@ -13,7 +13,7 @@ namespace Pixie
 	//bool Camera::HandleMoveWasd(int keyCode, float deltaTime)
 	//{
 	//	float velocity = m_CameraSpeed * deltaTime; // adjust accordingly
-	//	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
+	//	std::shared_ptr<TransformComponent> transform = m_ParentObject->GetTransform();
 	//	glm::vec3 currentPosition = transform->GetPosition();
 	//	switch (keyCode)
 	//	{
@@ -41,7 +41,7 @@ namespace Pixie
 	//	xOffset *= sensitivity;
 	//	yOffset *= sensitivity;
 	//
-	//	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
+	//	std::shared_ptr<TransformComponent> transform = m_ParentObject->GetTransform();
 	//	glm::vec3 rotation = transform->GetRotationEuler(AngleType::Degrees);
 	//	transform->SetRotationEuler(glm::vec3(rotation.x + xOffset, rotation.y + yOffset, rotation.z), AngleType::Degrees);
 	//
@@ -50,7 +50,7 @@ namespace Pixie
 	//
 	//glm::mat4 Camera::ViewMatrix() const
 	//{
-	//	std::shared_ptr<Transform> transform = m_ParentObject->GetTransform();
+	//	std::shared_ptr<TransformComponent> transform = m_ParentObject->GetTransform();
 	//	glm::vec3 position = transform->GetPosition();
 	//	return  glm::lookAt(position, position + transform->Forward(), transform->Up());
 	//}

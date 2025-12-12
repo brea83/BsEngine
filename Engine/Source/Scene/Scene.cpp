@@ -4,7 +4,7 @@
 #include "Scene/Components/Component.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Components/Transform.h"
 #include "Graphics/CameraController.h"
 #include "Components/CameraComponent.h"
 #include "EngineContext.h"
@@ -19,7 +19,7 @@ namespace Pixie
 	{
 		GameObject mainCam = CreateEmptyGameObject("Main Camera");
 		CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
-		Transform& transform = mainCam.GetComponent<Transform>();
+		TransformComponent& transform = mainCam.GetComponent<TransformComponent>();
 		transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
 		transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
 
@@ -34,7 +34,7 @@ namespace Pixie
 		GameObject cube1 = CreateCube();
 
 		GameObject house = CreateEmptyGameObject("Viking House");
-		Transform& transform2 = house.GetComponent<Transform>();
+		TransformComponent& transform2 = house.GetComponent<TransformComponent>();
 		transform2.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 		transform2.SetScale(glm::vec3(20.0f));
 		house.AddComponent<MeshComponent, const  std::string&>("../Assets/Meshes/Viking_House.obj");
@@ -62,7 +62,7 @@ namespace Pixie
 	GameObject Scene::CreateEmptyGameObject(const std::string& name)
 	{
 		GameObject gameObject = { m_Registry.create(), this };
-		gameObject.AddComponent<Transform>();
+		gameObject.AddComponent<TransformComponent>();
 		gameObject.AddComponent<HeirarchyComponent>();
 		NameComponent& nameComponent = gameObject.AddComponent<NameComponent>();
 		nameComponent.Name = name.empty() ? "Empty Object" : name;
@@ -164,10 +164,10 @@ namespace Pixie
 	{
 		Camera* mainCamera = nullptr;
 
-		auto group = m_Registry.group<CameraComponent>(entt::get<Transform>);
+		auto group = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : group)
 		{
-			auto [camera, transform] = group.get<CameraComponent, Transform>(entity);
+			auto [camera, transform] = group.get<CameraComponent, TransformComponent>(entity);
 
 			if (camera.IsPrimaryCamera)
 			{
@@ -254,7 +254,7 @@ namespace Pixie
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };
-		entity.AddComponent<Transform>();
+		entity.AddComponent<TransformComponent>();
 		NameComponent& nameComponent = entity.AddComponent<NameComponent>();
 		nameComponent.Name = name.empty() ? "Empty Object" : name;
 		return entity;

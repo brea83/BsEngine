@@ -4,7 +4,6 @@
 
 namespace Pixie
 {
-	class Transform;
 
 	class Quad : public Mesh
 	{

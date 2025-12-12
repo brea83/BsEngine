@@ -3,7 +3,7 @@
 #include "../Shaders/Shader.h"
 #include <glm/glm.hpp>
 #include "Resources/Resource.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Scene/Components/Transform.h"
 
 namespace Pixie
 {

@@ -3,6 +3,7 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Scene.h"
+#include "Scene/Components/Transform.h"
 #include "Scene/Components/CameraComponent.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Graphics/Texture.h"
@@ -45,11 +46,11 @@ namespace Pixie
 
 		entt::registry& registry = sceneToRender.GetRegistry();
 
-		auto group = registry.group<MeshComponent>(entt::get<Transform>);
+		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
 
 		for (auto entity : group)
 		{
-			Transform& transform = group.get<Transform>(entity);
+			TransformComponent& transform = group.get<TransformComponent>(entity);
 			MeshComponent& mesh = group.get<MeshComponent>(entity);
 
 			if (!mesh.HasTexture())

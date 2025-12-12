@@ -3,7 +3,7 @@
 #define GLFW_INCLUDE_NONE
 #include "EngineContext.h"
 #include "Scene/Scene.h"
-#include "Graphics/Primitives/Transform.h"
+#include "Scene/Components/Transform.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Graphics/CameraController.h"
 
@@ -29,9 +29,9 @@ namespace Pixie
 		//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;
 	}
 
-	Transform& GameObject::GetTransform()
+	TransformComponent& GameObject::GetTransform()
 	{
-		return m_Scene->GetRegistry().get_or_emplace<Transform>(*this);
+		return m_Scene->GetRegistry().get_or_emplace<TransformComponent>(*this);
 	}
 
 	void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
@@ -44,7 +44,7 @@ namespace Pixie
 		}
 
 		family.Parent = newParent;
-		Transform& transform = GetComponent<Transform>();
+		TransformComponent& transform = GetComponent<TransformComponent>();
 		transform.ParentEntityHandle = newParent;
 
 		if (!bSentFromAddChild)
@@ -59,7 +59,7 @@ namespace Pixie
 	{
 
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-		Transform& transform = GetComponent<Transform>();
+		TransformComponent& transform = GetComponent<TransformComponent>();
 		transform.UnParent(m_Scene, *this, grandParent);
 		family.Parent = grandParent;
 	}

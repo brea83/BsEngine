@@ -5,7 +5,7 @@
 #include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Components/Transform.h"
-#include "Graphics/CameraController.h"
+#include "Components/CameraController.h"
 #include "Components/CameraComponent.h"
 #include "EngineContext.h"
 #include "Entity.h"

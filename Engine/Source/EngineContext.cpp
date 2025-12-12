@@ -7,7 +7,7 @@
 #include "Scene/GameObject.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
 #include "Layers/ImGuiLayer.h"
-#include "Graphics/CameraController.h"
+#include "Scene/Components/CameraController.h"
 #include "Scene/Components/CameraComponent.h"
 #include "Scene/Components/Transform.h"
 

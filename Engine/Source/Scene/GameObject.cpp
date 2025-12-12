@@ -1,11 +1,11 @@
 #include "BsPrecompileHeader.h"
-#include "Scene/GameObject.h"
+#include "GameObject.h"
 #define GLFW_INCLUDE_NONE
 #include "EngineContext.h"
-#include "Scene/Scene.h"
-#include "Scene/Components/Transform.h"
-#include "Scene/Components/MeshComponent.h"
-#include "Graphics/CameraController.h"
+#include "Scene.h"
+#include "Components/Transform.h"
+#include "Components/MeshComponent.h"
+#include "Components/CameraController.h"
 
 namespace Pixie
 {

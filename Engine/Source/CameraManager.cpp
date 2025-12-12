@@ -2,7 +2,7 @@
 #include "EngineContext.h"
 #include "CameraManager.h"
 #include "Scene/Components/CameraComponent.h"
-#include "Graphics/CameraController.h"
+#include "Scene/Components/CameraController.h"
 
 namespace Pixie
 {

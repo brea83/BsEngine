@@ -13,13 +13,13 @@
 #include "Input/Input.h"
 #include "Events/KeyCodes.h"
 #include "Events/MouseCodes.h"
-#include "Graphics/CameraController.h"
 
 #include "Scene/Scene.h"
 #include "Scene/Entity.h"
 #include "Scene/GameObject.h"
 #include "Scene/Components/Component.h"
 #include "Scene/Components/CameraComponent.h"
+#include "Scene/Components/CameraController.h"
 #include "Scene/Components/MeshComponent.h"
 
 // ---Renderer------------------------

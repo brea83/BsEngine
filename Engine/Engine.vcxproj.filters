@@ -12,7 +12,7 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Source\CameraManager.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
-    <ClCompile Include="Source\Graphics\CameraController.cpp" />
+    <ClCompile Include="Source\Scene\Components\CameraController.cpp" />
     <ClCompile Include="Source\Scene\Entity.cpp" />
     <ClCompile Include="Source\Scene\Components\CameraComponent.cpp" />
     <ClCompile Include="Source\Scene\Components\Component.cpp" />
@@ -79,7 +79,7 @@
     <ClInclude Include="Source\CameraManager.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Input\Input.h" />
-    <ClInclude Include="Source\Graphics\CameraController.h" />
+    <ClInclude Include="Source\Scene\Components\CameraController.h" />
     <ClInclude Include="Source\Scene\Entity.h" />
     <ClInclude Include="Source\Scene\Components\CameraComponent.h" />
     <ClInclude Include="Source\Scene\Components\Component.h" />

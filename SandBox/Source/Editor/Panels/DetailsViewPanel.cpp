@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include "Resources/AssetLoader.h"
+#include <CameraManager.h>
 
 //DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
 //	:_currentScene(scene), _selected(selectedObjectIndex)
@@ -315,6 +316,7 @@ namespace Pixie
 
 		if (selected.HasCompoenent<CameraComponent>())
 		{
+			CameraManager& camManager = scene->GetCameraManager();
 			ImGui::PushID("CameraComponent");
 			ImGui::Separator();
 			CameraComponent& component = selected.GetComponent<CameraComponent>();
@@ -335,11 +337,11 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			if (scene->m_ActiveCamera != selected)
+			if (camManager.GetActiveCameraObject() != selected)
 			{
 				if (ImGui::Button("Make Active")) // once cam manager is set up turn this into a Possess button
 				{
-					scene->SetActiveCamera(selected);
+					camManager.SetActiveCamera(selected);
 				}
 			}
 			else
@@ -349,14 +351,14 @@ namespace Pixie
 				ImGui::EndDisabled();
 			}
 
-			std::string buttonText = scene->m_DefaultCamera != selected ? "Make Default" : "Is Default";
+			std::string buttonText = camManager.GetDefaultCamera() != selected ? "Make Default" : "Is Default";
 			float textWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - textWidth);
-			if (scene->m_DefaultCamera != selected)
+			if (camManager.GetDefaultCamera() != selected)
 			{
 				if (ImGui::Button(buttonText.c_str()))
 				{
-					scene->SetDefaultCamera(selected);
+					camManager.SetDefaultCamera(selected);
 				}
 			}
 			else

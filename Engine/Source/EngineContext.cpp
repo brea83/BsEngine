@@ -46,7 +46,7 @@ namespace Pixie
 
 		if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 		m_ActiveScene->Initialize();
-		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)m_MainWindow->WindowWidth() / (float)m_MainWindow->WindowHeight());
+		m_ActiveScene->ForwardAspectRatio((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
 		m_ImGuiLayer->OnAttach();
 
 		m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
@@ -180,6 +180,8 @@ namespace Pixie
 		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseButtonPressedEvent));
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseScrolled));
 		dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
+
+		if (!event.Handled) m_ActiveScene->OnEvent(event);
 		//std::cout << event.ToString() << std::endl;
 	}
 
@@ -204,7 +206,7 @@ namespace Pixie
 		}
 
 		//viewportSize = glm::vec2(width, height);
-		m_ActiveScene->GetActiveCamera()->SetAspectRatio((float)width/ (float)height);
+		m_ActiveScene->ForwardAspectRatio((float)width, (float)height);
 		return true;
 	}
 
@@ -221,18 +223,19 @@ namespace Pixie
 
 	bool EngineContext::OnMouseScrolled(MouseScrolledEvent& event)
 	{
-		float yOffset = event.GetYOffset();
+		/*float yOffset = event.GetYOffset();
 		if (m_CamFlyMode)
 		{
 			return m_ActiveScene->GetActiveCamera()->Zoom(yOffset);
 		}
+		*/
 		return false;
 	}
 
 
 	bool EngineContext::OnMouseMoved(MouseMovedEvent& event)
 	{
-		if (m_CamFlyMode)
+		/*if (m_CamFlyMode)
 		{
 			float xPosition = event.GetX();
 			float yPosition = event.GetY();
@@ -260,6 +263,7 @@ namespace Pixie
 
 			return cameraComponent->HandleMouseLook(cameraTransform, xOffset, yOffset, m_DeltaTime);
 		}
+		*/
 		return false;
 	}
 
@@ -268,41 +272,42 @@ namespace Pixie
 		Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
 
 
-		/*if (Inputs::KeyboardNames.find(key) != Inputs::KeyboardNames.end())
+		if (Inputs::KeyboardNames.find(keyCode) != Inputs::KeyboardNames.end())
 		{
-			std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(key) << std::endl;
+			std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(keyCode) << std::endl;
 		}
 		else
 		{
 			std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
-		}*/
+		}
 
 		// TODO: refactor this into a proper input system
-		if (m_CamFlyMode &&
-			(keyCode == Inputs::Keyboard::W
-				|| keyCode == Inputs::Keyboard::S
-				|| keyCode == Inputs::Keyboard::A
-				|| keyCode == Inputs::Keyboard::D))
-		{
-			entt::registry& registry = m_ActiveScene->GetRegistry();
-			GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
+		//if (m_CamFlyMode &&
+		//	(keyCode == Inputs::Keyboard::W
+		//		|| keyCode == Inputs::Keyboard::S
+		//		|| keyCode == Inputs::Keyboard::A
+		//		|| keyCode == Inputs::Keyboard::D))
+		//{
+		//	entt::registry& registry = m_ActiveScene->GetRegistry();
+		//	GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
 
-			CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
-			TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamObject);
+		//	CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
+		//	TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamObject);
 
-			if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
+		//	if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
 
-			return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
-		}
+		//	return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
+		//}
 
-		if (keyCode == Inputs::Keyboard::Tab)
-		{
-			//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
-			ToggleCamFlyMode();
-			return false;
-		}
+		//if (keyCode == Inputs::Keyboard::Tab)
+		//{
+		//	//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
+		//	ToggleCamFlyMode();
+		//	return false;
+		//}
 
-		m_ImGuiLayer->OnEvent(event);
+		m_ActiveScene->OnEvent(event);
+		if(!event.Handled) m_ImGuiLayer->OnEvent(event);
 		return false;
 	}
 

@@ -12,8 +12,10 @@
 
 namespace Pixie
 {
-	Scene::Scene()
-	{ }
+	Scene::Scene() 
+	{
+		m_CameraManager = CameraManager{ this, false };
+	}
 
 	void Scene::Initialize()
 	{
@@ -25,7 +27,7 @@ namespace Pixie
 
 		mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
 
-		m_DefaultCamera = mainCam;
+		//DefaultCamera = mainCam;
 		SetActiveCamera(mainCam);
 	}
 
@@ -50,13 +52,13 @@ namespace Pixie
 
 	void Scene::OnUpdate(float deltaTime)
 	{
-		//std::cout << "Scene update" << std::endl;
+		m_CameraManager.OnEditorUpdate(deltaTime);
 
-		//for (auto entity : m_Registry.view<entt::entity>())
-		//{
-		//	GameObject(entity, this).OnUpdate(deltaTime);
-		//}
+	}
 
+	bool Scene::OnEvent(Event& event)
+	{
+		return m_CameraManager.OnEvent(event);
 	}
 
 	GameObject Scene::CreateEmptyGameObject(const std::string& name)
@@ -141,9 +143,14 @@ namespace Pixie
 		return GameObject();
 	}
 
+	void Scene::ForwardAspectRatio(float width, float height)
+	{
+		m_CameraManager.OnViewportSizeEvent(width, height);
+	}
+
 	Camera* Scene::GetActiveCamera()
 	{
-		Camera* mainCamera = nullptr;
+		/*Camera* mainCamera = nullptr;
 
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
@@ -157,13 +164,14 @@ namespace Pixie
 			}
 		}
 
-		return mainCamera;
+		return mainCamera;*/
+		return m_CameraManager.GetActiveCamera();
 	}
 
 	Camera* Scene::GetActiveCamera(glm::mat4& viewMatrix)
 	{
-		Camera* mainCamera = nullptr;
-
+		//Camera* mainCamera = nullptr;
+		/*
 		auto group = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : group)
 		{
@@ -188,18 +196,20 @@ namespace Pixie
 				break;
 			}
 		}
+		*/
 
-		return mainCamera;
+		return m_CameraManager.GetActiveCamera(viewMatrix);
 	}
 
 	GameObject Scene::GetActiveCameraGameObject()
 	{
-		return GameObject(m_ActiveCamera, this);
+		return m_CameraManager.GetActiveCameraObject();
 	}
 
 	void Scene::SetActiveCamera(GameObject& gameObject)
 	{
-		if (m_ActiveCamera == gameObject) return;
+		m_CameraManager.SetActiveCamera(gameObject);
+		/*if (m_ActiveCamera == gameObject) return;
 		
 		if (m_ActiveCamera != entt::null)
 		{
@@ -209,27 +219,28 @@ namespace Pixie
 
 		CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
 		nextCamera.IsPrimaryCamera = true;
-		m_ActiveCamera = gameObject;
+		m_ActiveCamera = gameObject;*/
 	}
 
 	void Scene::SetDefaultCamera(GameObject& gameObject)
 	{
-		if (m_DefaultCamera == gameObject) return;
+		/*if (m_DefaultCamera == gameObject) return;
 
 		CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
-		m_DefaultCamera = gameObject;
+		m_DefaultCamera = gameObject;*/
+		m_CameraManager.SetDefaultCamera(gameObject);
 	}
 
 	bool Scene::TryRemoveCamera(entt::entity entityHandle)
 	{
-		auto view = m_Registry.view<CameraComponent>();
+	/*	auto view = m_Registry.view<CameraComponent>();
 		if (view.size() < 2)
 		{
 			std::cout << "Tried to remove Camera Object with handle: " << int(entityHandle) << ", from Scene, but there are not any cameras to replace it with" << std::endl;
 			return false;
-		}
+		}*/
 
-		if (entityHandle == m_DefaultCamera)
+		/*if (entityHandle == m_DefaultCamera)
 		{
 			for (auto entity : view)
 			{
@@ -245,9 +256,13 @@ namespace Pixie
 		{
 			m_ActiveCamera = m_DefaultCamera;
 			m_Registry.get<CameraComponent>(m_ActiveCamera).IsPrimaryCamera = true;
-		}
+		}*/
+
+		if (!m_CameraManager.IsCameraRemovable(entityHandle)) return false;
 
 		m_Registry.remove<CameraComponent>(entityHandle);
+		m_CameraManager.OnRemoveCamera(entityHandle);
+
 		return true;
 	}
 

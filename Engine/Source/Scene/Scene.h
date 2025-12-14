@@ -2,7 +2,8 @@
 #include "Core.h"
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
-#include "Editor/EditorCamera.h"
+#include "CameraManager.h"
+#include "Events/Event.h"
 
 namespace Pixie
 {
@@ -35,6 +36,8 @@ namespace Pixie
 		//TODO figure out if an interface might solve sending updates to all updateable components?
 		void OnUpdate(float deltaTime);
 
+		bool OnEvent(Event& event);
+
 		entt::registry& GetRegistry() { return m_Registry; }
 		Entity CreateEntity(const std::string& name = "");
 
@@ -45,6 +48,8 @@ namespace Pixie
 
 		//void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
 		//bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
+		CameraManager& GetCameraManager() { return m_CameraManager; }
+		void ForwardAspectRatio(float width, float height);
 		Camera* GetActiveCamera();
 		Camera* GetActiveCamera(glm::mat4& viewMatrix);
 		GameObject GetActiveCameraGameObject();
@@ -56,8 +61,9 @@ namespace Pixie
 
 	private:
 		entt::registry m_Registry;
-		entt::entity m_ActiveCamera{ entt::null };
-		entt::entity m_DefaultCamera{ entt::null };
+		/*entt::entity m_ActiveCamera{ entt::null };
+		entt::entity m_DefaultCamera{ entt::null };*/
+		CameraManager m_CameraManager;
 		//EditorCamera m_EditorCamera;
 		bool m_IsInitiated{ false };
 

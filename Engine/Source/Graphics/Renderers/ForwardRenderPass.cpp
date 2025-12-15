@@ -9,7 +9,7 @@
 #include "Graphics/Texture.h"
 #include "Resources/AssetLoader.h"
 #include "EngineContext.h"
-#include "Scene/Entity.h"
+#include "Scene/GameObject.h"
 
 
 namespace Pixie
@@ -31,6 +31,9 @@ namespace Pixie
 
 		m_Shader->SetUniformInt("Texture1", 0);
 
+		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
+		glm::vec4 camPosition = glm::vec4(cameraEntity.GetComponent<TransformComponent>().GetPosition(), 0.0f);
+
 		glm::mat4 viewMatrix{1.0f};
 		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
 
@@ -42,7 +45,7 @@ namespace Pixie
 
 		m_Shader->SetUniformMat4("view", viewMatrix);
 		m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
-		
+		m_Shader->SetUniformVec4("cameraPosition", camPosition);
 
 		entt::registry& registry = sceneToRender.GetRegistry();
 

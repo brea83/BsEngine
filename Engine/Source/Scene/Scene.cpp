@@ -41,7 +41,13 @@ namespace Pixie
 		transform2.SetScale(glm::vec3(20.0f));
 		house.AddComponent<MeshComponent, const  std::string&>("../Assets/Meshes/Viking_House.obj");
 
-		cube1.AddChild(house);
+		GameObject sphere = CreateEmptyGameObject("Sphere");
+		TransformComponent& transform3 = house.GetComponent<TransformComponent>();
+		transform3.SetPosition(glm::vec3(-1.0f, 1.0f, 0.0f));
+		sphere.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
+
+		house.AddChild(sphere);
+
 	}
 
 	Scene::~Scene()

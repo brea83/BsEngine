@@ -37,16 +37,16 @@ namespace Pixie
 
 		GameObject house = CreateEmptyGameObject("Viking House");
 		TransformComponent& transform2 = house.GetComponent<TransformComponent>();
-		transform2.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
+		transform2.SetPosition(glm::vec3(2.5f, -0.5f, 0.0f));
 		transform2.SetScale(glm::vec3(20.0f));
-		house.AddComponent<MeshComponent, const  std::string&>("../Assets/Meshes/Viking_House.obj");
+		house.AddComponent<MeshComponent, const  std::string&, const  std::string&>("../Assets/Meshes/Viking_House.obj", "../Assets/Textures/Viking_House.png");
 
 		GameObject sphere = CreateEmptyGameObject("Sphere");
-		TransformComponent& transform3 = house.GetComponent<TransformComponent>();
-		transform3.SetPosition(glm::vec3(-1.0f, 1.0f, 0.0f));
+		TransformComponent& transform3 = sphere.GetComponent<TransformComponent>();
+		transform3.SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
 		sphere.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
 
-		house.AddChild(sphere);
+		cube1.AddChild(sphere);
 
 	}
 
@@ -285,8 +285,8 @@ namespace Pixie
 	{
 		//m_MeshComponents.emplace_back(new Cube());
 		GameObject object = CreateEmptyGameObject("Cube");
-		object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
-		//m_GameObjects.push_back(std::make_shared<GameObject>(object));
+		//object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Cube.obj");
 		return object;
 	}
 

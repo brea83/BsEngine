@@ -51,3 +51,8 @@ namespace Pixie
 		//static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
 	};
 }
+
+//fbx loading plan
+// use similar method as for serializing scene? but it's just the data to construct the fbx again
+// first unpack saves meshes in loader with a lookup of their file | node name
+//		it will also need to serialize the layout of entities and components used to build the prefab

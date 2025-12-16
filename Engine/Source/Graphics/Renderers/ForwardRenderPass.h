@@ -18,6 +18,8 @@ namespace Pixie
 	private:
 		std::shared_ptr<Shader> m_Shader;
 		std::shared_ptr<Texture> m_FallbackTexture;
+		//todo: REPLACE THIS WITH PROPER MATERIALS SYSTEM
+		std::shared_ptr<Texture> m_FallbackSpecularMap;
 
 	};
 

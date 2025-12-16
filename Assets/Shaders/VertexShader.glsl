@@ -11,7 +11,7 @@ layout (location = 3) in vec2 uvCoord;
 uniform mat4 transform;
 uniform mat4 view;
 uniform mat4 projection;
-uniform vec4 cameraPosition;
+//uniform vec4 cameraPosition;
 
 out vec3 WorldPos;
 out vec3 Normal;
@@ -29,5 +29,5 @@ void main()
 
     VertexColor = vertexColor;
 
-    ViewVector = normalize(cameraPosition.xyz - WorldPos);
+    
 }

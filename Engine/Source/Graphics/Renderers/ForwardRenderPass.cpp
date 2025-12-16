@@ -16,7 +16,8 @@ namespace Pixie
 {
 	ForwardRenderPass::ForwardRenderPass()
 	{
-		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
+		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/teal.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
+		m_FallbackSpecularMap = AssetLoader::LoadTexture("../Assets/Textures/noise.png");
 
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentShader.glsl");
 	}
@@ -30,9 +31,13 @@ namespace Pixie
 		m_Shader->Use();
 
 		m_Shader->SetUniformInt("Texture1", 0);
+		m_Shader->SetUniformInt("SpecularMap", 1);
+		m_FallbackSpecularMap->Bind(1);
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
-		glm::vec4 camPosition = glm::vec4(cameraEntity.GetComponent<TransformComponent>().GetPosition(), 0.0f);
+		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
+		glm::vec4 camPosition = glm::vec4(transform.GetPosition().x, transform.GetPosition().y, transform.GetPosition().z, 1.0f);
+		static glm::vec4 lastPosition = camPosition;
 
 		glm::mat4 viewMatrix{1.0f};
 		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
@@ -46,6 +51,11 @@ namespace Pixie
 		m_Shader->SetUniformMat4("view", viewMatrix);
 		m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
 		m_Shader->SetUniformVec4("cameraPosition", camPosition);
+		if (lastPosition != camPosition)
+		{
+			std::cout << "CamPosition: " << camPosition.x << ", " << camPosition.y << ", " << camPosition.z << std::endl;
+			lastPosition = camPosition;
+		}
 
 		entt::registry& registry = sceneToRender.GetRegistry();
 

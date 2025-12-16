@@ -269,17 +269,17 @@ namespace Pixie
 
 	bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	{
-		Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
+		//Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
 
 
-		if (Inputs::KeyboardNames.find(keyCode) != Inputs::KeyboardNames.end())
-		{
-			std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(keyCode) << std::endl;
-		}
-		else
-		{
-			std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
-		}
+		//if (Inputs::KeyboardNames.find(keyCode) != Inputs::KeyboardNames.end())
+		//{
+		//	std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(keyCode) << std::endl;
+		//}
+		//else
+		//{
+		//	std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
+		//}
 
 		// TODO: refactor this into a proper input system
 		//if (m_CamFlyMode &&

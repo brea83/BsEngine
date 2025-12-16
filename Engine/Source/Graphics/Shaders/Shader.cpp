@@ -136,9 +136,9 @@ namespace Pixie
 		glUniformMatrix4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	void Shader::SetUniformVec4(const std::string& name, glm::vec4 vector) const
+	void Shader::SetUniformVec4(const std::string& name, glm::vec4& vector) const
 	{
-		glUniform4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 4, glm::value_ptr(vector));
+		glUniform4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, glm::value_ptr(vector));
 	}
 
 	void Shader::Use()

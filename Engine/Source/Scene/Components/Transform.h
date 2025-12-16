@@ -2,6 +2,7 @@
 //#include <glm/mat4x4.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <EnTT/entt.hpp>
 
 namespace Pixie
@@ -28,6 +29,7 @@ namespace Pixie
 
 		void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
 		glm::vec3 GetPosition();
+		const glm::vec3 ReadOnlyPosition() const { return m_Position; }
 
 		glm::vec3 Forward() const;
 		glm::vec3 Up() const;

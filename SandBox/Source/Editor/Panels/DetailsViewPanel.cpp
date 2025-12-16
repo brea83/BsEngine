@@ -152,6 +152,47 @@ namespace Pixie
 		return bValueChanged;
 	}
 
+	bool DetailsViewPanel::DrawFloatControl(const std::string& label, float& value, SliderParams params, float columnWidth)
+	{
+		bool bValueChanged = false;
+
+		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
+		{
+			float fontSize = ImGui::GetFontSize();
+			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
+			ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/);
+			ImGui::TableNextRow();
+			// the label
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text(label.c_str());
+
+			// the values
+			ImGui::TableSetColumnIndex(1);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);
+
+			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
+			if (ImGui::DragFloat("##float", &value, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
+			{
+				bValueChanged = true;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Reset"))
+			{
+				value = params.ResetValue;
+				bValueChanged = true;
+			}
+
+			ImGui::PopStyleVar();
+
+			
+			ImGui::PopItemWidth();
+
+			ImGui::EndTable();
+		}
+
+		return bValueChanged;
+	}
+
 
 	bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth)
 	{
@@ -278,34 +319,68 @@ namespace Pixie
 			ImGui::Separator();
 
 			//ImGui::Text(component->GetFilePath().c_str());
-			static bool bIsEditing2 = false;
-			static std::string  editingValue2;
-			std::string previousValue2 = component.m_FilePath;
-			if (DrawStringProperty("Mesh File", component.m_FilePath, editingValue2, bIsEditing2))
+			static bool bMeshPathEditing = false;
+			static std::string  meshPath;
+			std::string previousMeshPath = component.m_FilePath;
+			if (DrawStringProperty("Mesh File", component.m_FilePath, meshPath, bMeshPathEditing))
 			{
 				if (!component.Reload())
 				{
 					std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
-					component.m_FilePath = previousValue2;
+					component.m_FilePath = previousMeshPath;
 				}
 			}
 
-			static bool bIsEditing = false;
-			static std::string  editingValue1;
-			std::string previousValue = component.m_TexturePath;
-			if (DrawStringProperty("Texture File", component.m_TexturePath, editingValue1, bIsEditing))
+			ImGui::SeparatorText("Material Instance");
+			MaterialInstance& material = component.m_MaterialInstance;
+			static bool bBaseTextureEditing = false;
+			static std::string  baseMapPath;
+			std::string previousBasePath = material.BaseMapPath;
+			if (DrawStringProperty("Base Texture", material.BaseMapPath, baseMapPath, bBaseTextureEditing))
 			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(component.m_TexturePath);
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.BaseMapPath);
 				if (newTexture == nullptr)
 				{
 					std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
-					component.m_TexturePath = previousValue;
+					material.BaseMapPath = previousBasePath;
 				}
 				else
 				{
-					component.m_Texture = newTexture;
+					component.m_MaterialInstance.BaseMap = newTexture;
 				}
 			}
+
+			static bool bMetallicMapEditing = false;
+			static std::string  metallicMapPath;
+			std::string previousMetalPath = material.MetallicMapPath;
+			if (DrawStringProperty("Metallic Map", material.MetallicMapPath, metallicMapPath, bMetallicMapEditing))
+			{
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath);
+				if (newTexture == nullptr)
+				{
+					std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
+					material.MetallicMapPath = previousMetalPath;
+				}
+				else
+				{
+					component.m_MaterialInstance.MetallicMap = newTexture;
+				}
+			}
+			ImGui::SetItemTooltip("Expects Metalness and smoothness packed into R and G channels");
+
+			SliderParams smoothnessParams;
+			smoothnessParams.Min = 0.0f;
+			smoothnessParams.Max = 1.0f;
+			smoothnessParams.Speed = 0.001f;
+			smoothnessParams.ResetValue = 0.3f;
+			DrawFloatControl("Smoothness", material.Smoothness, smoothnessParams);
+
+			SliderParams specParams;
+			specParams.Min = 1.0f;
+			specParams.Max = 200.0f;
+			specParams.Speed = 0.1;
+			specParams.ResetValue = 32.0f;
+			DrawFloatControl("Specular Power", material.SpecularPower, specParams);
 
 			if (removeComponent)
 			{

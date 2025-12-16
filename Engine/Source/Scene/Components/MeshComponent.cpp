@@ -17,7 +17,7 @@
 namespace Pixie
 {
 	MeshComponent::MeshComponent(/*GameObject* parent*/)
- : /*m_ParentObject(parent),*/ m_Name("Model Component"), m_FilePath(""), m_TexturePath("")
+ : /*m_ParentObject(parent),*/ m_Name("Model Component"), m_FilePath("")
 	{
 
 	}
@@ -55,7 +55,7 @@ namespace Pixie
 	//}
 
 	MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-	: /*m_ParentObject(nullptr),*/ m_Name("Model Component"), m_TexturePath("")
+	: /*m_ParentObject(nullptr),*/ m_Name("Model Component")
 	{
 		std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 		if (mesh != nullptr)
@@ -86,9 +86,9 @@ namespace Pixie
 	}
 
 	MeshComponent::MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath)
-		:/* m_ParentObject(parent),*/ m_Name("Mesh Component"), m_FilePath(modelFilePath), m_TexturePath(textureFilePath)
+		:/* m_ParentObject(parent),*/ m_Name("Mesh Component"), m_FilePath(modelFilePath)
 	{
-
+		m_MaterialInstance.BaseMapPath = textureFilePath;
 		Reload();
 	}
 
@@ -103,7 +103,7 @@ namespace Pixie
 		}
 		else if (fileExtension == ".obj")
 		{
-			return LoadObj(m_FilePath, m_TexturePath);
+			return LoadObj(m_FilePath, m_MaterialInstance.BaseMapPath);
 		}
 		return false;
 	}
@@ -178,8 +178,11 @@ namespace Pixie
 
 		if (textureFileName != "")
 		{
-			m_Texture = AssetLoader::LoadTexture(m_TexturePath);
-			if (m_Texture == nullptr) return false;
+			//m_Texture = AssetLoader::LoadTexture(m_TexturePath);
+			//if (m_Texture == nullptr) return false;
+			m_MaterialInstance.BaseMapPath = textureFileName;
+			m_MaterialInstance.BaseMap = AssetLoader::LoadTexture(textureFileName);
+			if (m_MaterialInstance.BaseMap == nullptr) return false;
 		}
 
 		return true;
@@ -368,62 +371,45 @@ namespace Pixie
 	{
 		return std::shared_ptr<Component>();
 	}
-	//
-	//void MeshComponent::SetParentObject(GameObject* newParent)
-	//{}
+
 
 	void MeshComponent::OnUpdate()
 	{}
 
 	void MeshComponent::Render(Shader& currentShader)
 	{
-		//if (m_ParentObject == nullptr)
-		//{
-		//	//entt::registry& registry = EngineContext::GetEngine()->GetRegistry();
-		//	//registry.
-		//}
-		//else
-		//{
-		//	//currentShader.SetUniformMat4("transform", m_ParentObject->GetTransform()->GetObjectToWorldMatrix());
-		//}
-
-		if (m_Texture != nullptr)
+		if (m_MaterialInstance.BaseMap != nullptr)
 		{
-			m_Texture->Bind();
+			m_MaterialInstance.BaseMap->Bind(0);
 			currentShader.SetUniformInt("Texture1", 0);
 		}
+		if (m_MaterialInstance.MetallicMap != nullptr)
+		{
+			m_MaterialInstance.MetallicMap->Bind(1);
+			currentShader.SetUniformInt("MetallicMap", 1);
+			currentShader.SetUniformBool("material.bUseMetalicMap", true);
+		}
+		else
+		{
+			currentShader.SetUniformBool("material.bUseMetalicMap", false);
+		}
 
+		currentShader.SetUniformFloat("material.specularPower", m_MaterialInstance.SpecularPower);
+		currentShader.SetUniformFloat("material.smoothness", m_MaterialInstance.Smoothness);
 		for (unsigned int i = 0; i < m_Meshes.size(); i++)
 		{
 			m_Meshes[i]->Render(currentShader);
 		}
 
-		if (m_Texture != nullptr)
+		if (m_MaterialInstance.BaseMap != nullptr)
 		{
-			m_Texture->UnBind();
+			m_MaterialInstance.BaseMap->UnBind();
 			//currentShader.SetUniformInt("Texture1", 0);
 		}
-	}
-
-	void MeshComponent::Render(Shader& currentShader, TransformComponent& transform)
-	{
-		currentShader.SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
-		
-
-		if (m_Texture != nullptr)
+		if (m_MaterialInstance.MetallicMap != nullptr)
 		{
-			m_Texture->Bind();
-			currentShader.SetUniformInt("Texture1", 0);
-		}
-
-		for (unsigned int i = 0; i < m_Meshes.size(); i++)
-		{
-			m_Meshes[i]->Render(currentShader);
-		}
-
-		if (m_Texture != nullptr)
-		{
-			m_Texture->UnBind();
+			m_MaterialInstance.MetallicMap->UnBind();
 		}
 	}
+
 }

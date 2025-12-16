@@ -251,8 +251,6 @@
     <None Include="..\Assets\Shaders\FragmentShader.glsl" />
     <None Include="..\Assets\Shaders\VertexShader.glsl" />
     <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
-    <None Include="Source\Graphics\Shaders\FragmentShader.glsl" />
-    <None Include="Source\Graphics\Shaders\VertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

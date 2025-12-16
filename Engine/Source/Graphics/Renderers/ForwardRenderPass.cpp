@@ -30,32 +30,26 @@ namespace Pixie
 
 		m_Shader->Use();
 
-		m_Shader->SetUniformInt("Texture1", 0);
-		m_Shader->SetUniformInt("SpecularMap", 1);
-		m_FallbackSpecularMap->Bind(1);
+		//m_Shader->SetUniformInt("MetallicMap", 1);
+		//m_FallbackSpecularMap->Bind(1);
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
 		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
-		glm::vec4 camPosition = glm::vec4(transform.GetPosition().x, transform.GetPosition().y, transform.GetPosition().z, 1.0f);
-		static glm::vec4 lastPosition = camPosition;
+		glm::vec3 camPosition = transform.GetPosition();
+
 
 		glm::mat4 viewMatrix{1.0f};
 		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
-
 		if (mainCam == nullptr)
 		{
 			std::cout << "No Camera in the scene is set to active" << std::endl;
 			return;
 		}
+		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
 
 		m_Shader->SetUniformMat4("view", viewMatrix);
-		m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
-		m_Shader->SetUniformVec4("cameraPosition", camPosition);
-		if (lastPosition != camPosition)
-		{
-			std::cout << "CamPosition: " << camPosition.x << ", " << camPosition.y << ", " << camPosition.z << std::endl;
-			lastPosition = camPosition;
-		}
+		m_Shader->SetUniformMat4("projection", projectionMatrix);
+		m_Shader->SetUniformVec3("cameraPosition", camPosition);
 
 		entt::registry& registry = sceneToRender.GetRegistry();
 
@@ -64,14 +58,17 @@ namespace Pixie
 		for (auto entity : group)
 		{
 			TransformComponent& transform = group.get<TransformComponent>(entity);
+			m_Shader->SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
+
 			MeshComponent& mesh = group.get<MeshComponent>(entity);
 
 			if (!mesh.HasTexture())
 			{
 				m_FallbackTexture->Bind(0);
+				m_Shader->SetUniformInt("Texture1", 0);
 			}
 
-			mesh.Render(*m_Shader, transform);
+			mesh.Render(*m_Shader);
 		}
 
 		m_Shader->EndUse();

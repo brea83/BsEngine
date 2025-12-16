@@ -40,23 +40,23 @@ namespace Pixie
 		void SetFilePath(const std::string& modelFilePath) { }
 		std::string GetFilePath() { return m_FilePath; }
 
-		bool HasTexture() { return (m_Texture != nullptr ) && (m_Texture->TextureObject != 0); }
+		bool HasTexture() { return (m_MaterialInstance.BaseMap != nullptr ) && (m_MaterialInstance.BaseMap->TextureObject != 0); }
 
 		void OnUpdate() ;
 		
 		void Render(Shader& currentShader);
-
-		void Render(Shader& currentShader, TransformComponent& transform);
 
 	protected:
 		//properties
 		std::string m_Name{ "Mesh Component" };
 		//GameObject* m_ParentObject{ nullptr };
 		std::string m_FilePath{""};
-		std::string m_TexturePath{ "" };
+		
 		std::vector<std::shared_ptr<Mesh>> m_Meshes;
 		//Todo: replace textures with materials.
-		std::shared_ptr<Texture> m_Texture{nullptr};
+		//std::shared_ptr<Texture> m_Texture{nullptr};
+		MaterialInstance m_MaterialInstance{};
+
 
 		bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
 

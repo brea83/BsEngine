@@ -1,7 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "BsPrecompileHeader.h"
-
+#include "Graphics/Texture.h"
 #include "Editor/EditorCamera.h"
 #include <EnTT/entt.hpp>
 
@@ -55,5 +55,34 @@ namespace Pixie
 
         entt::entity Parent{ entt::null };
         std::vector<entt::entity> Children{};
+    };
+
+    struct MaterialInstance
+    {
+        MaterialInstance() = default;
+        MaterialInstance(const MaterialInstance&) = default;
+
+        std::string BaseMapPath{ "" };
+        std::shared_ptr<Texture> BaseMap{ nullptr };
+
+        std::string MetallicMapPath{ "" };
+        std::shared_ptr<Texture> MetallicMap{ nullptr };
+        float AmbientMultiplier{ 1.0f };
+        float Smoothness{ 0.3 };
+        float SpecularPower{ 32.0f };
+    };
+
+    struct PointLight
+    {
+        glm::vec3 Position{ 10.0f, 5.0f, -15.0f };
+        glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
+        glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
+    };
+
+    struct DirectionalLight
+    {
+        glm::vec3 Direction{ 0.5f, 0.5f, 0.5f };
+        glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
+        glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
     };
 }

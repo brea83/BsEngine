@@ -3,15 +3,16 @@
 // MID GREEN DESATURATED (0.4, 0.5, 0.2, 1)
 struct Material
 {
-	vec3 ambient;
+	vec3 ao;
 	vec3 diffuse;
 	vec3 specular;
-	float shininess;
+	bool bUseMetalicMap;
+	float smoothness;
+	float specularPower;
 };
 
 struct LightData
 {
-	vec3 ambient;
 	vec3 position;
 	vec3 color;
 	vec3 attenuation;
@@ -25,7 +26,7 @@ in vec3 Normal;
 in vec3 VertexColor;
 //in vec3 ViewVector;
 
-uniform vec4 cameraPosition;
+uniform vec3 cameraPosition;
 uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 
 uniform vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
@@ -35,21 +36,26 @@ uniform vec3 lightSpecColor = vec3(1.0, 1.0, 0.95);
 // light attnuation X constant Y linear, Z quadratic
 uniform vec3 lightAttenuation = vec3(1.0, 0.01, 0.00001);
 
-//TODO add more material uniforms
-uniform int shineIntensity = 80;
-
 uniform Material material;
 uniform sampler2D Texture1;
-uniform sampler2D SpecularMap;
+uniform sampler2D MetallicMap;
 
 void main()
 {
 	//FragColor = texture(Texture1, UV);
 	FragColor = vec4(0, 0, 0, 1);
-	vec3 textureColor = texture(Texture1, UV).xyz;
-	vec3 specMap = texture(SpecularMap, UV).xyz;
+	vec3 textureColor = texture(Texture1, UV).rgb;
+	float smoothness = 1;
 	vec3 diffuse = vec3(0, 0, 0);
 	vec3 specular = vec3(0, 0, 0);
+	if(material.bUseMetalicMap)
+	{
+		smoothness = texture(MetallicMap, UV).g * material.smoothness;
+	}
+	else
+	{
+		smoothness = material.smoothness;
+	}
 	//float specStrength = 0.5;
 	float attenuation = 1;
 
@@ -68,19 +74,15 @@ void main()
 
 		diffuse = nDotL * (lightColor.xyz * textureColor) * attenuation;
 
-		//FragColor.xyz += diffuse * attenuation;
-
 	//specular
-		vec3 H = normalize((lightDirection + V)/2);
+		vec3 H = normalize((lightDirection + V));
 		float nDotH = max(dot(N, H), 0.0);
 
-		float specBrightness = nDotH * specMap.x;
-//		for(int i = 0; i < shineIntensity; i++)
-//		{
-//			specBrightness *= nDotH;
-//		}
-		specBrightness = pow(max(specBrightness, 0.0), shineIntensity);
-		specular = specBrightness * lightColor * attenuation;
+		float specBrightness = nDotH * smoothness;
+		specBrightness = pow(max(specBrightness, 0.0), material.specularPower);
+
+		// until I start doing more pbr assume light intensity on spec is about a third of the main light color
+		specular = specBrightness * (lightColor * 0.3) * attenuation;
 
 	}
 		FragColor.xyz += (ambientLight.xyz + diffuse + specular) * textureColor; 

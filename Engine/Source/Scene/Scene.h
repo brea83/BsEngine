@@ -1,73 +1,84 @@
 #pragma once
+#include "Core.h"
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
-#include "Editor/EditorCamera.h"
+#include "CameraManager.h"
+#include "Events/Event.h"
 
-class GameObject;
-class MeshComponent;
-class Camera;
-class CameraComponent;
-class Entity;
-
-class Scene
+namespace Pixie
 {
-public:
-	Scene();
-	~Scene();
-	
-	GameObject CreateEmptyGameObject(const std::string& name);
-	//void AddGameObject(std::shared_ptr<GameObject> gameObject);
-	void RemoveGameObject(GameObject objectToRemove);
-	void RemoveEntity(entt::entity entityHandle);
-	//int NumGameObjects() { return m_GameObjects.size(); }
-	
-	GameObject GetGameObjectByEntityHandle(entt::entity entityHandle);
-	GameObject FindGameObjectByName(const std::string& name);
+	class GameObject;
+	class MeshComponent;
+	class Camera;
+	struct CameraComponent;
+	class Entity;
 
-	GameObject DuplicateGameObject(GameObject object);
-	
-	void Initialize();
+	class Scene
+	{
+	public:
+		Scene();
+		~Scene();
+		
+		GameObject CreateEmptyGameObject(const std::string& name);
+		//void AddGameObject(std::shared_ptr<GameObject> gameObject);
+		void RemoveGameObject(GameObject objectToRemove);
+		void RemoveEntity(entt::entity entityHandle);
+		//int NumGameObjects() { return m_GameObjects.size(); }
+		
+		GameObject GetGameObjectByEntityHandle(entt::entity entityHandle);
+		GameObject FindGameObjectByName(const std::string& name);
 
-	//TODO figure out if an interface might solve sending updates to all updateable components?
-	void OnUpdate(float deltaTime);
+		GameObject DuplicateGameObject(GameObject object);
+		
+		void Initialize();
+		void PopulateWithTestObjects();
 
-	entt::registry& GetRegistry() { return m_Registry; }
-	Entity CreateEntity(const std::string& name = "");
+		//TODO figure out if an interface might solve sending updates to all updateable components?
+		void OnUpdate(float deltaTime);
 
-	//void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { m_MeshComponents.push_back(newRenderable); }
-	GameObject CreateCube();
-	//void RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove);
-	//std::vector<std::shared_ptr<MeshComponent>>& GetRenderables();
+		bool OnEvent(Event& event);
 
-	//void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
-	//bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
-	Camera* GetActiveCamera();
-	Camera* GetActiveCamera(glm::mat4& viewMatrix);
-	GameObject GetActiveCameraGameObject();
-	void SetActiveCamera(GameObject& gameObject);
-	void SetDefaultCamera(GameObject& gameObject);
-	//Transform& GetActiveCameraTransform();
+		entt::registry& GetRegistry() { return m_Registry; }
+		Entity CreateEntity(const std::string& name = "");
 
-	bool TryRemoveCamera(entt::entity entityHandle);
+		//void AddRenderable(std::shared_ptr<MeshComponent> newRenderable) { m_MeshComponents.push_back(newRenderable); }
+		GameObject CreateCube();
+		//void RemoveRenderable(std::shared_ptr<MeshComponent> modelToRemove);
+		//std::vector<std::shared_ptr<MeshComponent>>& GetRenderables();
 
-private:
-	entt::registry m_Registry;
-	entt::entity m_ActiveCamera{ entt::null };
-	entt::entity m_DefaultCamera{ entt::null };
-	//EditorCamera m_EditorCamera;
-	bool m_IsInitiated{ false };
+		//void AddCamera(std::shared_ptr<CameraComponent> camera) { m_CameraComponents.push_back(camera); }
+		//bool TryRemoveCamera(std::shared_ptr<CameraComponent> cameraToRemove);
+		CameraManager& GetCameraManager() { return m_CameraManager; }
+		void ForwardAspectRatio(float width, float height);
+		Camera* GetActiveCamera();
+		Camera* GetActiveCamera(glm::mat4& viewMatrix);
+		GameObject GetActiveCameraGameObject();
+		void SetActiveCamera(GameObject& gameObject);
+		void SetDefaultCamera(GameObject& gameObject);
+		//TransformComponent& GetActiveCameraTransform();
 
-	//std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
-	/*std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;
-	std::vector<std::shared_ptr<GameObject>> m_GameObjects;*/
+		bool TryRemoveCamera(entt::entity entityHandle);
 
-	template<typename T>
-	void OnComponentAdded(Entity entity, T& component);
-	template<>
-	void OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component);
+	private:
+		entt::registry m_Registry;
+		/*entt::entity m_ActiveCamera{ entt::null };
+		entt::entity m_DefaultCamera{ entt::null };*/
+		CameraManager m_CameraManager;
+		//EditorCamera m_EditorCamera;
+		bool m_IsInitiated{ false };
 
-	friend class SceneHierarchyPanel;
-	friend class DetailsViewPanel;
-	friend class ImGuiLayer;
-	friend class Entity;
-};
+		//std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
+		/*std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;
+		std::vector<std::shared_ptr<GameObject>> m_GameObjects;*/
+
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
+		template<>
+		void OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component);
+
+		friend class SceneHierarchyPanel;
+		friend class DetailsViewPanel;
+		friend class ImGuiLayer;
+		friend class Entity;
+	};
+}

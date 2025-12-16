@@ -1,0 +1,91 @@
+#pragma once
+#include <glm/glm.hpp>
+#include "Events/ApplicationEvent.h"
+#include "Events/MouseEvents.h"
+#include "Events/KeyboardEvents.h"
+#include <EnTT/entt.hpp>
+
+namespace Pixie
+{
+	class TransformComponent;
+	class GameObject;
+
+	enum class CameraMoveType
+	{
+		// TODO: think about whether spline following will use this component or something else
+		Fly,
+		WaitingForMouse,
+		//EdgeScrolling, ??
+		// always have this one last for use in ui dropdowns
+		END
+	};
+
+	class CameraController
+	{
+	public:
+		CameraController() = default;
+		CameraController(entt::entity entity) : m_CameraEntity(entity) {}
+
+		void OnUpdate(float deltaTime, GameObject& gameObject);
+
+		bool OnEvent(Event& event);
+		bool HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime);
+		bool HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime);
+		
+		CameraMoveType GetMoveType(){ return m_Type; }
+		void SetMoveType(CameraMoveType type) { m_Type = type; m_FirstMouseFrame = true; }
+
+		float GetTranslationSpeed() const { return m_TranslationSpeed; }
+		void SetTranslationSpeed(float value) { m_TranslationSpeed = value; }
+
+		float GetRotationSpeed() const { return m_RotationSpeed; }
+		void SetRotationSpeed(float value) { m_RotationSpeed = value; }
+
+		void OnViewportSizeChange(float width, float height);
+
+		// TODO decide if zoom should go through cam controller or not?
+	private:
+		entt::entity m_CameraEntity{ entt::null };
+		CameraMoveType m_Type{ CameraMoveType::WaitingForMouse };
+
+		bool m_Rotation{ false };
+		glm::vec3 m_CameraPosition{ 0.0f };
+		glm::vec3 m_FocalPoint{ 0.0f };
+
+		glm::vec2 m_ViewportSize{ 0.0f };
+		float m_Distance{10.0f};
+
+		float m_Yaw{ 0.0f };
+		float m_Pitch{ 0.0f };
+
+		// rotation speed in degrees
+		float m_RotationSpeed{ 10.0f };
+		glm::vec2 m_prevMousePosition{ 0.0f };
+		glm::vec2 m_MouseDelta{ 0.0f };
+		bool m_FirstMouseFrame{ true };
+		float m_ScrollDelta{ 0.0f };
+
+		glm::vec3 m_TranslationDirection{ 0.0f };
+		float m_TranslationSpeed{ 10.0f };
+
+		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnMouseMoved(MouseMovedEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
+		bool OnMouseScrolled(MouseScrolledEvent& event);
+		bool OnWindowResized(WindowResizedEvent& event);
+
+		void Fly(float deltaTime, Pixie::TransformComponent& transform);
+		void UpdateMouseMode(float deltaTime, Pixie::TransformComponent& transform);
+
+		void MousePan(float deltaTime, Pixie::TransformComponent& transform);
+		void MouseRotate(float deltaTime, Pixie::TransformComponent& transform);
+		void MouseZoom(float deltaTime, Pixie::TransformComponent& transform);
+
+		glm::vec2 PanSpeed() const;
+		float RotationSpeed() const { return 0.8f; }
+
+
+		float ZoomSpeed() const;
+	};
+
+}

@@ -681,4 +681,68 @@ detect operating system language or allow user selection on first start
 for debugging print the keys or english since cout doesn't support all international symbols
 
 
-	
+================================
+module 3 lecture 1 vertex buffer and phong rendering
+================================	
+
+schedule for the module
+1.Vertex buffer, Phong Rendering,
+2.Textures and mapping
+3.Managing Shaders and Lights
+4.Screenbuffer, Texture Buffer, Shadow mapping
+january onward
+5.Animation
+6.Post processing techniques, Bloom, motion blur
+7.Deferred rendering
+8.Optimization and performance
+9.Audio APIs and playback
+
+reccomended reading
+	real/time rendering 4 edition
+		has sections on collision detection as well as other rendering in great detail
+
+Vertex buffers allow efficient drawing of complex models by storing vertices in gpu memory, minimizing cpu to gpu data transfer
+
+vertex data that is standardard is position, normal, uv coords, color, additional attributes like tangents or bone weights.
+
+in opengl creating the VBO may not reserve te memory immediately but it does prepare the data for transfer to the gpu
+
+GL_Static_Draw is for buffering it once. some cases you might want dynamic
+
+review of using indicies to render vertices.
+GL_ELement_Array_Buffer is the buffer you init for indices rendering
+
+PHONG RENDERING
+
+	common old stylized lighting model
+		designed in 1975
+
+		requires, view vector, surface normal, light direction, 
+
+		composed of ambient lighting (constant in all directions)
+		diffuse reflection, light that depends on surface normal and light direction
+		specular reflection the bright spots which do depend on 
+
+		attenuation is the fade/amplification of light intensity across the scene
+
+================================
+module 3 lecture 2 textures and mapping
+================================	
+
+review of what textures are
+3d textures is essentially storing multiple 2d textures in layers
+
+most graphics cards need image size to be a multiple of 4
+
+overview of how to generate mipmaps yourself if you want or need to do it manually
+
+mipmap min
+linear_nearest takes closest mipmap and samples it linearly
+linear_linear takes the two closests mipmaps samples them linearly and averages between them.
+
+overview of normal mapping
+	normal maps are in model space so you need to translate the data into worldspace to follow the rotations and scaling of the object they're applied to 
+	we use tangent space for that
+	tangent space defined by 2 edge vectors based on the vert pos
+	measure the uv dif between them
+	and solve for tangent and bitangent

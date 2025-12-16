@@ -3,7 +3,7 @@
 
 using MouseCode = uint16_t;
 
-namespace Inputs
+namespace Pixie::Inputs
 {
 	enum class Mouse: MouseCode
 	{

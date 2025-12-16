@@ -1,32 +1,35 @@
 #pragma once
+#include "Core.h"
 #include "BsPrecompileHeader.h"
 #include <glm/glm.hpp>
 #include "Scene/Entity.h"
 
-class Transform;
-
-
-class GameObject : public Entity
+namespace Pixie
 {
-public:
-	GameObject() : Entity(){}
-	GameObject(entt::entity entity, Scene* scene);
-	virtual ~GameObject();
-	
-	virtual void Init();
-	Transform& GetTransform();
+	class TransformComponent;
 
-	void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
-	GameObject GetParent();
+	class GameObject : public Entity
+	{
+	public:
+		GameObject() : Entity(){}
+		GameObject(entt::entity entity, Scene* scene);
+		virtual ~GameObject();
+		
+		virtual void Init();
+		TransformComponent& GetTransform();
 
-	void UnParent(entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
+		void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
+		GameObject GetParent();
 
-	void AddChild(entt::entity child, bool bSentFromSetParent = false);
-	void RemoveChild(entt::entity child);
-	std::vector< GameObject>& GetChildren();
+		void UnParent(entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
 
-	virtual void OnUpdate(float deltaTime);
+		void AddChild(entt::entity child, bool bSentFromSetParent = false);
+		void RemoveChild(entt::entity child);
+		std::vector< GameObject>& GetChildren();
 
-protected:
+		virtual void OnUpdate(float deltaTime);
 
-};
+	protected:
+
+	};
+}

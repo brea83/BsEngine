@@ -3,60 +3,74 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Scene.h"
+#include "Scene/Components/Transform.h"
 #include "Scene/Components/CameraComponent.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "Graphics/Texture.h"
 #include "Resources/AssetLoader.h"
 #include "EngineContext.h"
-#include "Scene/Entity.h"
+#include "Scene/GameObject.h"
 
 
-ForwardRenderPass::ForwardRenderPass()
+namespace Pixie
 {
-	m_FallbackTexture = AssetLoader::LoadTexture("Assets/Textures/ffxivSnowman1.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
-
-	m_Shader = AssetLoader::LoadShader("Source/Graphics/Shaders/VertexShader.glsl", "Source/Graphics/Shaders/FragmentShader.glsl");
-}
-
-ForwardRenderPass::~ForwardRenderPass()
-{ }
-
-void ForwardRenderPass::Execute(Scene& sceneToRender)
-{
-
-	m_Shader->Use();
-
-	m_Shader->SetUniformInt("Texture1", 0);
-
-	glm::mat4 viewMatrix{1.0f};
-	Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
-
-	if (mainCam == nullptr)
+	ForwardRenderPass::ForwardRenderPass()
 	{
-		std::cout << "No Camera in the scene is set to active" << std::endl;
-		return;
+		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/teal.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
+		m_FallbackSpecularMap = AssetLoader::LoadTexture("../Assets/Textures/noise.png");
+
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentShader.glsl");
 	}
 
-	m_Shader->SetUniformMat4("view", viewMatrix);
-	m_Shader->SetUniformMat4("projection", mainCam->ProjectionMatrix());
-	
+	ForwardRenderPass::~ForwardRenderPass()
+	{ }
 
-	entt::registry& registry = sceneToRender.GetRegistry();
-
-	auto group = registry.group<MeshComponent>(entt::get<Transform>);
-
-	for (auto entity : group)
+	void ForwardRenderPass::Execute(Scene& sceneToRender)
 	{
-		Transform& transform = group.get<Transform>(entity);
-		MeshComponent& mesh = group.get<MeshComponent>(entity);
 
-		if (!mesh.HasTexture())
+		m_Shader->Use();
+
+		//m_Shader->SetUniformInt("MetallicMap", 1);
+		//m_FallbackSpecularMap->Bind(1);
+
+		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
+		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
+		glm::vec3 camPosition = transform.GetPosition();
+
+
+		glm::mat4 viewMatrix{1.0f};
+		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
+		if (mainCam == nullptr)
 		{
-			m_FallbackTexture->Bind(0);
+			std::cout << "No Camera in the scene is set to active" << std::endl;
+			return;
+		}
+		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
+
+		m_Shader->SetUniformMat4("view", viewMatrix);
+		m_Shader->SetUniformMat4("projection", projectionMatrix);
+		m_Shader->SetUniformVec3("cameraPosition", camPosition);
+
+		entt::registry& registry = sceneToRender.GetRegistry();
+
+		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
+
+		for (auto entity : group)
+		{
+			TransformComponent& transform = group.get<TransformComponent>(entity);
+			m_Shader->SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
+
+			MeshComponent& mesh = group.get<MeshComponent>(entity);
+
+			if (!mesh.HasTexture())
+			{
+				m_FallbackTexture->Bind(0);
+				m_Shader->SetUniformInt("Texture1", 0);
+			}
+
+			mesh.Render(*m_Shader);
 		}
 
-		mesh.Render(*m_Shader, transform);
+		m_Shader->EndUse();
 	}
-
-	m_Shader->EndUse();
 }

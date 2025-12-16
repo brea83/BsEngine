@@ -7,141 +7,152 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/type_ptr.hpp>
 
-
-
-Shader::Shader(const std::string& vertPath, const std::string& fragPath)
-	: Resource(ResourceType::Shader)
+namespace Pixie
 {
-	Compile(vertPath, fragPath);
-}
-
-Shader::~Shader()
-{}
-
-unsigned int Shader::CompileShader(int glShaderType, const std::string& filePath)
-{
-	const char* shaderCode;
-	if (glShaderType == GL_FRAGMENT_SHADER)
+	Shader::Shader(const std::string& vertPath, const std::string& fragPath)
+		: Resource(ResourceType::Shader)
 	{
-		_fragmentSource = AssetLoader::LoadTextFile(filePath);
-		shaderCode = _fragmentSource->Text.c_str();
-	}
-	else if (glShaderType == GL_VERTEX_SHADER)
-	{
-		_vertexSource = AssetLoader::LoadTextFile(filePath);
-		shaderCode = _vertexSource->Text.c_str();
-	}
-	else
-	{
-		std::cout << "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE" << std::endl;
-		return 0;
+		Compile(vertPath, fragPath);
 	}
 
-	unsigned int shaderObject;
-	shaderObject = glCreateShader(glShaderType);
-	glShaderSource(shaderObject, 1, &shaderCode, NULL);
-	glCompileShader(shaderObject);
+	Shader::~Shader()
+	{}
 
-	//check for compile errors
-	int success;
-	char infoLog[512];
-	glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &success);
-	if (!success)
+	unsigned int Shader::CompileShader(int glShaderType, const std::string& filePath)
 	{
-		glGetShaderInfoLog(shaderObject, 512, NULL, infoLog);
-		std::string shaderTypeName = glShaderType == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ";
-		std::cout << "ERROR" << shaderTypeName << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;
-		return 0;
+		const char* shaderCode;
+		if (glShaderType == GL_FRAGMENT_SHADER)
+		{
+			_fragmentSource = AssetLoader::LoadTextFile(filePath);
+			shaderCode = _fragmentSource->Text.c_str();
+		}
+		else if (glShaderType == GL_VERTEX_SHADER)
+		{
+			_vertexSource = AssetLoader::LoadTextFile(filePath);
+			shaderCode = _vertexSource->Text.c_str();
+		}
+		else
+		{
+			std::cout << "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE" << std::endl;
+			return 0;
+		}
+
+		unsigned int shaderObject;
+		shaderObject = glCreateShader(glShaderType);
+		glShaderSource(shaderObject, 1, &shaderCode, NULL);
+		glCompileShader(shaderObject);
+
+		//check for compile errors
+		int success;
+		char infoLog[512];
+		glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &success);
+		if (!success)
+		{
+			glGetShaderInfoLog(shaderObject, 512, NULL, infoLog);
+			std::string shaderTypeName = glShaderType == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ";
+			std::cout << "ERROR" << shaderTypeName << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;
+			return 0;
+		}
+
+		return shaderObject;
 	}
 
-	return shaderObject;
-}
-
-unsigned int Shader::LinkShader(unsigned int vertexShader, unsigned int fragmentShader)
-{
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-
-	// Clean up shader parts now that they've been linked into a program
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	//check for linking errors
-	int success;
-	char infoLog[512];
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success)
+	unsigned int Shader::LinkShader(unsigned int vertexShader, unsigned int fragmentShader)
 	{
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR SHADER PROGRAM LINKING FAILED\n" << infoLog << std::endl;
-		return 0;
+		unsigned int shaderProgram = glCreateProgram();
+		glAttachShader(shaderProgram, vertexShader);
+		glAttachShader(shaderProgram, fragmentShader);
+		glLinkProgram(shaderProgram);
+
+
+		// Clean up shader parts now that they've been linked into a program
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+
+		//check for linking errors
+		int success;
+		char infoLog[512];
+		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+		if (!success)
+		{
+			glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+			std::cout << "ERROR SHADER PROGRAM LINKING FAILED\n" << infoLog << std::endl;
+			return 0;
+		}
+
+		return shaderProgram;
 	}
 
-	return shaderProgram;
-}
-
-void Shader::Compile(const std::string& vertPath, const std::string& fragPath)
-{
-	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);//LoadVertexShader(vertPath);
-	if (vertexShader == 0) return;
-	unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragPath);//LoadFragmentShader(fragPath);
-	if (fragmentShader == 0) return;
-
-	unsigned int linkedProgram = LinkShader(vertexShader, fragmentShader);
-	if (linkedProgram == 0) return;
-	ShaderProgram = linkedProgram;
-	
-}
-
-void Shader::ReCompile(const std::string& barDelineatedPaths)
-{
-	std::stringstream ss(barDelineatedPaths);
-
-	std::string segment;
-	std::vector<std::string> segmentList;
-	char delimiter = '|';
-	while (std::getline(ss, segment, delimiter))
+	void Shader::Compile(const std::string& vertPath, const std::string& fragPath)
 	{
-		segmentList.emplace_back(segment);
+		unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);//LoadVertexShader(vertPath);
+		if (vertexShader == 0) return;
+		unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragPath);//LoadFragmentShader(fragPath);
+		if (fragmentShader == 0) return;
+
+		unsigned int linkedProgram = LinkShader(vertexShader, fragmentShader);
+		if (linkedProgram == 0) return;
+		ShaderProgram = linkedProgram;
+
 	}
 
-	if (segmentList.size() < 2) return;
+	void Shader::ReCompile(const std::string& barDelineatedPaths)
+	{
+		std::stringstream ss(barDelineatedPaths);
 
-	if(!AssetLoader::ReLoadTextFile(segmentList[0])) return;
-	if(!AssetLoader::ReLoadTextFile(segmentList[1])) return;
+		std::string segment;
+		std::vector<std::string> segmentList;
+		char delimiter = '|';
+		while (std::getline(ss, segment, delimiter))
+		{
+			segmentList.emplace_back(segment);
+		}
 
-	Compile(segmentList[0], segmentList[1]);
-}
+		if (segmentList.size() < 2) return;
 
-void Shader::SetUniformBool(const std::string & name, bool value) const
-{
-	glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), static_cast<int> (value));
-}
+		if (!AssetLoader::ReLoadTextFile(segmentList[0])) return;
+		if (!AssetLoader::ReLoadTextFile(segmentList[1])) return;
 
-void Shader::SetUniformInt(const std::string & name, int value) const
-{
-	glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), value);
-}
+		Compile(segmentList[0], segmentList[1]);
+	}
 
-void Shader::SetUniformFloat(const std::string & name, float value) const
-{
-	glUniform1f(glGetUniformLocation(ShaderProgram, name.c_str()), value);
-}
+	void Shader::SetUniformBool(const std::string& name, bool value) const
+	{
+		glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), static_cast<int> (value));
+	}
 
-void Shader::SetUniformMat4(const std::string& name, glm::mat4 matrix) const
-{
-	glUniformMatrix4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
-}
+	void Shader::SetUniformInt(const std::string& name, int value) const
+	{
+		glUniform1i(glGetUniformLocation(ShaderProgram, name.c_str()), value);
+	}
 
-void Shader::Use()
-{
-	glUseProgram(ShaderProgram);
-}
+	void Shader::SetUniformFloat(const std::string& name, float value) const
+	{
+		glUniform1f(glGetUniformLocation(ShaderProgram, name.c_str()), value);
+	}
 
-void Shader::EndUse()
-{
-	glUseProgram(0);
+	void Shader::SetUniformMat4(const std::string& name, glm::mat4& matrix) const
+	{
+		glUniformMatrix4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
+	void Shader::SetUniformVec4(const std::string& name, glm::vec4& vector) const
+	{
+		glUniform4fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, glm::value_ptr(vector));
+	}
+
+	void Shader::SetUniformVec3(const std::string& name, glm::vec3& vector) const
+	{
+		glUniform3fv(glGetUniformLocation(ShaderProgram, name.c_str()), 1, glm::value_ptr(vector));
+	}
+
+	void Shader::Use()
+	{
+		glUseProgram(ShaderProgram);
+	}
+
+	void Shader::EndUse()
+	{
+		glUseProgram(0);
+	}
 }

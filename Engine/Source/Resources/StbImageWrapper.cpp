@@ -5,44 +5,47 @@
 #include <iostream>
 #include <glad/glad.h>
 
-void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& imageData)
+namespace Pixie
 {
-	std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
-	std::cout << "trying to load file path: " << filePath << std::endl;
-
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(filePath.c_str(), &imageData.Width, &imageData.Height, &imageData.ChannelsCount, 0);
-
-	if (data)
+	void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& imageData)
 	{
-		switch (imageData.ChannelsCount)
+		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
+		std::cout << "trying to load file path: " << filePath << std::endl;
+
+		stbi_set_flip_vertically_on_load(true);
+		unsigned char* data = stbi_load(filePath.c_str(), &imageData.Width, &imageData.Height, &imageData.ChannelsCount, 0);
+
+		if (data)
 		{
-		case 1:
-			imageData.Format = GL_RED;
-			break;
-		case 3:
-			imageData.Format = GL_RGB;
-			break;
-		case 4:
-			imageData.Format = GL_RGBA;
-			break;
-		default:
-			imageData.Format = GL_RGB;
-			break;
+			switch (imageData.ChannelsCount)
+			{
+			case 1:
+				imageData.Format = GL_RED;
+				break;
+			case 3:
+				imageData.Format = GL_RGB;
+				break;
+			case 4:
+				imageData.Format = GL_RGBA;
+				break;
+			default:
+				imageData.Format = GL_RGB;
+				break;
+			}
+			imageData.StbData = data;
+			imageData.BLoadSuccess = true;
+			std::cout << "FILE LOAD SUCCESS" << std::endl;
 		}
-		imageData.StbData = data;
-		imageData.BLoadSuccess = true;
-		std::cout << "FILE LOAD SUCCESS" << std::endl;
+		else
+		{
+			std::cerr << "Failed to load texture: " << filePath << std::endl;
+			imageData.BLoadSuccess = false;
+		}
+
 	}
-	else
+
+	void StbImageWrapper::FreeImageData(StbImageData& imageData)
 	{
-		std::cerr << "Failed to load texture: " << filePath << std::endl;
-		imageData.BLoadSuccess = false;
+		stbi_image_free(imageData.StbData);
 	}
-
-}
-
-void StbImageWrapper::FreeImageData(StbImageData& imageData)
-{
-	stbi_image_free(imageData.StbData);
 }

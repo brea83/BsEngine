@@ -3,38 +3,43 @@
 #include <glm/glm.hpp>
 #include "Resources/Resource.h"
 
-class TextResource;
-
-class Shader : public Resource
+namespace Pixie
 {
-public:
-	//------------------ constructors and properties
+	class TextResource;
 
-	Shader(const std::string& vertPath, const std::string& fragPath);
-	~Shader();
+	class Shader : public Resource
+	{
+	public:
+		//------------------ constructors and properties
 
-	unsigned int ShaderProgram{ 0 };
+		Shader(const std::string& vertPath, const std::string& fragPath);
+		~Shader();
 
-	//--------------- methods
+		unsigned int ShaderProgram{ 0 };
 
-	void Compile(const std::string& vertPath, const std::string& fragPath);
-	void ReCompile(const std::string& barDelineatedPaths);
-	bool IsValid() { return ShaderProgram != 0; }
-	
-	void SetUniformBool(const std::string& name, bool value) const;
-	void SetUniformInt(const std::string& name, int value) const;
-	void SetUniformFloat(const std::string& name, float value) const;
-	void SetUniformMat4(const std::string& name, glm::mat4 matrix) const;
+		//--------------- methods
 
-	void Use();
-	void EndUse();
+		void Compile(const std::string& vertPath, const std::string& fragPath);
+		void ReCompile(const std::string& barDelineatedPaths);
+		bool IsValid() { return ShaderProgram != 0; }
 
-private:
-	std::shared_ptr<TextResource> _vertexSource;
-	std::shared_ptr<TextResource> _fragmentSource;
+		void SetUniformBool(const std::string& name, bool value) const;
+		void SetUniformInt(const std::string& name, int value) const;
+		void SetUniformFloat(const std::string& name, float value) const;
+		void SetUniformMat4(const std::string& name, glm::mat4& matrix) const;
+		void SetUniformVec4(const std::string& name, glm::vec4& vector) const;
+		void SetUniformVec3(const std::string& name, glm::vec3& vector) const;
 
-	unsigned int CompileShader(int glShaderType, const std::string& filePath);
-	unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
+		void Use();
+		void EndUse();
 
-};
+	private:
+		std::shared_ptr<TextResource> _vertexSource;
+		std::shared_ptr<TextResource> _fragmentSource;
 
+		unsigned int CompileShader(int glShaderType, const std::string& filePath);
+		unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
+
+	};
+
+}

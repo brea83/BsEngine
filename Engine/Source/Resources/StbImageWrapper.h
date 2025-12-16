@@ -3,20 +3,23 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-struct StbImageData
+namespace Pixie
 {
-	int Width, Height, ChannelsCount;
-	GLenum Format;
-	unsigned char* StbData;
-	bool BLoadSuccess;
-};
-/*TODO: IMPLEMENT IMAGE CLASS*/
-class StbImageWrapper
-{
-public:
-	
-	static void LoadImage(const std::string& filePath, StbImageData& imageData);
+	struct StbImageData
+	{
+		int Width, Height, ChannelsCount;
+		GLenum Format;
+		unsigned char* StbData;
+		bool BLoadSuccess;
+	};
+	/*TODO: IMPLEMENT IMAGE CLASS*/
+	class StbImageWrapper
+	{
+	public:
 
-	static void FreeImageData(StbImageData& imageData);
-};
+		static void LoadImage(const std::string& filePath, StbImageData& imageData);
 
+		static void FreeImageData(StbImageData& imageData);
+	};
+
+}

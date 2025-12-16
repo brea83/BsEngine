@@ -1,97 +1,100 @@
 #include "BsPrecompileHeader.h"
-#include "Scene/GameObject.h"
+#include "GameObject.h"
 #define GLFW_INCLUDE_NONE
 #include "EngineContext.h"
-#include "Scene/Scene.h"
-#include "Graphics/Primitives/Transform.h"
-#include "Scene/Components/MeshComponent.h"
-#include "Graphics/CameraController.h"
+#include "Scene.h"
+#include "Components/Transform.h"
+#include "Components/MeshComponent.h"
+#include "Components/CameraController.h"
 
-static int s_NumGameObjects = 1;
-GameObject::GameObject(entt::entity entity, Scene* scene)
-	: Entity(entity, scene)
-{}
-
-GameObject::~GameObject()
-{}
-
-//TODO: update this to read in serialized data for loading scenes etc
-void GameObject::Init()
+namespace Pixie
 {
-	// send renderable components to graphics pipeline? 
-	// or do those components do that themselves?
-}
+	static int s_NumGameObjects = 1;
+	GameObject::GameObject(entt::entity entity, Scene* scene)
+		: Entity(entity, scene)
+	{}
 
-void GameObject::OnUpdate(float deltaTime)
-{
-	//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;
-}
+	GameObject::~GameObject()
+	{}
 
-Transform& GameObject::GetTransform()
-{
-	return m_Scene->GetRegistry().get_or_emplace<Transform>(*this);
-}
-
-void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
-{
-	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-	if (family.Parent != entt::null)
+	//TODO: update this to read in serialized data for loading scenes etc
+	void GameObject::Init()
 	{
-		GameObject parentObject{ family.Parent, m_Scene };
-		parentObject.RemoveChild(*this);
+		// send renderable components to graphics pipeline? 
+		// or do those components do that themselves?
 	}
 
-	family.Parent = newParent;
-	Transform& transform = GetComponent<Transform>();
-	transform.ParentEntityHandle = newParent;
-
-	if (!bSentFromAddChild)
+	void GameObject::OnUpdate(float deltaTime)
 	{
-		GameObject parentObject{ family.Parent, m_Scene };
-		parentObject.AddChild(*this);
-	}
-}
-
-
-void GameObject::UnParent(entt::entity grandParent, bool bKeepWorldPosition)
-{
-
-	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-	Transform& transform = GetComponent<Transform>();
-	transform.UnParent(m_Scene, *this, grandParent);
-	family.Parent = grandParent;
-}
-
-void GameObject::AddChild(entt::entity child, bool bSentFromSetParent)
-{
-	if (!m_Scene->GetRegistry().valid(child)) return;
-
-	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-	auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
-	if (itterator != family.Children.end())
-	{
-		// already is a child. do nothing
-		return;
+		//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;
 	}
 
-	family.Children.push_back(child);
-
-	if (!bSentFromSetParent)
+	TransformComponent& GameObject::GetTransform()
 	{
-		GameObject childObject{ child, m_Scene };
-		childObject.SetParent(*this, true);
+		return m_Scene->GetRegistry().get_or_emplace<TransformComponent>(*this);
 	}
-}
 
-void GameObject::RemoveChild(entt::entity child)
-{
-	if (!m_Scene->GetRegistry().valid(child)) return;
-	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-
-	if (family.Children.empty()) return;
-	auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
-	if (itterator != family.Children.end())
+	void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
 	{
-		family.Children.erase(itterator);
+		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+		if (family.Parent != entt::null)
+		{
+			GameObject parentObject{ family.Parent, m_Scene };
+			parentObject.RemoveChild(*this);
+		}
+
+		family.Parent = newParent;
+		TransformComponent& transform = GetComponent<TransformComponent>();
+		transform.ParentEntityHandle = newParent;
+
+		if (!bSentFromAddChild)
+		{
+			GameObject parentObject{ family.Parent, m_Scene };
+			parentObject.AddChild(*this);
+		}
+	}
+
+
+	void GameObject::UnParent(entt::entity grandParent, bool bKeepWorldPosition)
+	{
+
+		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+		TransformComponent& transform = GetComponent<TransformComponent>();
+		transform.UnParent(m_Scene, *this, grandParent);
+		family.Parent = grandParent;
+	}
+
+	void GameObject::AddChild(entt::entity child, bool bSentFromSetParent)
+	{
+		if (!m_Scene->GetRegistry().valid(child)) return;
+
+		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+		auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+		if (itterator != family.Children.end())
+		{
+			// already is a child. do nothing
+			return;
+		}
+
+		family.Children.push_back(child);
+
+		if (!bSentFromSetParent)
+		{
+			GameObject childObject{ child, m_Scene };
+			childObject.SetParent(*this, true);
+		}
+	}
+
+	void GameObject::RemoveChild(entt::entity child)
+	{
+		if (!m_Scene->GetRegistry().valid(child)) return;
+		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+
+		if (family.Children.empty()) return;
+		auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+		if (itterator != family.Children.end())
+		{
+			family.Children.erase(itterator);
+		}
 	}
 }

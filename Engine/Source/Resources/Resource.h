@@ -1,19 +1,21 @@
 #pragma once
 
-enum class ResourceType
+namespace Pixie
 {
-	TextFile,
-	Shader,
-	Texture,
-	Renderable,
-	Mesh,
-};
-class Resource
-{
-public:
-	Resource(ResourceType type) : Type(type) { }
-	virtual ~Resource();
+	enum class ResourceType
+	{
+		TextFile,
+		Shader,
+		Texture,
+		Renderable,
+		Mesh,
+	};
+	class Resource
+	{
+	public:
+		Resource(ResourceType type) : Type(type) {}
+		virtual ~Resource();
 
-	ResourceType Type;
-};
-
+		ResourceType Type;
+	};
+}

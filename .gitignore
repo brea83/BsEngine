@@ -20,6 +20,7 @@ mono_crash.*
 
 # Build results
 [Dd]ebug/
+intermediate/Debug_x64/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -79,6 +80,7 @@ StyleCopReport.xml
 *.obj
 # manual exception
 # keep .obj in assets folder because these are 3d models not visual studio .objs
+!Assets/**/*.obj
 !Engine/Assets/**/*.obj
 
 *.iobj

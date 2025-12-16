@@ -2,16 +2,19 @@
 #include "Mesh.h"
 #include <vector>
 
-class Triangle : public Mesh
+namespace Pixie
 {
-public:
-	Triangle(/*unsigned int uid*/const std::string& name = "Triangle");
-	//Triangle(std::vector<Vertex>& newVerticies);
-	~Triangle();
+	class Triangle : public Mesh
+	{
+	public:
+		Triangle(/*unsigned int uid*/const std::string& name = "Triangle");
+		//Triangle(std::vector<Vertex>& newVerticies);
+		~Triangle();
 
-	void Render(Shader& currentShader) override;
+		void Render(Shader& currentShader) override;
 
-protected:
-	void Init() override;
-};
+	protected:
+		void Init() override;
+	};
 
+}

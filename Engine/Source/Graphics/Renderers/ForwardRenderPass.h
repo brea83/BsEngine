@@ -3,19 +3,24 @@
 #include <glm/glm.hpp>
 //#include <memory>
 
-class Shader;
-class Texture;
-
-class ForwardRenderPass : public RenderPass
+namespace Pixie
 {
-public:
-	ForwardRenderPass();
-	~ForwardRenderPass();
-	// Inherited via RenderPass
-	void Execute(Scene& sceneToRender) override;
-private:
-	std::shared_ptr<Shader> m_Shader;
-	std::shared_ptr<Texture> m_FallbackTexture;
+	class Shader;
+	class Texture;
 
-};
+	class ForwardRenderPass : public RenderPass
+	{
+	public:
+		ForwardRenderPass();
+		~ForwardRenderPass();
+		// Inherited via RenderPass
+		void Execute(Scene& sceneToRender) override;
+	private:
+		std::shared_ptr<Shader> m_Shader;
+		std::shared_ptr<Texture> m_FallbackTexture;
+		//todo: REPLACE THIS WITH PROPER MATERIALS SYSTEM
+		std::shared_ptr<Texture> m_FallbackSpecularMap;
 
+	};
+
+}

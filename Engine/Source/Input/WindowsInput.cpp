@@ -3,30 +3,33 @@
 #include <GLFW/glfw3.h>
 #include "EngineContext.h"
 
-Input* Input::s_Instance = new WindowsInput();
-
-bool WindowsInput::IsKeyPressedImplementation(Inputs::Keyboard keycode)
+namespace Pixie
 {
-	GLFWwindow*	window = EngineContext::GetEngine()->GetGlfwWindow();
+	Input* Input::s_Instance = new WindowsInput();
 
-	auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
+	bool WindowsInput::IsKeyPressedImplementation(Inputs::Keyboard keycode)
+	{
+		GLFWwindow* window = EngineContext::GetEngine()->GetGlfwWindow();
 
-	return state == GLFW_PRESS;
-}
+		auto state = glfwGetKey(window, static_cast<int32_t>(keycode));
 
-bool WindowsInput::IsMouseButtonPressedImplementation(Inputs::Mouse button)
-{
-	GLFWwindow* window = EngineContext::GetEngine()->GetGlfwWindow();
-	auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
+		return state == GLFW_PRESS;
+	}
 
-	return state == GLFW_PRESS;
-}
+	bool WindowsInput::IsMouseButtonPressedImplementation(Inputs::Mouse button)
+	{
+		GLFWwindow* window = EngineContext::GetEngine()->GetGlfwWindow();
+		auto state = glfwGetMouseButton(window, static_cast<int32_t>(button));
 
-glm::vec2 WindowsInput::GetMousePositionImplementation()
-{
-	GLFWwindow* window = EngineContext::GetEngine()->GetGlfwWindow();
-	double positionX, positionY;
-	glfwGetCursorPos(window, &positionX, &positionY);
+		return state == GLFW_PRESS;
+	}
 
-	return glm::vec2(positionX, positionY);
+	glm::vec2 WindowsInput::GetMousePositionImplementation()
+	{
+		GLFWwindow* window = EngineContext::GetEngine()->GetGlfwWindow();
+		double positionX, positionY;
+		glfwGetCursorPos(window, &positionX, &positionY);
+
+		return glm::vec2(positionX, positionY);
+	}
 }

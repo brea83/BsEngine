@@ -3,6 +3,7 @@
 #include "Graphics/Shaders/Shader.h"
 #include "Scene/Components/MeshComponent.h"
 #include "Scene/Scene.h"
+#include "Scene/Components/Component.h"
 #include "Scene/Components/Transform.h"
 #include "Scene/Components/CameraComponent.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -30,8 +31,16 @@ namespace Pixie
 
 		m_Shader->Use();
 
-		//m_Shader->SetUniformInt("MetallicMap", 1);
-		//m_FallbackSpecularMap->Bind(1);
+		GameObject mainLight = sceneToRender.GetMainLight();
+		if (mainLight)
+		{
+			DirectionalLight& light = mainLight.GetComponent<DirectionalLight>();
+			glm::vec3 direction = -1.0f * glm::normalize(light.Direction);
+			m_Shader->SetUniformBool("bUseMainLight", true);
+			m_Shader->SetUniformVec3("MainLight.direction", direction);
+			m_Shader->SetUniformVec3("MainLight.color", light.Color);
+			m_Shader->SetUniformVec3("MainLight.attenuation", light.Attenuations);
+		}
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
 		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();

@@ -11,6 +11,7 @@ namespace Pixie
 	class MeshComponent;
 	class Camera;
 	struct CameraComponent;
+	struct DirectionalLight;
 	class Entity;
 
 	class Scene
@@ -59,6 +60,8 @@ namespace Pixie
 
 		bool TryRemoveCamera(entt::entity entityHandle);
 
+		GameObject GetMainLight();
+
 	private:
 		entt::registry m_Registry;
 		/*entt::entity m_ActiveCamera{ entt::null };
@@ -75,6 +78,8 @@ namespace Pixie
 		void OnComponentAdded(Entity entity, T& component);
 		template<>
 		void OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component);
+		template<>
+		void OnComponentAdded<DirectionalLight>(Entity entity, DirectionalLight& component);
 
 		friend class SceneHierarchyPanel;
 		friend class DetailsViewPanel;

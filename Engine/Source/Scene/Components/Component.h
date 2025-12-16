@@ -73,15 +73,20 @@ namespace Pixie
     };
 
     struct PointLight
-    {
-        glm::vec3 Position{ 10.0f, 5.0f, -15.0f };
+    {   
+        PointLight() = default;
+        PointLight(const PointLight&) = default;
+        // position should come from transform component
+        //glm::vec3 Position{ 10.0f, 5.0f, -15.0f };
         glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
         glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
     };
 
     struct DirectionalLight
     {
-        glm::vec3 Direction{ 0.5f, 0.5f, 0.5f };
+        DirectionalLight() = default;
+        DirectionalLight(const DirectionalLight&) = default;
+        glm::vec3 Direction{ 0.5f, -0.5f, 0.5f };
         glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
         glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
     };

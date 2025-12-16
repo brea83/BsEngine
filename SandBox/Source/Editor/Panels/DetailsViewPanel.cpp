@@ -49,10 +49,14 @@ namespace Pixie
 					selected.AddComponent<MeshComponent>();
 				}
 
-				if (ImGui::Selectable("CameraComponent"))
+				if (ImGui::Selectable("Camera Component"))
 				{
 					selected.AddComponent<CameraComponent>();
 					selected.AddComponent<CameraController, entt::entity>(selected.GetEnttHandle());
+				}
+				if (ImGui::Selectable("Directional Light"))
+				{
+					selected.AddComponent<DirectionalLight>();
 				}
 				ImGui::EndPopup();
 			}
@@ -474,6 +478,40 @@ namespace Pixie
 			if (removeComponent)
 			{
 				selected.RemoveComponent<CameraComponent>();
+			}
+			ImGui::PopID();
+		}
+
+		if (selected.HasCompoenent<PointLight>())
+		{
+
+		}
+		if (selected.HasCompoenent<DirectionalLight>())
+		{
+			DirectionalLight& light = selected.GetComponent<DirectionalLight>();
+			ImGui::PushID("DirectionalLightComponent");
+			ImGui::Separator();
+			ImGui::Text("Directional Light");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			DrawVec3Control("Direction", light.Direction, 0.5f);
+			ImGui::ColorPicker3("Color", glm::value_ptr(light.Color));
+			DrawVec3Control("Attenuations", light.Attenuations);
+
+			if (removeComponent)
+			{
+				selected.RemoveComponent<DirectionalLight>();
 			}
 			ImGui::PopID();
 		}

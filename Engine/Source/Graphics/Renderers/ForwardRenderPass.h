@@ -1,7 +1,9 @@
 #pragma once
 #include "RenderPass.h"
 #include <glm/glm.hpp>
-//#include <memory>
+
+
+#define MAX_LIGHTS 6
 
 namespace Pixie
 {
@@ -21,6 +23,7 @@ namespace Pixie
 		//todo: REPLACE THIS WITH PROPER MATERIALS SYSTEM
 		std::shared_ptr<Texture> m_FallbackSpecularMap;
 
+		void SendLightsToShader(Scene& currentScene);
 	};
 
 }

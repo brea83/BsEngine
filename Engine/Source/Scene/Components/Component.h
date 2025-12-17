@@ -72,14 +72,30 @@ namespace Pixie
         float SpecularPower{ 32.0f };
     };
 
-    struct PointLight
+
+
+    enum LightType
+    {
+        Point,
+        Directional,
+        Spot,
+        // END used for imgui combo windows
+        END
+    };
+    struct LightComponent
     {   
-        PointLight() = default;
-        PointLight(const PointLight&) = default;
-        // position should come from transform component
-        //glm::vec3 Position{ 10.0f, 5.0f, -15.0f };
+        LightComponent() = default;
+        LightComponent(const LightComponent&) = default;
+        
+        bool Enabled{ true };
+        LightType Type{ Point };
+
+        glm::vec3 Direction{ 0.5f, -0.5f, 0.5f }; // consider if this should just be getting the Forward from the transform?
         glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
-        glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
+        glm::vec3 Attenuation{ 1.0f, 0.01f, 0.00001f };
+
+        //spotlight only
+        float CuttoffAngle{ 15.0f };
     };
 
     struct DirectionalLight

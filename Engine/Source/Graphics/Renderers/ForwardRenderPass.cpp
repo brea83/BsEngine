@@ -11,7 +11,8 @@
 #include "Resources/AssetLoader.h"
 #include "EngineContext.h"
 #include "Scene/GameObject.h"
-
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Pixie
 {
@@ -81,5 +82,70 @@ namespace Pixie
 		}
 
 		m_Shader->EndUse();
+	}
+	void ForwardRenderPass::SendLightsToShader(Scene& currentScene)
+	{
+		entt::registry& registry = currentScene.GetRegistry();
+
+		auto group = registry.group<LightComponent>(entt::get<TransformComponent>);
+
+		if (!group)
+		{
+			std::cout << "No light components found" << std::endl;
+			return;
+		}
+
+
+		int lightTypes[MAX_LIGHTS];
+		float lightColors[MAX_LIGHTS * 3];
+		float lightPositions[MAX_LIGHTS * 3];
+		float lightDirections[MAX_LIGHTS * 3];
+		float lightAttenuations[MAX_LIGHTS * 3];
+		float spotCutoffAngles[MAX_LIGHTS];
+
+		int activeLights = 0;
+		for (auto entity : group)
+		{
+			LightComponent& light = group.get<LightComponent>(entity);
+			TransformComponent& lightTransform = group.get<TransformComponent>(entity);
+			if (!light.Enabled) continue;
+
+			lightTypes[activeLights] = light.Type;
+
+			lightColors[activeLights * 4 + 0] = light.Color.r;
+			lightColors[activeLights * 4 + 1] = light.Color.g;
+			lightColors[activeLights * 4 + 2] = light.Color.b;
+
+			lightPositions[activeLights * 4 + 0] = lightTransform.GetPosition().x;
+			lightPositions[activeLights * 4 + 1] = lightTransform.GetPosition().y;
+			lightPositions[activeLights * 4 + 2] = lightTransform.GetPosition().z;
+
+			lightDirections[activeLights * 4 + 0] = light.Direction.x;
+			lightDirections[activeLights * 4 + 1] = light.Direction.y;
+			lightDirections[activeLights * 4 + 2] = light.Direction.z;
+
+			lightAttenuations[activeLights * 4 + 0] = light.Attenuation.x;
+			lightAttenuations[activeLights * 4 + 1] = light.Attenuation.y;
+			lightAttenuations[activeLights * 4 + 2] = light.Attenuation.z;
+
+			spotCutoffAngles[activeLights] = light.CuttoffAngle;
+
+			activeLights++;
+		}
+
+		//uniform vec3 lightPosition[MAX_LIGHTS];
+		//uniform vec3 lightDirection[MAX_LIGHTS];
+		//uniform vec3 lightColor[MAX_LIGHTS];
+		//// light attnuation X constant Y linear, Z quadratic
+		//uniform vec3 lightAttenuation[MAX_LIGHTS];
+		//uniform float cutoffAngle[MAX_LIGHTS];
+
+		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightPosition"), activeLights, lightPositions);
+		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightDirection"), activeLights, lightDirections);
+		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightColor"), activeLights, lightColors);
+		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightAttenuation"), activeLights, lightAttenuations);
+		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "cutoffAngle"), activeLights, spotCutoffAngles);
+		glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLights"), activeLights);
+		glUniform1iv(glGetUniformLocation(m_Shader->ShaderProgram, "lightTypes"), activeLights, lightTypes);
 	}
 }

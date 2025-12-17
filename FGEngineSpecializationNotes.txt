@@ -746,3 +746,16 @@ overview of normal mapping
 	tangent space defined by 2 edge vectors based on the vert pos
 	measure the uv dif between them
 	and solve for tangent and bitangent
+================================
+module 3 lecture 3 managing lights and shaders
+================================	
+
+review of reading shader files, some tips on how to parse #defines or #includes
+
+light types
+	point, directional, spot
+
+	overview of multi light glsl
+
+suggestions for rendering light representations as wireframes
+	

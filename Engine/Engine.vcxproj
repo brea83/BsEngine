@@ -165,7 +165,6 @@
     <ClCompile Include="Source\Layers\Layer.cpp" />
     <ClCompile Include="Source\Layers\LayerStack.cpp" />
     <ClCompile Include="Source\Resources\StbImageWrapper.cpp" />
-    <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\QuadMesh.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\Renderable.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\Renderer.cpp" />

@@ -78,6 +78,7 @@ namespace Pixie
 		template<>
 		void OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component);
 		
+		friend class SceneSerializer;
 		friend class SceneHierarchyPanel;
 		friend class DetailsViewPanel;
 		friend class ImGuiLayer;

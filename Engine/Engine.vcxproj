@@ -247,6 +247,7 @@
     <ClInclude Include="Source\Events\SubscribableEvent.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />
     <None Include="..\Assets\Shaders\FragmentShader.glsl" />
     <None Include="..\Assets\Shaders\VertexShader.glsl" />
     <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />

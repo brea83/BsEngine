@@ -54,9 +54,9 @@ namespace Pixie
 					selected.AddComponent<CameraComponent>();
 					selected.AddComponent<CameraController, entt::entity>(selected.GetEnttHandle());
 				}
-				if (ImGui::Selectable("Directional Light"))
+				if (ImGui::Selectable("Light"))
 				{
-					selected.AddComponent<DirectionalLight>();
+					selected.AddComponent<LightComponent>();
 				}
 				ImGui::EndPopup();
 			}
@@ -482,16 +482,13 @@ namespace Pixie
 			ImGui::PopID();
 		}
 
-		if (selected.HasCompoenent<PointLight>())
+		if (selected.HasCompoenent<LightComponent>())
 		{
-
-		}
-		if (selected.HasCompoenent<DirectionalLight>())
-		{
-			DirectionalLight& light = selected.GetComponent<DirectionalLight>();
-			ImGui::PushID("DirectionalLightComponent");
+			LightComponent& light = selected.GetComponent<LightComponent>();
+			ImGui::PushID("LightComponent");
 			ImGui::Separator();
-			ImGui::Text("Directional Light");
+
+			ImGui::Text("Light Component");
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
 			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
@@ -504,16 +501,56 @@ namespace Pixie
 			}
 
 			ImGui::Separator();
+			ImGui::Text("Light Type");
+			ImGui::SameLine();
+			int currentType = static_cast<int>(light.Type);
+			if (ImGui::Combo("##Light Type", &currentType, LightComponent::LightTypeNames, IM_ARRAYSIZE(LightComponent::LightTypeNames)))
+			{
+				light.Type = static_cast<LightType>(currentType);
+			}
 
-			DrawVec3Control("Direction", light.Direction, 0.5f);
-			ImGui::ColorPicker3("Color", glm::value_ptr(light.Color));
-			DrawVec3Control("Attenuations", light.Attenuations);
+			ImGui::Text("Light Color");
+			ImGui::SameLine();
+			ImGui::ColorEdit3("##Color", glm::value_ptr(light.Color));
+
+			if (light.Type == LightType::Directional)
+			{
+				DrawVec3Control("Direction", light.Direction, 0.5f);
+
+			}
+			
+			if (light.Type == LightType::Point)
+			{
+				DrawVec3Control("Attenuations", light.Attenuation);
+
+			}
+
+			if (light.Type == LightType::Spot)
+			{
+				DrawVec3Control("Direction", light.Direction, 0.5f);
+				DrawVec3Control("Attenuations", light.Attenuation);
+
+				SliderParams params;
+				params.Min = 1.0f;
+				params.Max = 180.0f;
+				params.ResetValue = 12.5f;
+				params.Speed = 0.01f;
+				DrawFloatControl("Inner Radius", light.InnerRadius, params);
+
+				SliderParams paramsOuter;
+				paramsOuter.Min = 1.0f;
+				paramsOuter.Max = 180.0f;
+				paramsOuter.ResetValue = 15.0f;
+				paramsOuter.Speed = 0.01f;
+				DrawFloatControl("Inner Radius", light.OuterRadius, paramsOuter);
+			}
 
 			if (removeComponent)
 			{
-				selected.RemoveComponent<DirectionalLight>();
+				selected.RemoveComponent<LightComponent>();
 			}
 			ImGui::PopID();
+
 		}
 	}
 }

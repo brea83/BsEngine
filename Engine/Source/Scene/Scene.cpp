@@ -34,7 +34,8 @@ namespace Pixie
 	void Scene::PopulateWithTestObjects()
 	{
 		GameObject mainLight = CreateEmptyGameObject("Main Light");
-		mainLight.AddComponent<DirectionalLight>();
+		LightComponent& light = mainLight.AddComponent<LightComponent>();
+		light.Type = LightType::Directional;
 
 		GameObject cube1 = CreateCube();
 
@@ -277,12 +278,20 @@ namespace Pixie
 
 	GameObject Scene::GetMainLight()
 	{
-		auto view = m_Registry.view<DirectionalLight>();
+		auto view = m_Registry.view<LightComponent>();
 		if (!view) return GameObject();
 
-		if (view.size() > 1) std::cout << "Warning: more than one main light in scene, only using the first added directional light" << std::endl;
-		
-		return GameObject(view.front(), this);
+		std::vector<entt::entity> directionalLights;
+		for (auto entity : view)
+		{
+			LightComponent& light = view.get<LightComponent>(entity);
+			if (light.Type == Directional) directionalLights.push_back(entity);
+		}
+
+		if (directionalLights.size() < 1) return GameObject();
+		if(directionalLights.size() > 1) std::cout << "Warning: more than one directional light in scene, this returns the first one found" << std::endl;
+
+		return GameObject(directionalLights.front(), this);
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
@@ -317,7 +326,5 @@ namespace Pixie
 		component.Cam.SetAspectRatio(viewport.x / viewport.y);
 		
 	}
-	template<>
-	void Scene::OnComponentAdded(Entity entity, DirectionalLight& component)
-	{}
+	
 }

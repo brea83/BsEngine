@@ -76,12 +76,19 @@ namespace Pixie
 
     enum LightType
     {
-        Point,
         Directional,
+        Point,
         Spot,
-        // END used for imgui combo windows
-        END
+        // COUNT used for imgui combo windows
+        COUNT,
     };
+
+    const std::unordered_map<LightType, std::string> LightTypeToString = {
+        {LightType::Directional, "Directional Light"},
+        {LightType::Point, "Point Light"},
+        {LightType::Spot, "Spot Light"},
+    };
+
     struct LightComponent
     {   
         LightComponent() = default;
@@ -89,21 +96,16 @@ namespace Pixie
         
         bool Enabled{ true };
         LightType Type{ Point };
+        static const char* LightTypeNames[(unsigned long long)LightType::COUNT];
 
         glm::vec3 Direction{ 0.5f, -0.5f, 0.5f }; // consider if this should just be getting the Forward from the transform?
         glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
-        glm::vec3 Attenuation{ 1.0f, 0.01f, 0.00001f };
+        glm::vec3 Attenuation{ 1.0f, 0.045f, 0.0075f };
 
         //spotlight only
-        float CuttoffAngle{ 15.0f };
+        float InnerRadius{ 12.5f };
+        float OuterRadius{ 15.0f };
+
     };
 
-    struct DirectionalLight
-    {
-        DirectionalLight() = default;
-        DirectionalLight(const DirectionalLight&) = default;
-        glm::vec3 Direction{ 0.5f, -0.5f, 0.5f };
-        glm::vec3 Color{ 1.0f, 1.0f, 0.95f };
-        glm::vec3 Attenuations{ 1.0f, 0.01f, 0.00001f };
-    };
 }

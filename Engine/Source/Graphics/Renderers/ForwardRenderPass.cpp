@@ -21,7 +21,7 @@ namespace Pixie
 		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/teal.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
 		m_FallbackSpecularMap = AssetLoader::LoadTexture("../Assets/Textures/noise.png");
 
-		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentShader.glsl");
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentMultiLightLecture.glsl");
 	}
 
 	ForwardRenderPass::~ForwardRenderPass()
@@ -32,7 +32,7 @@ namespace Pixie
 
 		m_Shader->Use();
 
-		GameObject mainLight = sceneToRender.GetMainLight();
+		/*GameObject mainLight = sceneToRender.GetMainLight();
 		if (mainLight)
 		{
 			DirectionalLight& light = mainLight.GetComponent<DirectionalLight>();
@@ -41,7 +41,9 @@ namespace Pixie
 			m_Shader->SetUniformVec3("MainLight.direction", direction);
 			m_Shader->SetUniformVec3("MainLight.color", light.Color);
 			m_Shader->SetUniformVec3("MainLight.attenuation", light.Attenuations);
-		}
+		}*/
+
+		SendLightsToShader(sceneToRender);
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
 		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
@@ -95,13 +97,15 @@ namespace Pixie
 			return;
 		}
 
+		m_Shader->SetUniformBool("bUseMainLight", true);
 
 		int lightTypes[MAX_LIGHTS];
 		float lightColors[MAX_LIGHTS * 3];
 		float lightPositions[MAX_LIGHTS * 3];
 		float lightDirections[MAX_LIGHTS * 3];
 		float lightAttenuations[MAX_LIGHTS * 3];
-		float spotCutoffAngles[MAX_LIGHTS];
+		float innerRadiusCos[MAX_LIGHTS];
+		float outerRadiusCos[MAX_LIGHTS];
 
 		int activeLights = 0;
 		for (auto entity : group)
@@ -128,7 +132,8 @@ namespace Pixie
 			lightAttenuations[activeLights * 4 + 1] = light.Attenuation.y;
 			lightAttenuations[activeLights * 4 + 2] = light.Attenuation.z;
 
-			spotCutoffAngles[activeLights] = light.CuttoffAngle;
+			innerRadiusCos[activeLights] = glm::cos(glm::radians(light.InnerRadius));
+			outerRadiusCos[activeLights] = glm::cos(glm::radians(light.OuterRadius));
 
 			activeLights++;
 		}
@@ -144,7 +149,8 @@ namespace Pixie
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightDirection"), activeLights, lightDirections);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightColor"), activeLights, lightColors);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightAttenuation"), activeLights, lightAttenuations);
-		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "cutoffAngle"), activeLights, spotCutoffAngles);
+		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "innerRadius"), activeLights, innerRadiusCos);
+		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "outerRadius"), activeLights, outerRadiusCos);
 		glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLights"), activeLights);
 		glUniform1iv(glGetUniformLocation(m_Shader->ShaderProgram, "lightTypes"), activeLights, lightTypes);
 	}

@@ -53,6 +53,9 @@
     <ClCompile Include="Source\Input\WindowsInput.cpp" />
     <ClCompile Include="Source\Events\SubscribableEvent.cpp" />
     <ClCompile Include="Source\Editor\EditorCamera.cpp" />
+    <ClCompile Include="Source\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="Source\Resources\StreamWriter.cpp" />
+    <ClCompile Include="Source\Resources\StreamReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -120,6 +123,9 @@
     <ClInclude Include="Source\Input\WindowsInput.h" />
     <ClInclude Include="Source\Events\SubscribableEvent.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />
+    <ClInclude Include="Source\Scene\SceneSerializer.h" />
+    <ClInclude Include="Source\Resources\StreamWriter.h" />
+    <ClInclude Include="Source\Resources\StreamReader.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

@@ -132,6 +132,7 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Scene\SceneSerializer.cpp" />
     <ClCompile Include="Source\CameraManager.cpp" />
     <ClCompile Include="Source\Editor\EditorCamera.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
@@ -178,6 +179,8 @@
     <ClCompile Include="Source\Resources\TextResource.cpp" />
     <ClCompile Include="Source\Input\WindowsInput.cpp" />
     <ClCompile Include="Source\Events\SubscribableEvent.cpp" />
+    <ClCompile Include="Source\Resources\StreamWriter.cpp" />
+    <ClCompile Include="Source\Resources\StreamReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -197,6 +200,7 @@
     <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
+    <ClInclude Include="Source\Scene\SceneSerializer.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />
     <ClInclude Include="Source\EntryPoint.h" />
     <ClInclude Include="Pixie.h" />
@@ -245,6 +249,8 @@
     <ClInclude Include="Source\Resources\TextResource.h" />
     <ClInclude Include="Source\Input\WindowsInput.h" />
     <ClInclude Include="Source\Events\SubscribableEvent.h" />
+    <ClInclude Include="Source\Resources\StreamWriter.h" />
+    <ClInclude Include="Source\Resources\StreamReader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />

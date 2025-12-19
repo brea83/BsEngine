@@ -1,18 +1,7 @@
 #include "EditorLayer.h"
 #include "BsPrecompileHeader.h"
 #include "Pixie.h"
-//#include "EngineContext.h"
-//#include "GlfwWrapper.h"
-//#include "Graphics/Renderers/Renderer.h"
-//#include "Graphics/Camera.h"
-//#include "Graphics/FrameBuffer.h"
-//#include "Scene/Scene.h"
-//#include "Scene/GameObject.h"
-//#include "Graphics/Primitives/TransformComponent.h"
-//#include "glad/glad.h"
-
-//#include "Input/WindowsInput.h"
-//#include "Events/KeyCodes.h"
+#include "Scene/SceneSerializer.h"
 
 #include "ImGui/ImGuiPanel.h"
 #include <imgui_internal.h>
@@ -162,11 +151,25 @@ namespace Pixie
 			{
 				if (ImGui::MenuItem("Exit")) engine->StopApplication();
 
+				if (ImGui::MenuItem("Test Save Scene"))
+				{
+					SceneSerializer serializer(m_CurrentScene);
+					serializer.Serialize("TestSave.bin");
+				}
+
+				if (ImGui::MenuItem("Test Load Scene"))
+				{
+					SceneSerializer serializer(m_CurrentScene);
+					serializer.Deserialize("TestSave.bin");
+				}
+
 				ImGui::EndMenu();
 			}
 
 			if (ImGui::BeginMenu("Scene"))
 			{
+				if (ImGui::MenuItem("Change Scene Name test")) m_CurrentScene->SetName("NameFromMenu");
+
 				if (ImGui::MenuItem("Empty GameObject"))
 				{
 					m_CurrentScene->CreateEmptyGameObject("Empty");

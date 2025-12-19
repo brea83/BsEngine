@@ -18,12 +18,14 @@ namespace Pixie
 	public:
 		Scene();
 		~Scene();
+
+		std::string GetName() const { return m_Name; }
+		void SetName(const std::string& newName) { m_Name = newName; }
 		
 		GameObject CreateEmptyGameObject(const std::string& name);
-		//void AddGameObject(std::shared_ptr<GameObject> gameObject);
 		void RemoveGameObject(GameObject objectToRemove);
 		void RemoveEntity(entt::entity entityHandle);
-		//int NumGameObjects() { return m_GameObjects.size(); }
+		bool IsEntityValid(entt::entity entity) const { return m_Registry.valid(entity); }
 		
 		GameObject GetGameObjectByEntityHandle(entt::entity entityHandle);
 		GameObject FindGameObjectByName(const std::string& name);
@@ -62,12 +64,13 @@ namespace Pixie
 		GameObject GetMainLight();
 
 	private:
+		std::string m_Name{ "New Scene" };
 		entt::registry m_Registry;
 		/*entt::entity m_ActiveCamera{ entt::null };
 		entt::entity m_DefaultCamera{ entt::null };*/
 		CameraManager m_CameraManager;
 		//EditorCamera m_EditorCamera;
-		bool m_IsInitiated{ false };
+		//bool m_IsInitiated{ false };
 
 		//std::vector<std::shared_ptr<CameraComponent>> m_CameraComponents;
 		/*std::vector<std::shared_ptr<MeshComponent>> m_MeshComponents;

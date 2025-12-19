@@ -71,6 +71,22 @@ namespace Pixie
 			}
 		}
 
+		template<typename Value>
+		void WriteMap(const std::unordered_map<std::string, Value>& map, bool writeSize = true)
+		{
+			if (writeSize)	WriteRaw<uint32_t>((uint32_t)map.size());
+
+			for (const auto& [key, value] : map)
+			{
+				WriteString(key);
+
+				if constexpr (std::is_trivial<Value>())
+					WriteRaw<Value>(value);
+				else
+					WriteObjet<Value>(value);
+			}
+		}
+
 		template<typename T>
 		void WriteArray(const std::vector<T>& array, bool writeSize = true)
 		{
@@ -85,13 +101,14 @@ namespace Pixie
 			}
 		}
 
-	};
 		template<>
-		inline void StreamWriter::WriteArray(const std::vector<std::string>& array, bool writeSize)
+		inline void WriteArray(const std::vector<std::string>& array, bool writeSize)
 		{
 			if (writeSize) WriteRaw<uint32_t>((uint32_t)array.size());
 
 			for (const auto& element : array)
 				WriteString(element);
 		}
+
+	};
 }

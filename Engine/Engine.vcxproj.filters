@@ -56,6 +56,7 @@
     <ClCompile Include="Source\Scene\SceneSerializer.cpp" />
     <ClCompile Include="Source\Resources\StreamWriter.cpp" />
     <ClCompile Include="Source\Resources\StreamReader.cpp" />
+    <ClCompile Include="Source\Resources\FileStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Source\Scene\SceneSerializer.h" />
     <ClInclude Include="Source\Resources\StreamWriter.h" />
     <ClInclude Include="Source\Resources\StreamReader.h" />
+    <ClInclude Include="Source\Resources\FileStream.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

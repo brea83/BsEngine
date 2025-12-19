@@ -16,13 +16,12 @@ namespace Pixie
 	//class Texture;
 	class GameObject;
 
-	class MeshComponent : public Component
+	class MeshComponent
 	{
 	public:
-		MeshComponent(/*GameObject* parent*/);
-		//MeshComponent(/*GameObject* parent,*/ PrimitiveMeshType primitiveMesh);
+		MeshComponent();
 		MeshComponent(PrimitiveMeshType primitiveMesh);
-		MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath = "");
+		MeshComponent(const std::string& modelFilePath, const std::string& textureFilePath = "");
 		~MeshComponent();
 
 		bool Reload();
@@ -30,12 +29,10 @@ namespace Pixie
 		// Inherited via Component
 		void Initialize() ;
 		void CleanUp() ;
-		std::shared_ptr<Component> Clone() ;
+		
 
-		const std::string& Name() const  override{ return m_Name; }
+		const std::string& Name() const { return m_Name; }
 		void SetName(const std::string& name)  { m_Name = name; }
-		//GameObject* GetParentObject() const  { return m_ParentObject; }
-		//void SetParentObject(GameObject* newParent) ;
 
 		void SetFilePath(const std::string& modelFilePath) { }
 		std::string GetFilePath() { return m_FilePath; }
@@ -49,12 +46,9 @@ namespace Pixie
 	protected:
 		//properties
 		std::string m_Name{ "Mesh Component" };
-		//GameObject* m_ParentObject{ nullptr };
 		std::string m_FilePath{""};
 		
 		std::vector<std::shared_ptr<Mesh>> m_Meshes;
-		//Todo: replace textures with materials.
-		//std::shared_ptr<Texture> m_Texture{nullptr};
 		MaterialInstance m_MaterialInstance{};
 
 

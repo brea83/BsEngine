@@ -8,24 +8,24 @@
 
 namespace Pixie
 {
-    class Component
-    {
-    public:
-        virtual const std::string& Name() const = 0;
-        virtual std::string ToString() const { return Name(); }
+    //class Component
+    //{
+    //public:
+    //    virtual const std::string& Name() const = 0;
+    //    virtual std::string ToString() const { return Name(); }
 
-    };
+    //};
 
-    // components are hashed by their name and their typeid.hash_code()
-    struct ComponentHash
-    {
-        std::size_t operator()(const Component& component) const
-        {
-            std::hash<std::string> NameHash;
+    //// components are hashed by their name and their typeid.hash_code()
+    //struct ComponentHash
+    //{
+    //    std::size_t operator()(const Component& component) const
+    //    {
+    //        std::hash<std::string> NameHash;
 
-            return NameHash(component.Name()) ^ typeid(component).hash_code();
-        }
-    };
+    //        return NameHash(component.Name()) ^ typeid(component).hash_code();
+    //    }
+    //};
     struct TagComponent
     {
         TagComponent() = default;

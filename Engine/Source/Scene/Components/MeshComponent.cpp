@@ -16,46 +16,12 @@
 
 namespace Pixie
 {
-	MeshComponent::MeshComponent(/*GameObject* parent*/)
- : /*m_ParentObject(parent),*/ m_Name("Model Component"), m_FilePath("")
-	{
-
-	}
-
-	//MeshComponent::MeshComponent(/*GameObject* parent, */PrimitiveMeshType primitiveMesh)
-	//: /*m_ParentObject(parent),*/ m_Name("Model Component"), m_TexturePath("")
-	//{
-	//	
-	//	std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
-	//	if (mesh != nullptr)
-	//	{
-	//		m_Meshes.push_back(mesh);
-	//
-	//		switch (primitiveMesh)
-	//		{
-	//		case PrimitiveMeshType::Triangle:
-	//			m_FilePath = "PrimitiveMesh_Triangle";
-	//			break;
-	//		case PrimitiveMeshType::Quad:
-	//			m_FilePath = "PrimitiveMesh_Quad";
-	//			break;
-	//		case PrimitiveMeshType::Cube:
-	//			m_FilePath = "PrimitiveMesh_Cube";
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//
-	//		m_Meshes.push_back(mesh);
-	//	}
-	//	else
-	//	{
-	//		m_FilePath = "";
-	//	}
-	//}
+	MeshComponent::MeshComponent()
+ : m_Name("Model Component"), m_FilePath("")
+	{ }
 
 	MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-	: /*m_ParentObject(nullptr),*/ m_Name("Model Component")
+	: m_Name("Model Component")
 	{
 		std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 		if (mesh != nullptr)
@@ -85,8 +51,8 @@ namespace Pixie
 		}
 	}
 
-	MeshComponent::MeshComponent(/*GameObject* parent,*/ const std::string& modelFilePath, const std::string& textureFilePath)
-		:/* m_ParentObject(parent),*/ m_Name("Mesh Component"), m_FilePath(modelFilePath)
+	MeshComponent::MeshComponent( const std::string& modelFilePath, const std::string& textureFilePath)
+		: m_Name("Mesh Component"), m_FilePath(modelFilePath)
 	{
 		m_MaterialInstance.BaseMapPath = textureFilePath;
 		Reload();
@@ -111,7 +77,6 @@ namespace Pixie
 	MeshComponent::~MeshComponent()
 	{
 		std::cout << "DELETING " << m_Name << std::endl;
-		//delete[] m_Meshes;
 	}
 
 	void MeshComponent::LoadMeshAssimp(const std::string & filePath)
@@ -366,11 +331,6 @@ namespace Pixie
 
 	void MeshComponent::CleanUp()
 	{}
-
-	std::shared_ptr<Component> MeshComponent::Clone()
-	{
-		return std::shared_ptr<Component>();
-	}
 
 
 	void MeshComponent::OnUpdate()

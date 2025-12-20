@@ -84,11 +84,9 @@ namespace Pixie
 
 		
 		//methods
+		// ToDo: Refactor FBX loading
 		void LoadMeshAssimp(const std::string& filePath);
-
-		//TODO: refactor this to look for matching models and meshes in the assetloader
-		// and move the actual loading and processing to the asset loader
-		// for now just following tutorial to see if I can get importing to work at all
+		
 		void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
 		aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 		void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);

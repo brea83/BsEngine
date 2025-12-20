@@ -14,7 +14,7 @@ namespace Pixie
 
 	enum class CameraMoveType
 	{
-		// TODO: think about whether spline following will use this component or something else
+		// ToStudy: think about whether spline following will use this component or something else
 		Fly,
 		WaitingForMouse,
 		//EdgeScrolling, ??

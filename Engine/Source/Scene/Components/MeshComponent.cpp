@@ -81,7 +81,7 @@ namespace Pixie
 
 	void MeshComponent::LoadMeshAssimp(const std::string & filePath)
 	{
-		// TODO: Refactor FBX loading
+		
 		Assimp::Importer importer;
 		const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
 

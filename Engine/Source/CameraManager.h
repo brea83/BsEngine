@@ -40,7 +40,7 @@ namespace Pixie
 		void SetDefaultCamera(GameObject& gameObject);
 		GameObject GetDefaultCamera();
 
-		// Todo Add camera blend stuff. 
+		// ToDo: Add camera blend stuff. 
 		// I think that will mean I'll need update methods for lerping?
 
 	private:

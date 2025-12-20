@@ -8,7 +8,7 @@
 
 #include "Layers/Layer.h"
 #include "Layers/ImGuiLayer.h"
-// Todo make and add debug / logger
+// ToDo: make and add debug / logger
 
 
 #include "Input/Input.h"

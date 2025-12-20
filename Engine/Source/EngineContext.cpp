@@ -98,7 +98,7 @@ namespace Pixie
 
 	void EngineContext::Update()
 	{
-		//TODO: plan out what gets updated when window is minimized and what doesn't
+		//ToDo: plan out what gets updated when window is minimized and what doesn't
 		if (!m_IsMinimized)
 		{
 			float currentFrame = (float)glfwGetTime();

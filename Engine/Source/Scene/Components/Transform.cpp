@@ -190,6 +190,18 @@ namespace Pixie
         return m_LocalMatrix;
     }
 
+    void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
+    {
+        stream->WriteRaw<entt::entity>(component.ParentEntityHandle);
+        stream->WriteRaw<entt::entity>(component.EntityHandle);
+
+    }
+
+    bool TransformComponent::Deserialize(StreamReader * stream, TransformComponent & component)
+    {
+        return false;
+    }
+
     void TransformComponent::RecalculateModelMatrix()
     {
         glm::mat4 identity = glm::mat4(1.0f);

@@ -3,6 +3,11 @@
 #include "Scene.h"
 #include <EnTT/entt.hpp>
 #include "Scene/Components/CameraComponent.h"
+#include "Components/Transform.h"
+#include "Components/CameraController.h"
+#include "Components/CameraComponent.h"
+#include "Scene/Components/MeshComponent.h"
+
 
 namespace Pixie
 {
@@ -18,7 +23,7 @@ namespace Pixie
 		// Component function templates defined lower in the file to make 
 		// reading what functions are available less cluttered
 		template <typename Type>
-		bool HasCompoenent();
+		bool HasCompoenent() const;
 
 		// args are used to construct the component of <Type>
 		template <typename Type, typename... Args>
@@ -28,9 +33,11 @@ namespace Pixie
 		Type& AddOrReplaceComponent(Args&&... args);
 
 		template <typename Type>
-		Type& GetComponent();
+		Type& GetComponent() const;
 		template <typename Type>
-		Type* TryGetComponent();
+		Type* TryGetComponent() const;
+		template<typename Type, typename... Args>
+		Type& GetOrAddComponent(Args&&... args);
 
 		template <typename Type>
 		void RemoveComponent();
@@ -66,9 +73,10 @@ namespace Pixie
 
 
 	template <typename Type>
-	inline bool Entity::HasCompoenent()
+	inline bool Entity::HasCompoenent() const
 	{
-		return m_Scene->GetRegistry().any_of<Type>(m_EntityHandle);
+		const entt::registry& registry = m_Scene->GetRegistry();
+		return registry.any_of<Type>(m_EntityHandle);
 	}
 
 	// args are used to construct the component of <Type>
@@ -90,18 +98,29 @@ namespace Pixie
 	}
 
 	template <typename Type>
-	inline Type& Entity::GetComponent()
+	inline Type& Entity::GetComponent() const
 	{
 		if (!HasCompoenent<Type>()) std::cout << "WARNING: COULD NOT FIND COMPONENT" << std::endl;
 		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 	}
 
 	template <typename Type>
-	inline Type* Entity::TryGetComponent()
+	inline Type* Entity::TryGetComponent() const
 	{
 		return m_Scene->GetRegistry().try_get<Type>(m_EntityHandle);
 	}
 
+	template <typename Type, typename... Args>
+	inline Type& Entity::GetOrAddComponent(Args&&... args)
+	{
+		if (!HasCompoenent<Type>())
+		{
+			Type& component = m_Scene->GetRegistry().emplace<Type>(m_EntityHandle, std::forward<Args>(args)...);
+			m_Scene->OnComponentAdded<Type>(*this, component);
+			return component;
+		}
+		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
+	}
 
 	template <typename Type>
 	inline void Entity::RemoveComponent()

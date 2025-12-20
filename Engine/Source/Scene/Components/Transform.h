@@ -4,6 +4,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <EnTT/entt.hpp>
+#include "Scene/Components/Component.h"
 
 namespace Pixie
 {
@@ -23,6 +24,8 @@ namespace Pixie
 		TransformComponent(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
 		TransformComponent(const TransformComponent&) = default;
 		// properties
+		static constexpr SerializableComponentID ID{ SerializableComponentID::TransformComponent };
+
 		void UnParent(Scene* scene, entt::entity parent, entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
 		entt::entity ParentEntityHandle{ entt::null };
 		entt::entity EntityHandle{ entt::null };
@@ -65,6 +68,9 @@ namespace Pixie
 		{
 			return !(*this == other);
 		}
+
+		static void Serialize(StreamWriter* stream, const TransformComponent& component);
+		static bool Deserialize(StreamReader* stream, TransformComponent& component);
 	private:
 		glm::vec3 m_Position { 0.0f };
 		bool m_PositionDirty { true };

@@ -1,9 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <EnTT/entt.hpp>
+#include "Scene/Components/Component.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvents.h"
 #include "Events/KeyboardEvents.h"
-#include <EnTT/entt.hpp>
 
 namespace Pixie
 {
@@ -26,6 +27,8 @@ namespace Pixie
 		CameraController() = default;
 		CameraController(entt::entity entity) : m_CameraEntity(entity) {}
 
+		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
+
 		void OnUpdate(float deltaTime, GameObject& gameObject);
 
 		bool OnEvent(Event& event);
@@ -43,7 +46,18 @@ namespace Pixie
 
 		void OnViewportSizeChange(float width, float height);
 
-		// TODO decide if zoom should go through cam controller or not?
+		static void Serialize(StreamWriter* stream, const CameraController& component)
+		{
+			stream->WriteRaw<SerializableComponentID>(component.ID);
+		}
+		static bool Deserialize(StreamReader* stream, CameraController& component)
+		{
+			SerializableComponentID readID;
+			stream->ReadRaw<SerializableComponentID>(readID);
+			if (readID != component.ID) return false;
+			return true;
+		}
+		
 	private:
 		entt::entity m_CameraEntity{ entt::null };
 		CameraMoveType m_Type{ CameraMoveType::WaitingForMouse };

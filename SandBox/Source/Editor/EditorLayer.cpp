@@ -23,7 +23,7 @@ namespace Pixie
 
 	EditorLayer::~EditorLayer()
 	{
-		delete m_AssetViewer;
+		//delete m_AssetViewer;
 	}
 
 	void EditorLayer::OnAttach()
@@ -105,10 +105,9 @@ namespace Pixie
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 		DrawSceneTools();
+
 		glm::mat4 viewMatrix{ 1.0f };
 		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
-		//TransformComponent& camTransform = m_CurrentScene->GetActiveCameraTransform();
-		//DrawGridLines(camera);
 
 		std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
 		uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
@@ -118,27 +117,16 @@ namespace Pixie
 		{
 			m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
 			frameBuffer->Resize(currentSize.x, currentSize.y);
-			camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
+			
+			if(camera) camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
 
 
 		}
 		ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
-		DrawGizmos(camera, viewMatrix, selected);
+	
+		if(camera)
+			DrawGizmos(camera, viewMatrix, selected);
 
-		if (ImGui::IsWindowHovered())
-		{
-			ImGuiIO& io = ImGui::GetIO();
-
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Middle))
-			{
-
-			}
-
-			if (ImGui::IsMouseDown(ImGuiMouseButton_Right))
-			{
-
-			}
-		}
 		ImGui::End();
 	}
 
@@ -159,8 +147,11 @@ namespace Pixie
 
 				if (ImGui::MenuItem("Test Load Scene"))
 				{
-					SceneSerializer serializer(m_CurrentScene);
+					Scene* loadedScene = new Scene();
+					SceneSerializer serializer(loadedScene);
 					serializer.Deserialize("TestSave.bin");
+					EngineContext::GetEngine()->SetScene(loadedScene);
+					OnSceneChange(loadedScene);
 				}
 
 				ImGui::EndMenu();
@@ -199,47 +190,56 @@ namespace Pixie
 		{
 			if (ImGui::BeginMenuBar())
 			{
-				if (ImGui::Button("CamFlyMode"))
-				{
-					EngineContext* engine = EngineContext::GetEngine();
-					engine->ToggleCamFlyMode();
-				}
-
 				GameObject activeCam = m_CurrentScene->GetActiveCameraGameObject();
-				CameraController& camController = activeCam.GetComponent<CameraController>();
-				Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
-				static float translationSpeed = camController.GetTranslationSpeed();
-				static float rotationSpeed = camController.GetRotationSpeed();
-				static float fov = camera.GetFov();
-
-				ImGui::SetItemTooltip("Tab to toggle fly controlls");
-
-				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
-				ImGui::Text("Cam Speed");
-				if (ImGui::DragFloat("##Speed", &translationSpeed))
+				if (activeCam)
 				{
-					camController.SetTranslationSpeed(translationSpeed);
+					DrawEditorCamTools(activeCam);
 				}
-				ImGui::Text("Look Sensitivity");
-				if (ImGui::DragFloat("##Sensitivity", &rotationSpeed))
-				{
-					camController.SetRotationSpeed(rotationSpeed);
-				}
-				ImGui::Text("FOV");
-				if (ImGui::DragFloat("##FoVvalue", &fov))
-				{
-					camera.SetFov(fov);
-				}
-				if (ImGui::Button("ResetFoV"))
-				{
-					camera.SetFov(45.0f);
-				}
-				ImGui::PopItemWidth();
+				
 				ImGui::EndMenuBar();
 			}
 			ImGui::End();
 		}
 
+	}
+
+	void EditorLayer::DrawEditorCamTools(GameObject& activeCam)
+	{
+		if (ImGui::Button("CamFlyMode"))
+		{
+			EngineContext* engine = EngineContext::GetEngine();
+			engine->ToggleCamFlyMode();
+		}
+
+		CameraController& camController = activeCam.GetComponent<CameraController>();
+		Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
+		static float translationSpeed = camController.GetTranslationSpeed();
+		static float rotationSpeed = camController.GetRotationSpeed();
+		static float fov = camera.GetFov();
+
+		ImGui::SetItemTooltip("Tab to toggle fly controlls");
+
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
+		ImGui::Text("Cam Speed");
+		if (ImGui::DragFloat("##Speed", &translationSpeed))
+		{
+			camController.SetTranslationSpeed(translationSpeed);
+		}
+		ImGui::Text("Look Sensitivity");
+		if (ImGui::DragFloat("##Sensitivity", &rotationSpeed))
+		{
+			camController.SetRotationSpeed(rotationSpeed);
+		}
+		ImGui::Text("FOV");
+		if (ImGui::DragFloat("##FoVvalue", &fov))
+		{
+			camera.SetFov(fov);
+		}
+		if (ImGui::Button("ResetFoV"))
+		{
+			camera.SetFov(45.0f);
+		}
+		ImGui::PopItemWidth();
 	}
 
 	void EditorLayer::DrawGridLines(Camera* camera)

@@ -70,6 +70,13 @@ namespace Pixie
 		return m_Engine;
 	}
 
+	EngineContext::~EngineContext()
+	{
+		delete m_ActiveScene;
+		delete m_Renderer;
+		delete m_ImGuiLayer;
+	}
+
 	glm::vec2 EngineContext::GetViewportSize() const
 	{
 		return m_ImGuiLayer->GetViewportSize();
@@ -78,6 +85,15 @@ namespace Pixie
 	glm::vec2 EngineContext::GetWindowSize() const
 	{
 		return { glm::vec2(m_MainWindow->WindowWidth(), m_MainWindow->WindowHeight()) };
+	}
+
+	void EngineContext::SetScene(Scene* newScene)
+	{
+		if (m_ActiveScene)
+		{
+			delete m_ActiveScene;
+		}
+		m_ActiveScene = newScene;
 	}
 
 	void EngineContext::Update()

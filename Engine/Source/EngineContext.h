@@ -18,7 +18,7 @@ namespace Pixie
 	{
 	public:
 		static EngineContext* GetEngine();
-		virtual ~EngineContext() { }
+		virtual ~EngineContext();
 		bool Init();
 
 		//static int NextUID;
@@ -29,7 +29,7 @@ namespace Pixie
 
 		glm::vec2 GetWindowSize() const;
 
-		void SetScene(Scene* newScene) { m_ActiveScene = newScene; }
+		void SetScene(Scene* newScene);
 		Scene* GetScene() { return m_ActiveScene; }
 
 		Renderer* GetRenderer() { return m_Renderer; }

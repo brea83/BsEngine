@@ -47,9 +47,9 @@ namespace Pixie
 		Scene* m_Scene{ nullptr };
 		bool m_EditorFlyMode{ false };
 
-		entt::entity m_ActiveCamera{};
-		entt::entity m_DefaultCamera{};
-		entt::entity m_EditorCamera{};
+		entt::entity m_ActiveCamera{ entt::null };
+		entt::entity m_DefaultCamera{ entt::null };
+		entt::entity m_EditorCamera{ entt::null };
 
 		bool OnKeyPressed(KeyPressedEvent& event);
 

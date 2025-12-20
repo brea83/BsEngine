@@ -20,7 +20,7 @@ namespace Pixie
 		}
 
 		//static Entity selected = Entity();
-		entt::registry& registry = currentScene->m_Registry;
+		entt::registry& registry = currentScene->GetRegistry();
 
 
 		auto view = registry.view<HeirarchyComponent>();

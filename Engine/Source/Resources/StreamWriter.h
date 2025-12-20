@@ -28,7 +28,7 @@ namespace Pixie
 		}
 
 		template<typename T>
-		void WriteObjet(const T& object)
+		void WriteObject(const T& object)
 		{
 			T::Serialize(this, object);
 		}
@@ -43,12 +43,12 @@ namespace Pixie
 				if constexpr (std::is_trivial<Key>())
 					WriteRaw<Key>(key);
 				else
-					WriteObjet<Key>(key);
+					WriteObject<Key>(key);
 
 				if constexpr (std::is_trivial<Value>())
 					WriteRaw<Value>(value);
 				else
-					WriteObjet<Value>(value);
+					WriteObject<Value>(value);
 			}
 		}
 
@@ -62,12 +62,12 @@ namespace Pixie
 				if constexpr (std::is_trivial<Key>())
 					WriteRaw<Key>(key);
 				else
-					WriteObjet<Key>(key);
+					WriteObject<Key>(key);
 
 				if constexpr (std::is_trivial<Value>())
 					WriteRaw<Value>(value);
 				else
-					WriteObjet<Value>(value);
+					WriteObject<Value>(value);
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace Pixie
 				if constexpr (std::is_trivial<Value>())
 					WriteRaw<Value>(value);
 				else
-					WriteObjet<Value>(value);
+					WriteObject<Value>(value);
 			}
 		}
 
@@ -97,7 +97,7 @@ namespace Pixie
 				if constexpr (std::is_trivial<T>())
 					WriteRaw<T>(element);
 				else
-					WriteObjet<T>(element);
+					WriteObject<T>(element);
 			}
 		}
 

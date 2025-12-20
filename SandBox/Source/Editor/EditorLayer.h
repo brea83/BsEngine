@@ -38,9 +38,10 @@ namespace Pixie
 		GameObject m_Selected{ entt::null, nullptr };
 		int m_GizmoType{ -1 };
 
-		ImGuiPanel* m_AssetViewer{ nullptr };
+		//ImGuiPanel* m_AssetViewer{ nullptr };
 
 		void DrawSceneTools();
+		void DrawEditorCamTools(GameObject& activeCam);
 
 		void DrawGridLines(Camera* camera);
 		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix/*TransformComponent& camTransform*/, GameObject& selected);

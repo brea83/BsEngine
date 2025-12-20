@@ -32,23 +32,16 @@ namespace Pixie
 
 		m_Shader->Use();
 
-		/*GameObject mainLight = sceneToRender.GetMainLight();
-		if (mainLight)
-		{
-			DirectionalLight& light = mainLight.GetComponent<DirectionalLight>();
-			glm::vec3 direction = -1.0f * glm::normalize(light.Direction);
-			m_Shader->SetUniformBool("bUseMainLight", true);
-			m_Shader->SetUniformVec3("MainLight.direction", direction);
-			m_Shader->SetUniformVec3("MainLight.color", light.Color);
-			m_Shader->SetUniformVec3("MainLight.attenuation", light.Attenuations);
-		}*/
-
-		SendLightsToShader(sceneToRender);
-
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
+		if (!cameraEntity)
+		{
+			// no valid camera to render
+			m_Shader->EndUse();
+			return;
+		}
+		// set up rendering camera info
 		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
 		glm::vec3 camPosition = transform.GetPosition();
-
 
 		glm::mat4 viewMatrix{1.0f};
 		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
@@ -63,8 +56,13 @@ namespace Pixie
 		m_Shader->SetUniformMat4("projection", projectionMatrix);
 		m_Shader->SetUniformVec3("cameraPosition", camPosition);
 
+		// get scene registry for lighting and renderables
 		entt::registry& registry = sceneToRender.GetRegistry();
 
+		// set up light data
+		SendLightsToShader(registry);
+
+		// render meshes
 		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
 
 		for (auto entity : group)
@@ -85,9 +83,9 @@ namespace Pixie
 
 		m_Shader->EndUse();
 	}
-	void ForwardRenderPass::SendLightsToShader(Scene& currentScene)
+	void ForwardRenderPass::SendLightsToShader(entt::registry& registry)
 	{
-		entt::registry& registry = currentScene.GetRegistry();
+		//entt::registry& registry = currentScene.GetRegistry();
 
 		auto group = registry.group<LightComponent>(entt::get<TransformComponent>);
 

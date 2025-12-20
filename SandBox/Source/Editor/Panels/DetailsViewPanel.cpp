@@ -271,7 +271,7 @@ namespace Pixie
 
 	void DetailsViewPanel::DrawComponents(Scene* scene, GameObject& selected)
 	{
-		entt::registry& registry = scene->m_Registry;
+		entt::registry& registry = scene->GetRegistry();
 		if (selected.HasCompoenent<TransformComponent>())
 		{
 			ImGui::SeparatorText("Transform");
@@ -382,7 +382,7 @@ namespace Pixie
 			SliderParams specParams;
 			specParams.Min = 1.0f;
 			specParams.Max = 200.0f;
-			specParams.Speed = 0.1;
+			specParams.Speed = 0.1f;
 			specParams.ResetValue = 32.0f;
 			DrawFloatControl("Specular Power", material.SpecularPower, specParams);
 

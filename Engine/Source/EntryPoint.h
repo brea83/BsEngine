@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 	}
 	
 #pragma region TEMPE POPULATE START SCENE
-	engine->GetScene()->PopulateWithTestObjects();
+	//engine->GetScene()->PopulateWithTestObjects();
 #pragma endregion 1 cube and 1 viking house
 
 	// uncomment this call to draw in wireframe polygons.

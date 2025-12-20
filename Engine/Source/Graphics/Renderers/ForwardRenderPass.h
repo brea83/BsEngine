@@ -23,7 +23,7 @@ namespace Pixie
 		//todo: REPLACE THIS WITH PROPER MATERIALS SYSTEM
 		std::shared_ptr<Texture> m_FallbackSpecularMap;
 
-		void SendLightsToShader(Scene& currentScene);
+		void SendLightsToShader(entt::registry& registry);
 	};
 
 }

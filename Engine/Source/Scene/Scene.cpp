@@ -1,12 +1,8 @@
 #include "BsPrecompileHeader.h"
 #include "Scene.h"
 #include "GameObject.h"
-#include "Scene/Components/Component.h"
-#include "Scene/Components/MeshComponent.h"
 #include "Graphics/Primitives/Cube.h"
-#include "Components/Transform.h"
-#include "Components/CameraController.h"
-#include "Components/CameraComponent.h"
+
 #include "EngineContext.h"
 #include "Entity.h"
 
@@ -19,16 +15,23 @@ namespace Pixie
 
 	void Scene::Initialize()
 	{
-		GameObject mainCam = CreateEmptyGameObject("Main Camera");
-		CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
-		TransformComponent& transform = mainCam.GetComponent<TransformComponent>();
-		transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
-		transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
+		//GameObject mainCam = CreateEmptyGameObject("Main Camera");
+		//CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
+		//TransformComponent& transform = mainCam.GetComponent<TransformComponent>();
+		//transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
+		//transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
 
-		mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
+		//mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
 
-		//DefaultCamera = mainCam;
-		SetActiveCamera(mainCam);
+		////DefaultCamera = mainCam;
+		//SetActiveCamera(mainCam);
+
+		auto cameras = m_Registry.view<CameraComponent>();
+		if (cameras)
+		{
+			GameObject firstCamera(cameras.front(), this);
+			SetActiveCamera(firstCamera);
+		}
 	}
 
 	void Scene::PopulateWithTestObjects()
@@ -314,17 +317,45 @@ namespace Pixie
 
 
 	template<typename T>
-	inline void Scene::OnComponentAdded(Entity entity, T& component)
+	 void Scene::OnComponentAdded(Entity& entity, T& component)
 	{
 
 	}
 
 	template<>
-	inline void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	 void Scene::OnComponentAdded<TagComponent>(Entity& entity, TagComponent& component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<NameComponent>(Entity& entity, NameComponent & component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<HeirarchyComponent>(Entity& entity, HeirarchyComponent & component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<TransformComponent>(Entity& entity, TransformComponent & component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<MeshComponent>(Entity& entity, MeshComponent & component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<LightComponent>(Entity& entity, LightComponent & component)
+	{}
+
+	template<>
+	 void Scene::OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component)
 	{
 		glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
 		component.Cam.SetAspectRatio(viewport.x / viewport.y);
 		
 	}
+
+	template<>
+	 void Scene::OnComponentAdded<CameraController>(Entity& entity, CameraController& component)
+	{}
 	
 }

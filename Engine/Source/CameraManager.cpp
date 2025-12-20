@@ -143,6 +143,9 @@ namespace Pixie
     {
         GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
 
+        // if active cam is not entt valid we don't want to try and get components for it
+        if (!activeCam) return; 
+
         //cam controller tracks viewport size for move speed stuff
         CameraController& controller = activeCam.GetComponent<CameraController>();
         controller.OnViewportSizeChange(width, height);
@@ -180,6 +183,7 @@ namespace Pixie
     {
         GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
 
+        if (!activeCam) return nullptr;
         TransformComponent& transform = activeCam.GetComponent<TransformComponent>();
 
         glm::vec3 position = transform.GetPosition();

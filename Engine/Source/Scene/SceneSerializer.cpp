@@ -1,5 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "SceneSerializer.h"
+#include "Scene/GameObject.h"
 
 
 namespace Pixie
@@ -22,10 +23,16 @@ namespace Pixie
 		int entityCount = 0;
 		if (view)
 		{
-			entityCount = view.size();
+			entityCount = (int)view.size();
 		}
 
 		fileStream.WriteRaw<int>(entityCount);
+
+		for (auto entity : view)
+		{
+			GameObject object(entity, m_Scene);
+			fileStream.WriteObject(object);
+		}
 	}
 
 
@@ -36,6 +43,17 @@ namespace Pixie
 
 		int entityCount;
 		fileStream.ReadRaw<int>(entityCount);
+
+		entt::registry& registry = m_Scene->m_Registry;
+		registry.clear();
+		for (int i = 0; i < entityCount; i++)
+		{
+			GameObject object(registry.create(), m_Scene);
+
+			fileStream.ReadObject<GameObject>(object);
+		}
+
+		m_Scene->Initialize();
 		return true;
 	}
 }

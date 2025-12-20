@@ -24,6 +24,7 @@ namespace Pixie
 		MeshComponent(const std::string& modelFilePath, const std::string& textureFilePath = "");
 		~MeshComponent();
 
+		static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
 		bool Reload();
 
 		// Inherited via Component
@@ -42,6 +43,33 @@ namespace Pixie
 		void OnUpdate() ;
 		
 		void Render(Shader& currentShader);
+
+		static void Serialize(StreamWriter* stream, const MeshComponent& component)
+		{
+			stream->WriteString(component.m_Name);
+			stream->WriteString(component.m_FilePath);
+			stream->WriteObject<MaterialInstance>(component.m_MaterialInstance);
+
+		}
+		static bool Deserialize(StreamReader* stream, MeshComponent& component)
+		{
+			stream->ReadString(component.m_Name);
+
+			std::string oldPath = component.m_FilePath;
+			stream->ReadString(component.m_FilePath);
+
+			std::string oldTexture = component.m_MaterialInstance.BaseMapPath;
+			std::string oldMetalPath = component.m_MaterialInstance.MetallicMapPath;
+			stream->ReadObject<MaterialInstance>(component.m_MaterialInstance);
+
+			if (oldPath != component.m_FilePath 
+				|| oldTexture != component.m_MaterialInstance.BaseMapPath
+				|| oldMetalPath != component.m_MaterialInstance.MetallicMapPath)
+			{
+				component.Reload();
+			}
+			return true;
+		}
 
 	protected:
 		//properties

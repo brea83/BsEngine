@@ -407,3 +407,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# ignore some imgui stuff
+Sandbox\imgui.ini
+Sandbox/imgui.ini
+
+# ignore test save files
+Sandbox\TestSave.bin
+Sandbox/TestSave.bin

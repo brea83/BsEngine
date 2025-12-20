@@ -1,5 +1,6 @@
 #pragma once
 #include "RenderPass.h"
+#include "Scene/Components/Component.h"
 #include <glm/glm.hpp>
 
 
@@ -19,9 +20,7 @@ namespace Pixie
 		void Execute(Scene& sceneToRender) override;
 	private:
 		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<Texture> m_FallbackTexture;
-		//todo: REPLACE THIS WITH PROPER MATERIALS SYSTEM
-		std::shared_ptr<Texture> m_FallbackSpecularMap;
+		MaterialInstance m_FallbackMaterial{};
 
 		void SendLightsToShader(entt::registry& registry);
 	};

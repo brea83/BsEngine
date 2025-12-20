@@ -49,7 +49,7 @@ namespace Pixie
 		void Update();
 		void DrawConsole();
 
-		void ToggleCamFlyMode();
+		void SetDisableCursor(bool value);
 
 		// callback sent to GLFW window system that collects events each frame 
 		// to be processed at the top of next frame in DispatchEvents
@@ -69,11 +69,6 @@ namespace Pixie
 		bool m_IsRunning{ true };
 		bool m_IsMinimized{ false };
 		bool m_EditorEnabled{ true };
-
-		bool m_CamFlyMode{ false };
-		bool m_FirstMouse{ false };
-		float m_PrevMouseX{ 0.0f };
-		float m_PrevMouseY{ 0.0f };
 
 		float m_DeltaTime{ 0.0f };
 		float m_LastFrameTime{ 0.0f };

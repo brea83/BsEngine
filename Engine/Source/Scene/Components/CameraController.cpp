@@ -39,14 +39,16 @@ namespace Pixie
 				MousePan(deltaTime, transform);
 			else if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonLeft))
 				MouseRotate(deltaTime, transform);
-			else if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonRight))
-				MouseZoom(deltaTime, transform);
+			//else if (Input::IsMouseButtonPressed(Inputs::Mouse::ButtonRight))
 
 			if (m_ScrollDelta != 0.0f) MouseZoom(deltaTime, transform);
-
 			glm::vec3 newPosition = m_FocalPoint - (transform.Forward() * m_Distance);
 			transform.SetPosition(newPosition);
+			return;
 		}
+
+		CameraComponent* camComponent = gameObject.TryGetComponent<CameraComponent>();
+		if (m_ScrollDelta != 0.0f && camComponent) MouseZoom(*camComponent);
 	}
 
 	void CameraController::UpdateMouseMode(float deltaTime, Pixie::TransformComponent& transform)
@@ -59,15 +61,24 @@ namespace Pixie
 		float sensitivity = m_RotationSpeed * deltaTime;
 		glm::vec2 offset = m_MouseDelta * sensitivity;
 
-		glm::vec3 rotation = transform.GetRotationEuler(AngleType::Degrees);
-		transform.SetRotationEuler(glm::vec3(rotation.x + offset.x, rotation.y + offset.y, rotation.z), AngleType::Degrees);
+		if (offset.x <= -0.001f || offset.x >= 0.001f
+			|| offset.y <= -0.001f || offset.y >= 0.001f)
+		{
+			// offset is not too close to zero so do the rotation
+			glm::vec3 rotation = transform.GetRotationEuler(AngleType::Degrees);
+			transform.SetRotationEuler(glm::vec3(rotation.x + offset.x, rotation.y + offset.y, rotation.z), AngleType::Degrees);
+		}
 
-		float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
-		glm::vec3 currentPosition = transform.GetPosition();
+		// will need to modify this to properly detect deadzones when analog move inputs are implemented right now key pressed are whole numbers though
+		if (m_TranslationDirection.x != 0.0f || m_TranslationDirection.y != 0.0f || m_TranslationDirection.z != 0.0f)
+		{
+			glm::vec3 direction = glm::normalize(m_TranslationDirection);
+		
+			float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
+			glm::vec3 currentPosition = transform.GetPosition();
 
-		glm::vec3 direction = glm::normalize(m_TranslationDirection);
-
-		transform.SetPosition(currentPosition + (velocity * direction));
+			transform.SetPosition(currentPosition + (velocity * direction));
+		}
 	}
 
 	bool CameraController::OnEvent(Event& event)
@@ -75,6 +86,7 @@ namespace Pixie
 		EventDispatcher dispatcher{ event };
 
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(CameraController::OnKeyPressed));
+		dispatcher.Dispatch<KeyReleasedEvent>(BIND_EVENT_FUNCTION(CameraController::OnKeyReleased));
 		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(CameraController::OnMouseScrolled));
 		dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(CameraController::OnMouseMoved));
 
@@ -90,18 +102,18 @@ namespace Pixie
 		glm::vec3 currentPosition = transform->GetPosition();
 		switch (keyCode)
 		{
-		case Inputs::Keyboard::W:
-			transform->SetPosition(currentPosition + (velocity * transform->Forward()));
-			return true;
-		case Inputs::Keyboard::S:
-			transform->SetPosition(currentPosition + (velocity * transform->Forward() * -1.0f));
-			return true;
-		case Inputs::Keyboard::A:
-			transform->SetPosition(currentPosition + (velocity * transform->Left()));
-			return true;
-		case Inputs::Keyboard::D:
-			transform->SetPosition(currentPosition + (velocity * transform->Right()));
-			return true;
+		//case Inputs::Keyboard::W:
+		//	transform->SetPosition(currentPosition + (velocity * transform->Forward()));
+		//	return true;
+		//case Inputs::Keyboard::S:
+		//	transform->SetPosition(currentPosition + (velocity * transform->Forward() * -1.0f));
+		//	return true;
+		//case Inputs::Keyboard::A:
+		//	transform->SetPosition(currentPosition + (velocity * transform->Left()));
+		//	return true;
+		//case Inputs::Keyboard::D:
+		//	transform->SetPosition(currentPosition + (velocity * transform->Right()));
+		//	return true;
 		default:
 			return false;
 		}
@@ -112,28 +124,97 @@ namespace Pixie
 	{
 		Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
 
+		if (keyCode == Inputs::Keyboard::LeftAlt)
+		{
+			SetMoveType(CameraMoveType::WaitingForMouse);
+			return true;
+		}
+
+		if (m_Type == CameraMoveType::Fly)
+		{
+			switch (keyCode)
+			{
+			case Inputs::Keyboard::W:
+				m_TranslationDirection.z = 1;
+				return true;
+			case Inputs::Keyboard::S:
+				m_TranslationDirection.z = -1;
+				return true;
+			case Inputs::Keyboard::A:
+				m_TranslationDirection.x = 1;
+				return true;
+			case Inputs::Keyboard::D:
+				m_TranslationDirection.x = -1;
+				return true;
+			case Inputs::Keyboard::Space:
+				m_TranslationDirection.y = 1;
+				return true;
+			case Inputs::Keyboard::LeftControl:
+				m_TranslationDirection.y = -1;
+				return true;
+			default:
+				break;
+			}
+		}
+		
+		// toggles that we only want to happen on the first press not hold need to happen after this check
+		if (event.IsRepeat()) return false;
+
+		if (keyCode == Inputs::Keyboard::Tab)
+		{
+			if (m_Type != CameraMoveType::Fly)
+			{
+				SetMoveType(CameraMoveType::Fly);
+			}
+			else
+			{
+				SetMoveType(CameraMoveType::END);
+			}
+			return true;
+		}
+	}
+
+	bool CameraController::OnKeyReleased(KeyReleasedEvent& event)
+	{
+		Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
+		if (keyCode == Inputs::Keyboard::LeftAlt)
+		{
+			SetMoveType(CameraMoveType::END);
+			return true;
+		}
+
 		switch (keyCode)
 		{
 		case Inputs::Keyboard::W:
-			m_TranslationDirection.y = 1;
+			m_TranslationDirection.z = m_TranslationDirection.z == 1 ? 0 : m_TranslationDirection.z;
+			/*std::cout << event.ToString() << std::endl;
+			std::cout << m_TranslationDirection.x << ", " << m_TranslationDirection.y << std::endl;*/
 			return true;
 		case Inputs::Keyboard::S:
-			m_TranslationDirection.y = -1;
+			m_TranslationDirection.z = m_TranslationDirection.z == -1 ? 0 : m_TranslationDirection.z;
 			return true;
 		case Inputs::Keyboard::A:
-			m_TranslationDirection.y = -1;
+			m_TranslationDirection.x = m_TranslationDirection.x == 1 ? 0 : m_TranslationDirection.x;
 			return true;
 		case Inputs::Keyboard::D:
-			m_TranslationDirection.y = 1;
+			m_TranslationDirection.x = m_TranslationDirection.x == -1 ? 0 : m_TranslationDirection.x;
+			return true;
+		case Inputs::Keyboard::Space:
+			m_TranslationDirection.y = m_TranslationDirection.y == 1 ? 0 : m_TranslationDirection.y;
+			return true;
+		case Inputs::Keyboard::LeftControl:
+			m_TranslationDirection.y = m_TranslationDirection.y == -1 ? 0 : m_TranslationDirection.y;
 			return true;
 		default:
-			return false;
+			break;
 		}
 		return false;
 	}
 
 	bool CameraController::OnMouseMoved(MouseMovedEvent& event)
 	{
+		if (m_Type == CameraMoveType::END) return false;
+
 		float x = event.GetX();
 		float y = event.GetY();
 		glm::vec2 currentMouse{ x, y };
@@ -170,6 +251,21 @@ namespace Pixie
 		return true;
 	}
 
+	void CameraController::SetMoveType(CameraMoveType type)
+	{
+		EngineContext* engine = EngineContext::GetEngine();
+		engine->SetDisableCursor(type == CameraMoveType::Fly);
+		
+		m_Type = type; 
+		
+		if (type == CameraMoveType::Fly || type == CameraMoveType::WaitingForMouse)
+		{
+			m_FirstMouseFrame = true;
+		}
+		else
+			m_FirstMouseFrame = false;
+	}
+
 	void CameraController::OnViewportSizeChange(float width, float height)
 	{
 		m_ViewportSize.x = width;
@@ -178,6 +274,7 @@ namespace Pixie
 
 	bool CameraController::OnMouseScrolled(MouseScrolledEvent& event)
 	{
+		if(m_Type == CameraMoveType::Fly || m_Type == CameraMoveType::WaitingForMouse)
 		m_ScrollDelta = event.GetYOffset() * 0.1f;
 		//MouseZoom(delta);
 		//UpdateView();
@@ -228,6 +325,16 @@ namespace Pixie
 
 		glm::vec3 rotation = transform.GetRotationEuler(AngleType::Degrees);
 		transform.SetRotationEuler(glm::vec3(rotation.x + xOffset, rotation.y + yOffset, rotation.z), AngleType::Degrees);
+	}
+
+	void CameraController::MouseZoom( CameraComponent& camera)
+	{
+		if (m_Type == CameraMoveType::Fly)
+		{
+			camera.Cam.Zoom(m_ScrollDelta);
+			m_ScrollDelta = 0.0f;
+			return;
+		}
 	}
 
 	void CameraController::MouseZoom(float deltaTime, Pixie::TransformComponent& transform)

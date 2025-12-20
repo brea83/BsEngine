@@ -12,7 +12,6 @@ namespace Pixie
 		unsigned char* StbData;
 		bool BLoadSuccess;
 	};
-	/*TODO: IMPLEMENT IMAGE CLASS*/
 	class StbImageWrapper
 	{
 	public:

@@ -98,7 +98,7 @@ private:
 private:
     bool addClosure(const ComparableClosure& closure)
     {
-        auto events = std::atomic_load(&m_events); //ToDo: read up about std::atomic and atomic_load
+        auto events = std::atomic_load(&m_events); //ToStudy: read up about std::atomic and atomic_load
         int count;
         ComparableClosure* closures;
         if (events == nullptr)

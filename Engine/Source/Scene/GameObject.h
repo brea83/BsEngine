@@ -16,7 +16,6 @@ namespace Pixie
 		GameObject(entt::entity entity, Scene* scene);
 		virtual ~GameObject();
 		
-		virtual void Init();
 		TransformComponent& GetTransform();
 
 		void SetParent(entt::entity newParent, bool bSentFromAddChild = false);

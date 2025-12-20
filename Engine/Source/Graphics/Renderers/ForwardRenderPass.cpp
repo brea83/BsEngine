@@ -18,8 +18,8 @@ namespace Pixie
 {
 	ForwardRenderPass::ForwardRenderPass()
 	{
-		m_FallbackTexture = AssetLoader::LoadTexture("../Assets/Textures/teal.png");//new Texture("Assets/Textures/ffxivSnowman1.png");
-		m_FallbackSpecularMap = AssetLoader::LoadTexture("../Assets/Textures/noise.png");
+		m_FallbackMaterial.BaseMapPath = "../Assets/Textures/teal.png";
+		m_FallbackMaterial.BaseMap = AssetLoader::LoadTexture(m_FallbackMaterial.BaseMapPath);
 
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentMultiLightLecture.glsl");
 	}
@@ -29,7 +29,6 @@ namespace Pixie
 
 	void ForwardRenderPass::Execute(Scene& sceneToRender)
 	{
-
 		m_Shader->Use();
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
@@ -74,7 +73,7 @@ namespace Pixie
 
 			if (!mesh.HasTexture())
 			{
-				m_FallbackTexture->Bind(0);
+				m_FallbackMaterial.BaseMap->Bind(0);
 				m_Shader->SetUniformInt("Texture1", 0);
 			}
 
@@ -85,8 +84,6 @@ namespace Pixie
 	}
 	void ForwardRenderPass::SendLightsToShader(entt::registry& registry)
 	{
-		//entt::registry& registry = currentScene.GetRegistry();
-
 		auto group = registry.group<LightComponent>(entt::get<TransformComponent>);
 
 		if (!group)
@@ -135,13 +132,6 @@ namespace Pixie
 
 			activeLights++;
 		}
-
-		//uniform vec3 lightPosition[MAX_LIGHTS];
-		//uniform vec3 lightDirection[MAX_LIGHTS];
-		//uniform vec3 lightColor[MAX_LIGHTS];
-		//// light attnuation X constant Y linear, Z quadratic
-		//uniform vec3 lightAttenuation[MAX_LIGHTS];
-		//uniform float cutoffAngle[MAX_LIGHTS];
 
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightPosition"), activeLights, lightPositions);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightDirection"), activeLights, lightDirections);

@@ -49,8 +49,8 @@ namespace Pixie
 		m_ActiveScene->ForwardAspectRatio((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
 		m_ImGuiLayer->OnAttach();
 
-		m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
-		m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
+		//m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
+		//m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
 
 		return true;
 	}
@@ -152,6 +152,11 @@ namespace Pixie
 			EnqueEvent<KeyPressedEvent>(static_cast<KeyPressedEvent&>(event));
 		}
 
+		if (event.GetEventType() == KeyReleasedEvent::GetStaticType())
+		{
+			EnqueEvent<KeyReleasedEvent>(static_cast<KeyReleasedEvent&>(event));
+		}
+
 		if (event.GetEventType() == MouseButtonPressedEvent::GetStaticType())
 		{
 			EnqueEvent<MouseButtonPressedEvent>(static_cast<MouseButtonPressedEvent&>(event));
@@ -191,13 +196,14 @@ namespace Pixie
 		dispatcher.Dispatch<WindowClosedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnWindowClosed));
 		dispatcher.Dispatch<WindowResizedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnFrameBufferSize));
 
-		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnKeyPressedEvent));
+		//dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnKeyPressedEvent));
 
-		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseButtonPressedEvent));
-		dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseScrolled));
-		dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
+		//dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseButtonPressedEvent));
+		//dispatcher.Dispatch<MouseScrolledEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseScrolled));
+		//dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 
 		if (!event.Handled) m_ActiveScene->OnEvent(event);
+		if (!event.Handled) m_ImGuiLayer->OnEvent(event);
 		//std::cout << event.ToString() << std::endl;
 	}
 
@@ -285,55 +291,16 @@ namespace Pixie
 
 	bool EngineContext::OnKeyPressedEvent(KeyPressedEvent& event)
 	{
-		//Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
-
-
-		//if (Inputs::KeyboardNames.find(keyCode) != Inputs::KeyboardNames.end())
-		//{
-		//	std::cout << event.ToString() << " named: " << Inputs::KeyboardNames.at(keyCode) << std::endl;
-		//}
-		//else
-		//{
-		//	std::cout << event.ToString() << ", and key not in lookup tables " << std::endl;
-		//}
-
-		// TODO: refactor this into a proper input system
-		//if (m_CamFlyMode &&
-		//	(keyCode == Inputs::Keyboard::W
-		//		|| keyCode == Inputs::Keyboard::S
-		//		|| keyCode == Inputs::Keyboard::A
-		//		|| keyCode == Inputs::Keyboard::D))
-		//{
-		//	entt::registry& registry = m_ActiveScene->GetRegistry();
-		//	GameObject activeCamObject = m_ActiveScene->GetActiveCameraGameObject();
-
-		//	CameraController* cameraComponent = registry.try_get<CameraController>(activeCamObject);
-		//	TransformComponent* cameraTransform = registry.try_get<TransformComponent>(activeCamObject);
-
-		//	if (cameraComponent == nullptr || cameraTransform == nullptr) return false;
-
-		//	return cameraComponent->HandleKeyInput(cameraTransform, keyCode, m_DeltaTime);
-		//}
-
-		//if (keyCode == Inputs::Keyboard::Tab)
-		//{
-		//	//TODO: SERIOUSLY NEED A BETTER WAY THAN THESE HARDCODED THINGS
-		//	ToggleCamFlyMode();
-		//	return false;
-		//}
-
-		m_ActiveScene->OnEvent(event);
-		if(!event.Handled) m_ImGuiLayer->OnEvent(event);
+		//m_ActiveScene->OnEvent(event);
+		
 		return false;
 	}
 
 
-	void EngineContext::ToggleCamFlyMode()
+	void EngineContext::SetDisableCursor(bool value)
 	{
-		m_CamFlyMode = !m_CamFlyMode;
-		if (m_CamFlyMode)
+		if (value)
 		{
-			m_FirstMouse = true;
 			glfwSetInputMode(m_MainWindow->GetGlfwWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		}
 		else

@@ -18,13 +18,6 @@ namespace Pixie
 	GameObject::~GameObject()
 	{}
 
-	//TODO: update this to read in serialized data for loading scenes etc
-	void GameObject::Init()
-	{
-		// send renderable components to graphics pipeline? 
-		// or do those components do that themselves?
-	}
-
 	void GameObject::OnUpdate(float deltaTime)
 	{
 		//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;

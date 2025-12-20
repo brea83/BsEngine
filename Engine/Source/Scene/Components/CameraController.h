@@ -9,6 +9,7 @@
 namespace Pixie
 {
 	class TransformComponent;
+	struct CameraComponent;
 	class GameObject;
 
 	enum class CameraMoveType
@@ -25,7 +26,7 @@ namespace Pixie
 	{
 	public:
 		CameraController() = default;
-		CameraController(entt::entity entity) : m_CameraEntity(entity) {}
+		//CameraController(entt::entity entity) : m_CameraEntity(entity) {}
 
 		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
 
@@ -36,7 +37,7 @@ namespace Pixie
 		bool HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime);
 		
 		CameraMoveType GetMoveType(){ return m_Type; }
-		void SetMoveType(CameraMoveType type) { m_Type = type; m_FirstMouseFrame = true; }
+		void SetMoveType(CameraMoveType type);
 
 		float GetTranslationSpeed() const { return m_TranslationSpeed; }
 		void SetTranslationSpeed(float value) { m_TranslationSpeed = value; }
@@ -59,8 +60,9 @@ namespace Pixie
 		}
 		
 	private:
-		entt::entity m_CameraEntity{ entt::null };
-		CameraMoveType m_Type{ CameraMoveType::WaitingForMouse };
+		/*entt::entity m_CameraEntity{ entt::null };
+		Scene* m_Scene{ nullptr };*/
+		CameraMoveType m_Type{ CameraMoveType::END };
 
 		bool m_Rotation{ false };
 		glm::vec3 m_CameraPosition{ 0.0f };
@@ -83,17 +85,19 @@ namespace Pixie
 		float m_TranslationSpeed{ 10.0f };
 
 		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnKeyReleased(KeyReleasedEvent& event);
 		bool OnMouseMoved(MouseMovedEvent& event);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& event);
 		bool OnMouseScrolled(MouseScrolledEvent& event);
 		bool OnWindowResized(WindowResizedEvent& event);
 
-		void Fly(float deltaTime, Pixie::TransformComponent& transform);
-		void UpdateMouseMode(float deltaTime, Pixie::TransformComponent& transform);
+		void Fly(float deltaTime, TransformComponent& transform);
+		void UpdateMouseMode(float deltaTime, TransformComponent& transform);
 
-		void MousePan(float deltaTime, Pixie::TransformComponent& transform);
-		void MouseRotate(float deltaTime, Pixie::TransformComponent& transform);
-		void MouseZoom(float deltaTime, Pixie::TransformComponent& transform);
+		void MousePan(float deltaTime, TransformComponent& transform);
+		void MouseRotate(float deltaTime, TransformComponent& transform);
+		void MouseZoom(float deltaTime, TransformComponent& transform);
+		void MouseZoom(CameraComponent& camera);
 
 		glm::vec2 PanSpeed() const;
 		float RotationSpeed() const { return 0.8f; }

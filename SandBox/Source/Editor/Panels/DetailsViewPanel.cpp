@@ -52,7 +52,7 @@ namespace Pixie
 				if (ImGui::Selectable("Camera Component"))
 				{
 					selected.AddComponent<CameraComponent>();
-					selected.AddComponent<CameraController, entt::entity>(selected.GetEnttHandle());
+					selected.AddComponent<CameraController>();
 				}
 				if (ImGui::Selectable("Light"))
 				{

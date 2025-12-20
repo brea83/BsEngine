@@ -19,7 +19,7 @@ namespace Pixie
     bool CameraManager::OnEvent(Event& event)
     {
         EventDispatcher dispatcher{ event };
-        dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(CameraManager::OnKeyPressed));
+        //dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(CameraManager::OnKeyPressed));
 
         if (!event.Handled)
         {
@@ -33,7 +33,7 @@ namespace Pixie
 
     bool CameraManager::OnKeyPressed(KeyPressedEvent& event)
     {
-        CameraController* controllerComponent = m_Scene->GetRegistry().try_get<CameraController>(m_ActiveCamera);
+        /*CameraController* controllerComponent = m_Scene->GetRegistry().try_get<CameraController>(m_ActiveCamera);
         if (!controllerComponent) return false;
 
         Inputs::Keyboard keyCode = (Inputs::Keyboard)event.GetKeyCode();
@@ -48,7 +48,7 @@ namespace Pixie
                 controllerComponent->SetMoveType(CameraMoveType::WaitingForMouse);
             }
             return true;
-        }
+        }*/
 
         return false;
     }

@@ -1,27 +1,6 @@
-from reviewing engine reading and talks
-
-Application should be separate from Core engine
-
-most do this with multiple cpp projects
-
-Core Engine should be the reusable parts
-	Main Loop
-	Window system
-	Renderer
-	Event system
-
-	layer and application systems? need to read more about what they mean by this
-		layer is a way to introduce custom behavior
-
-App project should contain
-	app specific code [like imgui for editor app]?
-
-
-App project main file is simple calls to engine core project stuff
 
 
 ToDos:
-separate application and editor stuff from core stuff
 console/debug log in editor views
 plan and prepare for at least some threading
 

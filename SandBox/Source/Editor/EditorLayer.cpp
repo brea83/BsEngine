@@ -205,17 +205,24 @@ namespace Pixie
 
 	void EditorLayer::DrawEditorCamTools(GameObject& activeCam)
 	{
-		if (ImGui::Button("CamFlyMode"))
-		{
-			EngineContext* engine = EngineContext::GetEngine();
-			engine->ToggleCamFlyMode();
-		}
 
 		CameraController& camController = activeCam.GetComponent<CameraController>();
 		Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
 		static float translationSpeed = camController.GetTranslationSpeed();
 		static float rotationSpeed = camController.GetRotationSpeed();
 		static float fov = camera.GetFov();
+
+		if (ImGui::Button("CamFlyMode"))
+		{
+			if (camController.GetMoveType() != CameraMoveType::Fly)
+			{
+				camController.SetMoveType(CameraMoveType::Fly);
+			}
+			else
+			{
+				camController.SetMoveType(CameraMoveType::END);
+			}
+		}
 
 		ImGui::SetItemTooltip("Tab to toggle fly controlls");
 

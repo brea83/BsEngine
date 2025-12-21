@@ -1,10 +1,6 @@
 
 
-ToDos:
-console/debug log in editor views
-plan and prepare for at least some threading
-
-
+THREADING ?
 
 Threading strategy that I used in the dots project
 main thread would thread collision
@@ -25,10 +21,10 @@ the dots engine did not respond to user input...
 
 	Systems I want or need in my engine
 
-Window/application level system, interfaces with hardware and raises events to the engine
-Rendering system for gameplay visuals
-system for editor and debug ui (thanks Imgui for making this part easy)
 system for simulating playmode in editor
+	wrap editor only behavior in an ifDef? 
+	Debug builds can start with main func args to set wether it's editor or playmode?
+	Release builds have editor mode things stripped out?
+
 audio system
-serialization of assets, levels, and editor/gameplay settings
 

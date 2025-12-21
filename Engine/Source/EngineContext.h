@@ -6,6 +6,8 @@
 #include "Events/MouseEvents.h"
 #include <glm/glm.hpp>
 
+// ToDo: playmode and simulated playmode in editor
+
 struct GLFWwindow;
 namespace Pixie
 {

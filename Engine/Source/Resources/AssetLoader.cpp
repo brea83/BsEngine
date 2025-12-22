@@ -508,7 +508,7 @@ namespace Pixie
 	std::string AssetLoader::CheckForSerializedVersion(const std::string& filePath)
 	{
 		std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
-		serializedPath.append(".bmeta");
+		serializedPath.append(".pmesh");
 
 		if (_resources.find(serializedPath) != _resources.end()) return serializedPath;
 
@@ -526,7 +526,7 @@ namespace Pixie
 	std::string AssetLoader::SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh)
 	{
 		std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
-		serializedPath.append(".bmeta");
+		serializedPath.append(".pmesh");
 
 		std::ofstream file(serializedPath, std::ios_base::binary);
 		if (!file.is_open())
@@ -568,6 +568,13 @@ namespace Pixie
 		std::string version;
 		version.resize(s_SerializationVersion.size());
 		file.read((char*)version.data(), s_SerializationVersion.size() * sizeof(char));
+
+		if (version != s_SerializationVersion)
+		{
+			std::cout << "Warning serialization version doesn't match." << std::endl;
+			std::cout << "Pixie Engine Expects: " << s_SerializationVersion << std::endl;
+			std::cout << "Found: " << version << std::endl;
+		}
 
 		size_t numVertices;
 		file.read((char*)&numVertices, sizeof(size_t));

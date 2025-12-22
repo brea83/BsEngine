@@ -49,7 +49,7 @@ namespace Pixie
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		// create a windowed mode window and its openGL context
-		m_Window = glfwCreateWindow(START_WIDTH, START_HEIGHT, "BsEngine V1", NULL, NULL);
+		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
 		if (!m_Window)
 		{
 			std::cout << "Failed to create GLFW window" << std::endl;

@@ -3,6 +3,7 @@
 #include "Graphics/Texture.h"
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
+#include "Resources/FileStream.h"
 
 namespace Pixie
 {
@@ -58,8 +59,13 @@ namespace Pixie
 		// methods
 		void Render(Shader& currentShader) override;
 
+		static void Serialize(StreamWriter* stream, const Mesh& mesh);
+		static bool Deserialize(StreamReader* stream, Mesh& mesh);
+
 	protected:
 		//properties
+		static const int s_Version{ 0 };
+
 		unsigned int VAO{ 0 };
 		unsigned int VBO{ 0 };
 		unsigned int EBO{ 0 }; //Element buffer object

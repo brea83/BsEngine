@@ -132,6 +132,7 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\Resources\Prefab.cpp" />
     <ClCompile Include="Source\Resources\FileStream.cpp" />
     <ClCompile Include="Source\Scene\SceneSerializer.cpp" />
     <ClCompile Include="Source\CameraManager.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
+    <ClInclude Include="Source\Resources\Prefab.h" />
     <ClInclude Include="Source\Resources\FileStream.h" />
     <ClInclude Include="Source\Scene\SceneSerializer.h" />
     <ClInclude Include="Source\Editor\EditorCamera.h" />

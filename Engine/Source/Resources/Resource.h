@@ -9,6 +9,7 @@ namespace Pixie
 		Texture,
 		Renderable,
 		Mesh,
+		Prefab,
 	};
 	class Resource
 	{

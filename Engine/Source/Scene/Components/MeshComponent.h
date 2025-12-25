@@ -19,6 +19,7 @@ namespace Pixie
 	class MeshComponent
 	{
 	public:
+		using StdPath = std::filesystem::path;
 		MeshComponent();
 		MeshComponent(PrimitiveMeshType primitiveMesh);
 		MeshComponent(const std::string& modelFilePath, const std::string& textureFilePath = "");
@@ -27,9 +28,7 @@ namespace Pixie
 		static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
 		bool Reload();
 
-		// Inherited via Component
-		void Initialize() ;
-		void CleanUp() ;
+		void SetMesh(std::shared_ptr<Mesh> mesh) { m_Mesh = mesh; }
 		
 
 		const std::string& Name() const { return m_Name; }
@@ -37,6 +36,8 @@ namespace Pixie
 
 		void SetFilePath(const std::string& modelFilePath) { }
 		std::string GetFilePath() { return m_FilePath; }
+
+		MaterialInstance& GetMaterialInstance() { return m_MaterialInstance; }
 
 		bool HasTexture() { return (m_MaterialInstance.BaseMap != nullptr ) && (m_MaterialInstance.BaseMap->TextureObject != 0); }
 
@@ -71,27 +72,41 @@ namespace Pixie
 			return true;
 		}
 
+		bool operator== (const MeshComponent& other) const
+		{
+			return other.m_Name == m_Name
+				&& other.m_FilePath == m_FilePath
+				&& other.m_Mesh == m_Mesh
+				&& other.m_MaterialInstance == m_MaterialInstance;
+		}
+
+		bool operator!=(const MeshComponent& other) const
+		{
+			return !(*this == other);
+		}
+
 	protected:
 		//properties
 		std::string m_Name{ "Mesh Component" };
 		std::string m_FilePath{""};
 		
-		std::vector<std::shared_ptr<Mesh>> m_Meshes;
+
+		std::shared_ptr<Mesh> m_Mesh;
 		MaterialInstance m_MaterialInstance{};
 
 
-		bool LoadObj(const std::string& filePath, const std::string& textureFileName = "");
+		bool LoadObj(const StdPath& filePath, const std::string& textureFileName = "");
 
 		
 		//methods
 		// ToDo: Refactor FBX loading
-		void LoadMeshAssimp(const std::string& filePath);
+		//bool LoadFbx(GameObject& rootObject, const StdPath& filePath);
 		
-		void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
-		aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
-		void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
-		std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
-		std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
+		//void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
+		//aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
+		//void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
+		//std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
+		//std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
 
 		friend class DetailsViewPanel;
 	};

@@ -326,12 +326,14 @@ namespace Pixie
 			static bool bMeshPathEditing = false;
 			static std::string  meshPath;
 			std::string previousMeshPath = component.m_FilePath;
-			if (DrawStringProperty("Mesh File", component.m_FilePath, meshPath, bMeshPathEditing))
+			std::string newPath = component.m_FilePath;
+			if (DrawStringProperty("Mesh File", newPath, meshPath, bMeshPathEditing))
 			{
-				if (!component.Reload())
+				if (!AssetLoader::LoadMesh(selected, component, newPath))
 				{
 					std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
 					component.m_FilePath = previousMeshPath;
+					component.Reload();
 				}
 			}
 

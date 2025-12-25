@@ -67,4 +67,37 @@ namespace Pixie
         glBindVertexArray(0);
 
     }
+
+    void Mesh::Serialize(StreamWriter* stream, const Mesh& mesh)
+    {
+        stream->WriteRaw<int>(s_Version);
+        stream->WriteArray<Vertex>(mesh.m_Vertices);
+        stream->WriteArray<unsigned int>(mesh.m_Indices);
+    }
+
+    bool Mesh::Deserialize(StreamReader* stream, Mesh& mesh)
+    {
+        int version{ -1 };
+        stream->ReadRaw<int>(version);
+        if (version != s_Version)
+        {
+            std::cout << "Warning serialization version doesn't match." << std::endl;
+            std::cout << "Pixie Engine Expects: " << s_Version << std::endl;
+            std::cout << "Found: " << version << std::endl;
+        }
+        
+        // manually reading out the size of the stored arrays to error check before getting the array data itself
+        int vertexCount{ -1 };
+        stream->ReadRaw<int>(vertexCount);
+        if (vertexCount > 100000000) throw std::runtime_error("Error reading serialized mesh, too many vertices");
+
+        stream->ReadArray<Vertex>(mesh.m_Vertices, vertexCount);
+
+        int indexCount{ -1 };
+        stream->ReadRaw<int>(indexCount);
+        if (indexCount > 300000000) throw std::runtime_error("Error reading serialized mesh, too many indices");
+        
+        stream->ReadArray<unsigned int>(mesh.m_Indices, indexCount);
+        return true;
+    }
 }

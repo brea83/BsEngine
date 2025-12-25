@@ -1,6 +1,5 @@
 #include "BsPrecompileHeader.h"
 #include "AssetLoader.h"
-#include <fstream>
 #include "StbImageWrapper.h"
 #define NOMINMAX
 //#define WIN32_LEAN_AND_MEAN
@@ -15,10 +14,14 @@
 
 #include "Assimp/AssimpGlmHelpers.h"
 
+#include "Resources/FileStream.h"
+#include "Scene/GameObject.h"
+#include "Resources/Prefab.h"
+
 namespace Pixie
 {
-	const static std::string s_SerializationVersion = "Version 0.1 of Bs Engine Serialization";
-	std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::_resources;
+	//const static std::string s_SerializationVersion = "Version 0.1 of Bs Engine Serialization";
+	std::unordered_map<std::string, std::shared_ptr<Resource>> AssetLoader::s_Resources;
 
 	bool AssetLoader::IsMemoryAvailable(int minimumAvailableMb)
 	{
@@ -43,9 +46,9 @@ namespace Pixie
 			return nullptr;
 		}
 
-		if (_resources.find(filePath) != _resources.end())
+		if (s_Resources.find(filePath) != s_Resources.end())
 		{
-			auto textResourcePtr = std::dynamic_pointer_cast<TextResource>(_resources.at(filePath));
+			auto textResourcePtr = std::dynamic_pointer_cast<TextResource>(s_Resources.at(filePath));
 			if (textResourcePtr) return textResourcePtr;
 		}
 
@@ -60,7 +63,7 @@ namespace Pixie
 		buffer << file.rdbuf();
 
 		std::shared_ptr<TextResource> textSource = std::make_shared<TextResource>(TextResource(buffer.str()));
-		_resources.emplace(filePath, textSource);
+		s_Resources.emplace(filePath, textSource);
 
 		return textSource;
 	}
@@ -69,7 +72,7 @@ namespace Pixie
 	{
 		bool foundText = false;
 
-		if (_resources.find(filePath) != _resources.end())
+		if (s_Resources.find(filePath) != s_Resources.end())
 		{
 			foundText = true;
 		}
@@ -85,7 +88,7 @@ namespace Pixie
 
 		if (foundText)
 		{
-			auto textResourcePtr = std::dynamic_pointer_cast<TextResource>(_resources.at(filePath));
+			auto textResourcePtr = std::dynamic_pointer_cast<TextResource>(s_Resources.at(filePath));
 			if (textResourcePtr)
 			{
 				textResourcePtr->Text = buffer.str();
@@ -97,7 +100,7 @@ namespace Pixie
 			// we found no existing text file before so make and add a new one
 			TextResource* textSource = new TextResource(buffer.str());
 
-			_resources.emplace(filePath, textSource);
+			s_Resources.emplace(filePath, textSource);
 			return true;
 		}
 		std::cout << "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp" << std::endl;
@@ -112,11 +115,11 @@ namespace Pixie
 			return nullptr;
 		}
 
-		if (_resources.find(vertPath + "|" + fragPath) != _resources.end())
+		if (s_Resources.find(vertPath + "|" + fragPath) != s_Resources.end())
 		{
-			auto shader = std::dynamic_pointer_cast<Shader>(_resources.at(vertPath + "|" + fragPath));
+			auto shader = std::dynamic_pointer_cast<Shader>(s_Resources.at(vertPath + "|" + fragPath));
 			if (shader) return shader;
-			//return (Shader*)_resources.at(vertPath + "|" + fragPath);
+			//return (Shader*)s_Resources.at(vertPath + "|" + fragPath);
 		}
 
 		std::shared_ptr<TextResource> vertexFile = LoadTextFile(vertPath);
@@ -134,7 +137,7 @@ namespace Pixie
 
 		if (shader->IsValid())
 		{
-			_resources.emplace(vertPath + "|" + fragPath, shader);
+			s_Resources.emplace(vertPath + "|" + fragPath, shader);
 		}
 		return shader;
 	}
@@ -160,10 +163,106 @@ namespace Pixie
 	}
 
 
-
-	std::shared_ptr<Mesh> AssetLoader::LoadMesh(const std::string& filePath)
+	std::filesystem::path AssetLoader::CreatePrefab(GameObject& baseObject)
 	{
-		std::string serializedPath = CheckForSerializedVersion(filePath);
+		std::shared_ptr<Prefab> newPrefab = std::make_shared<Prefab>(baseObject);
+		
+		std::filesystem::path path = newPrefab->GetPath();
+		std::string pathString = path.string();
+
+		if (s_Resources.find(pathString) != s_Resources.end())
+		{
+			std::cout << "Cannot create new prefab with this name it already exists." << std::endl;
+			std::cout << "Either change the object's name or use the OverWrite/Save-Changes for Prefab" << std::endl;
+			return path;
+		}
+
+		
+		FileStreamWriter fileOut(path);
+		fileOut.WriteObject<Prefab>(*newPrefab);
+		s_Resources.insert_or_assign(pathString, newPrefab);
+		//s_Resources.emplace( pathString, newPrefab );
+
+	}
+
+	GameObject AssetLoader::LoadPrefab(const std::filesystem::path filePath, Scene* scene)
+	{
+		if (filePath.extension() != "pmeta")
+		{
+			std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
+			return GameObject();
+		}
+
+		FileStreamReader fileIn(filePath);
+
+		GameObject newCopy = scene->CreateEmptyGameObject("prefab Copy");
+
+		Prefab instance(newCopy);
+		fileIn.ReadObject(instance);
+
+		
+		return newCopy;
+	}
+
+	bool AssetLoader::LoadPrefab(const std::filesystem::path filePath, GameObject& rootObject)
+	{
+		if (filePath.extension() != "pmeta")
+		{
+			std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
+			return false;
+		}
+
+		FileStreamReader fileIn(filePath);
+
+		Prefab instance(rootObject);
+		fileIn.ReadObject(instance);
+
+		return true;
+	}
+
+
+	bool AssetLoader::LoadMesh(GameObject& rootObject, MeshComponent& component, const std::filesystem::path filePath)
+	{
+		std::filesystem::path serializedPath = CheckForSerializedVersion(filePath);
+		if (serializedPath != "" && serializedPath.extension() == ".pmesh")
+		{
+			auto timerStart = std::chrono::high_resolution_clock::now();
+			std::shared_ptr<Mesh> mesh = LoadSerializedMesh(serializedPath.string());
+			auto timerEnd = std::chrono::high_resolution_clock::now();
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
+			std::cout << "Loading serialized mesh took: " << duration.count() << " microseconds." << std::endl;
+
+			component.SetMesh(mesh);
+			return true;
+		}
+
+		if (filePath.extension() == ".fbx" || serializedPath.extension() == ".pmeta")
+		{
+			bool success = LoadFbx(filePath, rootObject);
+			if (success) return true;
+		}
+		else if (filePath.extension() == ".obj")
+		{
+			std::shared_ptr<Mesh> mesh;
+			auto timerStart = std::chrono::high_resolution_clock::now();
+			mesh = LoadObj(filePath.string());
+			auto timerEnd = std::chrono::high_resolution_clock::now();
+
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
+			std::cout << "Loading Obj took: " << duration.count() << " microseconds." << std::endl;
+			
+			if (mesh)
+			{
+				component.SetMesh(mesh);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	std::shared_ptr<Mesh> AssetLoader::LoadMesh(const std::filesystem::path filePath)
+	{
+		std::string serializedPath = CheckForSerializedVersion(filePath.string());
 		if (serializedPath != "")
 		{
 			auto timerStart = std::chrono::high_resolution_clock::now();
@@ -176,15 +275,15 @@ namespace Pixie
 		}
 
 		std::shared_ptr<Mesh> mesh;
-		std::string fileExtension = filePath.substr(filePath.find_last_of('.'));
-		if (fileExtension == ".fbx")
+		if (filePath.extension() == ".fbx")
 		{
-			//LoadModelAssimp(filePath);
+
+			//return LoadFbx(filePath)
 		}
-		else if (fileExtension == ".obj")
+		else if (filePath.extension() == ".obj")
 		{
 			auto timerStart = std::chrono::high_resolution_clock::now();
-			mesh = LoadObj(filePath);
+			mesh = LoadObj(filePath.string());
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
@@ -200,38 +299,38 @@ namespace Pixie
 		{
 		case PrimitiveMeshType::Triangle:
 		{
-			if (_resources.find("PrimitiveMesh_Triangle") != _resources.end())
+			if (s_Resources.find("PrimitiveMesh_Triangle") != s_Resources.end())
 			{
-				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Triangle"));
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Triangle"));
 				if (resourcePtr) return resourcePtr;
 			}
 			std::shared_ptr<Mesh> mesh = std::make_shared<Triangle>();
 
-			_resources.emplace("PrimitiveMesh_Triangle", mesh);
+			s_Resources.emplace("PrimitiveMesh_Triangle", mesh);
 			return mesh;
 		}
 		case PrimitiveMeshType::Quad:
 		{
-			if (_resources.find("PrimitiveMesh_Quad") != _resources.end())
+			if (s_Resources.find("PrimitiveMesh_Quad") != s_Resources.end())
 			{
-				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Quad"));
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Quad"));
 				if (resourcePtr) return resourcePtr;
 			}
 			std::shared_ptr<Mesh> mesh = std::make_shared<Quad>();
 
-			_resources.emplace("PrimitiveMesh_Quad", mesh);
+			s_Resources.emplace("PrimitiveMesh_Quad", mesh);
 			return mesh;
 		}
 		case PrimitiveMeshType::Cube:
 		{
-			if (_resources.find("PrimitiveMesh_Cube") != _resources.end())
+			if (s_Resources.find("PrimitiveMesh_Cube") != s_Resources.end())
 			{
-				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at("PrimitiveMesh_Cube"));
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Cube"));
 				if (resourcePtr) return resourcePtr;
 			}
 			std::shared_ptr<Mesh> mesh = std::make_shared<Cube>();
 
-			_resources.emplace("PrimitiveMesh_Cube", mesh);
+			s_Resources.emplace("PrimitiveMesh_Cube", mesh);
 			return mesh;
 		}
 		default:
@@ -248,9 +347,9 @@ namespace Pixie
 			return nullptr;
 		}
 
-		if (_resources.find(filePath) != _resources.end())
+		if (s_Resources.find(filePath) != s_Resources.end())
 		{
-			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at(filePath));
+			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at(filePath));
 			if (resourcePtr) return resourcePtr;
 		}
 
@@ -421,51 +520,72 @@ namespace Pixie
 		std::string serializedPath = SerializeMesh(filePath, mesh);
 		if (serializedPath != "")
 		{
-			_resources.emplace(serializedPath, mesh);
+			s_Resources.emplace(serializedPath, mesh);
 			return mesh;
 		}
 
-		_resources.emplace(filePath, mesh);
+		s_Resources.emplace(filePath, mesh);
 		return mesh;
 	}
 
-	std::shared_ptr<Mesh> AssetLoader::LoadFbx(const std::string& filePath, GameObject* rootObject)
+	bool AssetLoader::LoadFbx(const std::filesystem::path filePath, GameObject& rootObject)
 	{
+		//check for matching fbx prefab
+		std::filesystem::path searchPath("../Assets/Meshes/filename.pmeta");
+		searchPath.replace_filename(filePath.stem());
+
+		if (s_Resources.find(searchPath.string()) != s_Resources.end())
+		{
+			auto resourcePtr = std::dynamic_pointer_cast<Prefab>(s_Resources.at(filePath.string()));
+			
+			if (resourcePtr)
+			{
+				LoadPrefab(searchPath, rootObject);
+				return true;
+			}
+		}
+		//LoadModelAssimp(filePath);
+
 		Assimp::Importer importer;
-		const aiScene* assimpScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
+		const aiScene* assimpScene = importer.ReadFile(filePath.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
 
 		if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
 		{
 			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-			return nullptr;
+			return false;
 		}
 
 		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		std::cout << "IMPORTING " << filePath << std::endl;
 
-		std::vector<Mesh> meshes;
-		meshes.reserve(assimpScene->mNumMeshes);
-		ProcessNode(meshes, assimpScene->mRootNode, assimpScene, aiMatrix4x4());
-		return nullptr;
+		//std::vector<Mesh> meshes;
+		//meshes.reserve(assimpScene->mNumMeshes);
+		NameComponent& name = rootObject.GetOrAddComponent<NameComponent>();
+		name.Name = filePath.stem().string();
+
+		Scene* gameScene = rootObject.GetScene();
+		aiNode* rootNode = assimpScene->mRootNode;
+		ProcessNode(rootObject, rootNode, assimpScene, gameScene, name.Name);
+		return true;
 	}
 
 	void AssetLoader::CleanUp()
 	{
 		std::vector<std::string> resourcesToDelete;
-		for (auto pair : _resources)
+		for (auto pair : s_Resources)
 		{
 			int useCount = pair.second.use_count();
 			//std::cout << pair.first <<", has " << std::to_string(useCount) << " live pointers" << std::endl;
 			if (useCount == 2)
 			{
-				// two uses means one is this for loop and the other is the instance in _resources ie: nothing outside the loader is using it
+				// two uses means one is this for loop and the other is the instance in s_Resources ie: nothing outside the loader is using it
 				resourcesToDelete.emplace_back(pair.first);
 			}
 		}
 
 		for (std::string key : resourcesToDelete)
 		{
-			_resources.erase(key);
+			s_Resources.erase(key);
 		}
 	}
 
@@ -486,9 +606,9 @@ namespace Pixie
 
 	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath)
 	{
-		if (_resources.find(filePath) != _resources.end())
+		if (s_Resources.find(filePath) != s_Resources.end())
 		{
-			auto texture = std::dynamic_pointer_cast<Texture>(_resources.at(filePath));
+			auto texture = std::dynamic_pointer_cast<Texture>(s_Resources.at(filePath));
 			if (texture) return texture;
 		}
 
@@ -501,26 +621,38 @@ namespace Pixie
 
 		if (texture->TextureObject == 0) return nullptr;
 
-		_resources.emplace(filePath, texture);
+		s_Resources.emplace(filePath, texture);
 		return texture;
 	}
 
-	std::string AssetLoader::CheckForSerializedVersion(const std::string& filePath)
+	std::string AssetLoader::CheckForSerializedVersion(const std::filesystem::path& filePath)
 	{
-		std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
-		serializedPath.append(".pmesh");
 
-		if (_resources.find(serializedPath) != _resources.end()) return serializedPath;
+		std::filesystem::path serializedPath = filePath;
+		serializedPath.replace_extension("pmesh");
 
+		if (s_Resources.find(serializedPath.string()) != s_Resources.end()) 
+			return serializedPath.string();
+
+		std::ifstream mesh(serializedPath);
+		if (mesh.is_open())
+		{
+			mesh.close();
+			return serializedPath.string();
+		}
+
+		// no pmesh file found check for prefab for fbx type mesh
+		serializedPath.replace_extension("pmeta");
 		std::ifstream file(serializedPath);
 
-		if (!file.is_open())
+		if (file.is_open())
 		{
-			std::cerr << "Failed to open file: " << serializedPath << std::endl;
-			return "";
+			file.close();
+			return serializedPath.string();;
 		}
-		file.close();
-		return serializedPath;
+
+		std::cerr << "Failed to open file as either pmesh or pmeta: " << filePath << std::endl;
+		return "";
 	}
 
 	std::string AssetLoader::SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh)
@@ -528,75 +660,295 @@ namespace Pixie
 		std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
 		serializedPath.append(".pmesh");
 
-		std::ofstream file(serializedPath, std::ios_base::binary);
-		if (!file.is_open())
-		{
-			std::cerr << "ERROR: failed to open file to serialize mesh: " << serializedPath << std::endl;
-			return "";
-		}
+		//std::ofstream file(serializedPath, std::ios_base::binary);
+		//if (!file.is_open())
+		//{
+		//	std::cerr << "ERROR: failed to open file to serialize mesh: " << serializedPath << std::endl;
+		//	return "";
+		//}
 
-		//metadata about the mesh structure
-		file.write((char*)s_SerializationVersion.c_str(), s_SerializationVersion.size() * sizeof(char));
-		size_t numVertices = mesh->GetVertices().size();
-		file.write((char*)&numVertices, sizeof(size_t));
-		size_t numIndices = mesh->GetIndices().size();
-		file.write((char*)&numIndices, sizeof(size_t));
+		////metadata about the mesh structure
+		//file.write((char*)s_SerializationVersion.c_str(), s_SerializationVersion.size() * sizeof(char));
+		//size_t numVertices = mesh->GetVertices().size();
+		//file.write((char*)&numVertices, sizeof(size_t));
+		//size_t numIndices = mesh->GetIndices().size();
+		//file.write((char*)&numIndices, sizeof(size_t));
 
-		file.write((char*)mesh->GetVertices().data(), sizeof(Mesh::Vertex) * mesh->GetVertices().size());
-		file.write((char*)mesh->GetIndices().data(), sizeof(unsigned int) * mesh->GetIndices().size());
+		//file.write((char*)mesh->GetVertices().data(), sizeof(Mesh::Vertex) * mesh->GetVertices().size());
+		//file.write((char*)mesh->GetIndices().data(), sizeof(unsigned int) * mesh->GetIndices().size());
 
-		file.close();
-
+		//file.close();
+		FileStreamWriter outFile(serializedPath);
+		outFile.WriteObject<Mesh>(*mesh);
 
 		return serializedPath;
 	}
 
 	std::shared_ptr<Mesh> AssetLoader::LoadSerializedMesh(const std::string& filePath)
 	{
-		if (_resources.find(filePath) != _resources.end())
+		if (s_Resources.find(filePath) != s_Resources.end())
 		{
-			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(_resources.at(filePath));
+			auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at(filePath));
 			if (resourcePtr) return resourcePtr;
 		}
 
-		std::ifstream file(filePath, std::ios_base::binary);
-		if (!file.is_open())
-		{
-			return nullptr;
-		}
+		Mesh mesh;
 
-		std::string version;
-		version.resize(s_SerializationVersion.size());
-		file.read((char*)version.data(), s_SerializationVersion.size() * sizeof(char));
+		FileStreamReader fileIn(filePath);
+		fileIn.ReadObject<Mesh>(mesh);
+		
+		return std::make_shared<Mesh>(mesh.GetVertices(), mesh.GetIndices());
+		//std::ifstream file(filePath, std::ios_base::binary);
+		//if (!file.is_open())
+		//{
+		//	return nullptr;
+		//}
 
-		if (version != s_SerializationVersion)
-		{
-			std::cout << "Warning serialization version doesn't match." << std::endl;
-			std::cout << "Pixie Engine Expects: " << s_SerializationVersion << std::endl;
-			std::cout << "Found: " << version << std::endl;
-		}
+		//std::string version;
+		//version.resize(s_SerializationVersion.size());
+		//file.read((char*)version.data(), s_SerializationVersion.size() * sizeof(char));
 
-		size_t numVertices;
-		file.read((char*)&numVertices, sizeof(size_t));
-		if (numVertices > 100000000) throw std::runtime_error("Error reading serialized mesh, too many vertices");
+		//if (version != s_SerializationVersion)
+		//{
+		//	std::cout << "Warning serialization version doesn't match." << std::endl;
+		//	std::cout << "Pixie Engine Expects: " << s_SerializationVersion << std::endl;
+		//	std::cout << "Found: " << version << std::endl;
+		//}
 
-		size_t numIndices;
-		file.read((char*)&numIndices, sizeof(size_t));
-		if (numIndices > 300000000) throw std::runtime_error("Error reading serialized mesh, too many indices");
+		//size_t numVertices;
+		//file.read((char*)&numVertices, sizeof(size_t));
+		//if (numVertices > 100000000) throw std::runtime_error("Error reading serialized mesh, too many vertices");
 
-		std::vector<Mesh::Vertex> vertices;
-		vertices.resize(numVertices);
-		file.read((char*)vertices.data(), sizeof(Mesh::Vertex) * numVertices);
+		//size_t numIndices;
+		//file.read((char*)&numIndices, sizeof(size_t));
+		//if (numIndices > 300000000) throw std::runtime_error("Error reading serialized mesh, too many indices");
 
-		std::vector<unsigned int> indices;
-		indices.resize(numIndices);
-		file.read((char*)indices.data(), sizeof(unsigned int) * numIndices);
+		//std::vector<Mesh::Vertex> vertices;
+		//vertices.resize(numVertices);
+		//file.read((char*)vertices.data(), sizeof(Mesh::Vertex) * numVertices);
 
-		file.close();
+		//std::vector<unsigned int> indices;
+		//indices.resize(numIndices);
+		//file.read((char*)indices.data(), sizeof(unsigned int) * numIndices);
 
-		return std::make_shared<Mesh>(vertices, indices);
+		//file.close();
+
+		//return std::make_shared<Mesh>(vertices, indices);
 	}
 
-	void AssetLoader::ProcessNode(std::vector<Mesh>& meshes, aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices)
-	{}
+	aiMatrix4x4 AssetLoader::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
+	{
+		if (parentNode)
+		{
+			return (CombineTransformsToRoot(parentNode->mParent, parentNode)) * childNode->mTransformation.Inverse();
+			// example expansion of a root node with three levels of children
+			// ((rootTransform) * child1) * child2) * child3
+		}
+
+		return childNode->mTransformation.Inverse();
+
+	}
+
+	std::shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* assimpScene)
+	{
+		std::vector<Mesh::Vertex> vertices;
+		std::vector<unsigned int> indices;
+
+		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+		{
+
+			Mesh::Vertex vertex;
+
+			//process position 
+			aiVector3D sourcePosition = mesh->mVertices[i];
+			vertex.Position = glm::vec3(sourcePosition.x, sourcePosition.y, sourcePosition.z);
+
+			// normals 
+			aiVector3D sourceNormal = mesh->mNormals[i];
+			vertex.Normal = glm::vec3(sourceNormal.x, sourceNormal.y, sourceNormal.z);
+
+			// texture uvs
+			if (mesh->mTextureCoords[0])
+			{
+				aiVector3D sourceUV = mesh->mTextureCoords[0][i];
+				vertex.UV1 = glm::vec2(sourceUV.x, sourceUV.y);
+			}
+			else
+			{
+				vertex.UV1 = glm::vec2(0.0f, 0.0f);
+			}
+
+			// colors
+			if (mesh->mColors[0])
+			{
+				aiColor4D* sourceColor = mesh->mColors[i];
+				vertex.Color = glm::vec3(sourceColor->r, sourceColor->g, sourceColor->b);
+			}
+			else
+			{
+				vertex.Color = vertex.Normal;
+			}
+
+			vertices.emplace_back(vertex);
+		}
+		// process indices
+
+		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+		{
+			aiFace face = mesh->mFaces[i];
+			for (unsigned int j = 0; j < face.mNumIndices; j++)
+			{
+				indices.emplace_back(face.mIndices[j]);
+			}
+		}
+		
+		return std::make_shared<Mesh>(vertices, indices, mesh->mName.C_Str());
+	}
+
+	bool AssetLoader::ProcessTextures(MaterialInstance& objectMaterial, aiMesh* mesh, const aiScene* assimpScene)
+	{
+		std::vector<std::shared_ptr<Texture>> textures;
+
+		// process materials
+
+		aiMaterial* material = assimpScene->mMaterials[mesh->mMaterialIndex];
+
+		if (material == nullptr) return false;
+		
+
+		//std::vector<std::shared_ptr<Texture>> diffuseMaps = LoadMaterialTextures(material,
+		//	aiTextureType_DIFFUSE, TextureType::Diffuse);
+		std::string diffusePath;
+		std::shared_ptr<Texture> diffuseMap = GetTextureFromMaterial(material, aiTextureType_DIFFUSE, TextureType::Diffuse, diffusePath);
+
+		std::string normalPath;
+		std::shared_ptr<Texture> normalMap = GetTextureFromMaterial(material, aiTextureType_NORMALS, TextureType::Normal, normalPath);
+
+		std::string metallicPath;
+		std::shared_ptr<Texture> metallicMap = GetTextureFromMaterial(material, aiTextureType_METALNESS, TextureType::Metalness, metallicPath);
+		std::string specularPath;
+		std::shared_ptr<Texture> specularMAp = GetTextureFromMaterial(material, aiTextureType_SPECULAR, TextureType::Specular, specularPath);
+		
+		if (diffuseMap)
+		{
+			objectMaterial.BaseMap = diffuseMap;
+			objectMaterial.BaseMapPath = diffusePath;
+		}
+
+		if (normalMap)
+		{
+			objectMaterial.NormalMap = normalMap;
+			objectMaterial.NormalMapPath = normalPath;
+		}
+
+		if (metallicMap)
+		{
+			objectMaterial.MetallicMap = metallicMap;
+			objectMaterial.MetallicMapPath = metallicPath;
+		}
+
+		if (specularMAp)
+		{
+			objectMaterial.SpecularMap = specularMAp;
+			objectMaterial.SpecularMapPath = specularPath;
+		}
+
+		return true;
+	}
+
+	std::shared_ptr<Texture> AssetLoader::GetTextureFromMaterial(aiMaterial* material, aiTextureType type, TextureType pixieTextureType, std::string& outFilePath)
+	{
+
+		for (unsigned int i = 0; i < material->GetTextureCount(type); i++)
+		{
+			aiString filePath;
+			material->GetTexture(type, i, &filePath);
+
+			/*std::string typeName = TextureTypeToString.at(bsTextureType);
+			std::cout << "TEXTURE PATH: " << filePath.C_Str() << std::endl;
+			std::cout << "TYPE: " << typeName << std::endl;*/
+			std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(filePath.C_Str());
+			if (texture == nullptr) continue;
+
+			texture->Type = pixieTextureType;
+			outFilePath = filePath.C_Str();
+			return texture;
+		}
+		return nullptr;
+	}
+
+	void AssetLoader::ProcessTransform(aiMatrix4x4 nodeMatrix, TransformComponent& localTransform)
+	{
+		aiVector3D scaling;
+		aiVector3D rotation;
+		aiVector3D position;
+		nodeMatrix.Decompose(scaling, rotation, position);
+
+		localTransform.SetPosition(AssimpGlmHelpers::GetGlmVec(position));
+		localTransform.SetScale(AssimpGlmHelpers::GetGlmVec(scaling));
+		localTransform.SetRotationEuler(AssimpGlmHelpers::GetGlmVec(rotation), AngleType::Radians);
+	}
+
+	void AssetLoader::ProcessNode(GameObject& nodeObject, aiNode* node, const aiScene* assimpScene, Scene* gameScene, const std::string rootName)
+	{
+		
+		
+		ProcessTransform(node->mTransformation, nodeObject.GetComponent<TransformComponent>());
+
+		if (node->mNumMeshes > 0)
+		{
+			aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[0]];
+			std::shared_ptr<Mesh> mesh = ProcessMesh(aiMesh, assimpScene);
+			std::string meshName = node->mParent == nullptr ? rootName : rootName + "_" + aiMesh->mName.C_Str();
+			std::string assetIndex = SerializeMesh("../Assets/Meshes/" + meshName + ".pmesh", mesh);
+			MeshComponent& component = nodeObject.GetOrAddComponent<MeshComponent>();
+			component.SetFilePath(assetIndex);
+			component.SetMesh(mesh);
+
+			MaterialInstance& material = component.GetMaterialInstance();
+			ProcessTextures(material, aiMesh, assimpScene);
+		}
+		if(node->mNumMeshes > 1)
+		{
+
+			for (unsigned int i = 1; i < node->mNumMeshes; i++)
+			{
+				aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[i]];
+				//std::cout << "------------------------------" << std::endl;
+				std::shared_ptr<Mesh> mesh = ProcessMesh(aiMesh, assimpScene);
+
+				//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
+				//ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
+				//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
+				//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
+				//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
+				//meshWithCurrentNodeTransform = &mesh;
+
+				if (!mesh) continue;
+				std::string meshName = rootName + "_" + aiMesh->mName.C_Str();
+				std::string assetIndex = SerializeMesh("../Assets/Meshes/" + meshName + ".pmesh", mesh);
+				GameObject childObject = gameScene->CreateEmptyGameObject(meshName);
+				childObject.SetParent(nodeObject);
+				MeshComponent& component = childObject.AddComponent<MeshComponent>();
+				component.SetFilePath(assetIndex);
+				component.SetMesh(mesh);
+
+				MaterialInstance& material = component.GetMaterialInstance();
+				ProcessTextures(material, aiMesh, assimpScene);
+			}
+
+		}
+
+		// process children
+		for (unsigned int i = 0; i < node->mNumChildren; i++)
+		{
+			std::string name = node->mChildren[i]->mName.C_Str();
+			GameObject childObject = gameScene->CreateEmptyGameObject(name);
+			ProcessNode(childObject, node->mChildren[i], assimpScene, gameScene, rootName);
+
+			nodeObject.AddChild(childObject);
+		}
+	}
+
+
 }

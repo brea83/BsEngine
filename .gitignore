@@ -415,3 +415,7 @@ Sandbox/imgui.ini
 # ignore test save files
 Sandbox\TestSave.bin
 Sandbox/TestSave.bin
+
+# pmeta and pmesh files in the assets folder are generated on first load
+Assets/**/*.pmesh
+Assets/**/*.pmeta

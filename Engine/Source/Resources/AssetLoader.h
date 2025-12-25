@@ -10,6 +10,10 @@
 #include <assimp/scene.h>
 namespace Pixie
 {
+
+	class GameObject;
+	class Scene;
+
 	class AssetLoader
 	{
 	public:
@@ -21,34 +25,43 @@ namespace Pixie
 		static std::shared_ptr<Shader> LoadShader(const std::string& vertPath, const std::string& fragPath);
 		static std::shared_ptr<Texture> LoadTexture(const std::string& filePath);
 
+		static std::filesystem::path CreatePrefab(GameObject& baseObject);
+		static GameObject LoadPrefab(const std::filesystem::path filePath, Scene* scene);
+		static bool LoadPrefab(const std::filesystem::path filePath, GameObject& rootObject);
+
 		//static 
-		static std::shared_ptr<Mesh>LoadMesh(const std::string& filePath);
+		static bool LoadMesh(GameObject& rootObject, MeshComponent& component, const std::filesystem::path filePath);
+		static std::shared_ptr<Mesh>LoadMesh(const std::filesystem::path  filePath);
 		static std::shared_ptr<Mesh> LoadPrimitive(PrimitiveMeshType primitiveType);
 		static std::shared_ptr<Mesh> LoadObj(const std::string& filePath, const std::string& textureFilePath = "");
 		//static std::shared_ptr<Mesh> LoadMesh(std::string& objContentsString);
-		static std::shared_ptr <Mesh> LoadFbx(const std::string& filePath, GameObject* rootObject);
+		static bool LoadFbx(const std::filesystem::path filePath, GameObject& rootObject);
 
-		static std::unordered_map<std::string, std::shared_ptr<Resource>>& GetResources() { return _resources; }
+		static std::unordered_map<std::string, std::shared_ptr<Resource>>& GetResources() { return s_Resources; }
 		static void CleanUp();
 	private:
-		static std::unordered_map<std::string, std::shared_ptr<Resource>> _resources;
+		static std::unordered_map<std::string, std::shared_ptr<Resource>> s_Resources;
 
 		static void ParsePathString(const std::string& inPath, std::string& outPath);
 		static std::shared_ptr<Texture> LoadTextureParsedPath(const std::string& filePath);
 
-		static std::string CheckForSerializedVersion(const std::string& filePath);
+		static std::string CheckForSerializedVersion(const std::filesystem::path& filePath);
 		static std::string SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh);
 		//static std::string SerializeAssimpSubMesh(const std::string& filePath, const std::string& meshName, std::shared_ptr<Mesh> mesh);
 		static std::shared_ptr<Mesh> LoadSerializedMesh(const std::string& filePath);
 
 		//fbx Importing functions 
 
-		static void ProcessNode(std::vector<Mesh>& meshes, aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
+		static void ProcessNode(GameObject& nodeObject, aiNode* node, const aiScene* assimpScene, Scene* gameScene, const std::string rootName);
+		//static GameObject ProcessNodeRecursive(aiNode* node, const aiScene* assimpScene, Scene* gameScene);
 		//static std::shared_ptr<Mesh> LoadMesh(aiMesh& mesh, const aiScene& assimpScene);
-		//static void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
-		//static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
-		//static std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
-		//static std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
+		static void ProcessTransform(aiMatrix4x4 nodeMatrix, TransformComponent& localTransform);
+		static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
+		static std::shared_ptr<Mesh>  ProcessMesh(aiMesh* mesh, const aiScene* assimpScene);
+		static bool ProcessTextures(MaterialInstance& objectMaterial, aiMesh* mesh, const aiScene* assimpScene);
+
+		// returns the first loadable texture in an assimp material of aiTextureType and pixie engine's TextureType
+		static std::shared_ptr<Texture> GetTextureFromMaterial(aiMaterial* material, aiTextureType type, TextureType pixieTextureType, std::string& outFilePath);
 	};
 }
 

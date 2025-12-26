@@ -547,12 +547,40 @@ namespace Pixie
 		//LoadModelAssimp(filePath);
 
 		Assimp::Importer importer;
-		const aiScene* assimpScene = importer.ReadFile(filePath.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals /*| aiProcess_FlipUVs*/ | aiProcess_CalcTangentSpace);
+		unsigned int processFlags =
+			aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
+			aiProcess_GenSmoothNormals |
+			aiProcess_JoinIdenticalVertices | // join identical vertices/ optimize indexing
+			//aiProcess_ValidateDataStructure  | // perform a full validation of the loader's output
+			aiProcess_Triangulate | // Ensure all verticies are triangulated (each 3 vertices are triangle)
+			//aiProcess_ConvertToLeftHanded | // convert everything to D3D left handed space (by default right-handed, for OpenGL)
+			//aiProcess_SortByPType | // ?
+			aiProcess_ImproveCacheLocality | // improve the cache locality of the output vertices
+			//aiProcess_RemoveRedundantMaterials | // remove redundant materials
+			//aiProcess_FindDegenerates | // remove degenerated polygons from the import
+			//aiProcess_FindInvalidData | // detect invalid model data, such as invalid normal vectors
+			//aiProcess_GenUVCoords | // convert spherical, cylindrical, box and planar mapping to proper UVs
+			aiProcess_TransformUVCoords | // preprocess UV transformations (scaling, translation ...)
+			//aiProcess_FindInstances | // search for instanced meshes and remove them by references to one master
+			//aiProcess_LimitBoneWeights | // limit bone weights to 4 per vertex
+			aiProcess_OptimizeMeshes | // join small meshes, if possible;
+			//aiProcess_OptimizeGraph |
+			aiProcess_PreTransformVertices | //-- fixes the transformation issue.
+			//aiProcess_SplitByBoneCount | // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
+			0;
+		const aiScene* assimpScene = importer.ReadFile(filePath.string(), processFlags);
 
 		if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
 		{
 			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 			return false;
+		}
+
+		double factor(0.0);
+		if (assimpScene->mMetaData)
+		{
+			assimpScene->mMetaData->Get("UnitScaleFactor", factor);
+			std::cout << "Scene Unit Scale Factor is " << factor << std::endl;
 		}
 
 		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
@@ -565,6 +593,14 @@ namespace Pixie
 
 		Scene* gameScene = rootObject.GetScene();
 		aiNode* rootNode = assimpScene->mRootNode;
+
+		factor = 0.0;
+		if (rootNode->mMetaData)
+		{
+			rootNode->mMetaData->Get("UnitScaleFactor", factor);
+			std::cout << "Node Unit Scale Factor is " << factor << std::endl;
+		}
+
 		ProcessNode(rootObject, rootNode, assimpScene, gameScene, name.Name);
 		return true;
 	}

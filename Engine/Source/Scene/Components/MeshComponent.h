@@ -34,7 +34,7 @@ namespace Pixie
 		const std::string& Name() const { return m_Name; }
 		void SetName(const std::string& name)  { m_Name = name; }
 
-		void SetFilePath(const std::string& modelFilePath) { }
+		void SetFilePath(const std::string& path) { m_FilePath = path; }
 		std::string GetFilePath() { return m_FilePath; }
 
 		MaterialInstance& GetMaterialInstance() { return m_MaterialInstance; }

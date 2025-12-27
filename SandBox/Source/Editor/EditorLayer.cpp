@@ -148,9 +148,9 @@ namespace Pixie
 				if (ImGui::MenuItem("Test Load Scene"))
 				{
 					Scene* loadedScene = new Scene();
+					EngineContext::GetEngine()->SetScene(loadedScene);
 					SceneSerializer serializer(loadedScene);
 					serializer.Deserialize("TestSave.bin");
-					EngineContext::GetEngine()->SetScene(loadedScene);
 					OnSceneChange(loadedScene);
 				}
 
@@ -160,6 +160,11 @@ namespace Pixie
 			if (ImGui::BeginMenu("Scene"))
 			{
 				if (ImGui::MenuItem("Change Scene Name test")) m_CurrentScene->SetName("NameFromMenu");
+
+				if (ImGui::MenuItem("Populate With Test Objects"))
+				{
+					m_CurrentScene->PopulateWithTestObjects();
+				}
 
 				if (ImGui::MenuItem("Empty GameObject"))
 				{

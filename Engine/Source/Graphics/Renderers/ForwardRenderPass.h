@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderPass.h"
 #include "Scene/Components/Component.h"
+#include "Scene/Components/MaterialInstance.h"
 #include <glm/glm.hpp>
 
 

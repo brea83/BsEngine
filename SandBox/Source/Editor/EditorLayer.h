@@ -19,7 +19,7 @@ namespace Pixie
 		EditorLayer();
 		~EditorLayer();
 
-		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; }
+		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; m_Selected = GameObject(entt::null, m_CurrentScene); }
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;

@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "BsPrecompileHeader.h"
 #include "Scene/Entity.h"
+#include "Scene/Components/Component.h"
 #include <glm/glm.hpp>
 #include "Resources/FileStream.h"
 
@@ -17,16 +18,20 @@ namespace Pixie
 		virtual ~GameObject();
 		
 		TransformComponent& GetTransform();
+
+		GUID GetGUID() const { return GetComponent<IDComponent>().ID; }
+
 		Scene* GetScene() { return m_Scene; }
 		const Scene* GetScene() const { return m_Scene; }
 
-		void SetParent(entt::entity newParent, bool bSentFromAddChild = false);
+		void SetParentNone();
+		void SetParent(GameObject& newParent, bool bSentFromAddChild = false);
 		GameObject GetParent();
 
-		void UnParent(entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
+		//void UnParent(GameObject grandParent, bool bKeepWorldPosition = true);
 
-		void AddChild(entt::entity child, bool bSentFromSetParent = false);
-		void RemoveChild(entt::entity child);
+		void AddChild(GameObject& child, bool bSentFromSetParent = false);
+		void RemoveChild(GameObject& child);
 		std::vector< GameObject> GetChildren();
 
 		virtual void OnUpdate(float deltaTime);
@@ -44,6 +49,6 @@ namespace Pixie
 		// Note need to update with new component types as they are added
 		static bool Deserialize(StreamReader* fileReader, GameObject& object);
 	protected:
-		entt::entity m_SerializedID{ entt::null };
+		//entt::entity m_SerializedID{ entt::null };
 	};
 }

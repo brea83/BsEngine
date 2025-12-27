@@ -15,13 +15,13 @@ namespace Pixie
     m_LocalMatrix(glm::mat4(1.0f)), m_WorldMatrix(glm::mat4(1.0f))
     { }
 
-    void TransformComponent::UnParent(Scene* scene, entt::entity parent, entt::entity grandParent, bool bKeepWorldPosition)
+    void TransformComponent::UnParent(Scene* scene, GameObject& parent, GameObject& grandParent, bool bKeepWorldPosition)
     {
 
-        if (bKeepWorldPosition && scene->GetRegistry().valid(parent))
+        if (bKeepWorldPosition && grandParent)
         {
-            TransformComponent& parentTransform = scene->GetRegistry().get<TransformComponent>(grandParent);
-            glm::mat4 parentMatrix = parentTransform.m_LocalMatrix;
+            TransformComponent& newParentTransform = grandParent.GetTransform();//scene->GetRegistry().get<TransformComponent>(grandParent);
+            glm::mat4 parentMatrix = newParentTransform.m_LocalMatrix;
 
             m_LocalMatrix = parentMatrix * m_LocalMatrix;
 
@@ -31,11 +31,11 @@ namespace Pixie
 
             if (scene->GetRegistry().valid(grandParent))
             {
-                ParentEntityHandle = grandParent;
+                m_ParentGuid = grandParent.GetGUID();
                 return;
             }
         }
-        ParentEntityHandle = entt::null;
+        m_ParentGuid = 0;
     }
 
     glm::vec3 TransformComponent::GetPosition()
@@ -179,10 +179,10 @@ namespace Pixie
             RecalculateModelMatrix();
         } 
 
-        if (ParentEntityHandle != entt::null)
+        if (m_ParentGuid != 0)
         {
             Scene* scene = EngineContext::GetEngine()->GetScene();
-            TransformComponent& parentTransform = scene->GetRegistry().get<TransformComponent>(ParentEntityHandle);
+            TransformComponent& parentTransform = scene->FindGameObjectByGUID(m_ParentGuid).GetTransform();
             m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
             return m_WorldMatrix;
         }
@@ -192,8 +192,8 @@ namespace Pixie
 
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
     {
-        stream->WriteRaw<entt::entity>(component.ParentEntityHandle);
-        stream->WriteRaw<entt::entity>(component.EntityHandle);
+        stream->WriteRaw<GUID>(component.m_ParentGuid);
+        stream->WriteRaw<GUID>(component.m_Guid);
 
     }
 

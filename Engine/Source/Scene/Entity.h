@@ -46,7 +46,7 @@ namespace Pixie
 
 		// operator overrides
 
-		operator bool() const { return m_Scene->GetRegistry().valid(m_EntityHandle); }
+		operator bool() const { return m_Scene != nullptr && m_Scene->GetRegistry().valid(m_EntityHandle); }
 		operator entt::entity() const { return m_EntityHandle; }
 		operator int() const { return static_cast<int>(m_EntityHandle); }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }

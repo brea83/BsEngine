@@ -2,6 +2,7 @@
 #include "Core.h"
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
+#include "GUID.h"
 #include "CameraManager.h"
 #include "Events/Event.h"
 #include "Scene/Components/Component.h"
@@ -25,12 +26,14 @@ namespace Pixie
 		void SetName(const std::string& newName) { m_Name = newName; }
 		
 		GameObject CreateEmptyGameObject(const std::string& name);
+		GameObject CreateGameObjectWithGUID(GUID guid, const std::string& name = "");
 		void RemoveGameObject(GameObject objectToRemove);
-		void RemoveEntity(entt::entity entityHandle);
+		//void RemoveEntity(entt::entity entityHandle);
 		bool IsEntityValid(entt::entity entity) const { return m_Registry.valid(entity); }
 		
 		GameObject GetGameObjectByEntityHandle(entt::entity entityHandle);
 		GameObject FindGameObjectByName(const std::string& name);
+		GameObject FindGameObjectByGUID(GUID guid);
 
 		GameObject DuplicateGameObject(GameObject object);
 		
@@ -61,6 +64,8 @@ namespace Pixie
 
 		template<typename T>
 		void OnComponentAdded(Entity& entity, T& component);
+		template<>
+		void OnComponentAdded<IDComponent>(Entity& entity, IDComponent& component);
 		template<>
 		void OnComponentAdded<TagComponent>(Entity& entity, TagComponent& component);
 		template<>

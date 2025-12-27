@@ -34,7 +34,7 @@ namespace Pixie
 		{
 			GameObject currentObject{ entity, currentScene };
 			auto [family] = view.get(entity);
-			if (family.Parent != entt::null) continue;
+			if (family.Parent != 0) continue;
 
 			DrawNode(selected, currentObject);
 		}
@@ -65,8 +65,9 @@ namespace Pixie
 		std::string name = (entityName.empty()) ? "_NameEmpty_" : entityName;
 
 		//is entity a leaf node ie, no children
-		HeirarchyComponent& family = entity.GetComponent<HeirarchyComponent>();
-		bool bLeafNode = family.Children.empty();
+		//HeirarchyComponent& family = entity.GetComponent<HeirarchyComponent>();
+		std::vector<GameObject> children = entity.GetChildren();
+		bool bLeafNode = children.empty();
 
 		ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
 		if (bLeafNode)
@@ -97,9 +98,8 @@ namespace Pixie
 		{
 			if (!bLeafNode)
 			{
-				for (auto childHandle : family.Children)
+				for (auto child : children)
 				{
-					GameObject child{ childHandle, entity.m_Scene };
 					DrawNode(selected, child);
 				}
 			}
@@ -109,7 +109,7 @@ namespace Pixie
 
 		if (entityDeleted)
 		{
-			entity.m_Scene->RemoveEntity(entity);
+			entity.m_Scene->RemoveGameObject(entity);
 			if (selected == entity)
 				selected = {};
 		}

@@ -18,6 +18,7 @@ struct Material
 	vec3 diffuse;
 	vec3 specular;
 	bool bUseMetalicMap;
+	bool bMapIsRoughness;
 	float smoothness;
 	float specularPower;
 };
@@ -113,7 +114,9 @@ void main()
 		vec3 specular = vec3(0, 0, 0);
 		if(material.bUseMetalicMap)
 		{
-			smoothness = texture(MetallicMap, UV).g * material.smoothness;
+			float mapSmoothness = texture(MetallicMap, UV).g;
+			mapSmoothness= material.bMapIsRoughness ? 1.0 - mapSmoothness : mapSmoothness;
+			smoothness = mapSmoothness * material.smoothness;
 		}
 		else
 		{

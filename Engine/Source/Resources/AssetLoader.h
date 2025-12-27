@@ -4,7 +4,8 @@
 #include "TextResource.h"
 #include "Graphics/Shaders/Shader.h"
 #include "Graphics/Texture.h"
-#include "Scene/Components/MeshComponent.h"
+//#include "Scene/Components/MeshComponent.h"
+//#include "Scene/Components/MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
 
 #include <assimp/scene.h>
@@ -13,6 +14,8 @@ namespace Pixie
 
 	class GameObject;
 	class Scene;
+	class MeshComponent;
+	struct MaterialInstance;
 
 	class AssetLoader
 	{

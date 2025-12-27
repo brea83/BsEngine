@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "BsPrecompileHeader.h"
 #include "Graphics/Texture.h"
+#include "GUID.h"
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
 #include "Resources/FileStream.h"
@@ -19,8 +20,18 @@ namespace Pixie
         MaterialInstance,
         LightComponent,
         CameraComponent,
-        CameraController
+        CameraController,
+        IDComponent
     };
+
+    struct IDComponent
+    {
+        GUID ID;
+
+        IDComponent() = default;
+        IDComponent(const IDComponent&) = default;
+    };
+
     struct TagComponent
     {
         TagComponent() = default;
@@ -77,14 +88,14 @@ namespace Pixie
         HeirarchyComponent(const HeirarchyComponent&) = default;
 
         static constexpr SerializableComponentID ID{ SerializableComponentID::HeirarchyComponent };
-        entt::entity Parent{ entt::null };
-        std::vector<entt::entity> Children{};
+        GUID Parent{ 0 };
+        std::vector<GUID> Children{};
 
         static void Serialize(StreamWriter* stream, const HeirarchyComponent& component)
         {
             stream->WriteRaw<SerializableComponentID>(component.ID);
-            stream->WriteRaw<entt::entity>(component.Parent);
-            stream->WriteArray<entt::entity>(component.Children);
+            stream->WriteRaw<GUID>(component.Parent);
+            stream->WriteArray<GUID>(component.Children);
         }
         static bool Deserialize(StreamReader* stream, HeirarchyComponent& component)
         {
@@ -92,76 +103,13 @@ namespace Pixie
             stream->ReadRaw<SerializableComponentID>(readID);
             if (readID != component.ID) return false;
 
-            stream->ReadRaw<entt::entity>(component.Parent);
-            stream->ReadArray<entt::entity>(component.Children);
+            stream->ReadRaw<GUID>(component.Parent);
+            stream->ReadArray<GUID>(component.Children);
             return true;
         }
     };
 
-    struct MaterialInstance
-    {
-        MaterialInstance() = default;
-        MaterialInstance(const MaterialInstance&) = default;
-
-        static constexpr SerializableComponentID ID{ SerializableComponentID::MaterialInstance };
-        std::string BaseMapPath{ "" };
-        std::shared_ptr<Texture> BaseMap{ nullptr };
-
-        std::string NormalMapPath{ "" };
-        std::shared_ptr<Texture> NormalMap{ nullptr };
-
-        std::string MetallicMapPath{ "" };
-        std::shared_ptr<Texture> MetallicMap{ nullptr };
-        std::string SpecularMapPath{ "" };
-        std::shared_ptr<Texture> SpecularMap{ nullptr };
-        float AmbientMultiplier{ 1.0f };
-        float Smoothness{ 0.3f };
-        float SpecularPower{ 32.0f };
-
-        static void Serialize(StreamWriter* stream, const MaterialInstance& component)
-        {
-            stream->WriteRaw<SerializableComponentID>(component.ID);
-
-            stream->WriteString(component.BaseMapPath);
-            stream->WriteString(component.NormalMapPath);
-            stream->WriteString(component.MetallicMapPath);
-            stream->WriteString(component.SpecularMapPath);
-            stream->WriteRaw<float>(component.AmbientMultiplier);
-            stream->WriteRaw<float>(component.Smoothness);
-            stream->WriteRaw<float>(component.SpecularPower);
-        }
-        static bool Deserialize(StreamReader* stream, MaterialInstance& component)
-        {
-            SerializableComponentID readID;
-            stream->ReadRaw<SerializableComponentID>(readID);
-            if (readID != component.ID) return false;
-
-            stream->ReadString(component.BaseMapPath);
-            stream->ReadString(component.NormalMapPath);
-            stream->ReadString(component.MetallicMapPath); 
-            stream->ReadString(component.SpecularMapPath);
-            stream->ReadRaw<float>(component.AmbientMultiplier);
-            stream->ReadRaw<float>(component.Smoothness);
-            stream->ReadRaw<float>(component.SpecularPower);
-            return true;
-        }
-
-        bool operator== (const MaterialInstance& other) const
-        {
-            return other.BaseMapPath == BaseMapPath
-                && other.NormalMapPath == NormalMapPath
-                && other.MetallicMapPath == MetallicMapPath
-                && other.SpecularMapPath == SpecularMapPath
-                && other.AmbientMultiplier == AmbientMultiplier
-                && other.Smoothness == Smoothness
-                && other.SpecularPower == SpecularPower;
-        }
-
-        bool operator!=(const MaterialInstance& other) const
-        {
-            return !(*this == other);
-        }
-    };
+    
 
 
 

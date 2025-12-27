@@ -77,17 +77,24 @@ namespace Pixie
 	GameObject Scene::CreateEmptyGameObject(const std::string& name)
 	{
 		GameObject gameObject = { m_Registry.create(), this };
+		gameObject.AddComponent<IDComponent>();
 		gameObject.AddComponent<TransformComponent>();
 		gameObject.AddComponent<HeirarchyComponent>();
 		NameComponent& nameComponent = gameObject.AddComponent<NameComponent>();
 		nameComponent.Name = name.empty() ? "Empty Object" : name;
 		return gameObject;
 	}
-	//
-	//void Scene::AddGameObject(std::shared_ptr<GameObject> gameObject)
-	//{
-	//	m_GameObjects.push_back(gameObject);
-	//}
+	
+	GameObject Scene::CreateGameObjectWithGUID(GUID guid, const std::string& name)
+	{
+		GameObject gameObject = { m_Registry.create(), this };
+		gameObject.AddComponent<IDComponent>(guid);
+		gameObject.AddComponent<TransformComponent>();
+		gameObject.AddComponent<HeirarchyComponent>();
+		NameComponent& nameComponent = gameObject.AddComponent<NameComponent>();
+		nameComponent.Name = name.empty() ? "Empty Object" : name;
+		return gameObject;
+	}
 
 	void Scene::RemoveGameObject(GameObject objectToRemove)
 	{
@@ -97,35 +104,34 @@ namespace Pixie
 			return;
 		}
 
-		m_Registry.destroy(objectToRemove);
-	}
-
-	void Scene::RemoveEntity(entt::entity entityToDelete)
-	{
-		if (!m_Registry.valid(entityToDelete))
+		if (objectToRemove.TryGetComponent<CameraComponent>())
 		{
-			std::cout << "Tried to remove game object entt handle: " << int(entityToDelete) << ", from Scene, but could not find it" << std::endl;
-			return;
-		}
-
-		if (m_Registry.try_get<CameraComponent>(entityToDelete))
-		{
-			if (!TryRemoveCamera(entityToDelete))
+			if (!TryRemoveCamera(objectToRemove))
 			{
 				return;
 			}
 		}
 
 		//check if need to unparent
-		HeirarchyComponent* family = m_Registry.try_get<HeirarchyComponent>(entityToDelete);
-		if (family && family->Parent != entt::null)
+		GameObject parent = objectToRemove.GetParent();
+		//HeirarchyComponent* family = m_Registry.try_get<HeirarchyComponent>(objectToRemove);
+		if (parent)
 		{
-			GameObject parent{ family->Parent, this };
-			parent.RemoveChild(entityToDelete);
+			parent.RemoveChild(objectToRemove);
 		}
 
-		m_Registry.destroy(entityToDelete);
+		std::vector<GameObject> children = objectToRemove.GetChildren();
+		for (GameObject child : children)
+		{
+			if (parent)
+				child.SetParent(parent);
+			else
+				child.SetParentNone();
+		}
+
+		m_Registry.destroy(objectToRemove);
 	}
+
 
 	GameObject Scene::GetGameObjectByEntityHandle(entt::entity entityHandle)
 	{
@@ -151,6 +157,21 @@ namespace Pixie
 		return GameObject();
 	}
 
+	GameObject Scene::FindGameObjectByGUID(GUID guid)
+	{
+		auto view = m_Registry.view<IDComponent>();
+		for (auto entity : view)
+		{
+			const IDComponent& component = view.get<IDComponent>(entity);
+			if (component.ID == guid)
+			{
+				return GameObject(entity, this);
+			}
+		}
+
+		return GameObject();
+	}
+
 	GameObject Scene::DuplicateGameObject(GameObject object)
 	{
 		return GameObject();
@@ -163,54 +184,11 @@ namespace Pixie
 
 	Camera* Scene::GetActiveCamera()
 	{
-		/*Camera* mainCamera = nullptr;
-
-		auto view = m_Registry.view<CameraComponent>();
-		for (auto entity : view)
-		{
-			CameraComponent& camera = view.get<CameraComponent>(entity);
-
-			if (camera.IsPrimaryCamera)
-			{
-				mainCamera = &camera.Cam;
-				break;
-			}
-		}
-
-		return mainCamera;*/
 		return m_CameraManager.GetActiveCamera();
 	}
 
 	Camera* Scene::GetActiveCamera(glm::mat4& viewMatrix)
 	{
-		//Camera* mainCamera = nullptr;
-		/*
-		auto group = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		for (auto entity : group)
-		{
-			auto [camera, transform] = group.get<CameraComponent, TransformComponent>(entity);
-
-			if (camera.IsPrimaryCamera)
-			{
-				glm::vec3 position = transform.GetPosition();
-				glm::vec3 rotation = transform.GetRotationEuler(AngleType::Radians);
-				glm::vec3 direction;
-				direction.x = cos(rotation.x * cos(rotation.y));
-				direction.y = sin(rotation.y);
-				direction.z = sin(rotation.x) * cos(rotation.y);
-				glm::vec3 forward = glm::normalize(direction);
-
-				glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
-				glm::vec3 up = glm::normalize(glm::cross(right, forward));
-
-				viewMatrix = glm::lookAt(position, position + forward, up);
-				
-				mainCamera = &camera.Cam;
-				break;
-			}
-		}
-		*/
-
 		return m_CameraManager.GetActiveCamera(viewMatrix);
 	}
 
@@ -222,55 +200,16 @@ namespace Pixie
 	void Scene::SetActiveCamera(GameObject& gameObject)
 	{
 		m_CameraManager.SetActiveCamera(gameObject);
-		/*if (m_ActiveCamera == gameObject) return;
 		
-		if (m_ActiveCamera != entt::null)
-		{
-			CameraComponent& previousCamera = m_Registry.get<CameraComponent>(m_ActiveCamera);
-			previousCamera.IsPrimaryCamera = false;
-		}
-
-		CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
-		nextCamera.IsPrimaryCamera = true;
-		m_ActiveCamera = gameObject;*/
 	}
 
 	void Scene::SetDefaultCamera(GameObject& gameObject)
 	{
-		/*if (m_DefaultCamera == gameObject) return;
-
-		CameraComponent& nextCamera = gameObject.GetComponent<CameraComponent>();
-		m_DefaultCamera = gameObject;*/
 		m_CameraManager.SetDefaultCamera(gameObject);
 	}
 
 	bool Scene::TryRemoveCamera(entt::entity entityHandle)
 	{
-	/*	auto view = m_Registry.view<CameraComponent>();
-		if (view.size() < 2)
-		{
-			std::cout << "Tried to remove Camera Object with handle: " << int(entityHandle) << ", from Scene, but there are not any cameras to replace it with" << std::endl;
-			return false;
-		}*/
-
-		/*if (entityHandle == m_DefaultCamera)
-		{
-			for (auto entity : view)
-			{
-				if (entity != entityHandle)
-				{
-					m_DefaultCamera = entity;
-					break;
-				}
-			}
-		}
-
-		if (entityHandle == m_ActiveCamera)
-		{
-			m_ActiveCamera = m_DefaultCamera;
-			m_Registry.get<CameraComponent>(m_ActiveCamera).IsPrimaryCamera = true;
-		}*/
-
 		if (!m_CameraManager.IsCameraRemovable(entityHandle)) return false;
 
 		m_Registry.remove<CameraComponent>(entityHandle);
@@ -321,6 +260,10 @@ namespace Pixie
 	{
 
 	}
+
+	 template<>
+	 void Scene::OnComponentAdded<IDComponent>(Entity& entity, IDComponent& component)
+	 {}
 
 	template<>
 	 void Scene::OnComponentAdded<TagComponent>(Entity& entity, TagComponent& component)

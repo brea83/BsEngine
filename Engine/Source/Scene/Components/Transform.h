@@ -9,6 +9,7 @@
 namespace Pixie
 {
 	class Scene;
+	class GameObject;
 
 	enum class AngleType
 	{
@@ -26,9 +27,9 @@ namespace Pixie
 		// properties
 		static constexpr SerializableComponentID ID{ SerializableComponentID::TransformComponent };
 
-		void UnParent(Scene* scene, entt::entity parent, entt::entity grandParent = entt::null, bool bKeepWorldPosition = true);
-		entt::entity ParentEntityHandle{ entt::null };
-		entt::entity EntityHandle{ entt::null };
+		void UnParent(Scene* scene, GameObject& parent, GameObject& grandParent, bool bKeepWorldPosition = true);
+		GUID m_ParentGuid{ 0 };
+		GUID m_Guid{ 0 };
 
 		void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
 		glm::vec3 GetPosition();
@@ -61,7 +62,7 @@ namespace Pixie
 		//operator overrides
 		bool operator==(const TransformComponent& other) const
 		{
-			return EntityHandle == other.EntityHandle;
+			return m_Guid == other.m_Guid;
 		}
 
 		bool operator!=(const TransformComponent& other) const

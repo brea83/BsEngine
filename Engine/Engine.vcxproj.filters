@@ -58,6 +58,8 @@
     <ClCompile Include="Source\Resources\StreamReader.cpp" />
     <ClCompile Include="Source\Resources\FileStream.cpp" />
     <ClCompile Include="Source\Resources\Prefab.cpp" />
+    <ClCompile Include="Source\GUID.cpp" />
+    <ClCompile Include="Source\Scene\Components\MaterialInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -130,6 +132,8 @@
     <ClInclude Include="Source\Resources\StreamReader.h" />
     <ClInclude Include="Source\Resources\FileStream.h" />
     <ClInclude Include="Source\Resources\Prefab.h" />
+    <ClInclude Include="Source\GUID.h" />
+    <ClInclude Include="Source\Scene\Components\MaterialInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

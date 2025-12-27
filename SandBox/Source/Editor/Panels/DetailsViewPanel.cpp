@@ -24,7 +24,7 @@ namespace Pixie
 
 		ImGui::Begin("Details View");
 		{
-			if (scene == nullptr)
+			if (scene == nullptr || selected.GetScene() == nullptr)
 			{
 				ImGui::End();
 				return false;
@@ -334,6 +334,10 @@ namespace Pixie
 					std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
 					component.m_FilePath = previousMeshPath;
 					component.Reload();
+				}
+				else
+				{
+					component.m_FilePath = newPath;
 				}
 			}
 

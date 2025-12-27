@@ -9,6 +9,7 @@
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/QuadMesh.h"
 #include "Graphics/Primitives/Cube.h"
+#include "Scene/Components/MaterialInstance.h"
 
 #include <chrono>
 
@@ -232,8 +233,11 @@ namespace Pixie
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
 			std::cout << "Loading serialized mesh took: " << duration.count() << " microseconds." << std::endl;
 
-			component.SetMesh(mesh);
-			return true;
+			if (mesh)
+			{
+				component.SetMesh(mesh);
+				return true;
+			}
 		}
 
 		if (filePath.extension() == ".fbx" || serializedPath.extension() == ".pmeta")

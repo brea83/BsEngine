@@ -25,8 +25,14 @@ namespace Pixie
 
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
 	{
+		if (!object.HasCompoenent<IDComponent>())
+		{
+			std::cerr << "Error: trying to serialize a gameobject with no GUID" << std::endl;
+			return;
+		}
 
-		fileWriter->WriteRaw<entt::entity>(object.m_EntityHandle);
+		uint64_t guid = (uint64_t)object.GetGUID();
+		fileWriter->WriteRaw<uint64_t>(guid);
 
 		TagComponent* tag = object.TryGetComponent<TagComponent>();
 		NameComponent* name = object.TryGetComponent<NameComponent>();
@@ -80,35 +86,63 @@ namespace Pixie
 
 	bool GameObject::Deserialize(StreamReader* fileReader, GameObject& object)
 	{
-		fileReader->ReadRaw<entt::entity>(object.m_SerializedID);
+		uint64_t guid;
+		fileReader->ReadRaw<uint64_t>(guid);
+
+		object.GetOrAddComponent<IDComponent>().ID = guid;
+
 		std::vector<SerializableComponentID> components;
 		fileReader->ReadArray<SerializableComponentID>(components);
 
 		for (auto id : components)
 		{
-			if(id == SerializableComponentID::TagComponent)
+			if (id == SerializableComponentID::TagComponent)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<TagComponent>());
+				continue;
+			}
 
-			if(id== SerializableComponentID::NameComponent)
+			if (id == SerializableComponentID::NameComponent)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<NameComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::HeirarchyComponent)
+			if (id == SerializableComponentID::HeirarchyComponent)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<HeirarchyComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::TransformComponent)
+			if (id == SerializableComponentID::TransformComponent)
+			{
 				fileReader->ReadRaw<TransformComponent>(object.GetOrAddComponent<TransformComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::MeshComponent)
+			if (id == SerializableComponentID::MeshComponent)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<MeshComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::LightComponent)
+			if (id == SerializableComponentID::LightComponent)
+			{
 				fileReader->ReadRaw<LightComponent>(object.GetOrAddComponent<LightComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::CameraComponent)
+			if (id == SerializableComponentID::CameraComponent)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<CameraComponent>());
+				continue;
+			}
 
-			if(id == SerializableComponentID::CameraController)
+			if (id == SerializableComponentID::CameraController)
+			{
 				fileReader->ReadObject(object.GetOrAddComponent<CameraController>());
+				continue;
+			}
 		}
 
 		return true;
@@ -119,32 +153,46 @@ namespace Pixie
 		return m_Scene->GetRegistry().get_or_emplace<TransformComponent>(*this);
 	}
 
-	void GameObject::SetParent(entt::entity newParent, bool bSentFromAddChild)
+	void GameObject::SetParentNone()
+	{
+		GameObject parent = GetParent();
+		if (parent)
+		{
+			parent.RemoveChild(*this);
+		}
+
+		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+		family.Parent = 0;
+	}
+
+	void GameObject::SetParent(GameObject& newParent, bool bSentFromAddChild)
 	{
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-		if (family.Parent != entt::null)
+		if (family.Parent != 0)
 		{
-			GameObject parentObject{ family.Parent, m_Scene };
+			
+			GameObject parentObject = m_Scene->FindGameObjectByGUID(family.Parent);
 			parentObject.RemoveChild(*this);
 		}
 
-		family.Parent = newParent;
+		family.Parent = newParent.GetGUID();
 		TransformComponent& transform = GetComponent<TransformComponent>();
-		transform.ParentEntityHandle = newParent;
+		transform.m_ParentGuid = newParent.GetGUID();
 
 		if (!bSentFromAddChild)
 		{
-			GameObject parentObject{ family.Parent, m_Scene };
-			parentObject.AddChild(*this);
+			GameObject parentObject = m_Scene->FindGameObjectByGUID(family.Parent);
+			if(parentObject)
+				parentObject.AddChild(*this);
 		}
 	}
 
 	GameObject GameObject::GetParent()
 	{
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-		if (m_Scene->IsEntityValid(family.Parent))
+		if (family.Parent != 0)
 		{
-			return GameObject(family.Parent, m_Scene);
+			return m_Scene->FindGameObjectByGUID(family.Parent);
 		}
 		return GameObject();
 	}
@@ -155,51 +203,57 @@ namespace Pixie
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 		if (family.Children.size() > 0)
 		{
-			for (auto entity : family.Children)
+			for (auto guid : family.Children)
 			{
-				children.emplace_back( entity, m_Scene );
+				GameObject child = m_Scene->FindGameObjectByGUID(guid);
+				if(child)
+					children.push_back(child);
 			}
 		}
 		return children;
 	}
 
-	void GameObject::UnParent(entt::entity grandParent, bool bKeepWorldPosition)
-	{
+	//void GameObject::UnParent(GameObject grandParent, bool bKeepWorldPosition)
+	//{
+	//	
+	//	HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
+	//	TransformComponent& transform = GetComponent<TransformComponent>();
+	//	transform.UnParent(m_Scene, *this, grandParent);
+	//	family.Parent = grandParent.GetGUID();
+	//}
 
-		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-		TransformComponent& transform = GetComponent<TransformComponent>();
-		transform.UnParent(m_Scene, *this, grandParent);
-		family.Parent = grandParent;
-	}
-
-	void GameObject::AddChild(entt::entity child, bool bSentFromSetParent)
+	void GameObject::AddChild(GameObject& child, bool bSentFromSetParent)
 	{
 		if (!m_Scene->GetRegistry().valid(child)) return;
 
+		//m_Scene->FindGameObjectByGUID(guid);
+		GUID childGuid = child.GetGUID();
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
-		auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+		auto itterator = std::find(family.Children.begin(), family.Children.end(), childGuid);
+
 		if (itterator != family.Children.end())
 		{
 			// already is a child. do nothing
 			return;
 		}
 
-		family.Children.push_back(child);
+		family.Children.push_back(childGuid);
 
 		if (!bSentFromSetParent)
 		{
-			GameObject childObject{ child, m_Scene };
-			childObject.SetParent(*this, true);
+			child.SetParent(*this, true);
 		}
 	}
 
-	void GameObject::RemoveChild(entt::entity child)
+	void GameObject::RemoveChild(GameObject& child)
 	{
 		if (!m_Scene->GetRegistry().valid(child)) return;
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 
 		if (family.Children.empty()) return;
-		auto itterator = std::find(family.Children.begin(), family.Children.end(), child);
+
+		GUID childGuid = child.GetGUID();
+		auto itterator = std::find(family.Children.begin(), family.Children.end(), childGuid);
 		if (itterator != family.Children.end())
 		{
 			family.Children.erase(itterator);

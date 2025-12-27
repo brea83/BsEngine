@@ -3,6 +3,7 @@
 #include "BsPrecompileHeader.h"
 //#include "Graphics/Primitives/Renderable.h"
 #include "Scene/Components/Component.h"
+#include "MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
 #include "Graphics/Texture.h"
 
@@ -28,7 +29,7 @@ namespace Pixie
 		static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
 		bool Reload();
 
-		void SetMesh(std::shared_ptr<Mesh> mesh) { m_Mesh = mesh; }
+		void SetMesh(std::shared_ptr<Mesh>& mesh) { m_Mesh = mesh; }
 		
 
 		const std::string& Name() const { return m_Name; }
@@ -68,7 +69,9 @@ namespace Pixie
 				|| oldMetalPath != component.m_MaterialInstance.MetallicMapPath)
 			{
 				component.Reload();
+				component.m_MaterialInstance.Reload();
 			}
+
 			return true;
 		}
 
@@ -95,7 +98,7 @@ namespace Pixie
 		MaterialInstance m_MaterialInstance{};
 
 
-		bool LoadObj(const StdPath& filePath, const std::string& textureFileName = "");
+		//bool LoadObj(const StdPath& filePath, const std::string& textureFileName = "");
 
 		
 		//methods

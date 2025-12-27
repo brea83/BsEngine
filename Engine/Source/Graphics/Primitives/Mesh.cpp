@@ -56,6 +56,8 @@ namespace Pixie
         // unbind so that other objects can be set up
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        std::cout << "initialized mesh with " << m_Vertices.size() << " vertices" << std::endl;
     }
 
     void Mesh::Render(Shader& currentShader)

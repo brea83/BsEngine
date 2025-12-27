@@ -17,11 +17,11 @@
 namespace Pixie
 {
 	MeshComponent::MeshComponent()
- : m_Name("Model Component"), m_FilePath("")
+ : m_Name("Mesh Component"), m_FilePath("")
 	{ }
 
 	MeshComponent::MeshComponent(PrimitiveMeshType primitiveMesh)
-	: m_Name("Model Component")
+	: m_Name("Primitive Mesh Component")
 	{
 		std::shared_ptr<Mesh> mesh = AssetLoader::LoadPrimitive(primitiveMesh);
 		if (mesh != nullptr)
@@ -61,13 +61,11 @@ namespace Pixie
 	{
 		StdPath path(m_FilePath);
 		StdPath fileExtension = path.extension();
-		if (fileExtension == ".fbx")
-		{
 			GameObject rootObject;
-
 			EngineContext* engine = EngineContext::GetEngine();
 			Scene* scene = engine->GetScene();
 			entt::registry& registry = scene->GetRegistry();
+
 
 			auto view = registry.view<MeshComponent>();
 
@@ -81,21 +79,11 @@ namespace Pixie
 				}
 			}
 
-			if (rootObject)
+			if (rootObject.GetScene())
 			{
 				return AssetLoader::LoadMesh(rootObject, *this, path);
 			}
 			return false;
-		}
-		else if (fileExtension == ".obj")
-		{
-			return LoadObj(path, m_MaterialInstance.BaseMapPath);
-		}
-		else if (fileExtension == ".pmeta")
-		{
-
-		}
-		return false;
 	}
 
 	MeshComponent::~MeshComponent()
@@ -103,24 +91,24 @@ namespace Pixie
 		std::cout << "DELETING " << m_Name << std::endl;
 	}
 
-	bool MeshComponent::LoadObj(const StdPath& filePath, const std::string& textureFileName)
-	{
-		std::shared_ptr<Mesh> mesh = AssetLoader::LoadMesh(filePath);
-		if (mesh == nullptr)
-		{
-			return false;
-		}
-		m_Mesh = mesh;
+	//bool MeshComponent::LoadObj(const StdPath& filePath, const std::string& textureFileName)
+	//{
+	//	std::shared_ptr<Mesh> mesh = AssetLoader::LoadMesh(filePath);
+	//	if (mesh == nullptr)
+	//	{
+	//		return false;
+	//	}
+	//	m_Mesh = mesh;
 
-		if (textureFileName != "")
-		{
-			m_MaterialInstance.BaseMapPath = textureFileName;
-			m_MaterialInstance.BaseMap = AssetLoader::LoadTexture(textureFileName);
-			if (m_MaterialInstance.BaseMap == nullptr) return false;
-		}
+	//	if (textureFileName != "")
+	//	{
+	//		m_MaterialInstance.BaseMapPath = textureFileName;
+	//		m_MaterialInstance.BaseMap = AssetLoader::LoadTexture(textureFileName);
+	//		if (m_MaterialInstance.BaseMap == nullptr) return false;
+	//	}
 
-		return true;
-	}
+	//	return true;
+	//}
 
 	void MeshComponent::OnUpdate()
 	{}
@@ -139,6 +127,9 @@ namespace Pixie
 			m_MaterialInstance.MetallicMap->Bind(1);
 			currentShader.SetUniformInt("MetallicMap", 1);
 			currentShader.SetUniformBool("material.bUseMetalicMap", true);
+
+			currentShader.SetUniformBool("material.bMapIsRoughness", m_MaterialInstance.BMapIsRoughness);
+			
 		}
 		else
 		{

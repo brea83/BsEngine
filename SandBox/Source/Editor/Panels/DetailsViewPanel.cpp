@@ -2,21 +2,12 @@
 #include "DetailsViewPanel.h"
 #include "Pixie.h"
 #include "ImGui/ImGuiPanel.h"
-//#include "Scene/Scene.h"
-//#include "Graphics/Primitives/TransformComponent.h"
-//#include "Scene/Components/Component.h"
-//#include "Scene/Components/MeshComponent.h"
-//#include "Scene/Components/CameraComponent.h"
-//#include "Graphics/CameraController.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #include "Resources/AssetLoader.h"
 #include <CameraManager.h>
 
-//DetailsViewPanel::DetailsViewPanel(Scene* scene, std::size_t selectedObjectIndex)
-//	:_currentScene(scene), _selected(selectedObjectIndex)
-//{}
 namespace Pixie
 {
 	bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)

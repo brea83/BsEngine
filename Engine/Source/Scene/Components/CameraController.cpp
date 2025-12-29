@@ -130,6 +130,7 @@ namespace Pixie
 			return true;
 		}
 
+		
 		if (m_Type == CameraMoveType::Fly)
 		{
 			switch (keyCode)
@@ -153,6 +154,7 @@ namespace Pixie
 				m_TranslationDirection.y = -1;
 				return true;
 			default:
+				return false;
 				break;
 			}
 		}
@@ -172,6 +174,8 @@ namespace Pixie
 			}
 			return true;
 		}
+
+		return false;
 	}
 
 	bool CameraController::OnKeyReleased(KeyReleasedEvent& event)

@@ -73,7 +73,7 @@
     </PostBuildEvent>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)Engine/Dependencies/assimp;$(SolutionDir)Engine/Dependencies/GLFW;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;assimp-vc143-mtd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Comdlg32.Lib;glfw3.lib;assimp-vc143-mtd.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -185,6 +185,7 @@
     <ClCompile Include="Source\Events\SubscribableEvent.cpp" />
     <ClCompile Include="Source\Resources\StreamWriter.cpp" />
     <ClCompile Include="Source\Resources\StreamReader.cpp" />
+    <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
     <ClInclude Include="Source\GUID.h" />
+    <ClInclude Include="Source\PlatformUtils.h" />
     <ClInclude Include="Source\Resources\Prefab.h" />
     <ClInclude Include="Source\Resources\FileStream.h" />
     <ClInclude Include="Source\Scene\Components\MaterialInstance.h" />

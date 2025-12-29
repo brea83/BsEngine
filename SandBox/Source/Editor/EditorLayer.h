@@ -19,7 +19,12 @@ namespace Pixie
 		EditorLayer();
 		~EditorLayer();
 
-		void OnSceneChange(Scene* newScene) { m_CurrentScene = newScene; m_Selected = GameObject(entt::null, m_CurrentScene); }
+		void OnSceneChange(Scene* newScene, const std::string& filepath = "")
+		{ 
+			m_CurrentScene = newScene; 
+			m_Selected = GameObject(entt::null, m_CurrentScene); 
+			m_CurrentScenePath = filepath;
+		}
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
@@ -29,11 +34,15 @@ namespace Pixie
 
 		void DrawEditorMenu(EngineContext* engine);
 
-		
+		void NewScene();
+		void SaveScene();
+		void SaveSceneAs();
+		void OpenScene();
 
 
 	private:
 		Scene* m_CurrentScene{ nullptr };
+		std::string m_CurrentScenePath{ "" };
 		
 
 		//SceneHierarchyPanel m_Hierarchy;

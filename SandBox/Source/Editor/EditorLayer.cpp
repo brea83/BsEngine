@@ -2,6 +2,7 @@
 #include "BsPrecompileHeader.h"
 #include "Pixie.h"
 #include "Scene/SceneSerializer.h"
+#include "PlatformUtils.h"
 
 #include "ImGui/ImGuiPanel.h"
 #include <imgui_internal.h>
@@ -137,22 +138,31 @@ namespace Pixie
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+N"))
+				{
+					NewScene();
+				}
+
+				if (ImGui::MenuItem("Open Scene...", "Ctrl+O"))
+				{
+					OpenScene();
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Save Scene...", "Ctrl+S"))
+				{
+					SaveScene();
+				}
+
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S"))
+				{
+					SaveSceneAs();
+				}
+
+				ImGui::Separator();
+
 				if (ImGui::MenuItem("Exit")) engine->StopApplication();
-
-				if (ImGui::MenuItem("Test Save Scene"))
-				{
-					SceneSerializer serializer(m_CurrentScene);
-					serializer.Serialize("TestSave.bin");
-				}
-
-				if (ImGui::MenuItem("Test Load Scene"))
-				{
-					Scene* loadedScene = new Scene();
-					EngineContext::GetEngine()->SetScene(loadedScene);
-					SceneSerializer serializer(loadedScene);
-					serializer.Deserialize("TestSave.bin");
-					OnSceneChange(loadedScene);
-				}
 
 				ImGui::EndMenu();
 			}
@@ -183,6 +193,51 @@ namespace Pixie
 			ImGui::EndMainMenuBar();
 		}
 
+	}
+
+	void EditorLayer::NewScene()
+	{
+		Scene* loadedScene = new Scene();
+		EngineContext::GetEngine()->SetScene(loadedScene);
+		OnSceneChange(loadedScene);
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		if (!m_CurrentScenePath.empty())
+		{
+			SceneSerializer serializer(m_CurrentScene);
+			serializer.Serialize(m_CurrentScenePath);
+		}
+		else
+		{
+			SaveSceneAs();
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filePath = FileDialogs::SaveFile("Pixie Scene (*.pixie)\0*.pixie\0");
+
+		if (!filePath.empty())
+		{
+			SceneSerializer serializer(m_CurrentScene);
+			serializer.Serialize(filePath);
+		}
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filePath = FileDialogs::OpenFile("Pixie Scene (*.pixie)\0*.pixie\0");
+
+		if (!filePath.empty())
+		{
+			Scene* loadedScene = new Scene();
+			EngineContext::GetEngine()->SetScene(loadedScene);
+			SceneSerializer serializer(loadedScene);
+			serializer.Deserialize(filePath);
+			OnSceneChange(loadedScene, filePath);
+		}
 	}
 
 
@@ -328,18 +383,75 @@ namespace Pixie
 
 		using Key = Inputs::Keyboard;
 
+		Key pressed = (Key)event.GetKeyCode();
+
+		switch (pressed)
+		{
+		case Key::O:
+			if (control)
+			{
+				OpenScene();
+				return true;
+			}
+			break;
+		case Key::N:
+			if (control)
+			{
+				NewScene();
+				return true;
+			}
+			break;
+		case Key::S:
+			if (control)
+			{
+				if (shift)
+				{
+					SaveSceneAs();
+				}
+				else
+				{
+					SaveScene();
+				}
+				return true;
+			}
+			break;
+		default:
+			break; 
+		}
+
 		if (!ImGuizmo::IsUsing())
 		{
-			switch ((Inputs::Keyboard)event.GetKeyCode())
+			switch (pressed)
 			{
 			case Key::G:
-				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE)
+				{
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				}
+				else
+				{
+					m_GizmoType = -1;
+				}
 				break;
 			case Key::R:
-				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+				{
+					m_GizmoType = -1;
+				}
+				else
+				{
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				}
 				break;
 			case Key::S:
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				if (m_GizmoType == ImGuizmo::OPERATION::SCALE)
+				{
+					m_GizmoType = -1;
+				}
+				else
+				{
+					m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				}
 				break;
 			default:
 				break;

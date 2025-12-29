@@ -438,7 +438,8 @@ namespace Pixie
 			break; 
 		}
 
-		if (!ImGuizmo::IsUsing())
+		ImGuiIO& io = ImGui::GetIO();
+		if (!ImGuizmo::IsUsing() && !io.WantTextInput)
 		{
 			switch (pressed)
 			{

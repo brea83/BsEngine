@@ -1,12 +1,15 @@
 #include "BsPrecompileHeader.h"
 #include "DetailsViewPanel.h"
 #include "Pixie.h"
+
+#include "CameraManager.h"
 #include "ImGui/ImGuiPanel.h"
+#include "Resources/AssetLoader.h"
+#include "PlatformUtils.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui/misc/cpp/imgui_stdlib.h>
-#include "Resources/AssetLoader.h"
-#include <CameraManager.h>
 
 namespace Pixie
 {
@@ -313,31 +316,26 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			//ImGui::Text(component->GetFilePath().c_str());
-			static bool bMeshPathEditing = false;
-			static std::string  meshPath;
 			std::string previousMeshPath = component.m_FilePath;
-			std::string newPath = component.m_FilePath;
-			if (DrawStringProperty("Mesh File", newPath, meshPath, bMeshPathEditing))
+
+
+			if (FileProperty("Mesh File", component.m_FilePath, "All Formats (*.fbx, *.obj)\0*.fbx;*.obj\0FBX Model (*.fbx)\0*.fbx\0OBJ Mesh(*.obj)\0*.obj\0"))
 			{
-				if (!AssetLoader::LoadMesh(selected, component, newPath))
+				if (!AssetLoader::LoadMesh(selected, component, component.m_FilePath))
 				{
 					std::cout << "Error loading mesh file, reverting to old mesh path" << std::endl;
 					component.m_FilePath = previousMeshPath;
 					component.Reload();
 				}
-				else
-				{
-					component.m_FilePath = newPath;
-				}
 			}
 
 			ImGui::SeparatorText("Material Instance");
 			MaterialInstance& material = component.m_MaterialInstance;
-			static bool bBaseTextureEditing = false;
-			static std::string  baseMapPath;
+
 			std::string previousBasePath = material.BaseMapPath;
-			if (DrawStringProperty("Base Texture", material.BaseMapPath, baseMapPath, bBaseTextureEditing))
+
+			if (FileProperty("Base Texture", material.BaseMapPath,
+				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.BaseMapPath);
 				if (newTexture == nullptr)
@@ -351,10 +349,11 @@ namespace Pixie
 				}
 			}
 
-			static bool bMetallicMapEditing = false;
-			static std::string  metallicMapPath;
 			std::string previousMetalPath = material.MetallicMapPath;
-			if (DrawStringProperty("Metallic Map", material.MetallicMapPath, metallicMapPath, bMetallicMapEditing))
+
+
+			if (FileProperty("Metallic Map", material.MetallicMapPath,
+				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath);
 				if (newTexture == nullptr)
@@ -367,7 +366,6 @@ namespace Pixie
 					component.m_MaterialInstance.MetallicMap = newTexture;
 				}
 			}
-			ImGui::SetItemTooltip("Expects Metalness and smoothness packed into R and G channels");
 
 			SliderParams smoothnessParams;
 			smoothnessParams.Min = 0.0f;
@@ -549,5 +547,67 @@ namespace Pixie
 			ImGui::PopID();
 
 		}
+	}
+	bool DetailsViewPanel::FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth)
+	{
+		std::filesystem::path fileName = value;
+		if (!value.empty() && fileName.has_filename())
+		{
+			fileName = fileName.filename();
+		}
+
+
+		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
+		{
+			float fontSize = ImGui::GetFontSize();
+			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
+			ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
+			//ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
+
+			ImGui::TableNextRow();
+			// the label
+			ImGui::TableSetColumnIndex(0);
+
+			ImGui::PushItemWidth(fontSize * columnWidth);
+			ImGui::Text(label.c_str());
+			ImGui::PopItemWidth();
+
+			// the values
+			ImGui::TableSetColumnIndex(1);
+			ImGui::PushItemWidth(fontSize * value.size());
+			// do stuff
+
+			ImGui::Text((fileName.string().c_str()));
+			
+			ImGui::PopItemWidth();
+
+			// the button to turn  the value field into an edit field
+			
+			ImGui::EndTable();
+
+			ImGui::SameLine();
+			std::string buttonText = "...";
+			float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+
+			ImGui::PushID(label.c_str());
+			if (ImGui::Button(buttonText.c_str()))
+			{
+				//bValueChanged = (value != editingValue);
+				std::string filePath = FileDialogs::OpenFile(filter);
+
+				if (!filePath.empty())
+				{
+					value = filePath;
+					ImGui::PopID();
+					return true;
+				}
+					
+			}
+			ImGui::PopID();
+			//ImGui::PopItemWidth();
+		}
+
+		return false;
 	}
 }

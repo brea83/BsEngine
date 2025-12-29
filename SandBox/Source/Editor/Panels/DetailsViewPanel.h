@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/vec3.hpp>
 #include "Scene/GameObject.h"
+#include <Pixie.h>
 
 namespace Pixie
 {
@@ -30,5 +31,6 @@ namespace Pixie
 
         static void DrawComponents(Scene* scene, GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
 
+        static bool FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth = 10.0f);
     };
 }

@@ -248,11 +248,16 @@ namespace Pixie
 
 	void EditorLayer::DrawSceneTools()
 	{
-		ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+		ImGuiViewportP* mainWindow = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
 		float height = ImGui::GetFrameHeight();
-		if (ImGui::BeginViewportSideBar("##SceneTools", viewport, ImGuiDir_Up, height, windowFlags))
+		if (ImGui::BeginViewportSideBar("##SceneTools", mainWindow, ImGuiDir_Up, height, windowFlags))
 		{
+			if (m_CurrentScene == nullptr)
+			{
+				ImGui::End;
+				return;
+			}
 			if (ImGui::BeginMenuBar())
 			{
 				GameObject activeCam = m_CurrentScene->GetActiveCameraGameObject();
@@ -276,6 +281,15 @@ namespace Pixie
 		static float translationSpeed = camController.GetTranslationSpeed();
 		static float rotationSpeed = camController.GetRotationSpeed();
 		static float fov = camera.GetFov();
+
+		ImGuiStyle& style = ImGui::GetStyle();
+		const float global_scale = style.FontScaleMain * style.FontScaleDpi;
+
+		ImGui::PushFont(nullptr, style.FontSizeBase * 1.2 * global_scale);
+		ImGui::Text("Active Camera: ");
+		ImGui::SameLine();
+		ImGui::Text(activeCam.GetComponent<NameComponent>().Name.c_str());
+		ImGui::PopFont();
 
 		if (ImGui::Button("CamFlyMode"))
 		{

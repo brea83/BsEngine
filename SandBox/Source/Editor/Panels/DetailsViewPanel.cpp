@@ -30,10 +30,9 @@ namespace Pixie
 				return false;
 			}
 
-			static bool bIsEditing = false;
-			static std::string editingValue1;
 			NameComponent& nameComp = selected.GetComponent<NameComponent>();
-			DrawStringProperty("Name", nameComp.Name, editingValue1, bIsEditing);
+			static std::string editingName = nameComp.Name;
+			DrawStringProperty("Name", nameComp.Name, editingName);
 
 
 			if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
@@ -192,10 +191,8 @@ namespace Pixie
 	}
 
 
-	bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, bool& bIsEditing, float columnWidth)
+	bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth)
 	{
-		bool bValueChanged = false;
-		//bool bIsEditing = false;
 		bool bValueSubmitted = false;
 
 		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
@@ -203,7 +200,6 @@ namespace Pixie
 			float fontSize = ImGui::GetFontSize();
 			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
 			ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
-			//ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
 
 			ImGui::TableNextRow();
 			// the label
@@ -214,50 +210,27 @@ namespace Pixie
 
 			// the values
 			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(fontSize * value.size());
+			//ImGui::PushItemWidth(fontSize * value.size());
 			// do stuff
 
-			if (bIsEditing)
+			ImGui::InputTextWithHint("##EditableString", value.c_str(), &editingValue);
+			if (ImGui::IsItemDeactivatedAfterEdit())
 			{
-				ImGui::InputTextWithHint("##EditableString", value.c_str(), &editingValue);
-			}
-			else
-			{
-				ImGui::Text(value.c_str());
-			}
-			ImGui::PopItemWidth();
-
-			// the button to turn  the value field into an edit field
-			//ImGui::TableSetColumnIndex(2);
-			//ImGui::PushItemWidth(-ImGui::GetContentRegionAvail().x);
-			ImGui::EndTable();
-
-			ImGui::SameLine();
-			std::string buttonText = bIsEditing ? "Done" : "Edit";
-			float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
-			ImGui::PushID(label.c_str());
-			if (ImGui::Button(buttonText.c_str()))
-			{
-				bValueChanged = (value != editingValue);
-				if (bIsEditing && bValueChanged)
+				std::cout << "pressed enter on text input" << std::endl;
+				if (value != editingValue)
 				{
 					if (editingValue != "" && editingValue != " ")
 					{
 						value = editingValue;
 						bValueSubmitted = true;
 					}
-					//else
-					//{
-					//	//std::cout << "Error: tried to submit empty string to property: " << label << std::endl;
-					//}
-
 				}
 
-				bIsEditing = !bIsEditing;
 			}
-			ImGui::PopID();
+
 			//ImGui::PopItemWidth();
+
+			ImGui::EndTable();
 		}
 
 		return bValueSubmitted;

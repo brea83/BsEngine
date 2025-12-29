@@ -106,6 +106,11 @@ namespace Pixie
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 		DrawSceneTools();
+		if (m_CurrentScene == nullptr)
+		{
+			ImGui::End();
+			return;
+		}
 
 		glm::mat4 viewMatrix{ 1.0f };
 		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
@@ -334,7 +339,7 @@ namespace Pixie
 
 		TransformComponent& transform = selected.GetTransform();
 		//if (transform == nullptr) return;
-		glm::mat4 transformMatrix = transform.GetLocal();
+		glm::mat4 transformMatrix = transform.GetObjectToWorldMatrix();
 		/*ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(transform.GetPosition()),
 			glm::value_ptr(transform.GetRotationEuler(AngleType::Degrees)),
 			glm::value_ptr(transform.GetScale()),
@@ -426,11 +431,11 @@ namespace Pixie
 			case Key::G:
 				if (m_GizmoType == ImGuizmo::OPERATION::TRANSLATE)
 				{
-					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+					m_GizmoType = -1;
 				}
 				else
 				{
-					m_GizmoType = -1;
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				}
 				break;
 			case Key::R:

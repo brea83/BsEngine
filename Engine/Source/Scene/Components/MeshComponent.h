@@ -1,7 +1,6 @@
 #pragma once
 #include "Core.h"
 #include "BsPrecompileHeader.h"
-//#include "Graphics/Primitives/Renderable.h"
 #include "Scene/Components/Component.h"
 #include "MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
@@ -14,7 +13,6 @@
 
 namespace Pixie
 {
-	//class Texture;
 	class GameObject;
 
 	class MeshComponent
@@ -30,7 +28,6 @@ namespace Pixie
 		bool Reload();
 
 		void SetMesh(std::shared_ptr<Mesh>& mesh) { m_Mesh = mesh; }
-		
 
 		const std::string& Name() const { return m_Name; }
 		void SetName(const std::string& name)  { m_Name = name; }
@@ -51,8 +48,8 @@ namespace Pixie
 			stream->WriteString(component.m_Name);
 			stream->WriteString(component.m_FilePath);
 			stream->WriteObject<MaterialInstance>(component.m_MaterialInstance);
-
 		}
+
 		static bool Deserialize(StreamReader* stream, MeshComponent& component)
 		{
 			stream->ReadString(component.m_Name);
@@ -97,29 +94,8 @@ namespace Pixie
 		std::shared_ptr<Mesh> m_Mesh;
 		MaterialInstance m_MaterialInstance{};
 
-
-		//bool LoadObj(const StdPath& filePath, const std::string& textureFileName = "");
-
-		
-		//methods
-		// ToDo: Refactor FBX loading
-		//bool LoadFbx(GameObject& rootObject, const StdPath& filePath);
-		
-		//void ProcessTransform(aiMatrix4x4 nodeMatrix, std::shared_ptr<TransformComponent> localTransform, aiNode* parentNode);
-		//aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
-		//void ProcessNode(aiNode* node, const aiScene* assimpScene, aiMatrix4x4 combinedParentMatrices);
-		//std::shared_ptr<Mesh>  processMesh(aiMesh* mesh, const aiScene* assimpScene);
-		//std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial* material, aiTextureType type, TextureType bsTextureType);
-
 		friend class DetailsViewPanel;
 	};
-
-	// what does a model component need to know to tell the renderer where to render its meshes?
-	// how many meshes it has
-	// a ref to each unique mesh (data about verts in object space)
-	// a way to track and adjust transform offsets from the model root instead of the world root
-
-	//easy for single mesh. model just uses the game object's transform
 }
 
 

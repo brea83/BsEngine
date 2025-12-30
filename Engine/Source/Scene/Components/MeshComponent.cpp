@@ -91,25 +91,6 @@ namespace Pixie
 		std::cout << "DELETING " << m_Name << std::endl;
 	}
 
-	//bool MeshComponent::LoadObj(const StdPath& filePath, const std::string& textureFileName)
-	//{
-	//	std::shared_ptr<Mesh> mesh = AssetLoader::LoadMesh(filePath);
-	//	if (mesh == nullptr)
-	//	{
-	//		return false;
-	//	}
-	//	m_Mesh = mesh;
-
-	//	if (textureFileName != "")
-	//	{
-	//		m_MaterialInstance.BaseMapPath = textureFileName;
-	//		m_MaterialInstance.BaseMap = AssetLoader::LoadTexture(textureFileName);
-	//		if (m_MaterialInstance.BaseMap == nullptr) return false;
-	//	}
-
-	//	return true;
-	//}
-
 	void MeshComponent::OnUpdate()
 	{}
 
@@ -144,7 +125,6 @@ namespace Pixie
 		if (m_MaterialInstance.BaseMap != nullptr)
 		{
 			m_MaterialInstance.BaseMap->UnBind();
-			//currentShader.SetUniformInt("Texture1", 0);
 		}
 		if (m_MaterialInstance.MetallicMap != nullptr)
 		{

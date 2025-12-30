@@ -354,6 +354,12 @@ namespace Pixie
 		TransformComponent& transform = selected.GetTransform();
 		//if (transform == nullptr) return;
 		glm::mat4 transformMatrix = transform.GetObjectToWorldMatrix();
+		//glm::mat4 localTransform = transform.GetLocal();
+		
+		glm::vec3 oldTranslation;
+		glm::vec3 oldRotation;
+		glm::vec3 oldScale;
+		TransformComponent::Decompose(transformMatrix, oldScale, oldRotation, oldTranslation);
 		/*ImGuizmo::RecomposeMatrixFromComponents(glm::value_ptr(transform.GetPosition()),
 			glm::value_ptr(transform.GetRotationEuler(AngleType::Degrees)),
 			glm::value_ptr(transform.GetScale()),
@@ -373,17 +379,19 @@ namespace Pixie
 			glm::vec3 scale;
 			TransformComponent::Decompose(transformMatrix, scale, rotation, translation);
 
-			glm::vec3 oldRotation = transform.GetRotationEuler(AngleType::Radians);
+
+			glm::vec3 localTranslation = transform.GetPosition();
+			glm::vec3 localRotation = transform.GetRotationEuler(AngleType::Radians);
+			glm::vec3 localScale = transform.GetScale();
+
+			glm::vec3 deltaTranslation = translation - oldTranslation;
 			glm::vec3 deltaRotation = rotation - oldRotation;
+			glm::vec3 deltaScale = scale - oldScale;
 
-			transform.SetPosition(translation);
-			transform.SetScale(scale);
-			transform.SetRotationEuler(oldRotation + deltaRotation, AngleType::Radians);
+			transform.SetPosition(localTranslation + deltaTranslation);
+			transform.SetScale(localScale + deltaScale);
+			transform.SetRotationEuler(localRotation + deltaRotation, AngleType::Radians);
 
-			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
-			{
-				//std::cout << "NEW ROTATION == " << transform.GetRotationEuler().x << ", " << transform.GetRotationEuler().y << ", " << transform.GetRotationEuler().z << std::endl;
-			}
 		}
 	}
 

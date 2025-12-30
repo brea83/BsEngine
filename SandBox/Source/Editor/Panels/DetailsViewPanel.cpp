@@ -322,6 +322,41 @@ namespace Pixie
 				}
 			}
 
+			ImGui::SameLine();
+			ImGui::PushID("RemoveColorTexture");
+			if (ImGui::Button("X"))
+			{
+				material.BaseMap = nullptr;
+				material.BaseMapPath = "";
+			}
+			ImGui::PopID();
+
+			std::string previousNormalPath = material.NormalMapPath;
+
+			if (FileProperty("Normal Map", material.NormalMapPath,
+				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
+			{
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath);
+				if (newTexture == nullptr)
+				{
+					std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
+					material.NormalMapPath = previousBasePath;
+				}
+				else
+				{
+					component.m_MaterialInstance.NormalMap = newTexture;
+				}
+			}
+
+			ImGui::SameLine();
+			ImGui::PushID("RemoveNormalMap");
+			if (ImGui::Button("X"))
+			{
+				material.NormalMap = nullptr;
+				material.NormalMapPath = "";
+			}
+			ImGui::PopID();
+
 			std::string previousMetalPath = material.MetallicMapPath;
 
 
@@ -339,6 +374,15 @@ namespace Pixie
 					component.m_MaterialInstance.MetallicMap = newTexture;
 				}
 			}
+
+			ImGui::SameLine();
+			ImGui::PushID("RemoveMetalMap");
+			if (ImGui::Button("X"))
+			{
+				material.MetallicMap = nullptr;
+				material.MetallicMapPath = "";
+			}
+			ImGui::PopID();
 
 			SliderParams smoothnessParams;
 			smoothnessParams.Min = 0.0f;
@@ -560,8 +604,10 @@ namespace Pixie
 
 			ImGui::SameLine();
 			std::string buttonText = "...";
+			std::string deleteText = "X";
+			float deleteWidth = ImGui::CalcTextSize(deleteText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
 			float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - buttonWidth);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ( buttonWidth + deleteWidth));
 
 			ImGui::PushID(label.c_str());
 			if (ImGui::Button(buttonText.c_str()))

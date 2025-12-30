@@ -24,12 +24,17 @@ namespace Pixie
 			glm::vec3 Normal;
 			glm::vec3 Color;
 			glm::vec2 UV1;
+			glm::vec3 Tangent;
+			glm::vec3 BiTangent;
 
 			bool operator==(Vertex otherVertex)
 			{
 				if (otherVertex.Position == this->Position
 					&& otherVertex.Normal == this->Normal
-					&& otherVertex.UV1 == this->UV1)
+					&& otherVertex.Color == this->Color
+					&& otherVertex.UV1 == this->UV1
+					&& otherVertex.Tangent == this->Tangent
+					&& otherVertex.BiTangent == this->BiTangent)
 				{
 					return true;
 				}
@@ -62,9 +67,11 @@ namespace Pixie
 		static void Serialize(StreamWriter* stream, const Mesh& mesh);
 		static bool Deserialize(StreamReader* stream, Mesh& mesh);
 
+		void CalculateTangents();
+
 	protected:
 		//properties
-		static const int s_Version{ 0 };
+		static const int s_Version{ 1 };
 
 		unsigned int VAO{ 0 };
 		unsigned int VBO{ 0 };

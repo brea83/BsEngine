@@ -22,6 +22,7 @@ namespace Pixie
 		m_FallbackMaterial.BaseMap = AssetLoader::LoadTexture(m_FallbackMaterial.BaseMapPath);
 
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentMultiLightLecture.glsl");
+		
 	}
 
 	ForwardRenderPass::~ForwardRenderPass()
@@ -92,7 +93,7 @@ namespace Pixie
 			return;
 		}
 
-		m_Shader->SetUniformBool("bUseMainLight", true);
+		m_Shader->SetUniformBool("BUseLights", true);
 
 		int lightTypes[MAX_LIGHTS];
 		float lightColors[MAX_LIGHTS * 3];
@@ -132,14 +133,15 @@ namespace Pixie
 
 			activeLights++;
 		}
-
+		
+		//glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLightsCount"), activeLights);
+		glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLights"), activeLights);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightPosition"), activeLights, lightPositions);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightDirection"), activeLights, lightDirections);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightColor"), activeLights, lightColors);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightAttenuation"), activeLights, lightAttenuations);
 		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "innerRadius"), activeLights, innerRadiusCos);
 		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "outerRadius"), activeLights, outerRadiusCos);
-		glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLights"), activeLights);
 		glUniform1iv(glGetUniformLocation(m_Shader->ShaderProgram, "lightTypes"), activeLights, lightTypes);
 	}
 }

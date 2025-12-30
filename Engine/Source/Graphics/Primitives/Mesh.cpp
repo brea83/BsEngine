@@ -53,6 +53,12 @@ namespace Pixie
         glEnableVertexAttribArray(3);
         glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV1));
 
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, BiTangent));
+
         // unbind so that other objects can be set up
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -101,5 +107,10 @@ namespace Pixie
         
         stream->ReadArray<unsigned int>(mesh.m_Indices, indexCount);
         return true;
+    }
+
+    void Mesh::CalculateTangents()
+    {
+
     }
 }

@@ -1,28 +1,30 @@
 #version 330 core
-
+#define MAX_LIGHTS 6
 // MID GREEN DESATURATED (0.4, 0.5, 0.2, 1)
-struct Material
+struct MaterialData
 {
-	vec3 ao;
-	vec3 diffuse;
-	vec3 specular;
-	bool bUseMetalicMap;
-	float smoothness;
-	float specularPower;
+	sampler2D ColorTexture;
+	sampler2D NormalMap;
+	sampler2D MetallicMap;
+
+	vec3 Ao;
+	vec3 BaseColor;
+	
+	bool BUseMetallicMap;
+	bool BMapIsRoughness;
+	float Smoothness;
+	float SpecularPower;
 };
 
 struct LightData
 {
-	vec3 position;
-	vec3 color;
-	vec3 attenuation;
-};
-
-struct DirectionalLightData
-{
-	vec3 direction;
-	vec3 color;
-	vec3 attenuation;
+	int Type;
+	vec3 Position;
+	vec3 Direction;
+	vec3 Color;
+	vec3 Attenuation;
+	float InnerRadius;
+	float OuterRadius;
 };
 
 out vec4 FragColor;
@@ -33,77 +35,131 @@ in vec3 Normal;
 in vec3 VertexColor;
 //in vec3 ViewVector;
 
-uniform vec3 cameraPosition;
-uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
+uniform vec3 CameraPosition;
 
-uniform vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
-uniform vec3 lightPosition = vec3(10, 5, -15);
-uniform vec3 lightColor = vec3(1.0, 1.0, 0.95);
-uniform vec3 lightSpecColor = vec3(1.0, 1.0, 0.95);
-// light attnuation X constant Y linear, Z quadratic
-uniform vec3 lightAttenuation = vec3(1.0, 0.01, 0.00001);
+uniform vec4 AmbientLight = vec4(0.1, 0.1, 0.1, 1.0);
 
-uniform DirectionalLightData MainLight;
-uniform bool bUseMainLight;
 
-uniform Material material;
-uniform sampler2D Texture1;
-uniform sampler2D MetallicMap;
+uniform bool BUseLights;
+uniform int ActiveLights;
+uniform LightData Lights[MAX_LIGHTS];
+
+uniform MaterialData Material;
+
+// until I start doing more pbr like stuff assume the diffuse intensity is just a little less than full reflection
+vec3 GetPointLuminosity(float nDotL, vec3 lightColor, float lightDistance, vec3 attenuationConstants)
+{
+	float attenuation = 1.0 / (attenuationConstants.x + (attenuationConstants.y * lightDistance) + (attenuationConstants.z * pow(lightDistance, 2)));
+	return  nDotL * lightColor * attenuation * 0.8;
+}
+
+vec3 GetDirectionalLuminosity(float nDotL, vec3 lightColor)
+{
+	return  nDotL * lightColor * 0.8;
+}
+
+// until I start doing more pbr assume light intensity on spec is about a third of the main light color
+vec3 GetPointSpecular(float nDotH, vec3 lightColor, float smoothness, float specularPower, float lightDistance, vec3 attenuationConstants)
+{
+	float attenuation = 1.0 / (attenuationConstants.x + (attenuationConstants.y * lightDistance) + (attenuationConstants.z * pow(lightDistance, 2)));
+	float specBrightness = pow(max(nDotH, 0.0), specularPower * smoothness);
+
+			
+	return specBrightness * (lightColor * 0.3) * attenuation;
+}
+
+vec3 GetDirectionalSpecular(float nDotH, vec3 lightColor, float smoothness, float specularPower)
+{
+	float specBrightness = pow(max(nDotH, 0.0), smoothness * specularPower);
+
+	return specBrightness * (lightColor * 0.3);
+
+}
 
 void main()
 {
 	//FragColor = texture(Texture1, UV);
 	FragColor = vec4(0, 0, 0, 1);
-	vec3 textureColor = texture(Texture1, UV).rgb;
-	float smoothness = 1;
-	vec3 diffuse = vec3(0, 0, 0);
-	vec3 specular = vec3(0, 0, 0);
-	if(material.bUseMetalicMap)
-	{
-		smoothness = texture(MetallicMap, UV).g * material.smoothness;
-	}
-	else
-	{
-		smoothness = material.smoothness;
-	}
-	//float specStrength = 0.5;
-	float attenuation = 1;
+	vec3 textureColor = texture(Material.ColorTexture, UV).rgb;
 
-	//FragColor.xyz += ambientLight.xyz ; // mult in material ambience when I have it
-	if(bUseMainLight)
+	if (BUseLights)
 	{
-		
-		FragColor.xyz += ambientLight.xyz * textureColor;
-		vec3 N = normalize(Normal);
-		float nDotL = max(dot(N, MainLight.direction), 0.0);
-		vec3 V = normalize(cameraPosition.xyz - WorldPos);
-
-		if(nDotL > 0)
+		float smoothness = 1;
+		vec3 diffuse = vec3(0, 0, 0);
+		vec3 specular = vec3(0, 0, 0);
+		if(Material.BUseMetallicMap)
 		{
-//			float distance = length(lightPosition - WorldPos);
-//			attenuation = 1.0 / (MainLight.attenuation.x + (MainLight.attenuation.y * distance) + (MainLight.attenuation.z * pow(distance, 2)));
-			// until I start doing more pbr like stuff assume the diffuse intensity is just a little less than full reflection
-			diffuse = nDotL * MainLight.color * 0.8;
-
-		//specular
-			vec3 H = normalize((MainLight.direction + V));
-			float nDotH = max(dot(N, H), 0.0);
-
-			float specBrightness = nDotH * smoothness;
-			specBrightness = pow(max(specBrightness, 0.0), material.specularPower);
-
-			// until I start doing more pbr assume light intensity on spec is about a third of the main light color
-			specular = specBrightness * (MainLight.color * 0.3);
-
-			FragColor.xyz += (diffuse + specular) * textureColor; 
+			float mapSmoothness = 1.0 - texture(Material.MetallicMap, UV).g;
+			mapSmoothness = Material.BMapIsRoughness ? 1.0 - mapSmoothness : mapSmoothness;
+			smoothness = mapSmoothness * Material.Smoothness;
 		}
+		else
+		{
+			smoothness = Material.Smoothness;
+		}
+		smoothness = clamp(smoothness, 0.1, 1.0);
+
+
+		// ambient lighting
+		FragColor.xyz += AmbientLight.xyz * textureColor;
+
+		// set up for diffuse and specular lighting
+
+		vec3 N = normalize(Normal);
+		vec3 V = normalize(CameraPosition.xyz - WorldPos);
+
+		vec3 accumulatedDiffuse = vec3(0,0,0);
+		vec3 accumulatedSpecular = vec3(0,0,0);
+
+		// light loop
+		for(int i = 0; i < ActiveLights; i++)
+		{
+			LightData light = Lights[i];
+
+			if(light.Type == 0) // is directional light
+			{
+				vec3 direction = normalize(-light.Direction);
+				float nDotL = max(dot(N, direction), 0.0);
+				vec3 H = normalize((-light.Direction + V));
+				float nDotH = max(dot(N, H), 0.0);
+
+				accumulatedDiffuse += GetDirectionalLuminosity(nDotL, light.Color);
+				accumulatedSpecular += GetDirectionalSpecular(nDotH, light.Color, smoothness, Material.SpecularPower);
+				continue;
+			}
+
+			vec3 direction = normalize(light.Position - WorldPos);
+			float nDotL = max(dot(N, direction), 0.0);
+
+			vec3 H = normalize((direction + V));
+			float nDotH = max(dot(N, H), 0.0);
+			float lightDistance = length(light.Position - WorldPos);
+
+			if(light.Type == 1) // is point light
+			{
+				accumulatedDiffuse += GetPointLuminosity(nDotL, light.Color, lightDistance, light.Attenuation);
+				accumulatedSpecular += GetPointSpecular(nDotH, light.Color, smoothness, Material.SpecularPower, lightDistance, light.Attenuation);
+				continue;
+			}
+
+			if(light.Type == 2) // is spot light
+			{
+				float theta = dot(direction, normalize(-light.Direction));
+				float epsilon = light.InnerRadius - light.OuterRadius;
+				float intensity = clamp((theta - light.OuterRadius) / epsilon, 0.0, 1.0);
+
+				accumulatedDiffuse +=  intensity * GetPointLuminosity(nDotL, light.Color, lightDistance, light.Attenuation);
+				accumulatedSpecular += intensity * GetPointSpecular(nDotH, light.Color, smoothness, Material.SpecularPower, lightDistance, light.Attenuation);
+				continue;
+			}
+			
+		}	
+
+		FragColor.xyz += (accumulatedDiffuse + accumulatedSpecular) * textureColor;
 
 	}
 	else
 	{
 		FragColor.xyz = textureColor;
 	}
-
-	
-		//FragColor.xyz = V;
 }

@@ -689,8 +689,8 @@ schedule for the module
 1.Vertex buffer, Phong Rendering,
 2.Textures and mapping
 3.Managing Shaders and Lights
-4.Screenbuffer, Texture Buffer, Shadow mapping
 january onward
+4.Screenbuffer, Texture Buffer, Shadow mapping
 5.Animation
 6.Post processing techniques, Bloom, motion blur
 7.Deferred rendering

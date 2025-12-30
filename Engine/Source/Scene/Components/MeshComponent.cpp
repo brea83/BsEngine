@@ -101,24 +101,40 @@ namespace Pixie
 		if (m_MaterialInstance.BaseMap != nullptr)
 		{
 			m_MaterialInstance.BaseMap->Bind(0);
-			currentShader.SetUniformInt("Texture1", 0);
+			currentShader.SetUniformInt("Material.ColorTexture", 0);
 		}
+
+		if (m_MaterialInstance.NormalMap != nullptr)
+		{
+			m_MaterialInstance.NormalMap->Bind(1);
+			currentShader.SetUniformInt("Material.NormalMap", 1);
+			currentShader.SetUniformInt("NormalMap", 1);
+
+			currentShader.SetUniformBool("BUseNormalMap", true);
+			currentShader.SetUniformBool("Material.BUseNormalMap", true);
+		}
+		else
+		{
+			currentShader.SetUniformBool("BUseNormalMap", false);
+			currentShader.SetUniformBool("Material.BUseNormalMap", false);
+		}
+
 		if (m_MaterialInstance.MetallicMap != nullptr)
 		{
-			m_MaterialInstance.MetallicMap->Bind(1);
-			currentShader.SetUniformInt("MetallicMap", 1);
-			currentShader.SetUniformBool("material.bUseMetalicMap", true);
+			m_MaterialInstance.MetallicMap->Bind(2);
+			currentShader.SetUniformInt("Material.MetallicMap", 2);
+			currentShader.SetUniformBool("Material.BUseMetallicMap", true);
 
-			currentShader.SetUniformBool("material.bMapIsRoughness", m_MaterialInstance.BMapIsRoughness);
+			currentShader.SetUniformBool("Material.BMapIsRoughness", m_MaterialInstance.BMapIsRoughness);
 			
 		}
 		else
 		{
-			currentShader.SetUniformBool("material.bUseMetalicMap", false);
+			currentShader.SetUniformBool("Material.BUseMetalicMap", false);
 		}
 
-		currentShader.SetUniformFloat("material.specularPower", m_MaterialInstance.SpecularPower);
-		currentShader.SetUniformFloat("material.smoothness", m_MaterialInstance.Smoothness);
+		currentShader.SetUniformFloat("Material.SpecularPower", m_MaterialInstance.SpecularPower);
+		currentShader.SetUniformFloat("Material.Smoothness", m_MaterialInstance.Smoothness);
 
 		m_Mesh->Render(currentShader);
 

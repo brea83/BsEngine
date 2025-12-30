@@ -375,6 +375,8 @@ namespace Pixie
 		std::vector<glm::vec3> positions;
 		std::vector<glm::vec3> normals;
 		std::vector<glm::vec2> uvs;
+		std::vector<glm::vec3> tangents;
+		std::vector<glm::vec3> bitangents;
 		std::vector<unsigned int> indices;
 
 		while (std::getline(file, line))
@@ -700,24 +702,6 @@ namespace Pixie
 		std::string serializedPath = filePath.substr(0, filePath.find_last_of('.'));
 		serializedPath.append(".pmesh");
 
-		//std::ofstream file(serializedPath, std::ios_base::binary);
-		//if (!file.is_open())
-		//{
-		//	std::cerr << "ERROR: failed to open file to serialize mesh: " << serializedPath << std::endl;
-		//	return "";
-		//}
-
-		////metadata about the mesh structure
-		//file.write((char*)s_SerializationVersion.c_str(), s_SerializationVersion.size() * sizeof(char));
-		//size_t numVertices = mesh->GetVertices().size();
-		//file.write((char*)&numVertices, sizeof(size_t));
-		//size_t numIndices = mesh->GetIndices().size();
-		//file.write((char*)&numIndices, sizeof(size_t));
-
-		//file.write((char*)mesh->GetVertices().data(), sizeof(Mesh::Vertex) * mesh->GetVertices().size());
-		//file.write((char*)mesh->GetIndices().data(), sizeof(unsigned int) * mesh->GetIndices().size());
-
-		//file.close();
 		FileStreamWriter outFile(serializedPath);
 		outFile.WriteObject<Mesh>(*mesh);
 
@@ -738,56 +722,21 @@ namespace Pixie
 		fileIn.ReadObject<Mesh>(mesh);
 		
 		return std::make_shared<Mesh>(mesh.GetVertices(), mesh.GetIndices());
-		//std::ifstream file(filePath, std::ios_base::binary);
-		//if (!file.is_open())
-		//{
-		//	return nullptr;
-		//}
-
-		//std::string version;
-		//version.resize(s_SerializationVersion.size());
-		//file.read((char*)version.data(), s_SerializationVersion.size() * sizeof(char));
-
-		//if (version != s_SerializationVersion)
-		//{
-		//	std::cout << "Warning serialization version doesn't match." << std::endl;
-		//	std::cout << "Pixie Engine Expects: " << s_SerializationVersion << std::endl;
-		//	std::cout << "Found: " << version << std::endl;
-		//}
-
-		//size_t numVertices;
-		//file.read((char*)&numVertices, sizeof(size_t));
-		//if (numVertices > 100000000) throw std::runtime_error("Error reading serialized mesh, too many vertices");
-
-		//size_t numIndices;
-		//file.read((char*)&numIndices, sizeof(size_t));
-		//if (numIndices > 300000000) throw std::runtime_error("Error reading serialized mesh, too many indices");
-
-		//std::vector<Mesh::Vertex> vertices;
-		//vertices.resize(numVertices);
-		//file.read((char*)vertices.data(), sizeof(Mesh::Vertex) * numVertices);
-
-		//std::vector<unsigned int> indices;
-		//indices.resize(numIndices);
-		//file.read((char*)indices.data(), sizeof(unsigned int) * numIndices);
-
-		//file.close();
-
-		//return std::make_shared<Mesh>(vertices, indices);
+		
 	}
 
-	aiMatrix4x4 AssetLoader::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
-	{
-		if (parentNode)
-		{
-			return (CombineTransformsToRoot(parentNode->mParent, parentNode)) * childNode->mTransformation.Inverse();
-			// example expansion of a root node with three levels of children
-			// ((rootTransform) * child1) * child2) * child3
-		}
+	//aiMatrix4x4 AssetLoader::CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode)
+	//{
+	//	if (parentNode)
+	//	{
+	//		return (CombineTransformsToRoot(parentNode->mParent, parentNode)) * childNode->mTransformation.Inverse();
+	//		// example expansion of a root node with three levels of children
+	//		// ((rootTransform) * child1) * child2) * child3
+	//	}
 
-		return childNode->mTransformation.Inverse();
+	//	return childNode->mTransformation.Inverse();
 
-	}
+	//}
 
 	std::shared_ptr<Mesh> AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* assimpScene)
 	{
@@ -828,6 +777,13 @@ namespace Pixie
 			{
 				vertex.Color = vertex.Normal;
 			}
+
+			// tangents
+			vertex.Tangent.x = mesh->mTangents[i].x;
+			vertex.Tangent.y = mesh->mTangents[i].y;
+			vertex.Tangent.z = mesh->mTangents[i].z;
+
+			vertex.BiTangent = glm::cross(vertex.Normal, vertex.Tangent);
 
 			vertices.emplace_back(vertex);
 		}

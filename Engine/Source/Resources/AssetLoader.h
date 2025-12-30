@@ -59,7 +59,7 @@ namespace Pixie
 		//static GameObject ProcessNodeRecursive(aiNode* node, const aiScene* assimpScene, Scene* gameScene);
 		//static std::shared_ptr<Mesh> LoadMesh(aiMesh& mesh, const aiScene& assimpScene);
 		static void ProcessTransform(aiMatrix4x4 nodeMatrix, TransformComponent& localTransform);
-		static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
+		//static aiMatrix4x4 CombineTransformsToRoot(aiNode* parentNode, aiNode* childNode);
 		static std::shared_ptr<Mesh>  ProcessMesh(aiMesh* mesh, const aiScene* assimpScene);
 		static bool ProcessTextures(MaterialInstance& objectMaterial, aiMesh* mesh, const aiScene* assimpScene);
 

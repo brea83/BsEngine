@@ -37,11 +37,14 @@ in VS_OUT
 {
    vec3 Pos_WS;
    vec3 Pos_TS;
+   vec3 Pos_CS;
    vec3 Normal_WS;
+   vec3 Normal_CS;
    vec2 UV;
    vec3 VertexColor;
    vec3 CameraPos_WS;
    vec3 CameraPos_TS; 
+   vec3 EyeDirection_CS;
    mat3 TBN;
 } IN;
 
@@ -144,7 +147,7 @@ void main()
 		if(Material.BUseNormalMap)
 		{
 			vec3 sampledNormal = texture(Material.NormalMap, IN.UV).rgb;
-			sampledNormal = normalize(sampledNormal * 2.0 - 1.0);
+			sampledNormal = normalize((sampledNormal * 2.0) - 1.0);
 			N = sampledNormal;
 			V = IN.TBN * normalize(IN.CameraPos_WS.xyz - IN.Pos_WS);
 		}
@@ -168,9 +171,9 @@ void main()
 					direction = IN.TBN * direction;
 				}
 
-				float nDotL = max(dot(N, direction), 0.0);
-				vec3 H = normalize((-lightDirection[i] + V));
-				float nDotH = max(dot(N, H), 0.0);
+				float nDotL = clamp(dot(N, direction), 0.0, 1.0);
+				vec3 H = normalize((direction + V));
+				float nDotH = clamp(dot(N, H), 0.0, 1.0);
 
 				accumulatedDiffuse += GetDirectionalLuminosity(nDotL, lightColor[i]);
 				accumulatedSpecular += GetDirectionalSpecular(nDotH, lightColor[i], smoothness, Material.SpecularPower);
@@ -183,7 +186,7 @@ void main()
 				direction = IN.TBN * direction;
 			}
 
-			float nDotL = max(dot(N, direction), 0.0);
+			float nDotL = clamp(dot(N, direction), 0.0, 1.0);
 
 			vec3 H = normalize((direction + V));
 			float nDotH = max(dot(N, H), 0.0);
@@ -210,7 +213,7 @@ void main()
 		}	
 		FragColor.xyz += (accumulatedDiffuse + accumulatedSpecular) * textureColor;
 		//FragColor.xyz = accumulatedSpecular;
-		
+		//FragColor.xyz =  accumulatedSpecular;
 
 	}
 	else

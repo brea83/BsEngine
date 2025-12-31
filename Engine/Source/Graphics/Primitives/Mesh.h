@@ -31,10 +31,8 @@ namespace Pixie
 			{
 				if (otherVertex.Position == this->Position
 					&& otherVertex.Normal == this->Normal
-					&& otherVertex.Color == this->Color
-					&& otherVertex.UV1 == this->UV1
-					&& otherVertex.Tangent == this->Tangent
-					&& otherVertex.BiTangent == this->BiTangent)
+					&& otherVertex.UV1 == this->UV1)
+					
 				{
 					return true;
 				}

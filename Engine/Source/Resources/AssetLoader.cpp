@@ -516,12 +516,13 @@ namespace Pixie
 		}
 		file.close();
 
-
 		std::shared_ptr<Mesh> mesh;
 
 		mesh = std::make_shared<Mesh>(vertices, indices, name);
 
 		if (mesh == nullptr) return nullptr;
+
+		mesh->CalculateTangents();
 
 		std::string serializedPath = SerializeMesh(filePath, mesh);
 		if (serializedPath != "")

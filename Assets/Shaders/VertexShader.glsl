@@ -26,11 +26,14 @@ out VS_OUT
 {
    vec3 Pos_WS;
    vec3 Pos_TS;
+   vec3 Pos_CS;
    vec3 Normal_WS;
+   vec3 Normal_CS;
    vec2 UV;
    vec3 VertexColor;
    vec3 CameraPos_WS;
    vec3 CameraPos_TS; 
+   vec3 EyeDirection_CS;
    mat3 TBN;
 } OUT;
 
@@ -38,11 +41,13 @@ void main()
 {
     gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
     OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
+    OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
 
-    mat3 normalMatrix = transpose(inverse(mat3(transform)));
-    vec3 t = normalize(normalMatrix * vertexTangent);
-    vec3 b = normalize(normalMatrix * vertexBitangent);
-    vec3 n = normalize(normalMatrix * vertexNormal);
+    mat3 MV3 = mat3(view * transform);
+    mat3 M = mat3(transform);
+    vec3 t = M * normalize(vertexTangent);
+    vec3 b = M * normalize(vertexBitangent);
+    vec3 n = M * normalize(vertexNormal);
 
     OUT.TBN = transpose(mat3(t, b, n));
 
@@ -50,9 +55,12 @@ void main()
 
     OUT.CameraPos_WS = cameraPosition;
     OUT.CameraPos_TS = OUT.TBN * cameraPosition;
+    OUT.EyeDirection_CS = vec3(0,0,0) - OUT.Pos_CS;
 
 
-    OUT.Normal_WS = normalMatrix * vertexNormal;//vertexNormal;//normalize(vec3(transform * vec4(vertexNormal, 0.0)));
+
+    OUT.Normal_WS = (transform * vec4(vertexNormal, 0.0)).xyz;
+    OUT.Normal_CS = (view * transform * vec4(vertexNormal, 0.0)).xyz;
 
     OUT.UV = uvCoord;
 

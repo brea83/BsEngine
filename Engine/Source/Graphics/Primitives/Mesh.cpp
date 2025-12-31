@@ -111,6 +111,40 @@ namespace Pixie
 
     void Mesh::CalculateTangents()
     {
+        for (int i = 0; i < m_Indices.size(); i += 3)
+        {
+            //the three verts of our tri
+            unsigned int index0 = m_Indices[i];
+            unsigned int index1 = m_Indices[i + 1];
+            unsigned int index2 = m_Indices[i + 2];
 
+            Vertex& v0 = m_Vertices[index0];
+            Vertex& v1 = m_Vertices[index1];
+            Vertex& v2 = m_Vertices[index2];
+
+            //edges of the tri
+            glm::vec3 edge1 = v1.Position - v0.Position;
+            glm::vec3 edge2 = v2.Position - v0.Position;
+
+            // uv deltas
+            glm::vec2 deltaUV1 = v1.UV1 - v0.UV1;
+            glm::vec2 deltaUV2 = v2.UV1 - v0.UV1;
+
+            //compute tangent and bitangent
+
+            float denominator = (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
+            denominator = 1.0f / denominator;
+
+            v0.Tangent = ((edge1 * deltaUV2.y) - (edge2 * deltaUV1.y)) * denominator;
+            v0.Tangent = glm::normalize(v0.Tangent - (v0.Normal * glm::dot(v0.Normal, v0.Tangent)));
+            v1.Tangent = glm::normalize(v0.Tangent - (v1.Normal * glm::dot(v1.Normal, v0.Tangent)));
+            v2.Tangent = glm::normalize(v0.Tangent - (v2.Normal * glm::dot(v2.Normal, v0.Tangent)));
+
+            v0.BiTangent = glm::cross(v0.Normal, v0.Tangent);//((edge2 * deltaUV1.x) - (edge1 * deltaUV2.x)) * denominator;
+
+
+            v1.BiTangent = v0.BiTangent;
+            v2.BiTangent = v0.BiTangent;
+        }
     }
 }

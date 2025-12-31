@@ -527,7 +527,19 @@ namespace Pixie
 			Mesh::Vertex& v1 = vertices[index1];
 			Mesh::Vertex& v2 = vertices[index2];
 
-			glm::vec3 triTangent = Mesh::CalculateTangent(v0, v1, v2);
+			//edges of the tri
+			glm::vec3 edge1 = v1.Position - v0.Position;
+			glm::vec3 edge2 = v2.Position - v0.Position;
+
+			// uv deltas
+			glm::vec2 deltaUV1 = v1.UV1 - v0.UV1;
+			glm::vec2 deltaUV2 = v2.UV1 - v0.UV1;
+
+
+			float denominator = (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
+			denominator = 1.0f / denominator;
+
+			glm::vec3 triTangent = ((edge1 * deltaUV2.y) - (edge2 * deltaUV1.y)) * denominator;
 
 			v0.Tangent = triTangent;
 			v1.Tangent = triTangent;

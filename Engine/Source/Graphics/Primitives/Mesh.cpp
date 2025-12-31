@@ -109,40 +109,12 @@ namespace Pixie
         return true;
     }
 
-
-    glm::vec3 Mesh::CalculateTangent(Vertex& v0, Vertex& v1, Vertex& v2)
-    {
-            //edges of the tri
-            glm::vec3 edge1 = v1.Position - v0.Position;
-            glm::vec3 edge2 = v2.Position - v0.Position;
-
-            // uv deltas
-            glm::vec2 deltaUV1 = v1.UV1 - v0.UV1;
-            glm::vec2 deltaUV2 = v2.UV1 - v0.UV1;
-
-            //compute tangent and bitangent
-
-            float denominator = (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
-            denominator = 1.0f / denominator;
-
-            return ((edge1 * deltaUV2.y) - (edge2 * deltaUV1.y)) * denominator;
-
-            //v0.Tangent = ((edge1 * deltaUV2.y) - (edge2 * deltaUV1.y)) * denominator;
-           
-           //v1.Tangent = glm::normalize(v0.Tangent - (v1.Normal * glm::dot(v1.Normal, v0.Tangent)));
-           // v2.Tangent = glm::normalize(v0.Tangent - (v2.Normal * glm::dot(v2.Normal, v0.Tangent)));
-
-           //v0.BiTangent = glm::cross(v0.Normal, v0.Tangent);//((edge2 * deltaUV1.x) - (edge1 * deltaUV2.x)) * denominator;
-           // v1.BiTangent = v0.BiTangent;
-            //v2.BiTangent = v0.BiTangent;
-        
-    }
     void Mesh::Vertex::OrthagonalizeTangent()
     {
         Tangent = glm::normalize(Tangent - (Normal * glm::dot(Normal, Tangent)));
     }
     void Mesh::Vertex::CalculateBitangent()
     {
-        BiTangent = glm::cross(Normal, Tangent);
+        BiTangent = glm::cross(Normal, Tangent); 
     }
 }

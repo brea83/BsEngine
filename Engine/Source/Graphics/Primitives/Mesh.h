@@ -41,7 +41,7 @@ namespace Pixie
 					return false;
 				}
 			}
-
+	
 			void OrthagonalizeTangent();
 			void CalculateBitangent();
 		};
@@ -66,8 +66,6 @@ namespace Pixie
 
 		static void Serialize(StreamWriter* stream, const Mesh& mesh);
 		static bool Deserialize(StreamReader* stream, Mesh& mesh);
-
-		static glm::vec3 CalculateTangent(Vertex& v0, Vertex& v1, Vertex& v2);
 
 	protected:
 		//properties

@@ -42,6 +42,8 @@ namespace Pixie
 				}
 			}
 
+			void OrthagonalizeTangent();
+			void CalculateBitangent();
 		};
 
 		struct ObjPackedIndices
@@ -65,7 +67,7 @@ namespace Pixie
 		static void Serialize(StreamWriter* stream, const Mesh& mesh);
 		static bool Deserialize(StreamReader* stream, Mesh& mesh);
 
-		void CalculateTangents();
+		static glm::vec3 CalculateTangent(Vertex& v0, Vertex& v1, Vertex& v2);
 
 	protected:
 		//properties

@@ -516,13 +516,37 @@ namespace Pixie
 		}
 		file.close();
 
+		for (int i = 0; i < indices.size(); i += 3)
+		{
+			//the three verts of our tri
+			unsigned int index0 = indices[i];
+			unsigned int index1 = indices[i + 1];
+			unsigned int index2 = indices[i + 2];
+
+			Mesh::Vertex& v0 = vertices[index0];
+			Mesh::Vertex& v1 = vertices[index1];
+			Mesh::Vertex& v2 = vertices[index2];
+
+			glm::vec3 triTangent = Mesh::CalculateTangent(v0, v1, v2);
+
+			v0.Tangent = triTangent;
+			v1.Tangent = triTangent;
+			v2.Tangent = triTangent;
+
+			v0.OrthagonalizeTangent();
+			v1.OrthagonalizeTangent();
+			v2.OrthagonalizeTangent();
+
+			v0.CalculateBitangent();
+			v1.CalculateBitangent();
+			v2.CalculateBitangent();
+		}
+
 		std::shared_ptr<Mesh> mesh;
 
 		mesh = std::make_shared<Mesh>(vertices, indices, name);
 
 		if (mesh == nullptr) return nullptr;
-
-		mesh->CalculateTangents();
 
 		std::string serializedPath = SerializeMesh(filePath, mesh);
 		if (serializedPath != "")

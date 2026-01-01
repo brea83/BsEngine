@@ -26,7 +26,7 @@ namespace Pixie
 		static std::shared_ptr<TextResource> LoadTextFile(const std::string& filePath);
 		static bool ReLoadTextFile(const std::string& filePath);
 		static std::shared_ptr<Shader> LoadShader(const std::string& vertPath, const std::string& fragPath);
-		static std::shared_ptr<Texture> LoadTexture(const std::string& filePath);
+		static std::shared_ptr<Texture> LoadTexture(const std::string& filePath, TextureType type = TextureType::Diffuse);
 
 		static std::filesystem::path CreatePrefab(GameObject& baseObject);
 		static GameObject LoadPrefab(const std::filesystem::path filePath, Scene* scene);
@@ -46,7 +46,7 @@ namespace Pixie
 		static std::unordered_map<std::string, std::shared_ptr<Resource>> s_Resources;
 
 		static void ParsePathString(const std::string& inPath, std::string& outPath);
-		static std::shared_ptr<Texture> LoadTextureParsedPath(const std::string& filePath);
+		static std::shared_ptr<Texture> LoadTextureParsedPath(const std::string& filePath, TextureType type = TextureType::Diffuse);
 
 		static std::string CheckForSerializedVersion(const std::filesystem::path& filePath);
 		static std::string SerializeMesh(const std::string& filePath, std::shared_ptr<Mesh> mesh);

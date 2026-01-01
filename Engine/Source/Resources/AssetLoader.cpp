@@ -143,7 +143,7 @@ namespace Pixie
 		return shader;
 	}
 
-	std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath)
+	std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath, TextureType type)
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
@@ -157,10 +157,10 @@ namespace Pixie
 
 		if (relativePath != "" && relativePath != filePath)
 		{
-			return LoadTextureParsedPath(relativePath);
+			return LoadTextureParsedPath(relativePath, type);
 		}
 
-		return LoadTextureParsedPath(filePath);
+		return LoadTextureParsedPath(filePath, type);
 	}
 
 
@@ -683,7 +683,7 @@ namespace Pixie
 		outPath = inPath;
 	}
 
-	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath)
+	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath, TextureType type)
 	{
 		if (s_Resources.find(filePath) != s_Resources.end())
 		{
@@ -696,7 +696,7 @@ namespace Pixie
 
 		if (!data.BLoadSuccess) return nullptr;
 
-		std::shared_ptr<Texture> texture = std::make_shared<Texture>(data);
+		std::shared_ptr<Texture> texture = std::make_shared<Texture>(data, type);
 
 		if (texture->TextureObject == 0) return nullptr;
 

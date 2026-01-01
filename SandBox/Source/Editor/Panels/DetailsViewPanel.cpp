@@ -336,7 +336,7 @@ namespace Pixie
 			if (FileProperty("Normal Map", material.NormalMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath);
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, TextureType::Normal);
 				if (newTexture == nullptr)
 				{
 					std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;
@@ -363,7 +363,7 @@ namespace Pixie
 			if (FileProperty("Metallic Map", material.MetallicMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath);
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, TextureType::GltfMetalicRoughness);
 				if (newTexture == nullptr)
 				{
 					std::cout << "Error loading Texture file, reverting to old Texture path" << std::endl;

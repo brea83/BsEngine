@@ -21,7 +21,7 @@ namespace Pixie
 		: Resource(ResourceType::Texture)
 	{}
 
-	Texture::Texture(StbImageData& data)
+	Texture::Texture(StbImageData& data, TextureType type)
 		: Resource(ResourceType::Texture)
 	{
 		int glMinFilter = GetGlMin();
@@ -34,7 +34,11 @@ namespace Pixie
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glMinFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glMagFilter);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, data.Format, data.Width, data.Height, 0, data.Format, GL_UNSIGNED_BYTE, data.StbData);
+		Type = type;
+		GLenum internalFormat = GetGlEnumFromType(Type, data.ChannelsCount);
+
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, data.Width, data.Height, 0, data.Format, GL_UNSIGNED_BYTE, data.StbData);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 
@@ -54,6 +58,13 @@ namespace Pixie
 	{
 		m_MinFilterType = minFilter;
 		m_MagFilterType = magFilter;
+		CreateTexture(filePath);
+	}
+
+	void Texture::CreateTexture(const std::string& filePath, TextureSpecification specification)
+	{
+		m_MinFilterType = specification.MinFilterType;
+		m_MagFilterType = specification.MagFilterType;
 		CreateTexture(filePath);
 	}
 
@@ -87,7 +98,37 @@ namespace Pixie
 		}
 	}
 
-	void Texture::CreateTexture(const std::string& filePath)
+	GLenum Texture::GetGlEnumFromType(TextureType type, int channelcount)
+	{
+
+		if (channelcount == 1) return GL_RED;
+
+		if (type != TextureType::Diffuse)
+		{
+			switch (channelcount)
+			{
+			case 3:
+				return  GL_RGB;
+			case 4:
+				return  GL_RGBA;
+			default:
+				return  GL_RGB;
+			}
+		}
+
+
+		switch (channelcount)
+		{
+		case 3:
+			return GL_SRGB;
+		case 4:
+			return GL_SRGB_ALPHA;
+		default:
+			return GL_SRGB;
+		}
+	}
+
+	void Texture::CreateTexture(const std::string& filePath, bool overrideType, TextureType type)
 	{
 
 		int glMinFilter = GetGlMin();
@@ -106,7 +147,19 @@ namespace Pixie
 
 		if (!data.BLoadSuccess) return;
 
-		glTexImage2D(GL_TEXTURE_2D, 0, data.Format, data.Width, data.Height, 0, data.Format, GL_UNSIGNED_BYTE, data.StbData);
+		GLenum internalFormat;
+		if (overrideType)
+		{
+			internalFormat = GetGlEnumFromType(type, data.ChannelsCount);
+		}
+		else
+		{
+			internalFormat = GetGlEnumFromType(Type, data.ChannelsCount);
+		}
+		
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, data.Width, data.Height, 0, data.Format, GL_UNSIGNED_BYTE, data.StbData);
+
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		StbImageWrapper::FreeImageData(data);

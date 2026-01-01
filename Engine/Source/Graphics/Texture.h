@@ -81,11 +81,19 @@ namespace Pixie
 		{TextureType::GltfMetalicRoughness, ""},
 	};
 
+	struct TextureSpecification
+	{
+		TextureType Type{ TextureType::Diffuse };
+		Min_FilterType MinFilterType{ Min_FilterType::Nearest_Nearest };
+		Mag_FilterType MagFilterType{ Mag_FilterType::Nearest };
+	};
+
 	class Texture : public Resource
 	{
 	public:
+
 		Texture();
-		Texture(StbImageData& data);
+		Texture(StbImageData& data, TextureType type = TextureType::Diffuse);
 		Texture(const std::string& filePath);
 
 		unsigned int TextureObject{ 0 };
@@ -98,6 +106,7 @@ namespace Pixie
 		static TextureType GetTypeByString(const std::string& searchString);
 
 		void CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter);
+		void CreateTexture(const std::string& filePath, TextureSpecification specification);
 		void Bind(unsigned int slot = 0) const;
 		void UnBind() const;
 
@@ -107,7 +116,8 @@ namespace Pixie
 
 		int GetGlMin();
 		int GetGlMag();
-		void CreateTexture(const std::string& filePath);
+		GLenum GetGlEnumFromType(TextureType type, int channelCount);
+		void CreateTexture(const std::string& filePath, bool overrideType = false, TextureType type = TextureType::Diffuse);
 	};
 
 }

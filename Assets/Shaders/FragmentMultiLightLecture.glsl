@@ -52,7 +52,7 @@ uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 
 uniform MaterialData Material;
 
-uniform vec4 ambientLight = vec4(0.1, 0.1, 0.1, 1.0);
+uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
 uniform vec3 lightPosition[MAX_LIGHTS];
 uniform vec3 lightColor[MAX_LIGHTS];
@@ -66,6 +66,8 @@ uniform float outerRadius[MAX_LIGHTS];
 uniform int activeLights;
 //uniform DirectionalLightData MainLight;
 uniform bool BUseLights;
+
+uniform float Gamma = 2.0;// og srgb is 2.2
 
 
 
@@ -112,9 +114,9 @@ vec3 GetSpotSpecular(float nDotH, vec3 lightColor, float smoothness, float specu
 
 void main()
 {
-	//FragColor = texture(Texture1, UV);
 	FragColor = vec4(0, 0, 0, 1);
 	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb;
+	//textureColor = pow(textureColor, vec3(Gamma));
 
 	//FragColor.xyz += ambientLight.xyz ; // mult in Material ambience when I have it
 	if(BUseLights)
@@ -137,7 +139,7 @@ void main()
 		smoothness = clamp(smoothness, 0.1, 1.0);
 
 		// ambient lighting
-		FragColor.xyz += ambientLight.xyz * textureColor;
+		FragColor.rgb += ambientLight.xyz * textureColor;
 
 		// set up for diffuse and specular lighting
 
@@ -211,16 +213,16 @@ void main()
 			}
 			
 		}	
-		FragColor.xyz += (accumulatedDiffuse + accumulatedSpecular) * textureColor;
+		FragColor.rgb += (accumulatedDiffuse + accumulatedSpecular) * textureColor;
 		//FragColor.xyz = accumulatedSpecular;
 		//FragColor.xyz =  accumulatedSpecular;
 
 	}
 	else
 	{
-		FragColor.xyz = textureColor;
+		FragColor.rgb = textureColor;
 	}
 
 	
-		//FragColor.xyz = V;
+    FragColor.rgb = clamp(pow(FragColor.rgb, vec3(1.0/Gamma)), 0.0, 1.0);
 }

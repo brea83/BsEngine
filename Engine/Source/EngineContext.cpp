@@ -1,5 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "EngineContext.h"
+#include "Log.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include "GlfwWrapper.h"
@@ -47,6 +48,8 @@ namespace Pixie
 		if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 		m_ActiveScene->Initialize();
 		m_ActiveScene->ForwardAspectRatio((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
+
+		Logger::Init();
 		m_ImGuiLayer->OnAttach();
 
 		//m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;

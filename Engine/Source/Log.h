@@ -13,7 +13,8 @@ namespace Pixie
 		Debug,
 		Warning,
 		Error,
-		Critical
+		Critical,
+		Off
 	};
 
 
@@ -98,6 +99,9 @@ namespace Pixie
 			}
 		}
 
+		static void SetEngineCallback(std::function<void(const spdlog::details::log_msg& msg)> function) { s_EngineCallback = function; }
+		static void SetSandboxCallback(std::function<void(const spdlog::details::log_msg& msg)> function) { s_SandboxCallback = function; }
+
 		static void TestCallback(const spdlog::details::log_msg& msg)
 		{
 			Logger::Debug(LOG_INFO, "callback from engine log to sandbox log");
@@ -108,7 +112,8 @@ namespace Pixie
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
 		static std::shared_ptr<spdlog::logger> s_SandboxLogger;
 
-		static std::function<void(const spdlog::details::log_msg& msg)> s_Callback;
+		static std::function<void(const spdlog::details::log_msg& msg)> s_EngineCallback;
+		static std::function<void(const spdlog::details::log_msg& msg)> s_SandboxCallback;
 	};
 
 

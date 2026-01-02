@@ -9,7 +9,7 @@ namespace Pixie
 	class EngineContext;
 	class Camera;
 	class Scene;
-	class ImGuiPanel;
+	class ConsoleWindow;
 
 	//may need key, mouse, and application events
 	class EditorLayer : public ImGuiLayer
@@ -48,7 +48,7 @@ namespace Pixie
 		GameObject m_Selected{ entt::null, nullptr };
 		int m_GizmoType{ -1 };
 
-		//ImGuiPanel* m_AssetViewer{ nullptr };
+		std::shared_ptr<ConsoleWindow> m_ConsoleWindow{ nullptr };
 
 		void DrawSceneTools();
 		void DrawEditorCamTools(GameObject& activeCam);

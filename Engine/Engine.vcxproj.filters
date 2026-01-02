@@ -62,6 +62,8 @@
     <ClCompile Include="Source\Scene\Components\MaterialInstance.cpp" />
     <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
     <ClCompile Include="Source\Log.cpp" />
+    <ClCompile Include="Source\ImGui\imgui_sink.cpp" />
+    <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -138,6 +140,8 @@
     <ClInclude Include="Source\Scene\Components\MaterialInstance.h" />
     <ClInclude Include="Source\PlatformUtils.h" />
     <ClInclude Include="Source\Log.h" />
+    <ClInclude Include="Source\ImGui\imgui_sink.h" />
+    <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
     <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -141,6 +142,7 @@
     <ClCompile Include="Dependencies\imgui\misc\cpp\imgui_stdlib.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Source\ImGui\imgui_sink.cpp" />
     <ClCompile Include="Source\Log.cpp" />
     <ClCompile Include="Source\GUID.cpp" />
     <ClCompile Include="Source\Resources\Prefab.cpp" />
@@ -198,6 +200,7 @@
     <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
     <ClInclude Include="Dependencies\glad\glad.h" />
     <ClInclude Include="Dependencies\GLFW\glfw3.h" />
@@ -215,6 +218,7 @@
     <ClInclude Include="Dependencies\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Dependencies\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\stb\stb_image.h" />
+    <ClInclude Include="Source\ImGui\imgui_sink.h" />
     <ClInclude Include="Source\Log.h" />
     <ClInclude Include="Source\GUID.h" />
     <ClInclude Include="Source\PlatformUtils.h" />

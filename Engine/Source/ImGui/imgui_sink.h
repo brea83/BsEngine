@@ -30,6 +30,9 @@ namespace spdlog
 
             Pixie::LogData data;
             
+            data.Time = std::chrono::system_clock::to_time_t( msg.time);
+            data.LoggerName = msg.logger_name.data();
+
             using LEVEL = level::level_enum;
             switch (msg.level)
             {
@@ -62,7 +65,7 @@ namespace spdlog
                 data.Color = ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled);
                 break;
             }
-            
+
             // If needed (very likely but not mandatory), the sink formats the message before sending it to its final destination:
             spdlog::memory_buf_t formatted;
             spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);

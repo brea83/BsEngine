@@ -2,6 +2,8 @@
 #include "ImGuiPanel.h"
 #include "Log.h"
 #include <shared_mutex>
+#include <chrono>
+#include <ctime>
 
 namespace Pixie
 {
@@ -10,7 +12,8 @@ namespace Pixie
         LogData() = default;
 
         LogLevel Level{LogLevel::Off};
-        //std::string Properties;
+        std::string_view LoggerName;
+        std::time_t Time;
         //std::string Source;
         std::string Message{ "" };
         //std::size_t Color_range_start{ 0 };
@@ -28,25 +31,42 @@ namespace Pixie
         bool IsTimeShown() const { return m_ShowTime; }
         bool IsLevelShown() const { return m_ShowLevel; }
         bool IsLoggerShown() const { return m_ShowLogger; }
+        void ToggleWrap() { m_WrapText = !m_WrapText; }
+        void ToggleScrollLock() { m_scrollLock = !m_scrollLock; }
+
+        void DrawLogLevelsPopup();
+        void DrawLogFormatPopup();
 
         // Inherited via ImGuiPanel
         bool Draw() override;
         // do not use, not implemented
         int DrawReturnsInt() override { return 0; };
 
+
         void RecieveLog(LogData& log);
+        void ClearLogs();
     protected:
 
         std::vector<LogData> m_LogHistory;
         mutable std::shared_timed_mutex m_LogHistory_mutex;
 
         ImGuiTextFilter m_DisplayFilter;
+        std::string_view m_CoreLogName;
+        std::string_view m_SandboxLogName;
+
+
+        std::vector<std::pair<std::string_view, bool>> m_CoreLogLevel{ {"Trace", true}, {"Info", true}, {"Debug", true}, {"Warning", true}, {"Error", true}, {"Critical", true} };
+        std::vector<std::pair<std::string_view, bool>> m_SandboxLogLevel{ {"Trace", true}, {"Info", true}, {"Debug", true}, {"Warning", true}, {"Error", true}, {"Critical", true} };
+
+        float m_WrapWidth{ 200.0f };
+
+        std::string m_TimeFormat{"%Y-%m-%d %H:%M:%S"};
 
         bool m_scrollToBottom{ false };
-        bool m_wrap{ false };
+        bool m_WrapText{ false };
         bool m_scrollLock{ false };
 
-        bool m_ShowTime{ true };
+        bool m_ShowTime{ false };
         bool m_ShowLevel{ true };
         bool m_ShowLogger{ true };
 

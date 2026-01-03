@@ -67,6 +67,7 @@ namespace Pixie
 		//std::shared_ptr< spdlog::imgui_sink<std::mutex>> imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
 		
 		spdlog::sink_ptr imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
+		imguiSink->set_pattern("%^%v%$");
 		Logger::GetCoreLogger()->sinks().push_back(imguiSink);
 		Logger::GetSandboxLogger()->sinks().push_back(imguiSink);
 

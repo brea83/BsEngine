@@ -29,7 +29,7 @@ namespace Pixie
 			m_Engine = this;
 			return;
 		}
-		std::cerr << "Error: more than one Engine contexts has been created, only the first is saved as a singleton" << std::endl;
+		Logger::Log(LogLevel::Error, "Error: more than one Engine contexts has been created, only the first is saved as a singleton");// << std::endl;
 	}
 
 	bool EngineContext::Init()
@@ -178,17 +178,17 @@ namespace Pixie
 
 	void EngineContext::DispatchEvents()
 	{
-		//if(!m_EventQueue.empty()) std::cout << "----------------------------------"  << std::endl;
+		//if(!m_EventQueue.empty()) Logger::Log(LogLevel::Trace, "----------------------------------");
 
 		while (!m_EventQueue.empty())
 		{
-			//std::cout << "Event queue count: " << m_EventQueue.size() << std::endl;
+			//Logger::Log(LogLevel::Trace, "Event queue count: {0:d}", (int)m_EventQueue.size());
 			std::shared_ptr<Event> eventptr = m_EventQueue.front();
 			DispatchEvent(eventptr);
 			m_EventQueue.pop_front();
-			//if (m_EventQueue.empty()) std::cout << "Event queue count: " << m_EventQueue.size() << std::endl;
+			//if(m_EventQueue.empty()) Logger::Log(LogLevel::Trace, "Event queue count: {0:d}", (int)m_EventQueue.size());
 		}
-		//if (!m_EventQueue.empty()) 	std::cout << "WARNING EVENT QUEUE NOT EMPTY AFTER DISPATCH, CONTAINS COUNT: " << m_EventQueue.size() << std::endl;
+		if (!m_EventQueue.empty())  Logger::Log(LogLevel::Warning, "WARNING EVENT QUEUE NOT EMPTY AFTER DISPATCH, CONTAINS COUNT: {0:d}" , (int)m_EventQueue.size());
 	}
 
 	void EngineContext::DispatchEvent(std::shared_ptr<Event> eventptr)
@@ -207,7 +207,7 @@ namespace Pixie
 
 		if (!event.Handled) m_ActiveScene->OnEvent(event);
 		if (!event.Handled) m_ImGuiLayer->OnEvent(event);
-		//std::cout << event.ToString() << std::endl;
+		//Logger::Log(LogLevel::Trace, event.ToString());
 	}
 
 
@@ -237,6 +237,9 @@ namespace Pixie
 
 	bool EngineContext::OnWindowClosed(WindowClosedEvent& event)
 	{
+		Logger::Log(LogLevel::Trace, "====================================================================");
+		Logger::Log(LogLevel::Trace, event.ToString());
+		Logger::Log(LogLevel::Trace, "====================================================================");
 		m_IsRunning = false;
 		return true;
 	}

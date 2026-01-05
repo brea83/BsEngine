@@ -127,6 +127,8 @@ namespace Pixie
 
 	void EditorLayer::NewScene()
 	{
+		if (m_SceneState != SceneState::Edit)
+			OnSceneStop();
 		Scene* loadedScene = new Scene();
 		EngineContext::GetEngine()->SetScene(loadedScene);
 		OnSceneChange(loadedScene);
@@ -158,6 +160,9 @@ namespace Pixie
 
 	void EditorLayer::OpenScene()
 	{
+		if (m_SceneState != SceneState::Edit)
+			OnSceneStop();
+
 		std::string filePath = FileDialogs::OpenFile("Pixie Scene (*.pixie)\0*.pixie\0");
 
 		if (!filePath.empty())

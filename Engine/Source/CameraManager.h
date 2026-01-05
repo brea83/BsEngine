@@ -19,6 +19,8 @@ namespace Pixie
 	public:
 		CameraManager(Scene* scene = nullptr, bool isFlyModeOn = false) : m_Scene(scene), m_EditorFlyMode(isFlyModeOn) {}
 
+		void InitEditor();
+
 		void OnEditorUpdate(float deltaTime);
 		void OnPlayUpdate(float deltaTime) {}
 		bool OnEvent(Event& event);
@@ -27,7 +29,7 @@ namespace Pixie
 		void OnEndPlayMode();
 
 		// start new cameras with an apect ratio that matches the curent rendering viewport
-		bool OnCameraAdded(CameraComponent& cameraComponent);
+		void OnCameraAdded(entt::entity entity, CameraComponent& cameraComponent);
 		bool IsCameraRemovable(entt::entity entityToRemove);
 		bool OnRemoveCamera(entt::entity entityToRemove);
 
@@ -35,10 +37,11 @@ namespace Pixie
 
 		Camera* GetActiveCamera();
 		Camera* GetActiveCamera(glm::mat4& viewMatrix);
+		GameObject GetDefaultCamera();
 		GameObject GetActiveCameraObject();
 		void SetActiveCamera(GameObject& gameObject);
 		void SetDefaultCamera(GameObject& gameObject);
-		GameObject GetDefaultCamera();
+		void SetEditorCamActive() { m_ActiveCamera = m_EditorCamera; }
 
 		// ToDo: Add camera blend stuff. 
 		// I think that will mean I'll need update methods for lerping?

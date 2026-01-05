@@ -32,6 +32,30 @@ namespace Pixie
         IDComponent(const IDComponent&) = default;
     };
 
+    //enum class EditorBehaviorType
+    //{
+    //    EditorOnly,
+    //    EditorPlayMode,
+    //    All,
+    //    Count
+    //};
+
+    //const std::unordered_map<EditorBehaviorType, std::string> EditorBehaviorTypeToString = {
+    //    {EditorBehaviorType::EditorOnly, "Editor Only"},
+    //    {EditorBehaviorType::EditorPlayMode, "Editor Playmode"},
+    //    {EditorBehaviorType::All, "Editor and Release"},
+    //};
+
+    //struct EditorVsPlayBehaviorComponent
+    //{
+    //    EditorVsPlayBehaviorComponent() = default;
+    //    EditorVsPlayBehaviorComponent(const EditorVsPlayBehaviorComponent&) = default;
+
+    //    EditorBehaviorType RenderType{ EditorBehaviorType::All };
+    //    EditorBehaviorType UpdateType{ EditorBehaviorType::All };
+
+    //};
+
     struct TagComponent
     {
         TagComponent() = default;

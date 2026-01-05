@@ -25,7 +25,9 @@ namespace Pixie
 
 		////DefaultCamera = mainCam;
 		//SetActiveCamera(mainCam);
-
+		// TODO: make catch so that editor camera isn't created and used in non editor modes
+		m_CameraManager.InitEditor();
+		
 		auto cameras = m_Registry.view<CameraComponent>();
 		if (cameras)
 		{
@@ -240,9 +242,9 @@ namespace Pixie
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };
-		entity.AddComponent<TransformComponent>();
+		//entity.AddComponent<TransformComponent>();
 		NameComponent& nameComponent = entity.AddComponent<NameComponent>();
-		nameComponent.Name = name.empty() ? "Empty Object" : name;
+		nameComponent.Name = name.empty() ? "Empty Entity" : name;
 		return entity;
 	}
 
@@ -293,9 +295,10 @@ namespace Pixie
 	template<>
 	 void Scene::OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component)
 	{
-		glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
-		component.Cam.SetAspectRatio(viewport.x / viewport.y);
-		
+		/*glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+		component.Cam.SetAspectRatio(viewport.x / viewport.y);*/
+
+		m_CameraManager.OnCameraAdded(entity.GetEnttHandle(), component);
 	}
 
 	template<>

@@ -2,6 +2,7 @@
 #include "CameraManager.h"
 #include "EngineContext.h"
 #include "Scene/GameObject.h"
+#include "Editor/EditorCamera.h"
 #include "Scene/Components/Component.h"
 #include "Scene/Components/CameraComponent.h"
 #include "Scene/Components/CameraController.h"
@@ -9,6 +10,14 @@
 
 namespace Pixie
 {
+    void CameraManager::InitEditor()
+    {
+        Entity entity = m_Scene->CreateEntity("Editor Camera");
+
+        m_EditorCamera = EditorCamera(entity, m_Scene);
+        m_ActiveCamera = m_EditorCamera;
+    }
+
     void CameraManager::OnEditorUpdate(float deltaTime)
     {
         GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
@@ -54,9 +63,10 @@ namespace Pixie
     }
     void CameraManager::OnBeginPlayMode()
     {
-        if (EngineContext::GetEngine()->IsEditorEnabled())
+        if (EngineContext::GetEngine()->IsEditorEnabled() && m_ActiveCamera == m_EditorCamera)
         {
             //set active camera to main scene camera
+            m_ActiveCamera = m_DefaultCamera;
         }
     }
 
@@ -71,12 +81,20 @@ namespace Pixie
         }
     }
 
-    bool CameraManager::OnCameraAdded(CameraComponent& cameraComponent)
+    void CameraManager::OnCameraAdded(entt::entity entity, CameraComponent& cameraComponent)
     {
         glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
 
         cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
-        return true;
+
+        if (m_DefaultCamera != entt::null && m_DefaultCamera != entt::tombstone) return ; // early out b/c we have default already
+
+        GameObject cameraObject = GameObject(entity, m_Scene);
+
+        if (cameraObject.TryGetComponent<HeirarchyComponent>() == nullptr) return; // early out b/c this is an editor not scene camera
+
+        m_DefaultCamera = entity;
+
     }
 
     bool CameraManager::IsCameraRemovable(entt::entity entityToRemove)
@@ -133,7 +151,7 @@ namespace Pixie
         if (entityToRemove == m_ActiveCamera)
         {
             m_ActiveCamera = m_DefaultCamera;
-            registry.get<CameraComponent>(m_ActiveCamera).IsPrimaryCamera = true;
+            registry.get<CameraComponent>(m_ActiveCamera).IsActive = true;
         }
 
         return true;
@@ -163,10 +181,10 @@ namespace Pixie
         if (m_ActiveCamera != entt::null && m_ActiveCamera != entt::tombstone)
         {
             CameraComponent& previousCamera = m_Scene->GetRegistry().get<CameraComponent>(m_ActiveCamera);
-            previousCamera.IsPrimaryCamera = false;
+            previousCamera.IsActive = false;
         }
 
-        nextCamera->IsPrimaryCamera = true;
+        nextCamera->IsActive = true;
         m_ActiveCamera = gameObject;
     }
 
@@ -205,18 +223,18 @@ namespace Pixie
 
     void CameraManager::SetDefaultCamera(GameObject& gameObject)
     {
-        if (m_ActiveCamera == gameObject) return;
+        if (m_DefaultCamera == gameObject) return;
         CameraComponent* nextCamera = gameObject.TryGetComponent<CameraComponent>();
         if (!nextCamera) return;
 
-        if (m_ActiveCamera != entt::null && m_ActiveCamera != entt::tombstone)
+        if (m_DefaultCamera != entt::null && m_DefaultCamera != entt::tombstone)
         {
-            CameraComponent& previousCamera = m_Scene->GetRegistry().get<CameraComponent>(m_ActiveCamera);
-            previousCamera.IsPrimaryCamera = false;
+            CameraComponent& previousCamera = m_Scene->GetRegistry().get<CameraComponent>(m_DefaultCamera);
+            previousCamera.IsDefault = false;
         }
 
-        nextCamera->IsPrimaryCamera = true;
-        m_ActiveCamera = gameObject;
+        nextCamera->IsDefault = true;
+        m_DefaultCamera = gameObject;
     }
 
     GameObject CameraManager::GetActiveCameraObject()

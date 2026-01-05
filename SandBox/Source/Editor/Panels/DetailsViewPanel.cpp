@@ -430,17 +430,19 @@ namespace Pixie
 
 			if (camManager.GetActiveCameraObject() != selected)
 			{
-				if (ImGui::Button("Make Active")) // once cam manager is set up turn this into a Possess button
+				if (ImGui::Button("Possess"))
 				{
 					camManager.SetActiveCamera(selected);
 				}
 			}
 			else
 			{
-				ImGui::BeginDisabled();
-				ImGui::Button("Is Active"); // once cam manager is set up turn this into an Unpossess button
-				ImGui::EndDisabled();
+				if (ImGui::Button("Un Possess"))
+				{
+					camManager.SetEditorCamActive();
+				}
 			}
+		
 
 			std::string buttonText = camManager.GetDefaultCamera() != selected ? "Make Default" : "Is Default";
 			float textWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f);
@@ -565,6 +567,7 @@ namespace Pixie
 
 		}
 	}
+
 	bool DetailsViewPanel::FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth)
 	{
 		std::filesystem::path fileName = value;

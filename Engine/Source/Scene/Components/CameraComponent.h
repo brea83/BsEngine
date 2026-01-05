@@ -14,7 +14,9 @@ namespace Pixie
 		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraComponent };
 		Camera Cam;
 		std::string Name{ "Camera Component" };
-		bool IsPrimaryCamera{ false };
+		bool IsActive{ false };
+		bool IsDefault{ false };
+
 
 		static void Serialize(StreamWriter* stream, const CameraComponent& component)
 		{

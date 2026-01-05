@@ -61,7 +61,7 @@ namespace Pixie
 		// CHECK TO SEE IF IT WORKS	
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
-			std::cout << "Failed resize framebuffer" << std::endl;
+			Logger::Log(LOG_ERROR, "Failed resize framebuffer");
 		}
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

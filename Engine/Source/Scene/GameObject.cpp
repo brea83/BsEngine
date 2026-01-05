@@ -20,14 +20,14 @@ namespace Pixie
 
 	void GameObject::OnUpdate(float deltaTime)
 	{
-		//std::cout << "GameObject update, entity id: " << (int)m_EntityHandle << std::endl;
+		//Logger::Log(LOG_TRACE, "GameObject update, entity id: {}", (int)m_EntityHandle);
 	}
 
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
 	{
 		if (!object.HasCompoenent<IDComponent>())
 		{
-			std::cerr << "Error: trying to serialize a gameobject with no GUID" << std::endl;
+			Logger::Log(LOG_ERROR, "Error: trying to serialize a gameobject with no GUID");
 			return;
 		}
 

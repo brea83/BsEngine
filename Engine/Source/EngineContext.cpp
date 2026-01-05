@@ -34,6 +34,8 @@ namespace Pixie
 
 	bool EngineContext::Init()
 	{
+		Logger::Init();
+
 		if (m_MainWindow == nullptr) m_MainWindow = std::make_shared<Window>();
 		// configure glfw and glad state in Window class
 		if (!m_MainWindow->Init()) return false;
@@ -49,7 +51,6 @@ namespace Pixie
 		m_ActiveScene->Initialize();
 		m_ActiveScene->ForwardAspectRatio((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
 
-		Logger::Init();
 		m_ImGuiLayer->OnAttach();
 
 		//m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;

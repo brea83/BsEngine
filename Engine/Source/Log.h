@@ -1,8 +1,7 @@
 #pragma once
-#include "Core.h"
-#include <memory>
 #include <functional>
 #include <spdlog/spdlog.h>
+#include <iostream>
 
 namespace Pixie
 {
@@ -37,6 +36,11 @@ namespace Pixie
 		template <typename... Args>
 		inline static void Log(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args) 
 		{
+			if (!s_CoreLogger)
+			{	
+				std::cerr << "ERROR:: Logger::Log() called before Logger::Init()" << std::endl;
+				return;
+			}
 			switch (logLevel)
 			{
 			case Pixie::LogLevel::Trace:
@@ -73,6 +77,12 @@ namespace Pixie
 		template <typename... Args>
 		inline static void Debug(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args)
 		{
+			if (!s_SandboxLogger)
+			{
+				std::cerr << "ERROR:: Logger::Debug() called before Logger::Init()" << std::endl;
+				return;
+			}
+
 			switch (logLevel)
 			{
 			case Pixie::LogLevel::Trace:
@@ -104,8 +114,8 @@ namespace Pixie
 
 		static void TestCallback(const spdlog::details::log_msg& msg)
 		{
-			Logger::Debug(LOG_INFO, "callback from engine log to sandbox log");
-			Logger::Debug(LOG_DEBUG, msg.payload);
+			Logger::Debug(LogLevel::Trace, "callback from engine log to sandbox log");
+			Logger::Debug(LogLevel::Debug, msg.payload);
 		}
 
 	private:

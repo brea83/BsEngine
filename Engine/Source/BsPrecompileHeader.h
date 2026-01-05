@@ -1,5 +1,8 @@
 #pragma once
 //precompiled header
+#include "Log.h"
+#include "Core.h"
+
 #include <glad/glad.h>
 #include <iostream>
 #include <memory>
@@ -13,5 +16,3 @@
 #include <deque>
 #include <unordered_map>
 #include <unordered_set>
-
-#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}

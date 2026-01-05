@@ -10,7 +10,7 @@ namespace Pixie
     Mesh::Mesh(const std::string& name)
         : Renderable(name)
     {
-        std::cout << "creating Mesh: " << Name << std::endl;
+        Logger::Log(LOG_TRACE, "creating Mesh: {}", name);
     }
 
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const std::string& name)
@@ -63,7 +63,7 @@ namespace Pixie
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        std::cout << "initialized mesh with " << m_Vertices.size() << " vertices" << std::endl;
+        Logger::Log(LOG_TRACE, "initialized mesh with {} vertices", m_Vertices.size());
     }
 
     void Mesh::Render(Shader& currentShader)
@@ -89,9 +89,9 @@ namespace Pixie
         stream->ReadRaw<int>(version);
         if (version != s_Version)
         {
-            std::cout << "Warning serialization version doesn't match." << std::endl;
-            std::cout << "Pixie Engine Expects: " << s_Version << std::endl;
-            std::cout << "Found: " << version << std::endl;
+            Logger::Log(LOG_WARNING, "Warning serialization version doesn't match.");
+            Logger::Log(LOG_WARNING, "Pixie Engine Expects: {}", s_Version);
+            Logger::Log(LOG_WARNING, "Found: {}", version);
         }
         
         // manually reading out the size of the stored arrays to error check before getting the array data itself

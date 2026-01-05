@@ -24,13 +24,16 @@ namespace Pixie
 		logSinks[0]->set_pattern("%^[%T] %n: %v%$");
 		logSinks[1]->set_pattern("[%T] [%l] %n: %v");
 
-		s_CoreLogger = std::make_shared<spdlog::logger>("PIXIE", begin(logSinks), end(logSinks));//spdlog::stdout_color_mt("PIXIE");
+		s_CoreLogger = std::make_shared<spdlog::logger>("PIXIE", begin(logSinks), end(logSinks));
 		s_CoreLogger->set_level(spdlog::level::trace);
 		s_CoreLogger->flush_on(spdlog::level::trace);
 
-		s_SandboxLogger = std::make_shared<spdlog::logger>("SANDBOX", begin(logSinks), end(logSinks));//spdlog::stdout_color_mt("SANDBOX");
+		s_SandboxLogger = std::make_shared<spdlog::logger>("SANDBOX", begin(logSinks), end(logSinks));
 		s_SandboxLogger->set_level(spdlog::level::trace);
 		s_SandboxLogger->flush_on(spdlog::level::trace);
 
+		Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
+		Logger::Log(Pixie::LogLevel::Trace, "EngineContext::Init() -> Logger Initialized");
+		Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
 	}
 }

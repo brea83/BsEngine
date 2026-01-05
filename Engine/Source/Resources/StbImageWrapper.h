@@ -1,14 +1,15 @@
 #pragma once
 #include <string>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+//#include <glad/glad.h>
+//#include <GLFW/glfw3.h>
+#undef LoadImage
 
 namespace Pixie
 {
 	struct StbImageData
 	{
 		int Width, Height, ChannelsCount;
-		GLenum Format;
+		unsigned int Format;
 		unsigned char* StbData;
 		bool BLoadSuccess;
 	};

@@ -47,7 +47,7 @@ namespace Pixie
 		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
 		if (mainCam == nullptr)
 		{
-			std::cout << "No Camera in the scene is set to active" << std::endl;
+			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
 			return;
 		}
 		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
@@ -89,7 +89,7 @@ namespace Pixie
 
 		if (!group)
 		{
-			std::cout << "No light components found" << std::endl;
+			Logger::Log(LOG_WARNING, "No light components found");
 			return;
 		}
 

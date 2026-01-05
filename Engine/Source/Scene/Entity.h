@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include "Log.h"
 #include "Scene.h"
 #include <EnTT/entt.hpp>
 #include "Scene/Components/CameraComponent.h"
@@ -83,7 +84,7 @@ namespace Pixie
 	template <typename Type, typename... Args>
 	inline Type& Entity::AddComponent(Args&&... args)
 	{
-		if (HasCompoenent<Type>()) std::cout << "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT" << std::endl;
+		if (HasCompoenent<Type>()) Logger::Log(LOG_WARNING, "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT");
 		Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
 		m_Scene->OnComponentAdded<Type>(*this, component);
 		return component;
@@ -96,11 +97,11 @@ namespace Pixie
 		m_Scene->OnComponentAdded<Type>(*this, component);
 		return component;
 	}
-
+	
 	template <typename Type>
 	inline Type& Entity::GetComponent() const
 	{
-		if (!HasCompoenent<Type>()) std::cout << "WARNING: COULD NOT FIND COMPONENT" << std::endl;
+		if (!HasCompoenent<Type>()) Logger::Log(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
 		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 	}
 

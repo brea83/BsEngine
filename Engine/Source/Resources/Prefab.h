@@ -23,16 +23,16 @@ namespace Pixie
 
 		}
 
-		static void Serialize(StreamWriter* stream, const Prefab& prefab)
-		{
-			stream->WriteString("Prefab");
-			stream->WriteRaw<int>(s_Version);
+		static void Serialize(StreamWriter* stream, const Prefab& prefab);
+		//{
+		//	stream->WriteString("Prefab");
+		//	stream->WriteRaw<int>(s_Version);
 
-			stream->WriteObject(prefab.m_BaseObject);
-		}
+		//	stream->WriteObject(prefab.m_BaseObject);
+		//}
 
-		static bool Deserialize(StreamReader* stream, Prefab& copy)
-		{
+		static bool Deserialize(StreamReader* stream, Prefab& copy);
+		/*{
 			std::string pMetaType;
 			stream->ReadString(pMetaType);
 
@@ -57,7 +57,7 @@ namespace Pixie
 
 			stream->ReadObject(copy.m_BaseObject);
 			return true;
-		}
+		}*/
 
 		GameObject GetBaseObject() { return m_BaseObject; };
 		std::filesystem::path GetPath() const { return m_Path; }

@@ -100,7 +100,7 @@ namespace Pixie
 	{
 		if (!m_Registry.valid(objectToRemove))
 		{
-			std::cout << "Tried to remove game object entt handle: " << int(objectToRemove) << ", from Scene, but could not find it" << std::endl;
+			Logger::Log(LOG_WARNING, "Tried to remove game object with entt handle: {}, from Scene, but could not find it", int(objectToRemove));
 			return;
 		}
 
@@ -231,7 +231,8 @@ namespace Pixie
 		}
 
 		if (directionalLights.size() < 1) return GameObject();
-		if(directionalLights.size() > 1) std::cout << "Warning: more than one directional light in scene, this returns the first one found" << std::endl;
+		
+		if(directionalLights.size() > 1) Logger::Log(LOG_WARNING, "Warning: more than one directional light in scene, but Scene::GetMainLight() only returns the first one found");
 
 		return GameObject(directionalLights.front(), this);
 	}

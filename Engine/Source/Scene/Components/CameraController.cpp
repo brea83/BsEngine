@@ -21,8 +21,7 @@ namespace Pixie
 	{
 		TransformComponent& transform = gameObject.GetTransform();
 
-		
-		//std::cout << "Camera Controller Component update" << std::endl;
+		//Logger::Log(LOG_TRACE, "Camera Controller Component update");
 
 		if (m_Type == CameraMoveType::Fly)
 		{
@@ -191,8 +190,8 @@ namespace Pixie
 		{
 		case Inputs::Keyboard::W:
 			m_TranslationDirection.z = m_TranslationDirection.z == 1 ? 0 : m_TranslationDirection.z;
-			/*std::cout << event.ToString() << std::endl;
-			std::cout << m_TranslationDirection.x << ", " << m_TranslationDirection.y << std::endl;*/
+			//Logger::Log(LOG_DEBUG, "{}", event.ToString());
+			//Logger::Log(LOG_DEBUG, "{}", m_TranslationDirection);
 			return true;
 		case Inputs::Keyboard::S:
 			m_TranslationDirection.z = m_TranslationDirection.z == -1 ? 0 : m_TranslationDirection.z;

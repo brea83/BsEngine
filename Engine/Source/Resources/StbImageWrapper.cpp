@@ -3,14 +3,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <iostream>
-#include <glad/glad.h>
+//#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Pixie
 {
 	void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& imageData)
 	{
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::" << std::endl;
-		std::cout << "trying to load file path: " << filePath << std::endl;
+		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::" );
+		Logger::Log(LOG_TRACE, "stbi trying to load file path: {}", filePath);
 
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(filePath.c_str(), &imageData.Width, &imageData.Height, &imageData.ChannelsCount, 0);
@@ -34,11 +35,11 @@ namespace Pixie
 			}
 			imageData.StbData = data;
 			imageData.BLoadSuccess = true;
-			std::cout << "FILE LOAD SUCCESS" << std::endl;
+			Logger::Log(LOG_TRACE, "FILE LOAD SUCCESS");
 		}
 		else
 		{
-			std::cerr << "Failed to load texture: " << filePath << std::endl;
+			Logger::Log(LOG_ERROR, "FAILED TO LOAD TEXTURE: {}", filePath);
 			imageData.BLoadSuccess = false;
 		}
 

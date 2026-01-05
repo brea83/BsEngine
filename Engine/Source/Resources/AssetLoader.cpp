@@ -29,12 +29,15 @@ namespace Pixie
 		MEMORYSTATUSEX statusEx;
 		statusEx.dwLength = sizeof(statusEx);
 		GlobalMemoryStatusEx(&statusEx);
-		//std::cout << "********************" << std::endl;
-		//std::cout << "Physical Memory" << std::endl;
-		//std::cout << "Total: " << statusEx.ullTotalPhys / (1024 * 1024 ) << std::endl;
-		//std::cout << "Available: " << statusEx.ullAvailPhys / (1024 * 1024) << std::endl;
+		
+		//Logger::Log(LOG_INFO, "********************");
+		//Logger::Log(LOG_INFO, "Physical Memory");
+		//Logger::Log(LOG_INFO, "Total: {:d}", statusEx.ullTotalPhys / (1024 * 1024));
+		//Logger::Log(LOG_INFO, "Available: {:d}", statusEx.ullAvailPhys / (1024 * 1024));
+		
 
 		bool result = minimumAvailableMb < statusEx.ullAvailPhys / (1024 * 1024);
+		if (!result) Logger::Log(LOG_WARNING, "Available memory < minimum required. {:d} < {:d}", statusEx.ullAvailPhys / (1024 * 1024), minimumAvailableMb);
 		//std::cout << "Available memory > minimum required == " << result << std::endl;
 		return result;
 	}
@@ -43,7 +46,8 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			std::cout << "LOAD TEXT FILE ERROR: available memory less than " << std::endl;
+			Logger::Log(LOG_ERROR, "LOAD TEXT FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			//std::cout << "" << std::endl;
 			return nullptr;
 		}
 
@@ -57,7 +61,8 @@ namespace Pixie
 		std::ifstream file(filePath);
 		if (!file.is_open())
 		{
-			std::cerr << "Failed to open file: " << filePath << std::endl;
+			Logger::Log(LOG_ERROR, "Failed to open file: {}", filePath);
+			//std::cerr << "Failed to open file: " << filePath << std::endl;
 			return nullptr;
 		}
 		std::stringstream buffer;
@@ -81,7 +86,8 @@ namespace Pixie
 		std::ifstream file(filePath);
 		if (!file.is_open())
 		{
-			std::cerr << "Failed to open file: " << filePath << std::endl;
+			Logger::Log(LOG_ERROR, "Failed to open file: {}", filePath);
+			//std::cerr << "Failed to open file: " << filePath << std::endl;
 			return false;
 		}
 		std::stringstream buffer;
@@ -104,7 +110,8 @@ namespace Pixie
 			s_Resources.emplace(filePath, textSource);
 			return true;
 		}
-		std::cout << "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp" << std::endl;
+		Logger::Log(LOG_ERROR, "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp");
+		//std::cout << "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp" << std::endl;
 		return false;
 	}
 
@@ -112,7 +119,8 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			std::cout << "LOAD SHADER FILE ERROR: available memory less than " << std::endl;
+			Logger::Log(LOG_ERROR, "LOAD SHADER FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			//std::cout << "LOAD SHADER FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
 
@@ -147,7 +155,8 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			std::cout << "LOAD TEXTURE FILE ERROR: available memory less than " << std::endl;
+			Logger::Log(LOG_ERROR, "LOAD TEXTURE FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			//std::cout << "LOAD TEXTURE FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
 
@@ -173,8 +182,10 @@ namespace Pixie
 
 		if (s_Resources.find(pathString) != s_Resources.end())
 		{
-			std::cout << "Cannot create new prefab with this name it already exists." << std::endl;
-			std::cout << "Either change the object's name or use the OverWrite/Save-Changes for Prefab" << std::endl;
+			Logger::Log(LOG_ERROR, "Cannot create new prefab named {}, this name is already taken. \
+				Either change the object's name or use the OverWrite/Save-Changes for Prefab", path.stem().string());
+			//std::cout << "Cannot create new prefab with this name it already exists." << std::endl;
+			//std::cout << "Either change the object's name or use the OverWrite/Save-Changes for Prefab" << std::endl;
 			return path;
 		}
 
@@ -190,7 +201,8 @@ namespace Pixie
 	{
 		if (filePath.extension() != "pmeta")
 		{
-			std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
+			Logger::Log(LOG_WARNING, "tried to load prefab but it was not a .pmeta file, returning invalid GameObject.");
+			//std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
 			return GameObject();
 		}
 
@@ -209,7 +221,8 @@ namespace Pixie
 	{
 		if (filePath.extension() != "pmeta")
 		{
-			std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
+			Logger::Log(LOG_WARNING, "tried to load prefab but it was not a .pmeta file.");
+			//std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
 			return false;
 		}
 
@@ -230,8 +243,10 @@ namespace Pixie
 			auto timerStart = std::chrono::high_resolution_clock::now();
 			std::shared_ptr<Mesh> mesh = LoadSerializedMesh(serializedPath.string());
 			auto timerEnd = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
-			std::cout << "Loading serialized mesh took: " << duration.count() << " microseconds." << std::endl;
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
+
+			Logger::Log(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
+			//std::cout << "Loading serialized mesh took: " << duration.count() << " milliseconds." << std::endl;
 
 			if (mesh)
 			{
@@ -252,8 +267,9 @@ namespace Pixie
 			mesh = LoadObj(filePath.string());
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
-			std::cout << "Loading Obj took: " << duration.count() << " microseconds." << std::endl;
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
+			Logger::Log(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
+			//std::cout << "Loading Obj took: " << duration.count() << " milliseconds." << std::endl;
 			
 			if (mesh)
 			{
@@ -272,8 +288,9 @@ namespace Pixie
 			auto timerStart = std::chrono::high_resolution_clock::now();
 			std::shared_ptr<Mesh> mesh = LoadSerializedMesh(serializedPath);
 			auto timerEnd = std::chrono::high_resolution_clock::now();
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
-			std::cout << "Loading serialized mesh took: " << duration.count() << " microseconds." << std::endl;
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
+			Logger::Log(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
+			//std::cout << "Loading serialized mesh took: " << duration.count() << " milliseconds." << std::endl;
 
 			return mesh;
 		}
@@ -290,8 +307,9 @@ namespace Pixie
 			mesh = LoadObj(filePath.string());
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(timerEnd - timerStart);
-			std::cout << "Loading Obj took: " << duration.count() << " microseconds." << std::endl;
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
+			Logger::Log(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
+			//std::cout << "Loading Obj took: " << duration.count() << " milliseconds." << std::endl;
 		}
 
 		return mesh;
@@ -347,7 +365,8 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			std::cout << "LOAD OBJ FILE ERROR: available memory less than " << std::endl;
+			Logger::Log(LOG_ERROR, "LOAD OBJ FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			//std::cout << "LOAD OBJ FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
 
@@ -366,9 +385,12 @@ namespace Pixie
 		}
 		std::string name = filePath.substr(filePath.find_last_of('/') + 1, filePath.find_last_of("."));
 
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-		std::cout << "IMPORTING OBJ " << name << std::endl;
-		std::cout << " FilePath: " << filePath << std::endl;
+		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
+		Logger::Log(LOG_TRACE, "IMPORTING OBJ: {}", name);
+		Logger::Log(LOG_TRACE, "FilePath: {}", filePath);
+		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		//std::cout << "IMPORTING OBJ " << name << std::endl;
+		//std::cout << " FilePath: " << filePath << std::endl;
 		std::string line;
 
 		std::vector<Mesh::Vertex> vertices;
@@ -615,7 +637,8 @@ namespace Pixie
 
 		if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
 		{
-			std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+			Logger::Log(LOG_ERROR, "ERROR::ASSIMP:: {}", importer.GetErrorString());
+			//std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 			return false;
 		}
 
@@ -623,11 +646,14 @@ namespace Pixie
 		if (assimpScene->mMetaData)
 		{
 			assimpScene->mMetaData->Get("UnitScaleFactor", factor);
-			std::cout << "Scene Unit Scale Factor is " << factor << std::endl;
+			Logger::Log(LOG_TRACE, "Scene Unit Scale Factor is {}", factor);
+			//std::cout << "Scene Unit Scale Factor is " << factor << std::endl;
 		}
 
-		std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
-		std::cout << "IMPORTING " << filePath << std::endl;
+		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
+		Logger::Log(LOG_TRACE, "IMPORTING: {}", filePath.string());
+		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
+		//std::cout << "IMPORTING " << filePath << std::endl;
 
 		//std::vector<Mesh> meshes;
 		//meshes.reserve(assimpScene->mNumMeshes);
@@ -641,7 +667,8 @@ namespace Pixie
 		if (rootNode->mMetaData)
 		{
 			rootNode->mMetaData->Get("UnitScaleFactor", factor);
-			std::cout << "Node Unit Scale Factor is " << factor << std::endl;
+			Logger::Log(LOG_TRACE, "Node Unit Scale Factor is {}", factor);
+			//std::cout << "Node Unit Scale Factor is " << factor << std::endl;
 		}
 
 		ProcessNode(rootObject, rootNode, assimpScene, gameScene, name.Name);
@@ -654,8 +681,8 @@ namespace Pixie
 		for (auto pair : s_Resources)
 		{
 			int useCount = pair.second.use_count();
-			//std::cout << pair.first <<", has " << std::to_string(useCount) << " live pointers" << std::endl;
-			if (useCount == 2)
+			//Logger::Log(LOG_TRACE, "{} has {} live pointers", pair.first, std::to_string(useCount));
+			if (useCount <= 2)
 			{
 				// two uses means one is this for loop and the other is the instance in s_Resources ie: nothing outside the loader is using it
 				resourcesToDelete.emplace_back(pair.first);
@@ -675,8 +702,6 @@ namespace Pixie
 		if (inPath.substr(0, inPath.find_first_of('\\')) == "..")
 		{
 			outPath = "../Assets" + inPath.substr(inPath.find_first_of('\\'));
-			//std::cout << "PATH WAS RELATIVE, AND STARTED WITH .." << std::endl;
-			//std::cout << "path modified to: " << outPath << std::endl;
 			return;
 		}
 
@@ -898,8 +923,9 @@ namespace Pixie
 			material->GetTexture(type, i, &filePath);
 
 			/*std::string typeName = TextureTypeToString.at(bsTextureType);
-			std::cout << "TEXTURE PATH: " << filePath.C_Str() << std::endl;
-			std::cout << "TYPE: " << typeName << std::endl;*/
+			Logger::Log(LOG_TRACE, "TEXTURE PATH: {}", filePath.C_Str() );
+			Logger::Log(LOG_TRACE, "TYPE: {}", typeName);
+			*/
 			std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(filePath.C_Str());
 			if (texture == nullptr) continue;
 
@@ -947,15 +973,8 @@ namespace Pixie
 			for (unsigned int i = 1; i < node->mNumMeshes; i++)
 			{
 				aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[i]];
-				//std::cout << "------------------------------" << std::endl;
+				//Logger::Log(LOG_TRACE, "------------------------------");
 				std::shared_ptr<Mesh> mesh = ProcessMesh(aiMesh, assimpScene);
-
-				//std::cout << "Set Mesh transform for: " << node->mName.C_Str() << std::endl;
-				//ProcessTransform(nodeTransform, m_ParentObject->GetTransform(), node->mParent);
-				//std::cout << "Position: " << mesh.GetTransform()->GetPosition().x << ", " << mesh.GetTransform()->GetPosition().y << ", " << mesh.GetTransform()->GetPosition().z << std::endl;
-				//std::cout << "Rotation: " << mesh.GetTransform()->GetRotationEuler().x << ", " << mesh.GetTransform()->GetRotationEuler().y << ", " << mesh.GetTransform()->GetRotationEuler().z << std::endl;
-				//std::cout << "Scale: " << mesh.GetTransform()->GetScale().x << ", " << mesh.GetTransform()->GetScale().y << ", " << mesh.GetTransform()->GetScale().z << std::endl;
-				//meshWithCurrentNodeTransform = &mesh;
 
 				if (!mesh) continue;
 				std::string meshName = rootName + "_" + aiMesh->mName.C_Str();

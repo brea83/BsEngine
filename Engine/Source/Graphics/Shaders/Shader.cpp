@@ -33,7 +33,7 @@ namespace Pixie
 		}
 		else
 		{
-			std::cout << "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE" << std::endl;
+			Logger::Log(LOG_ERROR, "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE");
 			return 0;
 		}
 
@@ -50,7 +50,9 @@ namespace Pixie
 		{
 			glGetShaderInfoLog(shaderObject, 512, NULL, infoLog);
 			std::string shaderTypeName = glShaderType == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ";
-			std::cout << "ERROR" << shaderTypeName << "SHADER COMPILATION FAILED\n" << infoLog << std::endl;
+
+			Logger::Log(LOG_ERROR, "ERROR, {} SHADER COMPILATION FAILED", shaderTypeName);
+			Logger::Log(LOG_ERROR, "{}", infoLog);
 			return 0;
 		}
 
@@ -76,7 +78,8 @@ namespace Pixie
 		if (!success)
 		{
 			glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-			std::cout << "ERROR SHADER PROGRAM LINKING FAILED\n" << infoLog << std::endl;
+			Logger::Log(LOG_ERROR, "ERROR SHADER PROGRAM LINKING FAILED");
+			Logger::Log(LOG_ERROR, "{}", infoLog);
 			return 0;
 		}
 

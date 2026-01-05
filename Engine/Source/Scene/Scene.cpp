@@ -26,8 +26,16 @@ namespace Pixie
 		////DefaultCamera = mainCam;
 		//SetActiveCamera(mainCam);
 		// TODO: make catch so that editor camera isn't created and used in non editor modes
-		m_CameraManager.InitEditor();
-		
+		if (EngineContext::GetEngine()->IsEditorEnabled())
+		{
+			m_CameraManager.InitEditor();
+			m_SceneState = SceneState::Edit;
+		}
+		else
+		{
+			m_SceneState = SceneState::Play;
+		}
+
 		auto cameras = m_Registry.view<CameraComponent>();
 		if (cameras)
 		{
@@ -65,7 +73,23 @@ namespace Pixie
 
 	}
 
+	void  Scene::BeginPlayMode()
+	{
+		m_CameraManager.OnBeginPlayMode();
+	}
+
+	void  Scene::EndPlayMode()
+	{
+		m_CameraManager.OnEndPlayMode();
+	}
+
 	void Scene::OnUpdate(float deltaTime)
+	{
+		m_CameraManager.OnPlayUpdate(deltaTime);
+
+	}
+
+	void Scene::OnEditorUpdate(float deltaTime)
 	{
 		m_CameraManager.OnEditorUpdate(deltaTime);
 

@@ -30,6 +30,14 @@ namespace Pixie
 		//delete m_AssetViewer;
 	}
 
+	void EditorLayer::OnSceneChange(Scene* newScene, const std::string& filepath)
+	{
+		m_CurrentScene = newScene;
+		m_Selected = GameObject(entt::null, m_CurrentScene);
+		m_CurrentScenePath = filepath;
+		m_CurrentScene->ForwardAspectRatio(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
+	}
+
 	void EditorLayer::OnAttach()
 	{
 		// setup dear imgui context
@@ -82,7 +90,85 @@ namespace Pixie
 	void EditorLayer::OnDetach()
 	{}
 
+	void EditorLayer::OnEvent(Event& event)
+	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
+	}
 
+	void EditorLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+		m_PlayPauseText = "Pause";
+		if (m_CurrentScene != nullptr)
+			m_CurrentScene->BeginPlayMode();
+	}
+
+	void EditorLayer::OnScenePause()
+	{
+		m_SceneState = SceneState::Pause;
+		m_PlayPauseText = "Play";
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
+		if (m_CurrentScene != nullptr)
+			m_CurrentScene->EndPlayMode();
+	}
+
+	void EditorLayer::OnUpdate(float deltaTime)
+	{
+		if (m_SceneState == SceneState::Edit)
+			m_CurrentScene->OnEditorUpdate(deltaTime);
+		else if (m_SceneState == SceneState::Play)
+			m_CurrentScene->OnUpdate(deltaTime);
+	}
+
+	void EditorLayer::NewScene()
+	{
+		Scene* loadedScene = new Scene();
+		EngineContext::GetEngine()->SetScene(loadedScene);
+		OnSceneChange(loadedScene);
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		if (!m_CurrentScenePath.empty())
+		{
+			SceneSerializer serializer(m_CurrentScene);
+			serializer.Serialize(m_CurrentScenePath);
+		}
+		else
+		{
+			SaveSceneAs();
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filePath = FileDialogs::SaveFile("Pixie Scene (*.pixie)\0*.pixie\0");
+
+		if (!filePath.empty())
+		{
+			SceneSerializer serializer(m_CurrentScene);
+			serializer.Serialize(filePath);
+		}
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filePath = FileDialogs::OpenFile("Pixie Scene (*.pixie)\0*.pixie\0");
+
+		if (!filePath.empty())
+		{
+			Scene* loadedScene = new Scene();
+			EngineContext::GetEngine()->SetScene(loadedScene);
+			SceneSerializer serializer(loadedScene);
+			serializer.Deserialize(filePath);
+			OnSceneChange(loadedScene, filePath);
+		}
+	}
 
 	void EditorLayer::OnImGuiRender()
 	{
@@ -90,7 +176,9 @@ namespace Pixie
 		static bool show = true;
 
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport()/*, ImGuiDockNodeFlags_PassthruCentralNode*/);
-		DrawEditorMenu(&engine);
+		DrawMainMenu(&engine);
+		DrawMainMenuBar2();
+
 		ImGui::Begin("Window stats");
 		ImGui::SeparatorText("FPS");
 		ImGuiIO& io = ImGui::GetIO();
@@ -115,47 +203,7 @@ namespace Pixie
 		m_ConsoleWindow->Draw();
 	}
 
-	void EditorLayer::OnEvent(Event& event)
-	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
-	}
-
-	void EditorLayer::DrawViewport(EngineContext& engine, GameObject& selected)
-	{
-		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
-		DrawSceneTools();
-		if (m_CurrentScene == nullptr)
-		{
-			ImGui::End();
-			return;
-		}
-
-		glm::mat4 viewMatrix{ 1.0f };
-		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
-
-		std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
-		uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
-		ImVec2 currentSize = ImGui::GetContentRegionAvail();
-
-		if (m_ViewportPanelSize.x != currentSize.x || m_ViewportPanelSize.y != currentSize.y)
-		{
-			m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
-			frameBuffer->Resize(currentSize.x, currentSize.y);
-			
-			if(camera) camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
-
-
-		}
-		ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
-	
-		if(camera)
-			DrawGizmos(camera, viewMatrix, selected);
-
-		ImGui::End();
-	}
-
-	void EditorLayer::DrawEditorMenu(EngineContext* engine)
+	void EditorLayer::DrawMainMenu(EngineContext* engine)
 	{
 
 		if (ImGui::BeginMainMenuBar())
@@ -219,53 +267,8 @@ namespace Pixie
 
 	}
 
-	void EditorLayer::NewScene()
-	{
-		Scene* loadedScene = new Scene();
-		EngineContext::GetEngine()->SetScene(loadedScene);
-		OnSceneChange(loadedScene);
-	}
 
-	void EditorLayer::SaveScene()
-	{
-		if (!m_CurrentScenePath.empty())
-		{
-			SceneSerializer serializer(m_CurrentScene);
-			serializer.Serialize(m_CurrentScenePath);
-		}
-		else
-		{
-			SaveSceneAs();
-		}
-	}
-
-	void EditorLayer::SaveSceneAs()
-	{
-		std::string filePath = FileDialogs::SaveFile("Pixie Scene (*.pixie)\0*.pixie\0");
-
-		if (!filePath.empty())
-		{
-			SceneSerializer serializer(m_CurrentScene);
-			serializer.Serialize(filePath);
-		}
-	}
-
-	void EditorLayer::OpenScene()
-	{
-		std::string filePath = FileDialogs::OpenFile("Pixie Scene (*.pixie)\0*.pixie\0");
-
-		if (!filePath.empty())
-		{
-			Scene* loadedScene = new Scene();
-			EngineContext::GetEngine()->SetScene(loadedScene);
-			SceneSerializer serializer(loadedScene);
-			serializer.Deserialize(filePath);
-			OnSceneChange(loadedScene, filePath);
-		}
-	}
-
-
-	void EditorLayer::DrawSceneTools()
+	void EditorLayer::DrawMainMenuBar2()
 	{
 		ImGuiViewportP* mainWindow = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
@@ -345,6 +348,62 @@ namespace Pixie
 			camera.SetFov(45.0f);
 		}
 		ImGui::PopItemWidth();
+	}
+
+	void EditorLayer::DrawViewport(EngineContext& engine, GameObject& selected)
+	{
+		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
+		if (m_CurrentScene == nullptr)
+		{
+			ImGui::End();
+			return;
+		}
+
+		if (ImGui::BeginMenuBar())
+		{
+			
+			if (ImGui::Button(m_PlayPauseText.c_str()))
+			{
+				if (m_SceneState == SceneState::Edit)
+				{
+					OnScenePlay();
+				}
+				else if (m_SceneState == SceneState::Play)
+				{
+					OnScenePause();
+				}
+			}
+
+			if (ImGui::Button("Stop"))
+			{
+				OnSceneStop();
+			}
+
+			ImGui::EndMenuBar();
+		}
+
+		glm::mat4 viewMatrix{ 1.0f };
+		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
+
+		std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
+		uint32_t textureID = frameBuffer->GetColorAttachmentRendererId();
+		ImVec2 currentSize = ImGui::GetContentRegionAvail();
+
+		if (m_ViewportPanelSize.x != currentSize.x || m_ViewportPanelSize.y != currentSize.y)
+		{
+			m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
+			frameBuffer->Resize(currentSize.x, currentSize.y);
+
+			m_CurrentScene->ForwardAspectRatio(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
+			//if (camera) camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);
+
+		}
+		ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
+
+		if (camera)
+			DrawGizmos(camera, viewMatrix, selected);
+
+		ImGui::End();
 	}
 
 	void EditorLayer::DrawGridLines(Camera* camera)

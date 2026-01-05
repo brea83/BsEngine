@@ -16,6 +16,15 @@ namespace Pixie
 	struct CameraComponent;
 	class Entity;
 
+	enum class SceneState
+	{
+		UnInitialized = -1,
+		Edit = 0,
+		Play = 1,
+		Pause = 2,
+		SimulatePhysics = 3
+	};
+
 	class Scene
 	{
 	public:
@@ -40,7 +49,10 @@ namespace Pixie
 		void Initialize();
 		void PopulateWithTestObjects();
 
+		void BeginPlayMode();
+		void EndPlayMode();
 		void OnUpdate(float deltaTime);
+		void OnEditorUpdate(float deltaTime);
 
 		bool OnEvent(Event& event);
 
@@ -87,6 +99,7 @@ namespace Pixie
 		std::string m_Name{ "New Scene" };
 		entt::registry m_Registry;
 		CameraManager m_CameraManager;
+		SceneState m_SceneState{ SceneState::UnInitialized };
 
 		friend class SceneSerializer;
 		friend class Entity;

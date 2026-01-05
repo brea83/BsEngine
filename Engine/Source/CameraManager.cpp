@@ -67,6 +67,14 @@ namespace Pixie
         {
             //set active camera to main scene camera
             m_ActiveCamera = m_DefaultCamera;
+            GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
+            if (!activeCam) return;
+
+            CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
+
+            glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+
+            cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
         }
     }
 
@@ -78,6 +86,15 @@ namespace Pixie
         if (EngineContext::GetEngine()->IsEditorEnabled())
         {
             m_ActiveCamera = m_EditorCamera;
+
+            GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
+            if (!activeCam) return;
+
+            CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
+
+            glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+
+            cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
         }
     }
 

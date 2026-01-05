@@ -18,31 +18,30 @@ namespace Pixie
 		EditorLayer();
 		~EditorLayer();
 
-		void OnSceneChange(Scene* newScene, const std::string& filepath = "")
-		{ 
-			m_CurrentScene = newScene; 
-			m_Selected = GameObject(entt::null, m_CurrentScene); 
-			m_CurrentScenePath = filepath;
-		}
+		void OnSceneChange(Scene* newScene, const std::string& filepath = "");
+		
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& event) override;
 
-		void DrawViewport(EngineContext& engine, GameObject& selected);
-
-		void DrawEditorMenu(EngineContext* engine);
+		void OnScenePlay();
+		void OnScenePause();
+		void OnSceneStop();
+		virtual void OnUpdate(float deltaTime) override;
 
 		void NewScene();
 		void SaveScene();
 		void SaveSceneAs();
 		void OpenScene();
 
+		virtual void OnImGuiRender() override;
 
 	private:
 		Scene* m_CurrentScene{ nullptr };
 		std::string m_CurrentScenePath{ "" };
-		
+		SceneState m_SceneState{SceneState::Edit};
+		std::string m_PlayPauseText{ "Play" };
+
 
 		//SceneHierarchyPanel m_Hierarchy;
 		GameObject m_Selected{ entt::null, nullptr };
@@ -50,8 +49,12 @@ namespace Pixie
 
 		std::shared_ptr<ConsoleWindow> m_ConsoleWindow{ nullptr };
 
-		void DrawSceneTools();
+		void DrawMainMenu(EngineContext* engine);
+		void DrawMainMenuBar2();
+
 		void DrawEditorCamTools(GameObject& activeCam);
+		
+		void DrawViewport(EngineContext& engine, GameObject& selected);
 
 		void DrawGridLines(Camera* camera);
 		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix/*TransformComponent& camTransform*/, GameObject& selected);

@@ -45,13 +45,16 @@ namespace Pixie
 		if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 		m_Renderer->Init();
 
-		if(m_ImGuiLayer == nullptr)	m_ImGuiLayer = new ImGuiLayer();
+		if(m_ImGuiLayer == nullptr && m_EditorEnabled)	m_ImGuiLayer = new ImGuiLayer();
 
 		if (m_ActiveScene == nullptr) m_ActiveScene = new Scene();
 		m_ActiveScene->Initialize();
-		m_ActiveScene->ForwardAspectRatio((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
 
-		m_ImGuiLayer->OnAttach();
+		glm::vec2 viewportSize = glm::vec2((float)m_MainWindow->WindowWidth(), (float)m_MainWindow->WindowHeight());
+		m_ActiveScene->ForwardAspectRatio(viewportSize.x, viewportSize.y);
+
+		if(m_EditorEnabled)
+			m_ImGuiLayer->OnAttach();
 
 		//m_PrevMouseX = m_MainWindow->WindowWidth() / 2.0f;
 		//m_PrevMouseY = m_MainWindow->WindowHeight() / 2.0f;
@@ -109,11 +112,16 @@ namespace Pixie
 			m_DeltaTime = currentFrame - m_LastFrameTime;
 			m_LastFrameTime = currentFrame;
 
-			m_ActiveScene->OnUpdate(m_DeltaTime);
+			if (!m_EditorEnabled)
+			{
+				m_ActiveScene->OnUpdate(m_DeltaTime);
+			}
 		}
 
-		m_ImGuiLayer->OnUpdate(m_DeltaTime);
-
+		if (m_EditorEnabled)
+		{
+			m_ImGuiLayer->OnUpdate(m_DeltaTime);
+		}
 		
 		m_MainWindow->OnUpdate();
 	}

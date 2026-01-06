@@ -86,7 +86,10 @@ namespace Pixie
 
 	glm::vec2 EngineContext::GetViewportSize() const
 	{
-		return m_ImGuiLayer->GetViewportSize();
+		if(m_EditorEnabled)
+			return m_ImGuiLayer->GetViewportSize();
+		
+		return GetWindowSize();
 	}
 
 	glm::vec2 EngineContext::GetWindowSize() const

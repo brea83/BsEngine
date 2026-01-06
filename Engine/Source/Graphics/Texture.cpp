@@ -54,7 +54,7 @@ namespace Pixie
 		return TextureType();
 	}
 
-	void Texture::CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter)
+	void Texture::UpdateTextureFilters(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter)
 	{
 		m_MinFilterType = minFilter;
 		m_MagFilterType = magFilter;

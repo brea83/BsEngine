@@ -12,6 +12,8 @@ namespace Pixie
 		void BeginFrame(Scene& scene) override;
 		void RenderFrame(Scene& scene) override;
 		void EndFrame(Scene& scene) override;
+	protected:
+		
 	};
 
 }

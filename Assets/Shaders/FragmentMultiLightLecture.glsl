@@ -38,6 +38,7 @@ in VS_OUT
    vec3 Pos_WS;
    vec3 Pos_TS;
    vec3 Pos_CS;
+   vec4 Pos_LS;
    vec3 Normal_WS;
    vec3 Normal_CS;
    vec2 UV;
@@ -51,6 +52,11 @@ in VS_OUT
 uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 
 uniform MaterialData Material;
+
+uniform bool bUseShadowMap;
+uniform sampler2D shadowMap;
+uniform float lightNearPlane;
+uniform float lightFarPlane;
 
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
@@ -69,7 +75,28 @@ uniform bool BUseLights;
 
 uniform float Gamma = 2.0;// og srgb is 2.2
 
+// required to view depth for debuging when using a perspective projection matrix
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * lightNearPlane * lightFarPlane) / (lightFarPlane + lightNearPlane - z * (lightFarPlane - lightNearPlane));	
+}
 
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 // until I start doing more pbr like stuff assume the diffuse intensity is just a little less than full reflection
 vec3 GetPointLuminosity(float nDotL, vec3 lightColor, float lightDistance, vec3 attenuationConstants)
@@ -114,6 +141,11 @@ vec3 GetSpotSpecular(float nDotH, vec3 lightColor, float smoothness, float specu
 
 void main()
 {
+//	float shadowDepth = texture(shadowMap, IN.UV).r;
+//     //FragColor = vec4(vec3(LinearizeDepth(shadowDepth) / lightFarPlane), 1.0); // perspective
+//    FragColor = vec4(vec3(shadowDepth), 1.0); // orthographic
+//
+
 	FragColor = vec4(0, 0, 0, 1);
 	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb;
 	//textureColor = pow(textureColor, vec3(Gamma));

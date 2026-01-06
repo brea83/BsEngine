@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
     <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
     <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -200,6 +201,7 @@
     <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
     <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
     <ClInclude Include="Dependencies\glad\glad.h" />
@@ -278,8 +280,10 @@
     <ClInclude Include="Source\Resources\StreamReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Assets\Shaders\EmptyFragment.glsl" />
     <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />
     <None Include="..\Assets\Shaders\FragmentShader.glsl" />
+    <None Include="..\Assets\Shaders\SimpleDepthVertex.glsl" />
     <None Include="..\Assets\Shaders\VertexShader.glsl" />
     <None Include="Dependencies\assimp\assimp-vc143-mtd.dll" />
   </ItemGroup>

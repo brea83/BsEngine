@@ -16,7 +16,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPosition;
 
-uniform int activeLightsCount;
+uniform mat4 lightSpaceMatrix;
 
 
 uniform sampler2D NormalMap;
@@ -27,6 +27,7 @@ out VS_OUT
    vec3 Pos_WS;
    vec3 Pos_TS;
    vec3 Pos_CS;
+   vec4 Pos_LS;
    vec3 Normal_WS;
    vec3 Normal_CS;
    vec2 UV;
@@ -42,6 +43,7 @@ void main()
     gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
     OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
     OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
+    OUT.Pos_LS = lightSpaceMatrix * vec4(OUT.Pos_WS, 1.0);
 
     mat3 MV3 = mat3(view * transform);
     mat3 M = mat3(transform);

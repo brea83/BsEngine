@@ -28,9 +28,24 @@ namespace Pixie
 	ForwardRenderPass::~ForwardRenderPass()
 	{ }
 
-	void ForwardRenderPass::Execute(Scene& sceneToRender)
+	void ForwardRenderPass::Execute(Scene& sceneToRender, uint32_t prevPassDepthID, uint32_t prevPassColorID)
 	{
 		m_Shader->Use();
+
+		if (prevPassDepthID != 0)
+		{
+			uint32_t slot = 4; // slots 0 through 3 are taken by diffuse, normals, metalic/rough, and specular maps
+			glActiveTexture(GL_TEXTURE0 + slot);
+			glBindTexture(GL_TEXTURE_2D, prevPassDepthID);
+			m_Shader->SetUniformInt("shadowMap", slot);
+
+			m_Shader->SetUniformBool("bUseShadowMap", true);
+		}
+		else
+		{
+			m_Shader->SetUniformBool("bUseShadowMap", false);
+		}
+
 
 		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
 		if (!cameraEntity)
@@ -48,6 +63,7 @@ namespace Pixie
 		if (mainCam == nullptr)
 		{
 			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
+			m_Shader->EndUse();
 			return;
 		}
 		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
@@ -144,4 +160,5 @@ namespace Pixie
 		glUniform1fv(glGetUniformLocation(m_Shader->ShaderProgram, "outerRadius"), activeLights, outerRadiusCos);
 		glUniform1iv(glGetUniformLocation(m_Shader->ShaderProgram, "lightTypes"), activeLights, lightTypes);
 	}
+	
 }

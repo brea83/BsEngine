@@ -10,7 +10,7 @@
 namespace Pixie
 {
 	class Shader;
-	class Texture;
+	class FrameBuffer;
 
 	class ForwardRenderPass : public RenderPass
 	{
@@ -18,12 +18,19 @@ namespace Pixie
 		ForwardRenderPass();
 		~ForwardRenderPass();
 		// Inherited via RenderPass
-		void Execute(Scene& sceneToRender) override;
+		void Execute(Scene& sceneToRender, uint32_t prevPassDepthID = 0, uint32_t prevPassColorID = 0) override;
+		std::shared_ptr<Shader> GetShader() override { return m_Shader; }
+		std::shared_ptr<FrameBuffer> GetFrameBuffer() const override { return nullptr; }
+		uint32_t GetFrameBufferID() override { return 0; }
+		uint32_t GetColorAttatchmentID() override { return 0; }
+		uint32_t GetDepthAttatchmentID() override { return 0; }
+
 	private:
 		std::shared_ptr<Shader> m_Shader;
 		MaterialInstance m_FallbackMaterial{};
 
 		void SendLightsToShader(entt::registry& registry);
+
 	};
 
 }

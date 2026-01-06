@@ -25,12 +25,14 @@ namespace Pixie
 		void Bind();
 		void UnBind();
 
-		uint32_t GetColorAttachmentRendererId() const { return m_ColorAttatchment; }
+		uint32_t GetFrameBufferID() const { return m_FrameBufferID; }
+		uint32_t GetColorAttachmentID() const { return m_ColorAttatchment; }
+		uint32_t GetDepthAttatchmentID() const { return m_DepthAttachment; }
 
 		void Resize();
 		void Resize(uint32_t width, uint32_t height);
 	private:
-		uint32_t m_RendererId{ 0 };
+		uint32_t m_FrameBufferID{ 0 };
 		uint32_t m_ColorAttatchment{ 0 };
 		uint32_t m_DepthAttachment{ 0 };
 		FrameBufferSpecification m_Specification;

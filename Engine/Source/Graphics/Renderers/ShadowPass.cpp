@@ -1,0 +1,66 @@
+#include "BsPrecompileHeader.h"
+#include "ShadowPass.h"
+#include "EngineContext.h"
+#include "Resources/AssetLoader.h"
+#include "ForwardRenderer.h"
+#include "Scene/GameObject.h"
+#include "Scene/Components/Component.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+namespace Pixie
+{
+	ShadowPass::ShadowPass()
+	{
+		FrameBufferSpecification frameBufferData;
+		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+		frameBufferData.Width = viewportSize.x;
+		frameBufferData.Height = viewportSize.y;
+
+		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
+		glEnable(GL_DEPTH_TEST);
+
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/SimpleDepthVertex.glsl", "../Assets/Shaders/EmptyFragment.glsl");
+	}
+
+	ShadowPass::~ShadowPass()
+	{}
+
+	void ShadowPass::Execute(Scene& sceneToRender, uint32_t prevPassDepthID, uint32_t prevPassColorID)
+	{
+		// start rendering
+		m_Shader->Use();
+		
+
+		// render meshes
+		entt::registry& registry = sceneToRender.GetRegistry();
+		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
+
+		for (auto entity : group)
+		{
+			TransformComponent& transform = group.get<TransformComponent>(entity);
+			m_Shader->SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
+
+			MeshComponent& mesh = group.get<MeshComponent>(entity);
+
+			mesh.RenderWithoutMaterial(*m_Shader);
+		}
+
+		m_Shader->EndUse();
+	}
+
+	uint32_t ShadowPass::GetFrameBufferID()
+	{
+		return m_FrameBuffer->GetFrameBufferID();
+	}
+
+	uint32_t ShadowPass::GetColorAttatchmentID()
+	{
+	;	return m_FrameBuffer->GetColorAttachmentID();
+	}
+	uint32_t ShadowPass::GetDepthAttatchmentID()
+	{
+		return m_FrameBuffer->GetDepthAttatchmentID();
+	}
+}

@@ -18,7 +18,7 @@ namespace Pixie
 		virtual void EndFrame(Scene& scene) = 0;
 
 		std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
-		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentRendererId(); }
+		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentID(); }
 	protected:
 		EngineContext* m_Engine;
 		std::vector<std::unique_ptr<RenderPass>> m_Passes;

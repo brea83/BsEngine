@@ -42,6 +42,7 @@ namespace Pixie
 		void OnUpdate() ;
 		
 		void Render(Shader& currentShader);
+		void RenderWithoutMaterial(Shader& currentShader);
 
 		static void Serialize(StreamWriter* stream, const MeshComponent& component)
 		{

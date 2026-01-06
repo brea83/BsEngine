@@ -105,7 +105,7 @@ namespace Pixie
 		Mag_FilterType GetMagFilterType() const { return m_MagFilterType; }
 		static TextureType GetTypeByString(const std::string& searchString);
 
-		void CreateTexture(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter);
+		void UpdateTextureFilters(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter);
 		void CreateTexture(const std::string& filePath, TextureSpecification specification);
 		void Bind(unsigned int slot = 0) const;
 		void UnBind() const;

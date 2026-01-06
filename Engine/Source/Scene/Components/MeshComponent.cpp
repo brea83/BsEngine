@@ -148,4 +148,11 @@ namespace Pixie
 		}
 	}
 
+	void MeshComponent::RenderWithoutMaterial(Shader& currentShader)
+	{
+		if (!m_Mesh) return;
+
+		m_Mesh->Render(currentShader);
+	}
+
 }

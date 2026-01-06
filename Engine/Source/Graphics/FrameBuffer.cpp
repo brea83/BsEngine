@@ -11,7 +11,7 @@ namespace Pixie
 
 	FrameBuffer::~FrameBuffer()
 	{
-		glDeleteFramebuffers(1, &m_RendererId);
+		glDeleteFramebuffers(1, &m_FrameBufferID);
 		glDeleteTextures(1, &m_ColorAttatchment);
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
@@ -23,8 +23,8 @@ namespace Pixie
 
 	void FrameBuffer::Bind()
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
 	}
 
 	void FrameBuffer::UnBind()
@@ -34,15 +34,15 @@ namespace Pixie
 
 	void FrameBuffer::Resize()
 	{
-		if (m_RendererId)
+		if (m_FrameBufferID)
 		{
-			glDeleteFramebuffers(1, &m_RendererId);
+			glDeleteFramebuffers(1, &m_FrameBufferID);
 			glDeleteTextures(1, &m_ColorAttatchment);
 			glDeleteTextures(1, &m_DepthAttachment);
 		}
 
-		glCreateFramebuffers(1, &m_RendererId);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
+		glCreateFramebuffers(1, &m_FrameBufferID);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttatchment);
 		glBindTexture(GL_TEXTURE_2D, m_ColorAttatchment);

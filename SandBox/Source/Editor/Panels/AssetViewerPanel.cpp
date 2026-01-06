@@ -73,12 +73,12 @@ namespace Pixie
 
 		if (ImGui::Combo("Min Filter", &current_min, Texture::Min_FilterModeNames, IM_ARRAYSIZE(Texture::Min_FilterModeNames)))
 		{
-			texture->CreateTexture(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
+			texture->UpdateTextureFilters(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
 		}
 
 		if (ImGui::Combo("Mag Filter", &current_mag, Texture::Mag_FilterModeNames, IM_ARRAYSIZE(Texture::Mag_FilterModeNames)))
 		{
-			texture->CreateTexture(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
+			texture->UpdateTextureFilters(assetKey, static_cast<Min_FilterType>(current_min), static_cast<Mag_FilterType>(current_mag));
 		}
 	}
 

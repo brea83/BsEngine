@@ -14,9 +14,8 @@ namespace Pixie
 	ShadowPass::ShadowPass()
 	{
 		FrameBufferSpecification frameBufferData;
-		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
-		frameBufferData.Width = viewportSize.x;
-		frameBufferData.Height = viewportSize.y;
+		frameBufferData.Width = 1024;
+		frameBufferData.Height = 1024;
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
@@ -31,8 +30,9 @@ namespace Pixie
 	{
 		// start rendering
 		m_Shader->Use();
-		
-
+		m_FrameBuffer->Bind();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachmentID());
 		// render meshes
 		entt::registry& registry = sceneToRender.GetRegistry();
 		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
@@ -57,7 +57,7 @@ namespace Pixie
 
 	uint32_t ShadowPass::GetColorAttatchmentID()
 	{
-	;	return m_FrameBuffer->GetColorAttachmentID();
+		return m_FrameBuffer->GetColorAttachmentID();
 	}
 	uint32_t ShadowPass::GetDepthAttatchmentID()
 	{

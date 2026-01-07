@@ -19,6 +19,7 @@ namespace Pixie
 		//virtual glm::mat4 ViewMatrix() const = 0;
 		// calculates a projection matrix
 		glm::mat4 ProjectionMatrix() const;
+		glm::mat4 OrthoProjection() const;
 
 		void SetFov(float fov) { m_Fov = fov; }
 		float GetFov() { return m_Fov; }
@@ -38,6 +39,7 @@ namespace Pixie
 	protected:
 
 		float m_Fov{ 45.0f };
+		float m_ZoomLevel{ 1.0f };
 		float m_AspectRatio{ 1280.0f / 720.0f };
 		float m_Near{ 0.1f };
 		float m_Far{ 100.0f };

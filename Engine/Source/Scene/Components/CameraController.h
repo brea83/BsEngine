@@ -91,7 +91,7 @@ namespace Pixie
 		bool OnMouseScrolled(MouseScrolledEvent& event);
 		bool OnWindowResized(WindowResizedEvent& event);
 
-		void Fly(float deltaTime, TransformComponent& transform);
+		void Fly(float deltaTime, CameraComponent& camComponent, TransformComponent& transform);
 		void UpdateMouseMode(float deltaTime, TransformComponent& transform);
 
 		void MousePan(float deltaTime, TransformComponent& transform);

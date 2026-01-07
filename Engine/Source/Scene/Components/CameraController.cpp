@@ -19,13 +19,17 @@ namespace Pixie
 {
 	void CameraController::OnUpdate(float deltaTime, GameObject& gameObject)
 	{
+		if (!gameObject.HasCompoenent<CameraComponent>()) return;
+
 		TransformComponent& transform = gameObject.GetTransform();
 
 		//Logger::Log(LOG_TRACE, "Camera Controller Component update");
 
 		if (m_Type == CameraMoveType::Fly)
 		{
-			Fly(deltaTime, transform);
+			CameraComponent& camComponent = gameObject.GetComponent<CameraComponent>();
+
+			Fly(deltaTime, camComponent, transform);
 			return;
 		}
 
@@ -46,8 +50,7 @@ namespace Pixie
 			return;
 		}
 
-		CameraComponent* camComponent = gameObject.TryGetComponent<CameraComponent>();
-		if (m_ScrollDelta != 0.0f && camComponent) MouseZoom(*camComponent);
+		
 	}
 
 	void CameraController::UpdateMouseMode(float deltaTime, Pixie::TransformComponent& transform)
@@ -55,7 +58,7 @@ namespace Pixie
 		
 	}
 
-	void CameraController::Fly(float deltaTime, Pixie::TransformComponent& transform)
+	void CameraController::Fly(float deltaTime, CameraComponent& camComponent, TransformComponent& transform)
 	{
 		float sensitivity = m_RotationSpeed * deltaTime;
 		glm::vec2 offset = m_MouseDelta * sensitivity;
@@ -78,6 +81,8 @@ namespace Pixie
 
 			transform.SetPosition(currentPosition + (velocity * direction));
 		}
+
+		if (m_ScrollDelta != 0.0f) MouseZoom(camComponent);
 	}
 
 	bool CameraController::OnEvent(Event& event)
@@ -332,12 +337,10 @@ namespace Pixie
 
 	void CameraController::MouseZoom( CameraComponent& camera)
 	{
-		if (m_Type == CameraMoveType::Fly)
-		{
-			camera.Cam.Zoom(m_ScrollDelta);
-			m_ScrollDelta = 0.0f;
-			return;
-		}
+		camera.Cam.Zoom(m_ScrollDelta);
+		m_ScrollDelta = 0.0f;
+		return;
+		
 	}
 
 	void CameraController::MouseZoom(float deltaTime, Pixie::TransformComponent& transform)

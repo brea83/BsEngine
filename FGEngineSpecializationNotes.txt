@@ -758,4 +758,30 @@ light types
 	overview of multi light glsl
 
 suggestions for rendering light representations as wireframes
+
+
+================================
+module 3 lecture 4 screen buffer,  texture buffers, shadow mapping
+================================	
+
+texture buffers can be detatched after render and used as input in later render passes
+all data types of buffer are available as texture buffers
 	
+	deffered rendering, post processing effects, multi sample anti aliasing, shadow mapping, ssao, screen space reflections, and more are use cases for buffers
+
+
+shadow mapping
+	
+	using a directional light for now
+
+	one method sets up a camera at the light's point of view
+
+================================
+module 3 lecture 5 deffered rendering
+================================	
+
+the deferred part of the this process is just the light process
+this allows us to only calculate light once per fragment
+
+also mentioning uniform buffer objects
+

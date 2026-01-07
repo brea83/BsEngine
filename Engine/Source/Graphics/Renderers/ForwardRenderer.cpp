@@ -47,19 +47,35 @@ namespace Pixie
 		bool bUseLightMatrix{ false };
 		GameObject mainLight = scene.GetMainLight();
 		glm::mat4 lightSpaceMatrix = glm::mat4();
-		float near_plane = 1.0f, far_plane = 7.5f;
+		//glm::mat4 lightProjection = glm::mat4();
+		//glm::mat4 lightView = glm::mat4();
+		float near_plane = 1.0;
+		float far_plane = 7.5f;
 
 		if (mainLight)
 		{
 			// light direction is used as position with an ortho projection
 			LightComponent& light = mainLight.GetComponent<LightComponent>();
 			glm::vec3 lightPos = -light.Direction;
+			/*glm::vec3 lightRot = glm::radians(glm::vec3 (45.0f, -45.0f, 0.0f ));
+			glm::vec3 direction;
+			direction.x = cos(lightRot.x * cos(lightRot.y));
+			direction.y = sin(lightRot.y);
+			direction.z = sin(lightRot.x) * cos(lightRot.y);
+			glm::vec3 forward = glm::normalize(direction);
+			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+			glm::vec3 up = glm::normalize(glm::cross(right, forward));*/
+
+
+			glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+			float aspectRatio = viewportSize.x / viewportSize.y;
+			
 
 			// get the light's projection and view to create a light-space matrix
-			glm::mat4 lightProjection, lightView;
-			lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-			lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-			lightSpaceMatrix = lightProjection * lightView;
+			float zoom = 1.0f;
+			m_LightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+			m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+			lightSpaceMatrix = m_LightProjection * m_LightView;
 
 			bUseLightMatrix = true;
 		}
@@ -70,17 +86,13 @@ namespace Pixie
 
 		for (size_t i = 0; i < m_Passes.size(); i++)
 		{
-			std::shared_ptr<FrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
-			if (passBuffer != nullptr)
-				passBuffer->Bind();
-			else
-				m_FrameBuffer->Bind();
 			
 			std::shared_ptr<Shader> shader = m_Passes[i]->GetShader();
 			shader->SetUniformBool("bUseShadowMap", bUseLightMatrix);
 			if (bUseLightMatrix)
 			{
-				shader->SetUniformMat4("lightSpaceMatrix", lightSpaceMatrix);
+				shader->SetUniformMat4("lightViewMat", m_LightView);
+				shader->SetUniformMat4("lightProjMat", m_LightProjection);
 				shader->SetUniformFloat("lightNearPlane", near_plane);
 				shader->SetUniformFloat("lightFarPlane", far_plane);
 			}
@@ -89,6 +101,10 @@ namespace Pixie
 
 			prevPassDepth = m_Passes[i]->GetDepthAttatchmentID();
 			prevPassColor = m_Passes[i]->GetColorAttatchmentID();
+			
+			std::shared_ptr<FrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
+			if (passBuffer != nullptr)
+				m_FrameBuffer->Bind();
 		}
 	}
 

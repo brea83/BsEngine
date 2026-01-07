@@ -16,7 +16,8 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPosition;
 
-uniform mat4 lightSpaceMatrix;
+uniform mat4 lightViewMat;
+uniform mat4 lightProjMat;
 
 
 uniform sampler2D NormalMap;
@@ -43,7 +44,7 @@ void main()
     gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
     OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
     OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
-    OUT.Pos_LS = lightSpaceMatrix * vec4(OUT.Pos_WS, 1.0);
+    OUT.Pos_LS = lightProjMat * lightViewMat * transform * vec4(vertexPosition, 1.0);
 
     mat3 MV3 = mat3(view * transform);
     mat3 M = mat3(transform);

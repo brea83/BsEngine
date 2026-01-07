@@ -10,16 +10,30 @@ namespace Pixie
 
 	bool Camera::Zoom(float amount)
 	{
-		m_Fov -= amount;
+		m_ZoomLevel -= amount;
 
-		if (m_Fov < 1.0f) m_Fov = 1.0f;
+		//m_Fov -= amount;
 
-		if (m_Fov > 90.0f) m_Fov = 90.0f;
+		if (m_ZoomLevel < 0.03f)
+		{
+			m_ZoomLevel = 0.03f;
+		}
+		else if (m_ZoomLevel > 2.0f)
+		{
+			m_ZoomLevel = 2.0f;
+		}
+		/*if (m_Fov < 1.0f) m_Fov = 1.0f;
+
+		if (m_Fov > 90.0f) m_Fov = 90.0f;*/
 		return true;
 	}
 
 	glm::mat4 Camera::ProjectionMatrix() const
 	{
-		return glm::perspective(glm::radians(m_Fov), m_AspectRatio, m_Near, m_Far);
+		return glm::perspective(glm::radians(m_Fov * m_ZoomLevel), m_AspectRatio, m_Near, m_Far);
+	}
+	glm::mat4 Camera::OrthoProjection() const
+	{
+		return glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, m_Near, m_Far);
 	}
 }

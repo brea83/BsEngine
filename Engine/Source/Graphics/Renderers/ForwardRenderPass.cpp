@@ -37,7 +37,7 @@ namespace Pixie
 			uint32_t slot = 4; // slots 0 through 3 are taken by diffuse, normals, metalic/rough, and specular maps
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, prevPassDepthID);
-			m_Shader->SetUniformInt("shadowMap", slot);
+			m_Shader->SetUniformInt("shadowMap", GL_TEXTURE0 + slot);
 
 			m_Shader->SetUniformBool("bUseShadowMap", true);
 		}
@@ -66,12 +66,12 @@ namespace Pixie
 			m_Shader->EndUse();
 			return;
 		}
-		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
+		glm::mat4 projectionMatrix = mainCam->OrthoProjection();
 
 		m_Shader->SetUniformMat4("view", viewMatrix);
 		m_Shader->SetUniformMat4("projection", projectionMatrix);
 		m_Shader->SetUniformVec3("cameraPosition", camPosition);
-
+		glm::mat4 pvMat = projectionMatrix * viewMatrix;
 		// get scene registry for lighting and renderables
 		entt::registry& registry = sceneToRender.GetRegistry();
 

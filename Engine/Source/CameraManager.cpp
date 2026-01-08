@@ -221,18 +221,24 @@ namespace Pixie
         if (!activeCam) return nullptr;
         TransformComponent& transform = activeCam.GetComponent<TransformComponent>();
 
-        glm::vec3 position = transform.GetPosition();
-        glm::vec3 rotation = transform.GetRotationEuler(AngleType::Radians);
-        glm::vec3 direction;
-        direction.x = cos(rotation.x * cos(rotation.y));
-        direction.y = sin(rotation.y);
-        direction.z = sin(rotation.x) * cos(rotation.y);
-        glm::vec3 forward = glm::normalize(direction);
+        //glm::vec3 position = transform.GetPosition();
+        //glm::vec3 rotation = transform.GetRotationEuler(AngleType::Radians);
+        //glm::vec3 direction;
+        //direction.x = cos(rotation.y * cos(rotation.x));
+        //direction.y = sin(rotation.x);
+        //direction.z = sin(rotation.y) * cos(rotation.x);
+        //glm::vec3 forward = glm::normalize(direction);
 
-        glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
-        glm::vec3 up = glm::normalize(glm::cross(right, forward));
 
-        viewMatrix = glm::lookAt(position, position + forward, up);
+        //glm::vec3 right; /*= glm::normalize(glm::cross(forward, glm::vec3(0.0f, rotation.z, 0.0f)));*/
+        //right.x = cos(rotation.y);
+        //right.y = 0.0f;
+        //right.z = -sin(rotation.y);
+
+        //glm::vec3 up = glm::normalize(glm::cross(right, forward));
+
+        viewMatrix = glm::inverse(transform.GetObjectToWorldMatrix());//glm::lookAt(position, position + forward, up);
+
 
         CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
         return &cameraComponent.Cam;
@@ -252,6 +258,13 @@ namespace Pixie
 
         nextCamera->IsDefault = true;
         m_DefaultCamera = gameObject;
+    }
+
+    glm::mat4 CameraManager::GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix)
+    {
+        outViewMatrix = glm::inverse(inTransform.GetObjectToWorldMatrix());//glm::lookAt(position, position + forward, up);
+
+        return inCamera.ProjectionMatrix();
     }
 
     GameObject CameraManager::GetActiveCameraObject()

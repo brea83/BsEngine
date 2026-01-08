@@ -149,6 +149,67 @@ namespace Pixie
 		return bValueChanged;
 	}
 
+	bool DetailsViewPanel::DrawVec2Control(const std::string& label, glm::vec2& values, glm::vec2 resetValue, float columnWidth)
+	{
+		bool bValueChanged = false;
+
+		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
+		{
+			float fontSize = ImGui::GetFontSize();
+			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, columnWidth);
+			ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/);
+			ImGui::TableNextRow();
+			// the label
+			ImGui::TableSetColumnIndex(0);
+			ImGui::Text(label.c_str());
+
+			// the values
+			ImGui::TableSetColumnIndex(1);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);// fontSize * 4.0f);
+
+			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.25f, 0.25f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.0f, 0.2f, 0.2f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
+			if (ImGui::Button("X"))
+			{
+				values.x = resetValue.x;
+				bValueChanged = true;
+			}
+			ImGui::SameLine();
+			if (ImGui::DragFloat("##floatX", &values.x, 0.1f))
+			{
+				bValueChanged = true;
+			}
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar();
+
+			ImGui::SameLine();
+			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.3f, 0.55f, 0.3f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.9f, 0.2f, 1.0f });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.6f, 0.05f, 1.0f });
+			if (ImGui::Button("Y"))
+			{
+				values.y = resetValue.y;
+				bValueChanged = true;
+			}
+			ImGui::SameLine();
+			if (ImGui::DragFloat("##floatY", &values.y, 0.1f))
+			{
+				bValueChanged = true;
+			}
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar();
+
+			ImGui::PopItemWidth();
+
+			ImGui::EndTable();
+		}
+
+		return bValueChanged;
+	}
+
 	bool DetailsViewPanel::DrawFloatControl(const std::string& label, float& value, SliderParams params, float columnWidth)
 	{
 		bool bValueChanged = false;
@@ -443,7 +504,6 @@ namespace Pixie
 				}
 			}
 		
-
 			std::string buttonText = camManager.GetDefaultCamera() != selected ? "Make Default" : "Is Default";
 			float textWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f);
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - textWidth);
@@ -461,33 +521,49 @@ namespace Pixie
 				ImGui::EndDisabled();
 			}
 
+			ImGui::SeparatorText("ShadowMap Debug");
 
-
-			float labelWidth = (ImGui::GetFontSize() * 10.0f);
-			std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
-			std::vector<float*> values{ &component.Cam.m_Fov, &component.Cam.m_Near, &component.Cam.m_Far };
-			if (ImGui::BeginTable("##CameraProperties", 2))
+			if (ImGui::Button("Try Match Light Position"))
 			{
-				ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);
-				ImGui::TableSetupColumn("Values");
+				TransformComponent& transform = selected.GetTransform();
+				GameObject mainLight = selected.GetScene()->GetMainLight();
+				LightComponent* light = mainLight.TryGetComponent<LightComponent>();
 
-				for (int i = 0; i < labels.size(); i++)
+				if (light != nullptr)
 				{
-					ImGui::PushID(i);
-					ImGui::TableNextRow();
-					// the label
-					ImGui::TableSetColumnIndex(0);
-					ImGui::Text(labels[i].c_str());
+					glm::vec3 forward = glm::normalize(light->Direction);
+					glm::vec3 forwardDegrees = glm::degrees(forward);
 
-					// the values
-					ImGui::TableSetColumnIndex(1);
-					ImGui::DragFloat("##Value", values[i]);
-					ImGui::PopID();
+					transform.SetPosition(forward * -10.0f);
+					transform.SetRotationEuler(glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
 
+					glm::vec3 rotationDegrees = transform.GetRotationEuler();
 				}
 
-				ImGui::EndTable();
 			}
+
+			ImGui::Separator();
+
+			ImGui::Text("Projection Type");
+			ImGui::SameLine();
+			const char* projectionTypeNames[] = { "Perspective", "Orthographic" };
+			int bOrthographic = (int)component.IsOrthographic();
+
+			if (ImGui::Combo("##Projection Type", &bOrthographic, projectionTypeNames, IM_ARRAYSIZE(projectionTypeNames)))
+			{
+				component.SetOrthographic(bOrthographic == 1);
+			}
+
+			if (component.IsOrthographic())
+			{
+				DrawOrthographicCamProps(component.Cam);
+			}
+			else
+			{
+				DrawPerspectiveCamProps(component.Cam);
+			}
+
+			
 
 			if (removeComponent)
 			{
@@ -527,11 +603,11 @@ namespace Pixie
 			ImGui::SameLine();
 			ImGui::ColorEdit3("##Color", glm::value_ptr(light.Color));
 
-			if (light.Type == LightType::Directional)
+			/*if (light.Type == LightType::Directional)
 			{
 				DrawVec3Control("Direction", light.Direction, 0.5f);
 
-			}
+			}*/
 			
 			if (light.Type == LightType::Point)
 			{
@@ -541,7 +617,7 @@ namespace Pixie
 
 			if (light.Type == LightType::Spot)
 			{
-				DrawVec3Control("Direction", light.Direction, 0.5f);
+				//DrawVec3Control("Direction", light.Direction, 0.5f);
 				DrawVec3Control("Attenuations", light.Attenuation);
 
 				SliderParams params;
@@ -565,6 +641,72 @@ namespace Pixie
 			}
 			ImGui::PopID();
 
+		}
+	}
+
+	void DetailsViewPanel::DrawOrthographicCamProps(Camera& camera)
+	{
+		float labelWidth = (ImGui::GetFontSize() * 10.0f);
+		ImGui::SeparatorText("Zoom");
+
+		ImGui::DragFloat("##Value", &camera.m_ZoomLevel, 0.01f, 0.001f);
+		ImGui::SameLine();
+		if (ImGui::Button("Reset"))
+		{
+			camera.m_ZoomLevel = 1;
+		}
+
+		ImGui::SeparatorText("Aspect Ratio");
+		ImGui::Text("Manually Set Aspect Ratio");
+		ImGui::SameLine();
+		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+
+		static glm::vec2 size = viewportSize;
+		ImGui::Checkbox("##lockAspectRatio", &camera.m_LockAspectRatio);
+
+		if (!camera.m_LockAspectRatio)
+			ImGui::BeginDisabled();
+		if (DrawVec2Control("Aspect Ratio", size, viewportSize, labelWidth))
+		{
+			camera.m_ManualRatio = size.x / size.y;
+		}
+
+		if (!camera.m_LockAspectRatio)
+			ImGui::EndDisabled();
+	}
+
+	void DetailsViewPanel::DrawPerspectiveCamProps(Camera& camera)
+	{
+		float labelWidth = (ImGui::GetFontSize() * 10.0f);
+		std::vector<std::string> labels{ "FoV", "Near Plane", "Far Plane" };
+		std::vector<float*> values{ &camera.m_Fov, &camera.m_Near, &camera.m_Far };
+		std::vector<float> resetValues{ 1.0f, 0.1f, 100.0f };
+		if (ImGui::BeginTable("##CameraProperties", 2))
+		{
+			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, labelWidth);
+			ImGui::TableSetupColumn("Values");
+
+			for (int i = 0; i < labels.size(); i++)
+			{
+				ImGui::PushID(i);
+				ImGui::TableNextRow();
+				// the label
+				ImGui::TableSetColumnIndex(0);
+				ImGui::Text(labels[i].c_str());
+
+				// the values
+				ImGui::TableSetColumnIndex(1);
+				ImGui::DragFloat("##Value", values[i], 0.01f);
+				ImGui::SameLine();
+				if (ImGui::Button("Reset"))
+				{
+					*values[i] = resetValues[i];
+				}
+				ImGui::PopID();
+
+			}
+
+			ImGui::EndTable();
 		}
 	}
 

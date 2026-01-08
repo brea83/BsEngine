@@ -99,29 +99,29 @@ namespace Pixie
 		//dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 	}
 
-	bool CameraController::HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime)
-	{
-		float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
+	//bool CameraController::HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime)
+	//{
+	//	float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
 
-		glm::vec3 currentPosition = transform->GetPosition();
-		switch (keyCode)
-		{
-		//case Inputs::Keyboard::W:
-		//	transform->SetPosition(currentPosition + (velocity * transform->Forward()));
-		//	return true;
-		//case Inputs::Keyboard::S:
-		//	transform->SetPosition(currentPosition + (velocity * transform->Forward() * -1.0f));
-		//	return true;
-		//case Inputs::Keyboard::A:
-		//	transform->SetPosition(currentPosition + (velocity * transform->Left()));
-		//	return true;
-		//case Inputs::Keyboard::D:
-		//	transform->SetPosition(currentPosition + (velocity * transform->Right()));
-		//	return true;
-		default:
-			return false;
-		}
-	}
+	//	glm::vec3 currentPosition = transform->GetPosition();
+	//	switch (keyCode)
+	//	{
+	//	//case Inputs::Keyboard::W:
+	//	//	transform->SetPosition(currentPosition + (velocity * transform->Forward()));
+	//	//	return true;
+	//	//case Inputs::Keyboard::S:
+	//	//	transform->SetPosition(currentPosition + (velocity * transform->Forward() * -1.0f));
+	//	//	return true;
+	//	//case Inputs::Keyboard::A:
+	//	//	transform->SetPosition(currentPosition + (velocity * transform->Left()));
+	//	//	return true;
+	//	//case Inputs::Keyboard::D:
+	//	//	transform->SetPosition(currentPosition + (velocity * transform->Right()));
+	//	//	return true;
+	//	default:
+	//		return false;
+	//	}
+	//}
 
 
 	bool CameraController::OnKeyPressed(KeyPressedEvent& event)
@@ -247,7 +247,7 @@ namespace Pixie
 		return false;
 	}
 
-	bool CameraController::HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime)
+	/*bool CameraController::HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime)
 	{
 		float sensitivity = m_RotationSpeed * deltaTime;
 		xOffset *= sensitivity;
@@ -257,7 +257,7 @@ namespace Pixie
 		transform->SetRotationEuler(glm::vec3(rotation.x + xOffset, rotation.y + yOffset, rotation.z), AngleType::Degrees);
 
 		return true;
-	}
+	}*/
 
 	void CameraController::SetMoveType(CameraMoveType type)
 	{

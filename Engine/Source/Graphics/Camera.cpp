@@ -30,10 +30,21 @@ namespace Pixie
 
 	glm::mat4 Camera::ProjectionMatrix() const
 	{
-		return glm::perspective(glm::radians(m_Fov * m_ZoomLevel), m_AspectRatio, m_Near, m_Far);
+		if (m_IsOrthographic)
+			return OrthoProjection();
+
+		return PerspectiveProjection();
+	}
+	glm::mat4 Camera::PerspectiveProjection() const
+	{
+		float nonZeroZoom = glm::max(0.001f, m_ZoomLevel);
+		float aspectRatio = m_LockAspectRatio ? m_ManualRatio : m_AspectRatio;
+		return glm::perspective(glm::radians(m_Fov * nonZeroZoom), aspectRatio, m_Near, m_Far);
 	}
 	glm::mat4 Camera::OrthoProjection() const
 	{
-		return glm::ortho(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel, m_Near, m_Far);
+		float nonZeroZoom = glm::max(0.001f, m_ZoomLevel);
+		float aspectRatio = m_LockAspectRatio ? m_ManualRatio : m_AspectRatio;
+		return glm::ortho(-aspectRatio * nonZeroZoom, aspectRatio * nonZeroZoom, -nonZeroZoom, nonZeroZoom, m_Near, m_Far);
 	}
 }

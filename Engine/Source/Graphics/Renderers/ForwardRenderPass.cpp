@@ -37,7 +37,7 @@ namespace Pixie
 			uint32_t slot = 4; // slots 0 through 3 are taken by diffuse, normals, metalic/rough, and specular maps
 			glActiveTexture(GL_TEXTURE0 + slot);
 			glBindTexture(GL_TEXTURE_2D, prevPassDepthID);
-			m_Shader->SetUniformInt("shadowMap", GL_TEXTURE0 + slot);
+			m_Shader->SetUniformInt("shadowMap", slot);
 
 			m_Shader->SetUniformBool("bUseShadowMap", true);
 		}
@@ -66,7 +66,7 @@ namespace Pixie
 			m_Shader->EndUse();
 			return;
 		}
-		glm::mat4 projectionMatrix = mainCam->OrthoProjection();
+		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
 
 		m_Shader->SetUniformMat4("view", viewMatrix);
 		m_Shader->SetUniformMat4("projection", projectionMatrix);
@@ -136,9 +136,9 @@ namespace Pixie
 			lightPositions[activeLights * 4 + 1] = lightTransform.GetPosition().y;
 			lightPositions[activeLights * 4 + 2] = lightTransform.GetPosition().z;
 
-			lightDirections[activeLights * 4 + 0] = light.Direction.x;
-			lightDirections[activeLights * 4 + 1] = light.Direction.y;
-			lightDirections[activeLights * 4 + 2] = light.Direction.z;
+			lightDirections[activeLights * 4 + 0] = lightTransform.Forward().x;
+			lightDirections[activeLights * 4 + 1] = lightTransform.Forward().y;
+			lightDirections[activeLights * 4 + 2] = lightTransform.Forward().z;
 
 			lightAttenuations[activeLights * 4 + 0] = light.Attenuation.x;
 			lightAttenuations[activeLights * 4 + 1] = light.Attenuation.y;

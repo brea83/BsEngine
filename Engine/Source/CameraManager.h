@@ -10,6 +10,7 @@ namespace Pixie
 	class Scene;
 	class Event;
 	class Camera;
+	class TransformComponent;
 	struct CameraComponent;
 	class GameObject;
 
@@ -42,6 +43,8 @@ namespace Pixie
 		void SetActiveCamera(GameObject& gameObject);
 		void SetDefaultCamera(GameObject& gameObject);
 		void SetEditorCamActive() { m_ActiveCamera = m_EditorCamera; }
+
+		static glm::mat4 GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix);
 
 		// ToDo: Add camera blend stuff. 
 		// I think that will mean I'll need update methods for lerping?

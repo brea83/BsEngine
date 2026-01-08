@@ -307,7 +307,7 @@ namespace Pixie
 		Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
 		static float translationSpeed = camController.GetTranslationSpeed();
 		static float rotationSpeed = camController.GetRotationSpeed();
-		static float fov = camera.GetFov();
+		static float zoom = camera.GetZoom();
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		const float global_scale = style.FontScaleMain * style.FontScaleDpi;
@@ -343,14 +343,15 @@ namespace Pixie
 		{
 			camController.SetRotationSpeed(rotationSpeed);
 		}
-		ImGui::Text("FOV");
-		if (ImGui::DragFloat("##FoVvalue", &fov))
+		ImGui::Text("Zoom");
+		if (ImGui::DragFloat("##Zoomvalue", &zoom))
 		{
-			camera.SetFov(fov);
+			camera.SetZoom(zoom);
 		}
-		if (ImGui::Button("ResetFoV"))
+		if (ImGui::Button("ResetZoom"))
 		{
-			camera.SetFov(45.0f);
+			camera.SetZoom(1.0f);
+			zoom = 1.0f;
 		}
 		ImGui::PopItemWidth();
 	}

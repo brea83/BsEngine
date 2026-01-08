@@ -7,6 +7,7 @@
 #include "EngineContext.h"
 #include "GlfwWrapper.h"
 #include "Scene/GameObject.h"
+#include "Graphics/Camera.h"
 
 namespace Pixie
 {
@@ -31,6 +32,12 @@ namespace Pixie
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
+
+		m_LightCamera = std::make_shared<Camera>(45.0f, 1.0f);
+		m_LightCamera->SetOrthographic(true);
+		m_LightCamera->SetZoom(20.0f);
+
+		m_LightTransfrom = std::make_shared<TransformComponent>();
 	}
 
 	void ForwardRenderer::BeginFrame(Scene& scene)
@@ -47,6 +54,7 @@ namespace Pixie
 		bool bUseLightMatrix{ false };
 		GameObject mainLight = scene.GetMainLight();
 		glm::mat4 lightSpaceMatrix = glm::mat4();
+		glm::vec3 hypotheticalLightPos{ 1.0f };
 		//glm::mat4 lightProjection = glm::mat4();
 		//glm::mat4 lightView = glm::mat4();
 		float near_plane = 1.0;
@@ -54,27 +62,23 @@ namespace Pixie
 
 		if (mainLight)
 		{
-			// light direction is used as position with an ortho projection
-			LightComponent& light = mainLight.GetComponent<LightComponent>();
-			glm::vec3 lightPos = -light.Direction;
-			/*glm::vec3 lightRot = glm::radians(glm::vec3 (45.0f, -45.0f, 0.0f ));
-			glm::vec3 direction;
-			direction.x = cos(lightRot.x * cos(lightRot.y));
-			direction.y = sin(lightRot.y);
-			direction.z = sin(lightRot.x) * cos(lightRot.y);
-			glm::vec3 forward = glm::normalize(direction);
-			glm::vec3 right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
-			glm::vec3 up = glm::normalize(glm::cross(right, forward));*/
-
-
 			glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
 			float aspectRatio = viewportSize.x / viewportSize.y;
-			
+			// light direction is used as position with an ortho projection
+			LightComponent& light = mainLight.GetComponent<LightComponent>();
+			TransformComponent lightTransform = mainLight.GetTransform();
+			//glm::vec3 lightPos = -light.Direction;
+			//glm::vec3 cameraRot{90.0f, 0.0, 0.0};
 
-			// get the light's projection and view to create a light-space matrix
-			float zoom = 1.0f;
-			m_LightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-			m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+			glm::vec3 forward = lightTransform.Forward();//glm::normalize(light.Direction);
+			glm::vec3 forwardDegrees = glm::degrees(forward);
+
+			hypotheticalLightPos = -20.0f * forward;
+			m_LightTransfrom->SetPosition(hypotheticalLightPos);
+			m_LightTransfrom->SetRotationEuler(glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
+			
+			m_LightProjection = CameraManager::GetProjectionOutView(*m_LightCamera, *m_LightTransfrom, m_LightView);
+			//m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 			lightSpaceMatrix = m_LightProjection * m_LightView;
 
 			bUseLightMatrix = true;
@@ -88,9 +92,12 @@ namespace Pixie
 		{
 			
 			std::shared_ptr<Shader> shader = m_Passes[i]->GetShader();
+			shader->Use();
 			shader->SetUniformBool("bUseShadowMap", bUseLightMatrix);
 			if (bUseLightMatrix)
 			{
+				
+				shader->SetUniformVec3("mainLightPosition", hypotheticalLightPos);
 				shader->SetUniformMat4("lightViewMat", m_LightView);
 				shader->SetUniformMat4("lightProjMat", m_LightProjection);
 				shader->SetUniformFloat("lightNearPlane", near_plane);

@@ -19,14 +19,26 @@ namespace Pixie
 		//virtual glm::mat4 ViewMatrix() const = 0;
 		// calculates a projection matrix
 		glm::mat4 ProjectionMatrix() const;
+
+		glm::mat4 PerspectiveProjection() const;
 		glm::mat4 OrthoProjection() const;
 
-		void SetFov(float fov) { m_Fov = fov; }
-		float GetFov() { return m_Fov; }
-		void SetAspectRatio(float aspect) { m_AspectRatio = aspect; }
-		float GetAspectRatio() { return m_AspectRatio; }
-		void SetNearFar(float nearPlane, float farPlane) { m_Near = nearPlane; m_Far = farPlane; }
+		void SetOrthographic(bool value) { m_IsOrthographic = value; }
+		bool IsOrthographic() const { return m_IsOrthographic; }
 
+		void SetFov(float fov) { m_Fov = fov; }
+		float GetFov() const { return m_Fov; }
+
+		void SetZoom(float amount) { m_ZoomLevel = amount; }
+		float GetZoom() const { return m_ZoomLevel; }
+
+		void SetAspectRatio(float aspect) { m_AspectRatio = aspect; }
+		float GetAspectRatio() const { return m_AspectRatio; }
+		void LockAspectRatio(bool value = true) { m_LockAspectRatio = value; }
+		bool IsAspectRatioLocked() const { return m_LockAspectRatio; }
+
+		void SetNearFar(float nearPlane, float farPlane) { m_Near = nearPlane; m_Far = farPlane; }
+		glm::vec2 GetNearFar() const { return glm::vec2(m_Near, m_Far); }
 
 		bool operator ==(const Camera& other)
 		{
@@ -37,11 +49,15 @@ namespace Pixie
 				&& m_Far == other.m_Far;
 		}
 	protected:
+		bool m_IsOrthographic{ false };
+		bool m_LockAspectRatio{ false };
 
 		float m_Fov{ 45.0f };
 		float m_ZoomLevel{ 1.0f };
 		float m_AspectRatio{ 1280.0f / 720.0f };
-		float m_Near{ 0.1f };
+		float m_ManualRatio{ 1280.0f / 720.0f };
+
+		float m_Near{ 0.01f };
 		float m_Far{ 100.0f };
 
 		float m_CameraSpeed{ 10.0f };

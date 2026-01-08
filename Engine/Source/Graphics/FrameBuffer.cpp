@@ -25,7 +25,7 @@ namespace Pixie
 	{
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void FrameBuffer::UnBind()

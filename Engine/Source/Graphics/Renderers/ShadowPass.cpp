@@ -37,6 +37,7 @@ namespace Pixie
 		entt::registry& registry = sceneToRender.GetRegistry();
 		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
 
+		glCullFace(GL_FRONT);
 		for (auto entity : group)
 		{
 			TransformComponent& transform = group.get<TransformComponent>(entity);
@@ -46,7 +47,8 @@ namespace Pixie
 
 			mesh.RenderWithoutMaterial(*m_Shader);
 		}
-
+		glCullFace(GL_BACK);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		m_Shader->EndUse();
 	}
 

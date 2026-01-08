@@ -16,6 +16,10 @@ namespace Pixie
 		std::string Name{ "Camera Component" };
 		bool IsActive{ false };
 		bool IsDefault{ false };
+		bool IsOrthographic() { return Cam.IsOrthographic(); }
+		void SetOrthographic(bool value) { Cam.SetOrthographic(value); }
+		void LockAspectRatio(bool value = true) { Cam.LockAspectRatio(value); }
+		bool IsAspectRatioLocked() const { return Cam.IsAspectRatioLocked(); }
 
 
 		static void Serialize(StreamWriter* stream, const CameraComponent& component)

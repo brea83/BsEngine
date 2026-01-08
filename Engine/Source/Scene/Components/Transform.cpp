@@ -51,9 +51,9 @@ namespace Pixie
     {
         glm::vec3 direction;
 
-        direction.x = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
-        direction.y = sin(m_EulerRotation.y);
-        direction.z = sin(m_EulerRotation.x) * cos(m_EulerRotation.y);
+        direction.x = cos(m_EulerRotation.y) * cos(m_EulerRotation.x);
+        direction.y = sin(m_EulerRotation.x);
+        direction.z = sin(m_EulerRotation.y) * cos(m_EulerRotation.x);
 
         return glm::normalize(direction);
     }

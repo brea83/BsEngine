@@ -66,6 +66,9 @@ namespace Pixie
 		Scene* m_Scene{ nullptr };
 		entt::entity m_EntityHandle{ entt::null };
 
+		static void WarnSceneNull(entt::entity entityHandle, const std::string& attemptedAction);
+		static void WarnEntityInvalid(const std::string& attemptedAction);
+
 	private:
 		friend class SceneHierarchyPanel;
 
@@ -76,6 +79,11 @@ namespace Pixie
 	template <typename Type>
 	inline bool Entity::HasCompoenent() const
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "check components");
+			return false;
+		}
 		const entt::registry& registry = m_Scene->GetRegistry();
 		return registry.any_of<Type>(m_EntityHandle);
 	}
@@ -84,6 +92,12 @@ namespace Pixie
 	template <typename Type, typename... Args>
 	inline Type& Entity::AddComponent(Args&&... args)
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "add a component");
+			assert(m_Scene != nullptr);
+		}
+
 		if (HasCompoenent<Type>()) Logger::Log(LOG_WARNING, "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT");
 		Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
 		m_Scene->OnComponentAdded<Type>(*this, component);
@@ -93,6 +107,12 @@ namespace Pixie
 	template<typename Type, typename... Args>
 	inline Type& Entity::AddOrReplaceComponent(Args&&... args)
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "add or replace a component");
+			assert(m_Scene != nullptr);
+		}
+
 		Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
 		m_Scene->OnComponentAdded<Type>(*this, component);
 		return component;
@@ -101,6 +121,11 @@ namespace Pixie
 	template <typename Type>
 	inline Type& Entity::GetComponent() const
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "get a component");
+			assert(m_Scene != nullptr);
+		}
 		if (!HasCompoenent<Type>()) Logger::Log(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
 		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 	}
@@ -108,12 +133,30 @@ namespace Pixie
 	template <typename Type>
 	inline Type* Entity::TryGetComponent() const
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "get a component as a pointer");
+			return nullptr;
+		}
+
+		if (m_EntityHandle == entt::null || m_EntityHandle == entt::tombstone)
+		{
+			WarnEntityInvalid("get a component as a pointer");
+			return nullptr;
+		}
+
 		return m_Scene->GetRegistry().try_get<Type>(m_EntityHandle);
 	}
 
 	template <typename Type, typename... Args>
 	inline Type& Entity::GetOrAddComponent(Args&&... args)
 	{
+		if (m_Scene == nullptr)
+		{
+			WarnSceneNull(m_EntityHandle, "get a component or add it if missing");
+			assert(m_Scene != nullptr);
+		}
+
 		if (!HasCompoenent<Type>())
 		{
 			Type& component = m_Scene->GetRegistry().emplace<Type>(m_EntityHandle, std::forward<Args>(args)...);

@@ -19,7 +19,7 @@ namespace Pixie
 	{
 		TransformComponent& transform = AddComponent<TransformComponent>();
 		transform.SetPosition(glm::vec3(0.0f, 10.0f, -15.0f));
-		transform.SetRotationEuler(glm::vec3(100.0f, -30.0f, 0.0f));
+		transform.SetRotationEuler(glm::vec3(-30.0f, 180.0f, 0.0f));
 
 		CameraComponent& cameraComponent = AddComponent<CameraComponent>();
 		cameraComponent.Cam.SetFov(fov);

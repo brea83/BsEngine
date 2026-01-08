@@ -33,8 +33,8 @@ namespace Pixie
 		void OnUpdate(float deltaTime, GameObject& gameObject);
 
 		bool OnEvent(Event& event);
-		bool HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime);
-		bool HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime);
+		//bool HandleKeyInput(TransformComponent* transform, Inputs::Keyboard keyCode, float deltaTime);
+		//bool HandleMouseLook(TransformComponent* transform, float xOffset, float yOffset, float deltaTime);
 		
 		CameraMoveType GetMoveType(){ return m_Type; }
 		void SetMoveType(CameraMoveType type);
@@ -46,6 +46,7 @@ namespace Pixie
 		void SetRotationSpeed(float value) { m_RotationSpeed = value; }
 
 		void OnViewportSizeChange(float width, float height);
+
 
 		static void Serialize(StreamWriter* stream, const CameraController& component)
 		{

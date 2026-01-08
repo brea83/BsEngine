@@ -25,11 +25,15 @@ namespace Pixie
             int Flags{ 0 };
         };
         static bool DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue = 0.0f, float columnWidth = 5.0f);
+        static bool DrawVec2Control(const std::string& label, glm::vec2& values, glm::vec2 resetValues = glm::vec2(0.0f), float columnWidth = 5.0f);
         static bool DrawFloatControl(const std::string& label, float& value, SliderParams params, float columnWidth = 5.0f);
 
         static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth = 10.0f);
 
         static void DrawComponents(Scene* scene, GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
+
+        static void DrawOrthographicCamProps(Camera& camera);
+        static void DrawPerspectiveCamProps(Camera& camera);
 
         static bool FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth = 10.0f);
     };

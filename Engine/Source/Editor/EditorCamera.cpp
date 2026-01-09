@@ -26,8 +26,9 @@ namespace Pixie
 		cameraComponent.Cam.SetAspectRatio(aspectRatio);
 		cameraComponent.Cam.SetNearFar(nearClip, farClip);
 
-		AddComponent<CameraController>();
-
+		CameraController& controller = AddComponent<CameraController>();
+		Entity entityAccessor = Entity(entity, scene);
+		controller.Init(entityAccessor);
 
 	}
 

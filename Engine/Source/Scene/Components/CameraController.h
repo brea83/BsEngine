@@ -11,6 +11,7 @@ namespace Pixie
 	class TransformComponent;
 	struct CameraComponent;
 	class GameObject;
+	class Entity;
 
 	enum class CameraMoveType
 	{
@@ -27,6 +28,7 @@ namespace Pixie
 	public:
 		CameraController() = default;
 		//CameraController(entt::entity entity) : m_CameraEntity(entity) {}
+		void Init(Entity& gameObject);
 
 		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
 
@@ -68,6 +70,7 @@ namespace Pixie
 		bool m_Rotation{ false };
 		glm::vec3 m_CameraPosition{ 0.0f };
 		glm::vec3 m_FocalPoint{ 0.0f };
+		bool m_FocalPointDirty{ false };
 
 		glm::vec2 m_ViewportSize{ 0.0f };
 		float m_Distance{10.0f};

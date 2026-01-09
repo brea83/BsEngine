@@ -45,7 +45,8 @@ namespace Pixie
 				if (ImGui::Selectable("Camera Component"))
 				{
 					selected.AddComponent<CameraComponent>();
-					selected.AddComponent<CameraController>();
+					CameraController& controller = selected.AddComponent<CameraController>();
+					controller.Init(selected);
 				}
 				if (ImGui::Selectable("Light"))
 				{
@@ -571,6 +572,8 @@ namespace Pixie
 			}
 			ImGui::PopID();
 		}
+
+		if(selected.HasCompoenent<CameraController>())
 
 		if (selected.HasCompoenent<LightComponent>())
 		{

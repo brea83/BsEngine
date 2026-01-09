@@ -73,11 +73,14 @@ namespace Pixie
 			glm::vec3 forward = lightTransform.Forward();//glm::normalize(light.Direction);
 			glm::vec3 forwardDegrees = glm::degrees(forward);
 
-			hypotheticalLightPos = -20.0f * forward;
+			hypotheticalLightPos = -1.0f * forward;
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
 			m_LightTransfrom->SetRotationEuler(glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
 			
-			m_LightProjection = CameraManager::GetProjectionOutView(*m_LightCamera, *m_LightTransfrom, m_LightView);
+			m_LightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+			m_LightView = glm::lookAt(hypotheticalLightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+
+			//m_LightProjection = CameraManager::GetProjectionOutView(*m_LightCamera, *m_LightTransfrom, m_LightView);
 			//m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 			lightSpaceMatrix = m_LightProjection * m_LightView;
 

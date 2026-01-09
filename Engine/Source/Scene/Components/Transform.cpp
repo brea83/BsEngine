@@ -38,12 +38,21 @@ namespace Pixie
         m_ParentGuid = 0;
     }
 
+    void TransformComponent::SetPosition(glm::vec3 value)
+    {
+        m_Position = value;
+        m_PositionDirty = true;
+    }
+
     glm::vec3 TransformComponent::GetPosition()
     {
-        if(!m_PositionDirty) return m_Position;
+        if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
+        {
+            RecalculateModelMatrix();
+        }
 
-        m_LocalMatrix = glm::translate(m_LocalMatrix, m_Position);
-        m_PositionDirty = false;
+       /* m_LocalMatrix = glm::translate(m_LocalMatrix, m_Position);
+        m_PositionDirty = false;*/
         return m_Position;
     }
 
@@ -51,9 +60,9 @@ namespace Pixie
     {
         glm::vec3 direction;
 
-        direction.x = cos(m_EulerRotation.y) * cos(m_EulerRotation.x);
+        direction.x = cos(m_EulerRotation.x) * sin(m_EulerRotation.y);
         direction.y = sin(m_EulerRotation.x);
-        direction.z = sin(m_EulerRotation.y) * cos(m_EulerRotation.x);
+        direction.z = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
 
         return glm::normalize(direction);
     }
@@ -70,7 +79,11 @@ namespace Pixie
 
     glm::vec3 TransformComponent::Right() const
     {
-        return  glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        glm::vec3 right;
+        right.x = sin(m_EulerRotation.y - 3.14f / 2.0f);
+        right.y = 0;
+        right.z = cos(m_EulerRotation.y - 3.14f / 2.0f);
+        return  glm::normalize(right); // glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
     glm::vec3 TransformComponent::Down() const

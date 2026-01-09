@@ -31,7 +31,8 @@ namespace Pixie
 		GUID m_ParentGuid{ 0 };
 		GUID m_Guid{ 0 };
 
-		void SetPosition(glm::vec3 value) { m_Position = value; m_PositionDirty = true; }
+		void SetPosition(glm::vec3 value);
+	
 		glm::vec3 GetPosition();
 		const glm::vec3 ReadOnlyPosition() const { return m_Position; }
 

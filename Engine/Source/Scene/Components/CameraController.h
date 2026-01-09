@@ -28,7 +28,8 @@ namespace Pixie
 	public:
 		CameraController() = default;
 		//CameraController(entt::entity entity) : m_CameraEntity(entity) {}
-		void Init(Entity& gameObject);
+		void UpdateFocalPoint(Entity& gameObject);
+		void UpdateFocalPoint(TransformComponent& transform);
 
 		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
 
@@ -46,6 +47,9 @@ namespace Pixie
 
 		float GetRotationSpeed() const { return m_RotationSpeed; }
 		void SetRotationSpeed(float value) { m_RotationSpeed = value; }
+
+		glm::vec3 GetFocalPoint()const { return m_FocalPoint; }
+		float GetFocalPointDistance() const { return m_Distance; }
 
 		void OnViewportSizeChange(float width, float height);
 
@@ -66,6 +70,7 @@ namespace Pixie
 		/*entt::entity m_CameraEntity{ entt::null };
 		Scene* m_Scene{ nullptr };*/
 		CameraMoveType m_Type{ CameraMoveType::END };
+		
 
 		bool m_Rotation{ false };
 		glm::vec3 m_CameraPosition{ 0.0f };

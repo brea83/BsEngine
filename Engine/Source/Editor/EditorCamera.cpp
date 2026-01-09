@@ -27,8 +27,8 @@ namespace Pixie
 		cameraComponent.Cam.SetNearFar(nearClip, farClip);
 
 		CameraController& controller = AddComponent<CameraController>();
-		Entity entityAccessor = Entity(entity, scene);
-		controller.Init(entityAccessor);
+		//Entity entityAccessor = Entity(entity, scene);
+		//controller.UpdateFocalPoint(entityAccessor);
 
 	}
 

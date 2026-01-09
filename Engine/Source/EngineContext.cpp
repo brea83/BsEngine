@@ -218,8 +218,15 @@ namespace Pixie
 		//dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FUNCTION(EngineContext::OnMouseMoved));
 
 		if (!event.Handled) m_ActiveScene->OnEvent(event);
+	/*	if (event.GetEventType() == EventType::KeyPressed)
+		{
+			Logger::Log(LogLevel::Trace,"{} BEFORE ImGUILayer it is handled == {}", event.ToString(), event.Handled);
+		}*/
 		if (!event.Handled) m_ImGuiLayer->OnEvent(event);
-		//Logger::Log(LogLevel::Trace, event.ToString());
+		/*if (event.GetEventType() == EventType::KeyPressed)
+		{
+			Logger::Log(LogLevel::Trace, "{} AFTER ImGUILayer it is handled == {}", event.ToString(), event.Handled);
+		}*/
 	}
 
 

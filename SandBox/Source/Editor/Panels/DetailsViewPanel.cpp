@@ -46,7 +46,7 @@ namespace Pixie
 				{
 					selected.AddComponent<CameraComponent>();
 					CameraController& controller = selected.AddComponent<CameraController>();
-					controller.Init(selected);
+					//controller.UpdateFocalPoint(selected);
 				}
 				if (ImGui::Selectable("Light"))
 				{
@@ -573,7 +573,41 @@ namespace Pixie
 			ImGui::PopID();
 		}
 
-		if(selected.HasCompoenent<CameraController>())
+		if (selected.HasCompoenent<CameraController>())
+		{
+			ImGui::PushID("CameraController");
+			ImGui::Separator();
+			CameraController& component = selected.GetComponent<CameraController>();
+
+			ImGui::Text("Camera Controller");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+			ImGui::SetItemTooltip("Cannot Remove Controller via ui at this time");
+			ImGui::Separator();
+
+			ImGui::Text("Focal Point");
+			ImGui::SameLine();
+			glm::vec3 focalPoint = component.GetFocalPoint();
+			float focalDistance = component.GetFocalPointDistance();
+
+			ImGui::BeginDisabled();
+			ImGui::InputFloat3("##readOnly", glm::value_ptr(focalPoint));
+
+			ImGui::Text("Distance to Focal Point");
+			ImGui::InputFloat("##readOnlyDistance", &focalDistance);
+
+			ImGui::EndDisabled();
+
+			ImGui::PopID();
+		}
 
 		if (selected.HasCompoenent<LightComponent>())
 		{

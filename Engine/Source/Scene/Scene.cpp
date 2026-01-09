@@ -327,6 +327,8 @@ namespace Pixie
 
 	template<>
 	 void Scene::OnComponentAdded<CameraController>(Entity& entity, CameraController& component)
-	{}
+	{
+		 component.UpdateFocalPoint(entity);
+	}
 	
 }

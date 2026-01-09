@@ -17,14 +17,23 @@
 
 namespace Pixie
 {
-	void CameraController::Init(Entity& gameObject)
+	void CameraController::UpdateFocalPoint(Entity& gameObject)
 	{
-		if (!gameObject.HasCompoenent<TransformComponent>()) return;
+		if (!gameObject.HasCompoenent<TransformComponent>())
+		{
+			Logger::Log(LOG_WARNING, "Cam Controller on entity {}: Tried to set focal point without a transform component, focal point defaults to (0,0,0)", (int)gameObject.GetEnttHandle());
+			return;
+		}
 
 		//CameraComponent& camComponent = gameObject.GetComponent<CameraComponent>();
 		TransformComponent& transform = gameObject.GetComponent<TransformComponent>();
 
-		m_FocalPoint = transform.Forward() * m_Distance;
+		m_FocalPoint = transform.GetPosition() + (transform.Forward() * m_Distance);
+	}
+
+	void CameraController::UpdateFocalPoint(TransformComponent& transform)
+	{
+		m_FocalPoint = transform.GetPosition() + (transform.Forward() * m_Distance);
 	}
 
 	void CameraController::OnUpdate(float deltaTime, GameObject& gameObject)
@@ -88,22 +97,30 @@ namespace Pixie
 			// offset is not too close to zero so do the rotation
 			glm::vec3 rotation = transform.GetRotationEuler(AngleType::Degrees);
 			transform.SetRotationEuler(glm::vec3(rotation.x + offset.y, rotation.y + offset.x, rotation.z), AngleType::Degrees);
+			m_MouseDelta = glm::vec2(0.0f);
 		}
 
 		// will need to modify this to properly detect deadzones when analog move inputs are implemented right now key pressed are whole numbers though
 		if (m_TranslationDirection.x != 0.0f || m_TranslationDirection.y != 0.0f || m_TranslationDirection.z != 0.0f)
 		{
 			glm::vec3 direction = glm::normalize(m_TranslationDirection);
-		
 			float velocity = m_TranslationSpeed * deltaTime; // adjust accordingly
+
+			glm::vec3 forward = transform.Forward() * m_TranslationDirection.z;
+			glm::vec3 right = transform.Right() * m_TranslationDirection.x;
+			glm::vec3 up = transform.Up() * m_TranslationDirection.y;
+
 			glm::vec3 currentPosition = transform.GetPosition();
 
-			transform.SetPosition(currentPosition + (velocity * direction));
+			transform.SetPosition(currentPosition + (velocity * (forward + right + up)));
+			/*transform.SetPosition(currentPosition + (velocity * right));
+			transform.SetPosition(currentPosition + (velocity * up));*/
 		}
 
 		if (m_ScrollDelta != 0.0f) MouseZoom(camComponent);
 
 		// update focal point position
+		UpdateFocalPoint(transform);
 	}
 
 	bool CameraController::OnEvent(Event& event)
@@ -178,6 +195,9 @@ namespace Pixie
 			case Inputs::Keyboard::LeftControl:
 				m_TranslationDirection.y = -1;
 				return true;
+			case Inputs::Keyboard::Tab:
+				SetMoveType(CameraMoveType::END);
+				return true;
 			default:
 				return false;
 				break;
@@ -192,12 +212,8 @@ namespace Pixie
 			if (m_Type != CameraMoveType::Fly)
 			{
 				SetMoveType(CameraMoveType::Fly);
+				return true;
 			}
-			else
-			{
-				SetMoveType(CameraMoveType::END);
-			}
-			return true;
 		}
 
 		return false;
@@ -257,7 +273,7 @@ namespace Pixie
 		}
 
 		m_MouseDelta = m_prevMousePosition - currentMouse;
-		m_MouseDelta *= 0.003f;
+		//m_MouseDelta *= 0.003f;
 		m_prevMousePosition = currentMouse;
 
 		return true;
@@ -340,9 +356,9 @@ namespace Pixie
 
 	void CameraController::MousePan(float deltaTime, Pixie::TransformComponent& transform)
 	{
-		glm::vec2 speed = PanSpeed();
+		glm::vec2 speed = PanSpeed() * deltaTime;
 		m_FocalPoint += -transform.Right() * m_MouseDelta.x * speed.x * m_Distance;
-		m_FocalPoint += transform.Up() * m_MouseDelta.y * speed.y * m_Distance;
+		m_FocalPoint += transform.Up() * -m_MouseDelta.y * speed.y * m_Distance;
 
 		m_MouseDelta = glm::vec2(0.0f, 0.0f);
 		m_FocalPointDirty = true;
@@ -352,13 +368,16 @@ namespace Pixie
 	{
 		float yawSign = transform.Up().y < 0 ? -1.0f : 1.0f;
 
-		float xOffset = yawSign * m_MouseDelta.x * RotationSpeed();
-		float yOffset = m_MouseDelta.y * RotationSpeed();
+		float sensitivity = m_RotationSpeed * deltaTime;
+
+		float xOffset = yawSign * m_MouseDelta.x * sensitivity;
+		float yOffset = m_MouseDelta.y * sensitivity;
 
 		glm::vec3 rotation = transform.GetRotationEuler(AngleType::Degrees);
 		transform.SetRotationEuler(glm::vec3(rotation.x + yOffset, rotation.y + xOffset, rotation.z), AngleType::Degrees);
 		
 		m_MouseDelta = glm::vec2(0.0f, 0.0f);
+		UpdateFocalPoint(transform);
 	}
 
 	void CameraController::MouseZoom( CameraComponent& camera)

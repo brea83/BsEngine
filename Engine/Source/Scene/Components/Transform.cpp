@@ -58,32 +58,33 @@ namespace Pixie
 
     glm::vec3 TransformComponent::Forward() const
     {
-        glm::vec3 direction;
+        //glm::vec3 direction;
 
-        direction.x = cos(m_EulerRotation.x) * sin(m_EulerRotation.y);
-        direction.y = sin(m_EulerRotation.x);
-        direction.z = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
+        //direction.x = cos(m_EulerRotation.x) * sin(m_EulerRotation.y);
+        //direction.y = sin(m_EulerRotation.x);
+        //direction.z = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
 
-        return glm::normalize(direction);
+        return -1.0f * glm::normalize(m_LocalMatrix[2]);//glm::normalize(direction);
     }
 
     glm::vec3 TransformComponent::Up() const
     {
-        return glm::normalize(glm::cross(Right(), Forward()));
+        return glm::normalize(m_LocalMatrix[1]);//glm::normalize(glm::cross(Right(), Forward()));
     }
 
     glm::vec3 TransformComponent::Left() const
     {
-        return Right() * -1.0f;
+        return glm::normalize(m_LocalMatrix[0]);
     }
 
     glm::vec3 TransformComponent::Right() const
     {
-        glm::vec3 right;
-        right.x = sin(m_EulerRotation.y - 3.14f / 2.0f);
-        right.y = 0;
-        right.z = cos(m_EulerRotation.y - 3.14f / 2.0f);
-        return  glm::normalize(right); // glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+
+        //glm::vec3 right;
+        //right.x = sin(m_EulerRotation.y - 3.14f / 2.0f);
+        //right.y = 0;
+        //right.z = cos(m_EulerRotation.y - 3.14f / 2.0f);
+        return  -1.0f * glm::normalize(m_LocalMatrix[0]);//glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
     glm::vec3 TransformComponent::Down() const

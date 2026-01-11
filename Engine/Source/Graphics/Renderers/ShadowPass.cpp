@@ -20,7 +20,7 @@ namespace Pixie
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
 
-		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/SimpleDepthVertex.glsl", "../Assets/Shaders/EmptyFragment.glsl");
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/SimpleDepthVertex.glsl", "../Assets/Shaders/SimpleDepthFragment.glsl");
 	}
 
 	ShadowPass::~ShadowPass()

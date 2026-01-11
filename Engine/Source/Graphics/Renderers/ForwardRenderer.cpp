@@ -38,6 +38,14 @@ namespace Pixie
 		m_LightCamera->SetZoom(20.0f);
 
 		m_LightTransfrom = std::make_shared<TransformComponent>();
+
+		m_GridShader = AssetLoader::LoadShader("../Assets/Shaders/GridVertex.glsl", "../Assets/Shaders/GridFragment.glsl");
+
+		if (m_GridShader == nullptr)
+			m_DrawGridEnabled = false;
+		else
+			m_DrawGridEnabled = true;
+
 	}
 
 	void ForwardRenderer::BeginFrame(Scene& scene)

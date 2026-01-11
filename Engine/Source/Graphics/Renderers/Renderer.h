@@ -8,6 +8,7 @@
 namespace Pixie
 {
 	class EngineContext;
+	class Shader;
 
 	class Renderer
 	{
@@ -19,11 +20,18 @@ namespace Pixie
 
 		std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
 		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentID(); }
+
+		std::shared_ptr<Shader> GetGridShader() { return m_GridShader; }
+		void EnableGridShader(bool value) { m_DrawGridEnabled = value; }
+		bool IsGridShaderEnabled() { return m_DrawGridEnabled; }
 	protected:
 		EngineContext* m_Engine;
 		std::vector<std::unique_ptr<RenderPass>> m_Passes;
 
 		std::shared_ptr<FrameBuffer> m_FrameBuffer;
+
+		bool m_DrawGridEnabled;
+		std::shared_ptr<Shader> m_GridShader;
 	};
 
 }

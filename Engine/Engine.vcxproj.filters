@@ -159,6 +159,9 @@
     <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />
     <None Include="..\Assets\Shaders\EmptyFragment.glsl" />
     <None Include="..\Assets\Shaders\SimpleDepthVertex.glsl" />
+    <None Include="..\Assets\Shaders\GridFragment.glsl" />
+    <None Include="..\Assets\Shaders\GridVertex.glsl" />
+    <None Include="..\Assets\Shaders\SimpleDepthFragment.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

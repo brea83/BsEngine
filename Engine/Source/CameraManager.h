@@ -42,7 +42,7 @@ namespace Pixie
 		GameObject GetActiveCameraObject();
 		void SetActiveCamera(GameObject& gameObject);
 		void SetDefaultCamera(GameObject& gameObject);
-		void SetEditorCamActive() { m_ActiveCamera = m_EditorCamera; }
+		void SetEditorCamActive();
 
 		static glm::mat4 GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix);
 

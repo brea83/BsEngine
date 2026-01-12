@@ -201,8 +201,29 @@ namespace Pixie
             previousCamera.IsActive = false;
         }
 
+        glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+        nextCamera->Cam.SetAspectRatio(viewport.x / viewport.y);
         nextCamera->IsActive = true;
         m_ActiveCamera = gameObject;
+    }
+
+    void CameraManager::SetEditorCamActive()
+    {
+        GameObject editorCam = GameObject(m_EditorCamera, m_Scene);
+        SetActiveCamera(editorCam);
+        //if (m_ActiveCamera == m_EditorCamera) return; // already active
+        //CameraComponent* editorCamComponent = m_Scene->GetRegistry().try_get<CameraComponent>(m_EditorCamera);
+        //if (!editorCamComponent) return; // consider throwing an error if this happens in editor mode?
+
+        //if (m_ActiveCamera != entt::null && m_ActiveCamera != entt::tombstone)
+        //{
+        //    CameraComponent& previousCamera = m_Scene->GetRegistry().get<CameraComponent>(m_ActiveCamera);
+        //    previousCamera.IsActive = false;
+        //}
+
+        //glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+        //editorCamComponent->Cam.SetAspectRatio(viewport.x / viewport.y);
+        //m_ActiveCamera = m_EditorCamera; 
     }
 
     Camera* CameraManager::GetActiveCamera()

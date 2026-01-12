@@ -33,7 +33,7 @@ namespace Pixie
 		float GetZoom() const { return m_ZoomLevel; }
 
 		void SetAspectRatio(float aspect) { m_AspectRatio = aspect; }
-		float GetAspectRatio() const { return m_AspectRatio; }
+		float GetAspectRatio() const { return m_LockAspectRatio ? m_ManualRatio : m_AspectRatio; }
 		void LockAspectRatio(bool value = true) { m_LockAspectRatio = value; }
 		bool IsAspectRatioLocked() const { return m_LockAspectRatio; }
 

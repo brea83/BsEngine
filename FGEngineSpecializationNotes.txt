@@ -785,3 +785,27 @@ this allows us to only calculate light once per fragment
 
 also mentioning uniform buffer objects
 
+================================
+module 3 lecture 7 frustum culling
+================================	
+
+optimization technique to only render what is in the camera's view, before sending things to gpu
+
+frustum defined by 8 verts 
+	  4 for near
+	  4 for far plane
+
+	  common short hand names are NUL = near upper L and FLR far Lower right verts for example.
+
+	  review slides for how verts are calculated
+
+culling is performed with a series of intersection tests, intersection tests returns positive if inside frustum
+
+
+other options include
+	heirarchical culling
+		use knowledge of sceen groups can quickly test a parent and not need to test children
+
+can use quad and oct trees also to reduce tests 
+
+often a good idea to do one of the other culling methods (heirarchical or quad/oct) before fine grain frustum culling for very large scenes especially

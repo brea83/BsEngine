@@ -539,13 +539,14 @@ namespace Pixie
 
 				if (light != nullptr)
 				{
-					glm::vec3 forward = glm::normalize(light->Direction);
+					TransformComponent& lightTransform = mainLight.GetTransform();
+					glm::vec3 forward = lightTransform.Forward();
 					glm::vec3 forwardDegrees = glm::degrees(forward);
 
-					transform.SetPosition(forward * -10.0f);
-					transform.SetRotationEuler(glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
+					transform.SetPosition(forward * -1.0f);
+					transform.SetRotationEuler(lightTransform.GetRotationEuler());
 
-					glm::vec3 rotationDegrees = transform.GetRotationEuler();
+					//glm::vec3 rotationDegrees = transform.GetRotationEuler();
 				}
 
 			}

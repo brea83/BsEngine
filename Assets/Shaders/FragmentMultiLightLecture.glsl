@@ -1,6 +1,7 @@
 #version 330 core
 #define MAX_LIGHTS 6
 
+layout(location = 1) out vec3 screenSpacePos;
 
 //// lightType enum in Component.h
 // enum LightType
@@ -57,6 +58,7 @@ uniform bool bUseShadowMap;
 uniform sampler2D shadowMap;
 uniform float lightNearPlane;
 uniform float lightFarPlane;
+uniform float shadowBiasMult = 1.0; // values under 1 seem better, below zero creates a lot of shadow acne
 
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
@@ -96,8 +98,22 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normalizedNormal)
 	
 	vec3 lightDir = normalize((mainLightPosition) - IN.Pos_WS);
     float bias = max(0.05 * (1.0 - dot(normalizedNormal, lightDir)), 0.005);
-    // check whether current frag pos is in shadow
-     float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	bias *= shadowBiasMult;
+    // check whether current frag pos is in shadow with edge softening 
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for(int x = -1; x <= 1; x++)
+	{
+		for(int y = -1; y <= 1; y++)
+		{
+			float depth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > depth ? 1.0 : 0.0;
+			
+		}
+	}
+	shadow /= 9.0;
+     
+	 //float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 
     return shadow;
 }
@@ -184,6 +200,7 @@ void mainTESTS()
 
 void main()
 {
+	screenSpacePos = gl_FragCoord.xyz;
 	FragColor = vec4(0, 0, 0, 1);
 	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb;
 	//textureColor = pow(textureColor, vec3(Gamma));

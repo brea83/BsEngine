@@ -9,6 +9,7 @@ namespace Pixie
 {
 	class EngineContext;
 	class Shader;
+	class Mesh;
 
 	class Renderer
 	{
@@ -32,6 +33,8 @@ namespace Pixie
 
 		bool m_DrawGridEnabled;
 		std::shared_ptr<Shader> m_GridShader;
+		std::shared_ptr<Mesh> m_EditorGrid;
+
 	};
 
 }

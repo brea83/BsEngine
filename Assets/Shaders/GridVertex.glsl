@@ -18,8 +18,8 @@ uniform int MajorGridDivisions = 10; // suggested range 2 to 25, default 10
 
 out VS_OUT
 {
-   vec3 Pos_WS;
-   vec3 Pos_CS;
+   //vec3 Pos_WS;
+   //vec3 Pos_CS;
    vec4 UV;
    int MajorGridDiv;
 
@@ -29,8 +29,8 @@ void main()
 {
     gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
 
-    OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
-    OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
+    //OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
+    //OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
    
 
    float div = max(2.0, round(MajorGridDivisions));
@@ -38,9 +38,9 @@ void main()
    // this should reduce visual artifacts when far from world origin
 
    vec3 cameraCenteringOffset = floor(cameraPosition / div) * div;
-
-   OUT.UV.yx = (OUT.Pos_WS - cameraCenteringOffset).yz;
-   OUT.UV.wz = OUT.Pos_WS.yz;
+   vec3 position_WS = vec3(transform * vec4(vertexPosition, 1.0));
+   OUT.UV.yx = (position_WS - cameraCenteringOffset).xz;
+   OUT.UV.wz = position_WS.xz;
 
    OUT.MajorGridDiv = MajorGridDivisions;
 }

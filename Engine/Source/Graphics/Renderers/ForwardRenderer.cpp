@@ -8,6 +8,7 @@
 #include "GlfwWrapper.h"
 #include "Scene/GameObject.h"
 #include "Graphics/Camera.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Pixie
 {
@@ -40,8 +41,9 @@ namespace Pixie
 		m_LightTransfrom = std::make_shared<TransformComponent>();
 
 		m_GridShader = AssetLoader::LoadShader("../Assets/Shaders/GridVertex.glsl", "../Assets/Shaders/GridFragment.glsl");
+		m_EditorGrid = AssetLoader::LoadMesh("../Assets/Meshes/DebugGrid.obj");
 
-		if (m_GridShader == nullptr)
+		if (m_GridShader == nullptr || m_EditorGrid == nullptr)
 			m_DrawGridEnabled = false;
 		else
 			m_DrawGridEnabled = true;
@@ -83,10 +85,10 @@ namespace Pixie
 
 			hypotheticalLightPos = -1.0f * forward;
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
-			m_LightTransfrom->SetRotationEuler(glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
+			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());//glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
 			
 			m_LightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			m_LightView = glm::lookAt(hypotheticalLightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());//glm::lookAt(hypotheticalLightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 			//m_LightProjection = CameraManager::GetProjectionOutView(*m_LightCamera, *m_LightTransfrom, m_LightView);
 			//m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -124,7 +126,50 @@ namespace Pixie
 			if (passBuffer != nullptr)
 				m_FrameBuffer->Bind();
 		}
+		
+		// post processing?
+
+		if (m_DrawGridEnabled)
+		{
+			//TODO: set up uniform buffer for camera data to share across shaders
+			GameObject cameraEntity = scene.GetActiveCameraGameObject();
+			if (!cameraEntity) return; // no valid camera to render
+
+			// set up rendering camera info
+			TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
+			glm::vec3 camPosition = transform.GetPosition();
+
+			glm::mat4 viewMatrix{ 1.0f };
+			Camera* mainCam = scene.GetActiveCamera(viewMatrix);
+			if (mainCam == nullptr)
+			{
+				Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
+				return;
+			}
+
+			glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
+
+			m_GridShader->Use();
+			m_GridShader->SetUniformMat4("view", viewMatrix);
+			m_GridShader->SetUniformMat4("projection", projectionMatrix);
+			m_GridShader->SetUniformVec3("cameraPosition", camPosition);
+
+			glm::mat4 transformMatrix = glm::mat4(1.0f); // send an identiy matrix, grid mesh is always at origin
+			glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(5.0f));
+			transformMatrix = transformMatrix * scale;
+			m_GridShader->SetUniformMat4("transform", transformMatrix);
+
+			//glActiveTexture(GL_TEXTURE0);
+			//glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetDepthAttatchmentID());
+			//m_GridShader->SetUniformInt("DepthMap", 0);
+
+			m_EditorGrid->Render(*m_GridShader);
+			//glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		
 	}
+
+	
 
 	void ForwardRenderer::EndFrame(Scene& scene)
 	{

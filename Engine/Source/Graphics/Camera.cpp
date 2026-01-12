@@ -45,6 +45,6 @@ namespace Pixie
 	{
 		float nonZeroZoom = glm::max(0.001f, m_ZoomLevel);
 		float aspectRatio = m_LockAspectRatio ? m_ManualRatio : m_AspectRatio;
-		return glm::ortho(-aspectRatio * nonZeroZoom, aspectRatio * nonZeroZoom, -nonZeroZoom, nonZeroZoom, m_Near, m_Far);
+		return glm::ortho(-aspectRatio * nonZeroZoom, aspectRatio * nonZeroZoom, -nonZeroZoom, nonZeroZoom, -10.0f, 20.0f);
 	}
 }

@@ -5,28 +5,28 @@
 // and on the axis colered variation here https://gist.github.com/bgolus/3a561077c86b5bfead0d6cc521097bae
 // the axis colored variation is written for unity and thus hlsl I believe
 
-struct MaterialData
-{
-	sampler2D ColorTexture;
-	vec3 BaseColor;
-
-	sampler2D NormalMap;
-	bool BUseNormalMap;
-
-	sampler2D MetallicMap;
-	bool BUseMetallicMap;
-	bool BMapIsRoughness;
-
-	vec3 Ao;
-	
-	float Smoothness;
-	float SpecularPower;
-};
+//struct MaterialData
+//{
+//	sampler2D ColorTexture;
+//	vec3 BaseColor;
+//
+//	sampler2D NormalMap;
+//	bool BUseNormalMap;
+//
+//	sampler2D MetallicMap;
+//	bool BUseMetallicMap;
+//	bool BMapIsRoughness;
+//
+//	vec3 Ao;
+//	
+//	float Smoothness;
+//	float SpecularPower;
+//};
 
 in VS_OUT
 {
-   vec3 Pos_WS;
-   vec3 Pos_CS;
+   //vec3 Pos_WS;
+   //vec3 Pos_CS;
    vec4 UV;
    int MajorGridDiv;
 
@@ -34,16 +34,16 @@ in VS_OUT
 
 out vec4 FragColor;
 
-uniform MaterialData Material;
+//uniform MaterialData Material;
 uniform int PlaneAxisEnum; // 0, 1, 2 == XZ, YZ, YX
 
 // all line widths should range between 0 and 1
-uniform float AxisLineWidth = 0.04;
-uniform float MajorLineWidth = 0.02;
+uniform float AxisLineWidth = 0.05;
+uniform float MajorLineWidth = 0.03;
 uniform float MinorLineWidth = 0.01;
 
 uniform vec4 MajorLineColor = vec4(1, 1, 1, 1);
-uniform vec4 MinorLineColor = vec4(1, 1, 1, 1);
+uniform vec4 MinorLineColor = vec4(0.5, 0.5, 0.5, 1);
 
 struct AxisColors 
 {
@@ -58,7 +58,7 @@ uniform vec4 CenterColor = vec4(1, 1, 1, 1);
 
 uniform float AxisDashScale = 1.33;
 
-uniform vec4 BaseColor = vec4(0, 0, 0, 1);
+uniform vec4 BaseColor = vec4(1, 1, 1, 0);
 
 float SaturateF(float value)
 {
@@ -192,4 +192,7 @@ void main()
 	FragColor = mix(BaseColor, MinorLineColor, minorGrid * MinorLineColor.a);
 	FragColor = mix(FragColor, MajorLineColor, majorGrid * MajorLineColor.a);
 	FragColor = FragColor * (1.0 - axisLines.a) + axisLines;
+
+	if(FragColor.a < 0.1)
+        discard;
 }

@@ -14,6 +14,7 @@ namespace Pixie
         static bool Draw(Scene* scene, GameObject& selcected);
 
     protected:
+       // std::string_view m_SelectedName;
         ///Returns true if one of the vector values is changed
         struct SliderParams
         {

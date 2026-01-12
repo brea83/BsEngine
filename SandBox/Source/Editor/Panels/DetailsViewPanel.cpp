@@ -32,6 +32,8 @@ namespace Pixie
 
 			NameComponent& nameComp = selected.GetComponent<NameComponent>();
 			static std::string editingName = nameComp.Name;
+
+
 			DrawStringProperty("Name", nameComp.Name, editingName);
 
 
@@ -288,6 +290,11 @@ namespace Pixie
 					}
 				}
 
+			}
+
+			if (!ImGui::IsItemActivated())
+			{
+				editingValue = value;
 			}
 
 			//ImGui::PopItemWidth();

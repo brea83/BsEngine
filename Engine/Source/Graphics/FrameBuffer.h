@@ -3,6 +3,8 @@
 
 namespace Pixie
 {
+	// ToDo: make FrameBuffers more generic and able to have variable num and types of attatchments
+
 	struct FrameBufferSpecification
 	{
 		uint32_t Width{ 1280 };

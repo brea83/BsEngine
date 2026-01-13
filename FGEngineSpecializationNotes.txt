@@ -809,3 +809,32 @@ other options include
 can use quad and oct trees also to reduce tests 
 
 often a good idea to do one of the other culling methods (heirarchical or quad/oct) before fine grain frustum culling for very large scenes especially
+
+================================
+module 3 lecture 8 LOD
+================================	
+
+basic over view of LOD philosophy (level of detail)
+
+idea is to reduce render cost of high poly objects that are distant and won't be seen well anyway
+
+can have staticaly defined distance based  or screen space error based LOD cascades
+Dynamic LODs adjusted based onf performance metrics like fps
+and some systems use view angle peramaters to determine lod as well
+
+LODs can cause popping, increased memory usage, and the overhead of managing the LODs
+if not set up well can reduce visual quality
+heavier load on artists 
+
+typically lodLevel and dist to cam should be tracked per entity as most meshes are reused
+
+terrain LOD is a special trial
+need to devide mesh into several sub-meshes somehow
+the lod meshes can be made by hand or by code based decimation
+
+-----
+Bilboarding is also a powerful tool for very distant objects, or grasses and leaves closer up
+
+normal maps on bilboards help make them work with your lighting 
+
+

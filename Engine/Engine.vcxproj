@@ -199,6 +199,7 @@
     <ClCompile Include="Source\Resources\StreamWriter.cpp" />
     <ClCompile Include="Source\Resources\StreamReader.cpp" />
     <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
+    <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
@@ -278,6 +279,7 @@
     <ClInclude Include="Source\Events\SubscribableEvent.h" />
     <ClInclude Include="Source\Resources\StreamWriter.h" />
     <ClInclude Include="Source\Resources\StreamReader.h" />
+    <ClInclude Include="Source\Graphics\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\EmptyFragment.glsl" />

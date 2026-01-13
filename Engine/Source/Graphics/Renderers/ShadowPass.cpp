@@ -8,6 +8,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+//ToDo: implement shadow map cascades
 
 namespace Pixie
 {

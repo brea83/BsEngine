@@ -11,8 +11,15 @@ layout (location = 4) in vec3 vertexTangent;
 layout (location = 5) in vec3 vertexBitangent;
 
 uniform mat4 transform;
-uniform mat4 lightViewMat;
-uniform mat4 lightProjMat;
+//uniform mat4 lightViewMat;
+//uniform mat4 lightProjMat;
+
+layout (std140) uniform LightProjectionBlock
+{
+    vec4 mainLightPosition; //alignment 0
+    mat4 lightViewMat;      //         16
+    mat4 lightProjMat;      //        80?
+};
 
 void main()
 {

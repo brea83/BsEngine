@@ -65,6 +65,7 @@
     <ClCompile Include="Source\ImGui\imgui_sink.cpp" />
     <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
+    <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Source\ImGui\imgui_sink.h" />
     <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
+    <ClInclude Include="Source\Graphics\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

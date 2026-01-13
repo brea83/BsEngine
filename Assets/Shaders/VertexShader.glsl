@@ -16,8 +16,14 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPosition;
 
-uniform mat4 lightViewMat;
-uniform mat4 lightProjMat;
+//uniform mat4 lightViewMat;
+//uniform mat4 lightProjMat;
+layout (std140) uniform LightProjectionBlock
+{
+    vec4 mainLightPosition;
+    mat4 lightViewMat;
+    mat4 lightProjMat;
+};
 
 
 uniform sampler2D NormalMap;

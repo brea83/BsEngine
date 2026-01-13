@@ -12,11 +12,8 @@
 
 namespace Pixie
 {
-	ForwardRenderer::ForwardRenderer(/*EngineContext* engineContext*/)
-	{
-		//m_Engine = engineContext;
-		//Init();
-	}
+	ForwardRenderer::ForwardRenderer()
+	{ }
 
 	void ForwardRenderer::Init()
 	{
@@ -39,6 +36,14 @@ namespace Pixie
 		m_LightCamera->SetZoom(20.0f);
 
 		m_LightTransfrom = std::make_shared<TransformComponent>();
+
+		std::vector<uint32_t> shaderIDs;
+		for (size_t i = 0; i < m_Passes.size(); i++)
+		{
+			shaderIDs.push_back(m_Passes[i]->GetShader()->ShaderProgram);
+		}
+
+		m_LightProjectionUBO = UniformBuffer(sizeof(LightProjUboData), GL_DYNAMIC_DRAW, "LightProjectionBlock", shaderIDs);
 
 		m_GridShader = AssetLoader::LoadShader("../Assets/Shaders/GridVertex.glsl", "../Assets/Shaders/GridFragment.glsl");
 		m_EditorGrid = AssetLoader::LoadMesh("../Assets/Meshes/DebugGrid.obj");
@@ -64,11 +69,8 @@ namespace Pixie
 		bool bUseLightMatrix{ false };
 		GameObject mainLight = scene.GetMainLight();
 		glm::mat4 lightSpaceMatrix = glm::mat4();
-		glm::vec3 hypotheticalLightPos{ 1.0f };
-		//glm::mat4 lightProjection = glm::mat4();
-		//glm::mat4 lightView = glm::mat4();
-		float near_plane = 1.0;
-		float far_plane = 7.5f;
+		glm::vec4 hypotheticalLightPos{ 1.0f };
+	
 
 		if (mainLight)
 		{
@@ -77,22 +79,24 @@ namespace Pixie
 			// light direction is used as position with an ortho projection
 			LightComponent& light = mainLight.GetComponent<LightComponent>();
 			TransformComponent lightTransform = mainLight.GetTransform();
-			//glm::vec3 lightPos = -light.Direction;
-			//glm::vec3 cameraRot{90.0f, 0.0, 0.0};
 
-			glm::vec3 forward = lightTransform.Forward();//glm::normalize(light.Direction);
+			glm::vec3 forward = lightTransform.Forward();
 			glm::vec3 forwardDegrees = glm::degrees(forward);
 
-			hypotheticalLightPos = -1.0f * forward;
+			hypotheticalLightPos = glm::vec4(-1.0f * forward, 1);
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
-			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());//glm::vec3(forwardDegrees.y, 180.0f + forwardDegrees.x, forwardDegrees.z), AngleType::Degrees);
+			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
 			
 			m_LightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());//glm::lookAt(hypotheticalLightPos, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
 
-			//m_LightProjection = CameraManager::GetProjectionOutView(*m_LightCamera, *m_LightTransfrom, m_LightView);
-			//m_LightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 			lightSpaceMatrix = m_LightProjection * m_LightView;
+
+			m_LightProjectionUBO.Bind();
+			m_LightProjectionUBO.UpdateVec4(0, hypotheticalLightPos);
+			m_LightProjectionUBO.UpdateMat4(16, m_LightView);
+			m_LightProjectionUBO.UpdateMat4(80, m_LightProjection);
+			m_LightProjectionUBO.UnBind();
 
 			bUseLightMatrix = true;
 		}
@@ -109,12 +113,11 @@ namespace Pixie
 			shader->SetUniformBool("bUseShadowMap", bUseLightMatrix);
 			if (bUseLightMatrix)
 			{
-				
-				shader->SetUniformVec3("mainLightPosition", hypotheticalLightPos);
+				// ToDo: move this data to a Uniform Buffer for better sharing across shaders
+				/*shader->SetUniformVec3("mainLightPosition", hypotheticalLightPos);
 				shader->SetUniformMat4("lightViewMat", m_LightView);
 				shader->SetUniformMat4("lightProjMat", m_LightProjection);
-				shader->SetUniformFloat("lightNearPlane", near_plane);
-				shader->SetUniformFloat("lightFarPlane", far_plane);
+				*/
 			}
 
 			m_Passes[i]->Execute(scene, prevPassDepth, prevPassColor);

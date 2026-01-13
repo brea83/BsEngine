@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderer.h"
+#include "Graphics/UniformBuffer.h"
 
 namespace Pixie
 {
@@ -19,6 +20,15 @@ namespace Pixie
 		std::shared_ptr<TransformComponent> m_LightTransfrom{ nullptr };
 		glm::mat4 m_LightProjection{glm::mat4(1)};
 		glm::mat4 m_LightView{glm::mat4(1)};
+		UniformBuffer m_LightProjectionUBO;
+
+
+		struct LightProjUboData
+		{
+			glm::vec4 mainLightPosition;
+			glm::mat4 lightViewMatrix;
+			glm::mat4 lightProjectionMatrix;
+		};
 	};
 
 }

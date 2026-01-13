@@ -3,6 +3,13 @@
 
 layout(location = 1) out vec3 screenSpacePos;
 
+layout (std140) uniform LightProjectionBlock
+{
+    vec4 mainLightPosition;
+    mat4 lightViewMat;
+    mat4 lightProjMat;
+};
+
 //// lightType enum in Component.h
 // enum LightType
 //    {
@@ -71,7 +78,7 @@ uniform vec3 lightAttenuation[MAX_LIGHTS];
 uniform float innerRadius[MAX_LIGHTS];
 uniform float outerRadius[MAX_LIGHTS];
 
-uniform vec3 mainLightPosition;
+//uniform vec3 mainLightPosition;
 uniform int activeLights;
 //uniform DirectionalLightData MainLight;
 uniform bool BUseLights;
@@ -96,7 +103,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normalizedNormal)
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 	
-	vec3 lightDir = normalize((mainLightPosition) - IN.Pos_WS);
+	vec3 lightDir = normalize((mainLightPosition.xyz) - IN.Pos_WS);
     float bias = max(0.05 * (1.0 - dot(normalizedNormal, lightDir)), 0.005);
 	bias *= shadowBiasMult;
     // check whether current frag pos is in shadow with edge softening 
@@ -157,45 +164,6 @@ vec3 GetDirectionalSpecular(float nDotH, vec3 lightColor, float smoothness, floa
 vec3 GetSpotSpecular(float nDotH, vec3 lightColor, float smoothness, float specularPower, float lightDistance, vec3 attenuation, float cutoff)
 {
 	return vec3(0,0,0);
-}
-
-void mainTESTS()
-{
-//	FragColor = vec4(0, 0, 0, 1);
-//	FragColor.rgb = texture(shadowMap, IN.UV).rgb;
-
-//		float shadowDepth = texture(shadowMap, IN.UV).r;
-//		FragColor = vec4(vec3(LinearizeDepth(shadowDepth) / lightFarPlane), 1.0);  perspective
-		//FragColor = vec4(vec3(shadowDepth), 1.0); // orthographic
-		
-		vec3 N;
-		vec3 V;
-
-		if(Material.BUseNormalMap)
-		{
-			vec3 sampledNormal = texture(Material.NormalMap, IN.UV).rgb;
-			sampledNormal = normalize((sampledNormal * 2.0) - 1.0);
-			N = sampledNormal;
-			V = IN.TBN * normalize(IN.CameraPos_WS.xyz - IN.Pos_WS);
-		}
-		else
-		{
-			N = normalize(IN.Normal_WS);
-			V = normalize(IN.CameraPos_WS.xyz - IN.Pos_WS);
-		}
-
-	float shadow = ShadowCalculation(IN.Pos_LS, N);
-	FragColor = vec4(vec3(shadow),1);
-
-	//FragColor = vec4(IN.Pos_LS.xyz, 1);
-//	if(FragColor.x == 0.0)
-//	{
-//		FragColor = vec4(1, 0, 0, 1);
-//	}
-//	else
-//	{
-//		FragColor = vec4(0.5, 1, 0.5, 1);
-//	}
 }
 
 void main()
@@ -303,8 +271,7 @@ void main()
 			
 		}	
 		FragColor.rgb = (ambientLight.xyz + (1.0 - shadowMask) * (accumulatedDiffuse + accumulatedSpecular)) * textureColor;
-		//FragColor.xyz = accumulatedSpecular;
-		//FragColor.xyz =  accumulatedSpecular;
+		
 
 	}
 	else

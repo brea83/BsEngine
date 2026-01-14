@@ -838,3 +838,26 @@ Bilboarding is also a powerful tool for very distant objects, or grasses and lea
 normal maps on bilboards help make them work with your lighting 
 
 
+================================
+module 3 lecture 9 audio
+================================
+
+audio playback apis
+	windows built in
+	open AL
+	FMOD
+
+some requirements are 
+	real time 
+	low latency
+	needs to have its own thread or strong protections against lag
+
+will need an audio manager
+	keep track of assets, 
+	current playing\
+	relay requests and buffering to audio api
+
+common formats .wav, .mp3, .ogg
+
+see slides for examples about .ogg ogg vorbis streaming using open AL
+

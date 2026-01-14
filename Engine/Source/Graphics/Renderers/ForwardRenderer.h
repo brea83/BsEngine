@@ -36,6 +36,10 @@ namespace Pixie
 			glm::mat4 projection;
 			glm::vec4 cameraPosition;
 		};
+
+		std::vector<glm::vec4> GetFrustumCornersWS(const glm::mat4& projection, const glm::mat4& view);
+		glm::vec3 GetFrustumCenter(const std::vector<glm::vec4>& frustumCorners);
+
 	};
 
 }

@@ -102,17 +102,19 @@ namespace Pixie
 
 			lightTypes[activeLights] = light.Type;
 
-			lightColors[activeLights * 4 + 0] = light.Color.r;
-			lightColors[activeLights * 4 + 1] = light.Color.g;
-			lightColors[activeLights * 4 + 2] = light.Color.b;
-
 			lightPositions[activeLights * 4 + 0] = lightTransform.GetPosition().x;
 			lightPositions[activeLights * 4 + 1] = lightTransform.GetPosition().y;
 			lightPositions[activeLights * 4 + 2] = lightTransform.GetPosition().z;
 
-			lightDirections[activeLights * 4 + 0] = lightTransform.Forward().x;
-			lightDirections[activeLights * 4 + 1] = lightTransform.Forward().y;
-			lightDirections[activeLights * 4 + 2] = lightTransform.Forward().z;
+			//glm::vec3 direction = lightTransform.GetRotationEuler(AngleType::Radians);
+			//direction = glm::normalize(direction);
+			lightDirections[activeLights * 3 + 0] = lightTransform.Forward().x;
+			lightDirections[activeLights * 3 + 1] = lightTransform.Forward().y;
+			lightDirections[activeLights * 3 + 2] = lightTransform.Forward().z;
+
+			lightColors[activeLights * 4 + 0] = light.Color.r;
+			lightColors[activeLights * 4 + 1] = light.Color.g;
+			lightColors[activeLights * 4 + 2] = light.Color.b;
 
 			lightAttenuations[activeLights * 4 + 0] = light.Attenuation.x;
 			lightAttenuations[activeLights * 4 + 1] = light.Attenuation.y;

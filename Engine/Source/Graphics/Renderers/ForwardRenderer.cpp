@@ -108,6 +108,13 @@ namespace Pixie
 
 		if (mainLight)
 		{
+			//TEMP 
+			// TODO: move camera frustrum fitting somewhere that makes more sense
+
+			std::vector< glm::vec4> frustumWS = GetFrustumCornersWS(projectionMatrix, viewMatrix);
+			glm::vec3 frustumCenter = GetFrustumCenter(frustumWS);
+
+
 			glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
 			float aspectRatio = viewportSize.x / viewportSize.y;
 			// light direction is used as position with an ortho projection
@@ -121,8 +128,39 @@ namespace Pixie
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
 			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
 
-			m_LightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+			m_LightView = lightTransform.GetObjectToWorldMatrix();//glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+			
+
+			glm::vec3 minPointLS{ std::numeric_limits<float>::max() };
+			glm::vec3 maxPointLS{ std::numeric_limits<float>::lowest() };
+
+			for (const glm::vec4& point : frustumWS)
+			{
+				const glm::vec4 pointLS = m_LightView * point;
+
+				minPointLS.x = std::min(minPointLS.x, pointLS.x);
+				minPointLS.y = std::min(minPointLS.y, pointLS.y);
+				minPointLS.z = std::min(minPointLS.z, pointLS.z);
+
+				maxPointLS.x = std::max(maxPointLS.x, pointLS.x);
+				maxPointLS.y = std::max(maxPointLS.y, pointLS.y);
+				maxPointLS.z = std::max(maxPointLS.z, pointLS.z);
+			}
+
+			// zMult needs to be tuned to scene so TODO: parameterize this so it can be changed in editor
+			constexpr float zMult = 10.0f;
+			if (minPointLS.z < 0)
+				minPointLS.z *= zMult;
+			else
+				minPointLS.z /= zMult;
+
+			if (maxPointLS.z < 0)
+				maxPointLS.z /= zMult;
+			else
+				maxPointLS.z *= zMult;
+
+
+			m_LightProjection = glm::ortho<float>(minPointLS.x, maxPointLS.x, minPointLS.y, maxPointLS.y, minPointLS.z, maxPointLS.z);
 
 			lightSpaceMatrix = m_LightProjection * m_LightView;
 
@@ -180,5 +218,44 @@ namespace Pixie
 	void ForwardRenderer::EndFrame(Scene& scene)
 	{
 		m_FrameBuffer->UnBind();
+	}
+
+	std::vector<glm::vec4> ForwardRenderer::GetFrustumCornersWS(const glm::mat4& projection, const glm::mat4& view)
+	{
+		const auto inverse = glm::inverse(projection * view);
+
+		std::vector<glm::vec4> frustumCorners;
+		for (int x = 0; x < 2; x++)
+		{
+			for (int y = 0; y < 2; y++)
+			{
+				for (int z = 0; z < 2; z++)
+				{
+					glm::vec4 point
+					{
+						2.0f * x - 1.0f,
+						2.0f * y - 1.0f,
+						2.0f * z - 1.0f,
+						1.0f
+					};
+
+					point = inverse * point;
+
+					frustumCorners.push_back(point);
+				}
+			}
+		}
+
+		return frustumCorners;
+	}
+	glm::vec3 ForwardRenderer::GetFrustumCenter(const std::vector<glm::vec4>& frustumCorners)
+	{
+		glm::vec3 center{ 0.0f };
+		for (const auto& point : frustumCorners)
+		{
+			center += glm::vec3(point);
+		}
+
+		return center /= frustumCorners.size();
 	}
 }

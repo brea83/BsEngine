@@ -108,7 +108,7 @@ namespace Pixie
         float pitch = glm::pitch(m_Orientation);
         float roll = glm::roll(m_Orientation);
 
-        m_EulerRotation = glm::vec3(yaw, pitch, roll);
+        m_EulerRotation = glm::vec3(pitch, yaw, roll);
         m_RotationDirty;
     }
 
@@ -136,20 +136,20 @@ namespace Pixie
             m_Orientation.x = glm::radians(orientation.x);
             m_Orientation.y = glm::radians(orientation.y);
             m_Orientation.z = glm::radians(orientation.z);
-            float yaw = glm::yaw(m_Orientation);
             float pitch = glm::pitch(m_Orientation);
+            float yaw = glm::yaw(m_Orientation);
             float roll = glm::roll(m_Orientation);
 
-            m_EulerRotation = glm::vec3(yaw, pitch, roll);
+            m_EulerRotation = glm::vec3( pitch, yaw, roll);
         }
         else
         {
             m_Orientation = orientation;
-            float yaw =  glm::yaw(m_Orientation);
             float pitch = glm::pitch(m_Orientation);
+            float yaw =  glm::yaw(m_Orientation);
             float roll = glm::roll(m_Orientation);
 
-            m_EulerRotation = glm::vec3(yaw, pitch, roll);
+            m_EulerRotation = glm::vec3( pitch, yaw, roll);
         }
 
         m_RotationDirty = true;
@@ -221,7 +221,7 @@ namespace Pixie
         glm::mat4 identity = glm::mat4(1.0f);
         glm::mat4 translation = glm::translate(identity, m_Position);
 
-        m_Orientation = glm::normalize(m_Orientation);
+        //m_Orientation = glm::normalize(m_Orientation);
         glm::mat4 rotation = glm::mat4_cast(m_Orientation);
 
     /* glm::mat4 rotation =

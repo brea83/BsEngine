@@ -70,8 +70,8 @@ uniform float shadowBiasMult = 0.21; // values under 1 seem better, below zero c
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
 uniform vec3 lightPosition[MAX_LIGHTS];
-uniform vec3 lightColor[MAX_LIGHTS];
 uniform vec3 lightDirection[MAX_LIGHTS];
+uniform vec3 lightColor[MAX_LIGHTS];
 
 // light attnuation X constant Y linear, Z quadratic
 uniform vec3 lightAttenuation[MAX_LIGHTS];

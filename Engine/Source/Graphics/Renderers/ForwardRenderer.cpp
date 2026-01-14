@@ -43,15 +43,22 @@ namespace Pixie
 			shaderIDs.push_back(m_Passes[i]->GetShader()->ShaderProgram);
 		}
 
-		m_LightProjectionUBO = UniformBuffer(sizeof(LightProjUboData), GL_DYNAMIC_DRAW, "LightProjectionBlock", shaderIDs);
-
 		m_GridShader = AssetLoader::LoadShader("../Assets/Shaders/GridVertex.glsl", "../Assets/Shaders/GridFragment.glsl");
 		m_EditorGrid = AssetLoader::LoadMesh("../Assets/Meshes/DebugGrid.obj");
 
 		if (m_GridShader == nullptr || m_EditorGrid == nullptr)
+		{
 			m_DrawGridEnabled = false;
+		}
 		else
+		{
+			shaderIDs.push_back(m_GridShader->ShaderProgram);
 			m_DrawGridEnabled = true;
+		}
+
+		m_CameraBlockUBO = UniformBuffer(sizeof(CameraBlockData), GL_DYNAMIC_DRAW, 0 /*"CameraBlock", shaderIDs*/);
+		m_LightProjectionUBO = UniformBuffer(sizeof(LightProjUboData), GL_DYNAMIC_DRAW, 1/*"LightProjectionBlock", shaderIDs*/);
+
 
 	}
 
@@ -61,16 +68,43 @@ namespace Pixie
 		glClearColor(0.2f, 0.1f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		
-	}
+		// prepare shared uniform buffers
+		// -----------------------------------
+		// Camera projection UBO
+		//TODO: set up uniform buffer for camera data to share across shaders
+		GameObject cameraEntity = scene.GetActiveCameraGameObject();
+		if (!cameraEntity)
+		{
+			m_bCameraFound = false;
+			return; // no valid camera to render
+		}
+		// set up rendering camera info
+		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
+		glm::vec4 camPosition = glm::vec4(transform.GetPosition(), 1);
 
-	void ForwardRenderer::RenderFrame(Scene& scene)
-	{
-		bool bUseLightMatrix{ false };
+		glm::mat4 viewMatrix{ 1.0f };
+		Camera* mainCam = scene.GetActiveCamera(viewMatrix);
+		if (mainCam == nullptr)
+		{
+			m_bCameraFound = false;
+			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
+			return;
+		}
+		m_bCameraFound = true;
+
+		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
+
+		m_CameraBlockUBO.Bind();
+		m_CameraBlockUBO.UpdateMat4(0, viewMatrix);
+		m_CameraBlockUBO.UpdateMat4(sizeof(glm::mat4), projectionMatrix);
+		m_CameraBlockUBO.UpdateVec4(sizeof(glm::mat4) * 2, camPosition);
+		m_CameraBlockUBO.UnBind();
+
+		// main light data needed for shadowmapping is in m_LightProjectionUBO
 		GameObject mainLight = scene.GetMainLight();
 		glm::mat4 lightSpaceMatrix = glm::mat4();
 		glm::vec4 hypotheticalLightPos{ 1.0f };
-	
+
 
 		if (mainLight)
 		{
@@ -86,7 +120,7 @@ namespace Pixie
 			hypotheticalLightPos = glm::vec4(-1.0f * forward, 1);
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
 			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
-			
+
 			m_LightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
 			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
 
@@ -98,27 +132,21 @@ namespace Pixie
 			m_LightProjectionUBO.UpdateMat4(80, m_LightProjection);
 			m_LightProjectionUBO.UnBind();
 
-			bUseLightMatrix = true;
 		}
 
+		
+
+	}
+
+	void ForwardRenderer::RenderFrame(Scene& scene)
+	{
 
 		uint32_t prevPassDepth{ 0 };
 		uint32_t prevPassColor{ 0 };
 
+		if (!m_bCameraFound) return;
 		for (size_t i = 0; i < m_Passes.size(); i++)
 		{
-			
-			std::shared_ptr<Shader> shader = m_Passes[i]->GetShader();
-			shader->Use();
-			shader->SetUniformBool("bUseShadowMap", bUseLightMatrix);
-			if (bUseLightMatrix)
-			{
-				// ToDo: move this data to a Uniform Buffer for better sharing across shaders
-				/*shader->SetUniformVec3("mainLightPosition", hypotheticalLightPos);
-				shader->SetUniformMat4("lightViewMat", m_LightView);
-				shader->SetUniformMat4("lightProjMat", m_LightProjection);
-				*/
-			}
 
 			m_Passes[i]->Execute(scene, prevPassDepth, prevPassColor);
 
@@ -132,42 +160,17 @@ namespace Pixie
 		
 		// post processing?
 
-		if (m_DrawGridEnabled)
+		if (m_DrawGridEnabled && m_bCameraFound)
 		{
-			//TODO: set up uniform buffer for camera data to share across shaders
-			GameObject cameraEntity = scene.GetActiveCameraGameObject();
-			if (!cameraEntity) return; // no valid camera to render
-
-			// set up rendering camera info
-			TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
-			glm::vec3 camPosition = transform.GetPosition();
-
-			glm::mat4 viewMatrix{ 1.0f };
-			Camera* mainCam = scene.GetActiveCamera(viewMatrix);
-			if (mainCam == nullptr)
-			{
-				Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
-				return;
-			}
-
-			glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
-
 			m_GridShader->Use();
-			m_GridShader->SetUniformMat4("view", viewMatrix);
-			m_GridShader->SetUniformMat4("projection", projectionMatrix);
-			m_GridShader->SetUniformVec3("cameraPosition", camPosition);
-
+		
 			glm::mat4 transformMatrix = glm::mat4(1.0f); // send an identiy matrix, grid mesh is always at origin
 			glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(5.0f));
 			transformMatrix = transformMatrix * scale;
 			m_GridShader->SetUniformMat4("transform", transformMatrix);
-
-			//glActiveTexture(GL_TEXTURE0);
-			//glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetDepthAttatchmentID());
-			//m_GridShader->SetUniformInt("DepthMap", 0);
-
+			
 			m_EditorGrid->Render(*m_GridShader);
-			//glBindTexture(GL_TEXTURE_2D, 0);
+			m_GridShader->EndUse();
 		}
 		
 	}

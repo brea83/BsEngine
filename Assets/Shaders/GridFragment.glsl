@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 
 // based on the "perfect grid shader" article 
 // https://bgolus.medium.com/the-best-darn-grid-shader-yet-727f9278b9d8

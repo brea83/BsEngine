@@ -1,9 +1,9 @@
-#version 330 core
+#version 450 core
 #define MAX_LIGHTS 6
 
 layout(location = 1) out vec3 screenSpacePos;
 
-layout (std140) uniform LightProjectionBlock
+layout (std140, binding = 1) uniform LightProjectionBlock
 {
     vec4 mainLightPosition;
     mat4 lightViewMat;
@@ -61,11 +61,11 @@ uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 
 uniform MaterialData Material;
 
-uniform bool bUseShadowMap;
+//uniform bool bUseShadowMap;
 uniform sampler2D shadowMap;
 uniform float lightNearPlane;
 uniform float lightFarPlane;
-uniform float shadowBiasMult = 1.0; // values under 1 seem better, below zero creates a lot of shadow acne
+uniform float shadowBiasMult = 0.21; // values under 1 seem better, below zero creates a lot of shadow acne
 
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];

@@ -1,5 +1,5 @@
 
-#version 330 core
+#version 450 core
 
 // OpenGL guarantees there are always at least 16 locations
 // for 4-component vertex attributes
@@ -14,7 +14,7 @@ uniform mat4 transform;
 //uniform mat4 lightViewMat;
 //uniform mat4 lightProjMat;
 
-layout (std140) uniform LightProjectionBlock
+layout (std140, binding = 1) uniform LightProjectionBlock
 {
     vec4 mainLightPosition; //alignment 0
     mat4 lightViewMat;      //         16

@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 //layout(location = 0) out vec3 FragColor;
 layout(location = 1) out vec3 screenSpacePos;
 

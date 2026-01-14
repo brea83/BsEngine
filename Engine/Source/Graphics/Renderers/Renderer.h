@@ -31,6 +31,7 @@ namespace Pixie
 
 		std::shared_ptr<FrameBuffer> m_FrameBuffer;
 
+		bool m_bCameraFound;
 		bool m_DrawGridEnabled;
 		std::shared_ptr<Shader> m_GridShader;
 		std::shared_ptr<Mesh> m_EditorGrid;

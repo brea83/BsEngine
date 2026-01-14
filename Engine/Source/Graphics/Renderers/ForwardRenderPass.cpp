@@ -46,32 +46,6 @@ namespace Pixie
 			m_Shader->SetUniformBool("bUseShadowMap", false);
 		}
 
-
-		GameObject cameraEntity = sceneToRender.GetActiveCameraGameObject();
-		if (!cameraEntity)
-		{
-			// no valid camera to render
-			m_Shader->EndUse();
-			return;
-		}
-		// set up rendering camera info
-		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
-		glm::vec3 camPosition = transform.GetPosition();
-
-		glm::mat4 viewMatrix{1.0f};
-		Camera* mainCam = sceneToRender.GetActiveCamera(viewMatrix);
-		if (mainCam == nullptr)
-		{
-			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
-			m_Shader->EndUse();
-			return;
-		}
-		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
-
-		m_Shader->SetUniformMat4("view", viewMatrix);
-		m_Shader->SetUniformMat4("projection", projectionMatrix);
-		m_Shader->SetUniformVec3("cameraPosition", camPosition);
-		glm::mat4 pvMat = projectionMatrix * viewMatrix;
 		// get scene registry for lighting and renderables
 		entt::registry& registry = sceneToRender.GetRegistry();
 

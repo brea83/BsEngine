@@ -21,13 +21,20 @@ namespace Pixie
 		glm::mat4 m_LightProjection{glm::mat4(1)};
 		glm::mat4 m_LightView{glm::mat4(1)};
 		UniformBuffer m_LightProjectionUBO;
-
+		UniformBuffer m_CameraBlockUBO;
 
 		struct LightProjUboData
 		{
 			glm::vec4 mainLightPosition;
 			glm::mat4 lightViewMatrix;
 			glm::mat4 lightProjectionMatrix;
+		};
+
+		struct CameraBlockData
+		{
+			glm::mat4 view;
+			glm::mat4 projection;
+			glm::vec4 cameraPosition;
 		};
 	};
 

@@ -1,5 +1,5 @@
 
-#version 330 core
+#version 450 core
 #define MAX_LIGHTS 6
 
 // OpenGL guarantees there are always at least 16 locations
@@ -12,13 +12,16 @@ layout (location = 4) in vec3 vertexTangent;
 layout (location = 5) in vec3 vertexBitangent;
 
 uniform mat4 transform;
-uniform mat4 view;
-uniform mat4 projection;
-uniform vec3 cameraPosition;
+layout (std140, binding = 0) uniform CameraBlock
+{
+    mat4 view;
+    mat4 projection;
+    vec4 cameraPosition;
+};
 
 //uniform mat4 lightViewMat;
 //uniform mat4 lightProjMat;
-layout (std140) uniform LightProjectionBlock
+layout (std140, binding = 1) uniform LightProjectionBlock
 {
     vec4 mainLightPosition;
     mat4 lightViewMat;
@@ -62,8 +65,8 @@ void main()
 
     OUT.Pos_TS = OUT.TBN * OUT.Pos_WS;
 
-    OUT.CameraPos_WS = cameraPosition;
-    OUT.CameraPos_TS = OUT.TBN * cameraPosition;
+    OUT.CameraPos_WS = cameraPosition.xyz;
+    OUT.CameraPos_TS = OUT.TBN * cameraPosition.xyz;
     OUT.EyeDirection_CS = vec3(0,0,0) - OUT.Pos_CS;
 
 

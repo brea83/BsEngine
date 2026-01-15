@@ -10,6 +10,7 @@ namespace Pixie
 	class Camera;
 	class Scene;
 	class ConsoleWindow;
+	class RenderInspectorPanel;
 
 	//may need key, mouse, and application events
 	class EditorLayer : public ImGuiLayer
@@ -48,6 +49,10 @@ namespace Pixie
 		int m_GizmoType{ -1 };
 
 		std::shared_ptr<ConsoleWindow> m_ConsoleWindow{ nullptr };
+		
+		bool m_ShowRenderInspector{ false };
+		std::shared_ptr<RenderInspectorPanel> m_RenderInspecorPanel{ nullptr };
+
 
 		void DrawMainMenu(EngineContext* engine);
 		void DrawMainMenuBar2();

@@ -25,7 +25,7 @@ out VS_OUT
    //vec3 Pos_WS;
    //vec3 Pos_CS;
    vec4 UV;
-   int MajorGridDiv;
+   flat int MajorGridDiv;
 
 } OUT;
 

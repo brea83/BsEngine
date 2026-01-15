@@ -71,28 +71,29 @@ namespace Pixie
 		// prepare shared uniform buffers
 		// -----------------------------------
 		// Camera projection UBO
-		//TODO: set up uniform buffer for camera data to share across shaders
 		GameObject cameraEntity = scene.GetActiveCameraGameObject();
 		if (!cameraEntity)
 		{
 			m_bCameraFound = false;
 			return; // no valid camera to render
 		}
-		// set up rendering camera info
-		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
-		glm::vec4 camPosition = glm::vec4(transform.GetPosition(), 1);
 
-		glm::mat4 viewMatrix{ 1.0f };
-		Camera* mainCam = scene.GetActiveCamera(viewMatrix);
-		if (mainCam == nullptr)
+		CameraComponent* camComponent = cameraEntity.TryGetComponent<CameraComponent>();
+		if (camComponent == nullptr)
 		{
 			m_bCameraFound = false;
 			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
 			return;
 		}
+		Camera& mainCam = camComponent->Cam;
 		m_bCameraFound = true;
 
-		glm::mat4 projectionMatrix = mainCam->ProjectionMatrix();
+		// set up rendering camera info
+		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
+		glm::vec4 camPosition = glm::vec4(transform.GetPosition(), 1);
+		glm::mat4 viewMatrix = glm::inverse(transform.GetObjectToWorldMatrix());
+		
+		glm::mat4 projectionMatrix = mainCam.ProjectionMatrix();
 
 		m_CameraBlockUBO.Bind();
 		m_CameraBlockUBO.UpdateMat4(0, viewMatrix);
@@ -128,7 +129,7 @@ namespace Pixie
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
 			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
 
-			m_LightView = lightTransform.GetObjectToWorldMatrix();//glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
 			
 
 			glm::vec3 minPointLS{ std::numeric_limits<float>::max() };
@@ -220,6 +221,30 @@ namespace Pixie
 		m_FrameBuffer->UnBind();
 	}
 
+	std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> ForwardRenderer::GetAllRenderBuffers()
+	{
+		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> renderBuffers;
+		for (size_t i = 0; i < m_Passes.size(); i++)
+		{
+			std::shared_ptr<FrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
+			if (passBuffer == nullptr) continue;
+
+			std::shared_ptr<Shader> shader = m_Passes[i]->GetShader();
+			std::string name = shader->GetName();
+
+			if (renderBuffers.find(name) != renderBuffers.end())
+			{
+				name += " ";
+				name += std::to_string(i);
+			}
+
+			renderBuffers[name] = passBuffer;
+		}
+
+		renderBuffers["Main Buffer"] = m_FrameBuffer;
+		return renderBuffers;
+	}
+
 	std::vector<glm::vec4> ForwardRenderer::GetFrustumCornersWS(const glm::mat4& projection, const glm::mat4& view)
 	{
 		const auto inverse = glm::inverse(projection * view);
@@ -241,7 +266,7 @@ namespace Pixie
 
 					point = inverse * point;
 
-					frustumCorners.push_back(point);
+					frustumCorners.push_back(point / point.w);
 				}
 			}
 		}

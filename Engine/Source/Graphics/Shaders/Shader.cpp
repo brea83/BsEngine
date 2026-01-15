@@ -23,13 +23,13 @@ namespace Pixie
 		const char* shaderCode;
 		if (glShaderType == GL_FRAGMENT_SHADER)
 		{
-			_fragmentSource = AssetLoader::LoadTextFile(filePath);
-			shaderCode = _fragmentSource->Text.c_str();
+			m_FragmentSource = AssetLoader::LoadTextFile(filePath);
+			shaderCode = m_FragmentSource->Text.c_str();
 		}
 		else if (glShaderType == GL_VERTEX_SHADER)
 		{
-			_vertexSource = AssetLoader::LoadTextFile(filePath);
-			shaderCode = _vertexSource->Text.c_str();
+			m_VertexSource = AssetLoader::LoadTextFile(filePath);
+			shaderCode = m_VertexSource->Text.c_str();
 		}
 		else
 		{
@@ -157,5 +157,9 @@ namespace Pixie
 	void Shader::EndUse()
 	{
 		glUseProgram(0);
+	}
+	std::string Shader::GetName()
+	{
+		return std::string(m_VertexSource->FileName.string() + "|" + m_FragmentSource->FileName.string());
 	}
 }

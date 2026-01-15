@@ -25,6 +25,8 @@ namespace Pixie
 		std::shared_ptr<Shader> GetGridShader() { return m_GridShader; }
 		void EnableGridShader(bool value) { m_DrawGridEnabled = value; }
 		bool IsGridShaderEnabled() { return m_DrawGridEnabled; }
+
+		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() = 0;
 	protected:
 		EngineContext* m_Engine;
 		std::vector<std::unique_ptr<RenderPass>> m_Passes;

@@ -28,7 +28,7 @@ in VS_OUT
    //vec3 Pos_WS;
    //vec3 Pos_CS;
    vec4 UV;
-   int MajorGridDiv;
+   flat int MajorGridDiv;
 
 } IN;
 
@@ -147,16 +147,16 @@ void main()
 	vec2 axisDashUV = abs(fract((IN.UV.zw + vec2(asixlineWidth) * 0.5) * AxisDashScale) * 2.0 -1.0) - 0.5;
 	vec2 axisDashDeriv = uvDeriv * AxisDashScale * 1.5;
 	vec2 axisDash = smoothstep(-axisDashDeriv, axisDashDeriv, axisDashUV);
-	axisDash = abs(IN.UV.z) > 0.5 || abs(IN.UV.w) > 0.5 ? axisDash : 1.0;
+	axisDash = abs(IN.UV.z) > 0.5 || abs(IN.UV.w) > 0.5 ? axisDash : vec2(1.0);
 
 	// Line COLORS
 	// ----------------------------------
 
-	vec4 aAxisColor;
-	vec4 aAxisDashColor;
+	vec4 aAxisColor = vec4(1.0);
+	vec4 aAxisDashColor = vec4(1.0);
 
-	vec4 bAxisColor;
-	vec4 bAxisDashColor;
+	vec4 bAxisColor = vec4(1.0);
+	vec4 bAxisDashColor = vec4(1.0);
 	
 	if( PlaneAxisEnum == 0) // XZ
 	{

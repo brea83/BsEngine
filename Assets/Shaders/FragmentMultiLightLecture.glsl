@@ -65,7 +65,7 @@ uniform MaterialData Material;
 uniform sampler2D shadowMap;
 uniform float lightNearPlane;
 uniform float lightFarPlane;
-uniform float shadowBiasMult = 0.21; // values under 1 seem better, below zero creates a lot of shadow acne
+uniform float shadowBiasMult = 0.000059; // values under 1 seem better, below zero creates a lot of shadow acne
 
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
@@ -92,35 +92,43 @@ float LinearizeDepth(float depth)
     return (2.0 * lightNearPlane * lightFarPlane) / (lightFarPlane + lightNearPlane - z * (lightFarPlane - lightNearPlane));	
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normalizedNormal)
+float ShadowCalculation(vec4 fragPosLightSpace, float nDotL)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     // transform to [0,1] range
     projCoords = projCoords * 0.5 + 0.5;
+	if(projCoords.z > 1)
+	{
+		//float shadow = 0.0;
+		return 0.0;
+	}
+
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
     float closestDepth = texture(shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 	
 	vec3 lightDir = normalize((mainLightPosition.xyz) - IN.Pos_WS);
-    float bias = max(0.05 * (1.0 - dot(normalizedNormal, lightDir)), 0.005);
+    //float bias = max(0.05 * (1.0 - dot(normalizedNormal, lightDir)), 0.005);
+	float bias = tan(acos(nDotL));
 	bias *= shadowBiasMult;
+	bias = clamp(bias, 0.0, 0.1);
     // check whether current frag pos is in shadow with edge softening 
 	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-	for(int x = -1; x <= 1; x++)
-	{
-		for(int y = -1; y <= 1; y++)
-		{
-			float depth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > depth ? 1.0 : 0.0;
-			
-		}
-	}
-	shadow /= 9.0;
+//	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+//	for(int x = -1; x <= 1; x++)
+//	{
+//		for(int y = -1; y <= 1; y++)
+//		{
+//			float depth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+//			shadow += currentDepth - bias > depth ? 1.0 : 0.0;
+//			
+//		}
+//	}
+//	shadow /= 9.0;
      
-	 //float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
+	shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 
     return shadow;
 }
@@ -217,7 +225,7 @@ void main()
 		vec3 accumulatedDiffuse = vec3(0,0,0);
 		vec3 accumulatedSpecular = vec3(0,0,0);
 
-		float shadowMask = ShadowCalculation(IN.Pos_LS, N); // 1 == shadow 0 == no shadow
+		float shadowMask = 0.0; // 1 == shadow 0 == no shadow
 
 		// light loop
 		for(int i = 0; i < activeLights; i++)
@@ -233,6 +241,8 @@ void main()
 				float nDotL = clamp(dot(N, direction), 0.0, 1.0);
 				vec3 H = normalize((direction + V));
 				float nDotH = clamp(dot(N, H), 0.0, 1.0);
+
+				shadowMask = ShadowCalculation(IN.Pos_LS, nDotL);
 
 				accumulatedDiffuse += GetDirectionalLuminosity(nDotL, lightColor[i]);
 				accumulatedSpecular += GetDirectionalSpecular(nDotH, lightColor[i], smoothness, Material.SpecularPower);

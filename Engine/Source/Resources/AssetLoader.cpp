@@ -68,8 +68,10 @@ namespace Pixie
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 
-		std::shared_ptr<TextResource> textSource = std::make_shared<TextResource>(TextResource(buffer.str()));
-		s_Resources.emplace(filePath, textSource);
+		std::filesystem::path path = filePath;
+		std::string fileName = path.filename().string();
+		std::shared_ptr<TextResource> textSource = std::make_shared<TextResource>(TextResource(buffer.str(), fileName));
+		s_Resources.emplace(fileName, textSource);
 
 		return textSource;
 	}
@@ -105,9 +107,11 @@ namespace Pixie
 		else
 		{
 			// we found no existing text file before so make and add a new one
-			TextResource* textSource = new TextResource(buffer.str());
+			std::filesystem::path path = filePath;
+			std::string fileName = path.filename().string();
+			TextResource* textSource = new TextResource(buffer.str(), fileName);
 
-			s_Resources.emplace(filePath, textSource);
+			s_Resources.emplace(fileName, textSource);
 			return true;
 		}
 		Logger::Log(LOG_ERROR, "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp");

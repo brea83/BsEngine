@@ -16,6 +16,7 @@
 #include "Panels/AssetViewerPanel.h"
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/DetailsViewPanel.h"
+#include "Panels/RenderInspectorPanel.h"
 
 #include "Log.h"
 #include "ImGui/imgui_sink.h"
@@ -23,7 +24,9 @@
 namespace Pixie
 {
 	EditorLayer::EditorLayer() : ImGuiLayer()
-	{}
+	{
+		m_RenderInspecorPanel = std::make_shared<RenderInspectorPanel>();
+	}
 
 	EditorLayer::~EditorLayer()
 	{
@@ -206,6 +209,8 @@ namespace Pixie
 		DrawViewport(engine, m_Selected);
 
 		m_ConsoleWindow->Draw();
+
+		if (m_ShowRenderInspector) m_RenderInspecorPanel->Draw();
 	}
 
 	void EditorLayer::DrawMainMenu(EngineContext* engine)
@@ -265,6 +270,11 @@ namespace Pixie
 			if (ImGui::BeginMenu("Windows"))
 			{
 				if (ImGui::MenuItem("Show ImGui Metrics")) ImGui::ShowMetricsWindow();
+
+				if (ImGui::MenuItem("Show Render Inspector") )
+				{
+					m_ShowRenderInspector = true;
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();

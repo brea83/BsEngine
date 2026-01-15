@@ -33,9 +33,10 @@ namespace Pixie
 		void Use();
 		void EndUse();
 
+		std::string GetName();
 	private:
-		std::shared_ptr<TextResource> _vertexSource;
-		std::shared_ptr<TextResource> _fragmentSource;
+		std::shared_ptr<TextResource> m_VertexSource;
+		std::shared_ptr<TextResource> m_FragmentSource;
 
 		unsigned int CompileShader(int glShaderType, const std::string& filePath);
 		unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);

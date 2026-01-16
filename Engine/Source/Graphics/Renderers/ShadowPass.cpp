@@ -33,7 +33,7 @@ namespace Pixie
 		m_Shader->Use();
 		m_FrameBuffer->Bind();
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachmentID());
+		glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetFirstColorAttachmentID());
 		// render meshes
 		entt::registry& registry = sceneToRender.GetRegistry();
 		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
@@ -60,7 +60,7 @@ namespace Pixie
 
 	uint32_t ShadowPass::GetColorAttatchmentID()
 	{
-		return m_FrameBuffer->GetColorAttachmentID();
+		return m_FrameBuffer->GetFirstColorAttachmentID();
 	}
 	uint32_t ShadowPass::GetDepthAttatchmentID()
 	{

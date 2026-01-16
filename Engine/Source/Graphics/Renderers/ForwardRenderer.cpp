@@ -126,7 +126,7 @@ namespace Pixie
 			glm::vec3 forwardDegrees = glm::degrees(forward);
 
 			hypotheticalLightPos = glm::vec4(-1.0f * forward, 1);
-			m_LightTransfrom->SetPosition(hypotheticalLightPos);
+			m_LightTransfrom->SetPosition(frustumCenter + glm::vec3(hypotheticalLightPos));
 			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
 
 			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
@@ -149,7 +149,7 @@ namespace Pixie
 			}
 
 			// zMult needs to be tuned to scene so TODO: parameterize this so it can be changed in editor
-			constexpr float zMult = 10.0f;
+			constexpr float zMult = 5.0f;
 			if (minPointLS.z < 0)
 				minPointLS.z *= zMult;
 			else
@@ -159,7 +159,6 @@ namespace Pixie
 				maxPointLS.z /= zMult;
 			else
 				maxPointLS.z *= zMult;
-
 
 			m_LightProjection = glm::ortho<float>(minPointLS.x, maxPointLS.x, minPointLS.y, maxPointLS.y, minPointLS.z, maxPointLS.z);
 

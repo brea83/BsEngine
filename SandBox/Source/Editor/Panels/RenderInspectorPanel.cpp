@@ -124,7 +124,7 @@ namespace Pixie
             ImGui::TableHeadersRow();
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            uint32_t colorID = frameBuffer->GetColorAttachmentID();
+            uint32_t colorID = frameBuffer->GetFirstColorAttachmentID();
             if (colorID != 0)
             {
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + xPadding);

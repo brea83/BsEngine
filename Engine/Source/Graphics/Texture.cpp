@@ -21,7 +21,7 @@ namespace Pixie
 		: Resource(ResourceType::Texture)
 	{}
 
-	Texture::Texture(StbImageData& data, TextureType type)
+	Texture::Texture(StbImageData& data, MaterialTextureType type)
 		: Resource(ResourceType::Texture)
 	{
 		int glMinFilter = GetGlMin();
@@ -48,10 +48,10 @@ namespace Pixie
 		CreateTexture(filePath);
 	}
 
-	TextureType Texture::GetTypeByString(const std::string& searchString)
+	MaterialTextureType Texture::GetTypeByString(const std::string& searchString)
 	{
 		//if(searchString == )
-		return TextureType();
+		return MaterialTextureType();
 	}
 
 	void Texture::UpdateTextureFilters(const std::string& filePath, Min_FilterType minFilter, Mag_FilterType magFilter)
@@ -98,12 +98,12 @@ namespace Pixie
 		}
 	}
 
-	GLenum Texture::GetGlEnumFromType(TextureType type, int channelcount)
+	GLenum Texture::GetGlEnumFromType(MaterialTextureType type, int channelcount)
 	{
 
 		if (channelcount == 1) return GL_RED;
 
-		if (type != TextureType::Diffuse)
+		if (type != MaterialTextureType::Diffuse)
 		{
 			switch (channelcount)
 			{
@@ -128,7 +128,7 @@ namespace Pixie
 		}
 	}
 
-	void Texture::CreateTexture(const std::string& filePath, bool overrideType, TextureType type)
+	void Texture::CreateTexture(const std::string& filePath, bool overrideType, MaterialTextureType type)
 	{
 
 		int glMinFilter = GetGlMin();

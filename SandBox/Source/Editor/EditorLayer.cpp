@@ -402,7 +402,7 @@ namespace Pixie
 		Camera* camera = m_CurrentScene->GetActiveCamera(viewMatrix);
 
 		std::shared_ptr<FrameBuffer> frameBuffer = engine.GetRenderer()->GetFrameBuffer();
-		uint32_t textureID = frameBuffer->GetColorAttachmentID();
+		uint32_t textureID = frameBuffer->GetFirstColorAttachmentID();
 		ImVec2 currentSize = ImGui::GetContentRegionAvail();
 
 		if (m_ViewportPanelSize.x != currentSize.x || m_ViewportPanelSize.y != currentSize.y)

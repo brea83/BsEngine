@@ -73,7 +73,7 @@ namespace Pixie
 
         void Reload()
         {
-            std::shared_ptr<Texture> newColor = ReloadTexture(BaseMapPath, TextureType::Diffuse);
+            std::shared_ptr<Texture> newColor = ReloadTexture(BaseMapPath, MaterialTextureType::Diffuse);
             if (newColor != nullptr)
             {
                 BaseMap = newColor;
@@ -83,7 +83,7 @@ namespace Pixie
                 BaseMapPath = "";
             }
 
-            std::shared_ptr<Texture> normal = ReloadTexture(NormalMapPath, TextureType::Normal);
+            std::shared_ptr<Texture> normal = ReloadTexture(NormalMapPath, MaterialTextureType::Normal);
             if (normal != nullptr)
             {
                 NormalMap = normal;
@@ -93,7 +93,7 @@ namespace Pixie
                 NormalMapPath = "";
             }
 
-            std::shared_ptr<Texture> metal = ReloadTexture(MetallicMapPath, TextureType::GltfMetalicRoughness);
+            std::shared_ptr<Texture> metal = ReloadTexture(MetallicMapPath, MaterialTextureType::GltfMetalicRoughness);
             if (metal != nullptr)
             {
                 MetallicMap = metal;
@@ -103,7 +103,7 @@ namespace Pixie
                 MetallicMapPath = "";
             }
 
-            std::shared_ptr<Texture> specular = ReloadTexture(SpecularMapPath, TextureType::Specular);
+            std::shared_ptr<Texture> specular = ReloadTexture(SpecularMapPath, MaterialTextureType::Specular);
             if (specular != nullptr)
             {
                 SpecularMap = specular;
@@ -114,7 +114,7 @@ namespace Pixie
             }
         }
 
-        std::shared_ptr<Texture> ReloadTexture(std::string path, TextureType type)
+        std::shared_ptr<Texture> ReloadTexture(std::string path, MaterialTextureType type)
         {
             if (path.empty()) return nullptr;
             std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(path, type);

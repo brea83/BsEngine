@@ -12,8 +12,16 @@ namespace Pixie
 		bool Draw() override;
 		int DrawReturnsInt() override { return 0; }
 
+		struct DebugImageSpecification
+		{
+			ImVec2 ImageSize;
+			ImVec2 Padding;
+		};
 	protected:
+
 		void DrawFrameBuffer(std::shared_ptr<FrameBuffer> frameBuffer, const std::string& shaderName, float heightRestriction);
+		DebugImageSpecification GetImageSize(ImVec2 regionAvailable, int numTextures, float bufferAspectRatio);
+		
 	};
 
 }

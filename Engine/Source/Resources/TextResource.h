@@ -16,6 +16,11 @@ namespace Pixie
 		{}
 		std::string Text;
 		std::filesystem::path FileName;
+
+		std::string GetNameString()
+		{
+			return FileName.filename().string();
+		}
 	};
 
 }

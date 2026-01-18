@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "FrameBuffer.h"
 #include <glad/glad.h>
+//	CRITICAL TODO: FIGURE OUT WHY TRYING TO CREATE TWO COLOR ATTACHMENTS WHEN ONLY ASKING FOR ONE
 
 namespace Pixie
 {
@@ -21,46 +22,52 @@ namespace Pixie
 			glBindTexture(TextureTarget(isArray), id);
 		}
 
-		static void AttachColorTexture(bool isArray, uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
 		{
-			bool multisampled = samples > 1;
-			if (multisampled)
-			{
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
-			}
-			else
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			}
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(isArray), id, 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, id, 0);
 		}
 
-		static void AttachDepthTexture(bool isArray, uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		static void AttachDepthTexture3D(uint32_t arraySize, uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
-			bool multisampled = samples > 1;
-			if (multisampled)
-			{
-				glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
-			}
-			else
-			{
-				glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+			bool bIsArray = arraySize > 0;
 
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			}
+			glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT32F, width, height, arraySize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(isArray), id, 0);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			//glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			
+			constexpr float bordercolor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			glTexParameterfv(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, bordercolor);
+
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, id, 0);
+
+			
+		}
+
+		static void AttachDepthTexture( uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		{
+			//glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, GL_TEXTURE_2D, id, 0);
 		}
 
 		static bool IsDepthFormat(FrameBufferTextureFormat format)
@@ -71,9 +78,10 @@ namespace Pixie
 				return true;
 			case FrameBufferTextureFormat::Depth24Stencil8:  
 				return true;
+			default:
+				return false;
 			}
 
-			return false;
 		}
 
 		static GLenum HazelFBTextureFormatToGL(FrameBufferTextureFormat format)
@@ -122,8 +130,9 @@ namespace Pixie
 
 	void FrameBuffer::Bind()
 	{
-		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBufferID);
+
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -138,9 +147,11 @@ namespace Pixie
 		{
 			glDeleteFramebuffers(1, &m_FrameBufferID);
 			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+			glDeleteTextures(m_DepthLayerViews.size(), m_DepthLayerViews.data());
 			glDeleteTextures(1, &m_DepthAttachment);
 
 			m_ColorAttachments.clear();
+			m_DepthLayerViews.clear();
 			m_DepthAttachment = 0;
 		}
 
@@ -150,10 +161,65 @@ namespace Pixie
 		// Attachments
 		if (m_ColorAttachmentSpecifications.size())
 		{
-			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+			
 			AttachColorTextures();
 		}
 
+		if (m_DepthAttachmentSpecification.TextureFormat != FrameBufferTextureFormat::None)
+		{
+			bool bIsArray = m_DepthAttachmentSpecification.ArraySize > 0;
+			Utils::CreateTextures(bIsArray, &m_DepthAttachment, 1);
+			Utils::BindTexture(bIsArray, m_DepthAttachment);
+
+			if (bIsArray)
+			{
+				uint32_t arraySize = m_DepthAttachmentSpecification.ArraySize;
+				switch (m_DepthAttachmentSpecification.TextureFormat)
+				{
+				case FrameBufferTextureFormat::Depth24:
+					Utils::AttachDepthTexture3D(arraySize, m_DepthAttachment, m_Specification.Samples, GL_DEPTH_COMPONENT24, GL_DEPTH_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+					break;
+				case FrameBufferTextureFormat::Depth24Stencil8:
+					Utils::AttachDepthTexture3D(arraySize, m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+					break;
+				}
+
+				// make views for debugging the texture array
+				m_DepthLayerViews.resize(arraySize);
+				glGenTextures(arraySize, m_DepthLayerViews.data());
+				for (int32_t i = 0; i < arraySize; ++i)
+				{
+					glTextureView(m_DepthLayerViews[i], GL_TEXTURE_2D, m_DepthAttachment, GL_DEPTH_COMPONENT32F, 0, 1, i, 1);
+				}
+			}
+			else
+			{
+				switch (m_DepthAttachmentSpecification.TextureFormat)
+				{
+				case FrameBufferTextureFormat::Depth24:
+					Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH_COMPONENT24, GL_DEPTH_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+					break;
+				case FrameBufferTextureFormat::Depth24Stencil8:
+					Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+					break;
+				}
+			}
+			
+		}
+
+		if (m_ColorAttachments.size() > 1)
+		{
+			if (m_ColorAttachments.size() > 4)
+				Logger::Log(LOG_WARNING, "more than 4 color attatchments created, but only 4 will be used by the frameBuffer");
+
+			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+			glDrawBuffers(m_ColorAttachments.size(), buffers);
+		}
+		else if (m_ColorAttachments.empty())
+		{
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		}
 		//glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttatchment);
 		//glBindTexture(GL_TEXTURE_2D, m_ColorAttatchment);
 		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Specification.Width, m_Specification.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -184,9 +250,19 @@ namespace Pixie
 		//glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
 
 		// CHECK TO SEE IF IT WORKS	
+
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
-			Logger::Log(LOG_ERROR, "Failed create or resize framebuffer");
+			std::string depthType = m_DepthAttachmentSpecification.TextureFormatToString();
+			std::string colorTypes{ "" };
+
+			for (auto spec : m_ColorAttachmentSpecifications)
+			{
+				colorTypes += spec.TextureFormatToString();
+				colorTypes += ", ";
+			}
+
+			Logger::Log(LOG_ERROR, "Failed create a frame buffer with {} color attachments, types: {}. and {} type depth attachment", m_ColorAttachments.size(), colorTypes, depthType);
 		}
 
 
@@ -200,26 +276,35 @@ namespace Pixie
 		Resize();
 	}
 
+	void FrameBuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	{}
+
+	void FrameBuffer::ClearAttachment(uint32_t attachmentIndex, int value)
+	{}
+
 	void FrameBuffer::AttachColorTextures()
 	{
-		for ( int i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
+		m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+
+		for ( int i = 0; i < m_ColorAttachments.size(); i++)
 		{
 			auto spec = m_ColorAttachmentSpecifications[i];
 			uint32_t id{ 0 };
-			Utils::CreateTextures(spec.IsTextureArray, &id, 1);
-			Utils::BindTexture(spec.IsTextureArray, id);
+			bool bIsArray = spec.ArraySize > 0;
+			Utils::CreateTextures(bIsArray, &id, 1);
+			Utils::BindTexture(bIsArray, id);
 
 			switch (spec.TextureFormat)
 			{
 			case FrameBufferTextureFormat::RGBA8:
-				Utils::AttachColorTexture(spec.IsTextureArray, id, m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+				Utils::AttachColorTexture( id, m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
 				break;
 			case FrameBufferTextureFormat::RedInteger:
-				Utils::AttachColorTexture(spec.IsTextureArray, id, m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+				Utils::AttachColorTexture( id, m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 				break;
 			}
 
-			m_ColorAttachments.push_back(id);
+			m_ColorAttachments[i] = id;
 		}
 
 

@@ -32,6 +32,21 @@ namespace Pixie
 
 		for (auto pair : resources)
 		{
+			std::string name = pair.first;
+			ResourceType type = pair.second->Type;
+
+			if (type == ResourceType::TextFile)
+			{
+				std::shared_ptr<TextResource> text = std::dynamic_pointer_cast<TextResource>(pair.second);
+				name = text->GetNameString();
+			}
+
+			if (type == ResourceType::Shader)
+			{
+				std::shared_ptr<Shader> shader = std::dynamic_pointer_cast<Shader>(pair.second);
+				name = shader->GetName();
+			}
+
 			if (ImGui::Button(pair.first.c_str()))
 			{
 				SelectedAsset = pair.first;

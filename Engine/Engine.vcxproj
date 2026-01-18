@@ -282,6 +282,8 @@
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Assets\Shaders\CascadesDepthGeometry.glsl" />
+    <None Include="..\Assets\Shaders\CascadesDepthVertex.glsl" />
     <None Include="..\Assets\Shaders\EmptyFragment.glsl" />
     <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />
     <None Include="..\Assets\Shaders\FragmentShader.glsl" />

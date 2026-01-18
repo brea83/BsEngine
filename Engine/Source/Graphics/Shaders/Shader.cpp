@@ -9,10 +9,10 @@
 
 namespace Pixie
 {
-	Shader::Shader(const std::string& vertPath, const std::string& fragPath)
+	Shader::Shader(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath)
 		: Resource(ResourceType::Shader)
 	{
-		Compile(vertPath, fragPath);
+		Compile(vertPath, fragPath, geometryPath);
 	}
 
 	Shader::~Shader()
@@ -30,6 +30,11 @@ namespace Pixie
 		{
 			m_VertexSource = AssetLoader::LoadTextFile(filePath);
 			shaderCode = m_VertexSource->Text.c_str();
+		}
+		else if (glShaderType == GL_GEOMETRY_SHADER)
+		{
+			m_GeometrySource = AssetLoader::LoadTextFile(filePath);
+			shaderCode = m_GeometrySource->Text.c_str();
 		}
 		else
 		{
@@ -49,7 +54,15 @@ namespace Pixie
 		if (!success)
 		{
 			glGetShaderInfoLog(shaderObject, 512, NULL, infoLog);
-			std::string shaderTypeName = glShaderType == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ";
+			std::string shaderTypeName = "";
+			if (glShaderType == GL_FRAGMENT_SHADER)
+				shaderTypeName = "FRAGMENT";
+			else if (glShaderType == GL_VERTEX_SHADER)
+				shaderTypeName = "VERTEX";
+			else if (glShaderType == GL_GEOMETRY_SHADER)
+				shaderTypeName = "GEOMETRY";
+			else
+				shaderTypeName = "UNKNOWN TYPE";
 
 			Logger::Log(LOG_ERROR, "ERROR, {} SHADER COMPILATION FAILED", shaderTypeName);
 			Logger::Log(LOG_ERROR, "{}", infoLog);
@@ -59,10 +72,12 @@ namespace Pixie
 		return shaderObject;
 	}
 
-	unsigned int Shader::LinkShader(unsigned int vertexShader, unsigned int fragmentShader)
+	unsigned int Shader::LinkShader(unsigned int vertexShader, unsigned int geometryShader, unsigned int fragmentShader)
 	{
 		unsigned int shaderProgram = glCreateProgram();
 		glAttachShader(shaderProgram, vertexShader);
+		if (geometryShader)
+			glAttachShader(shaderProgram, geometryShader);
 		glAttachShader(shaderProgram, fragmentShader);
 		glLinkProgram(shaderProgram);
 
@@ -70,6 +85,8 @@ namespace Pixie
 		// Clean up shader parts now that they've been linked into a program
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
+		if (geometryShader)
+			glDeleteShader(geometryShader);
 
 		//check for linking errors
 		int success;
@@ -86,17 +103,25 @@ namespace Pixie
 		return shaderProgram;
 	}
 
-	void Shader::Compile(const std::string& vertPath, const std::string& fragPath)
+	void Shader::Compile(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath)
 	{
 		unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);//LoadVertexShader(vertPath);
 		if (vertexShader == 0) return;
+
+		unsigned int geometryShader = 0;
+		if (!geometryPath.empty())
+		{
+			geometryShader = CompileShader(GL_GEOMETRY_SHADER, geometryPath);//LoadVertexShader(vertPath);
+			if (geometryShader == 0) return;
+		}
 		unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragPath);//LoadFragmentShader(fragPath);
 		if (fragmentShader == 0) return;
 
-		unsigned int linkedProgram = LinkShader(vertexShader, fragmentShader);
+		unsigned int linkedProgram = LinkShader(vertexShader, geometryShader, fragmentShader);
 		if (linkedProgram == 0) return;
 		ShaderProgram = linkedProgram;
 
+		Logger::Log(LOG_TRACE, "Successfully Compiled {}", GetName());
 	}
 
 	void Shader::ReCompile(const std::string& barDelineatedPaths)
@@ -115,8 +140,18 @@ namespace Pixie
 
 		if (!AssetLoader::ReLoadTextFile(segmentList[0])) return;
 		if (!AssetLoader::ReLoadTextFile(segmentList[1])) return;
+		if (segmentList.size() == 3)
+		{
+			if (!AssetLoader::ReLoadTextFile(segmentList[2])) return;
+			Logger::Log(LOG_TRACE, "Recompiling {}", barDelineatedPaths);
+			Compile(segmentList[0], segmentList[1], segmentList[2]);
+		}
+		else
+		{
+			Logger::Log(LOG_TRACE, "Recompiling {}", barDelineatedPaths);
+			Compile(segmentList[0], segmentList[1]);
+		}
 
-		Compile(segmentList[0], segmentList[1]);
 	}
 
 	void Shader::SetUniformBool(const std::string& name, bool value) const
@@ -160,6 +195,14 @@ namespace Pixie
 	}
 	std::string Shader::GetName()
 	{
-		return std::string(m_VertexSource->FileName.string() + "|" + m_FragmentSource->FileName.string());
+		std::string name = m_VertexSource->GetNameString() + "|";
+		if (m_GeometrySource != nullptr)
+			name += m_GeometrySource->GetNameString() + "|";
+			
+		name += m_FragmentSource->GetNameString();
+
+		return name;
+
+		//return std::string(m_VertexSource->FileName.string() + "|" + m_FragmentSource->FileName.string());
 	}
 }

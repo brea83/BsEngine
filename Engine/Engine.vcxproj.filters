@@ -164,6 +164,8 @@
     <None Include="..\Assets\Shaders\GridFragment.glsl" />
     <None Include="..\Assets\Shaders\GridVertex.glsl" />
     <None Include="..\Assets\Shaders\SimpleDepthFragment.glsl" />
+    <None Include="..\Assets\Shaders\CascadesDepthGeometry.glsl" />
+    <None Include="..\Assets\Shaders\CascadesDepthVertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

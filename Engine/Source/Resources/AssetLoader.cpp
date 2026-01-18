@@ -119,7 +119,7 @@ namespace Pixie
 		return false;
 	}
 
-	std::shared_ptr<Shader> AssetLoader::LoadShader(const std::string& vertPath, const std::string& fragPath)
+	std::shared_ptr<Shader> AssetLoader::LoadShader(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath)
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
@@ -128,29 +128,37 @@ namespace Pixie
 			return nullptr;
 		}
 
-		if (s_Resources.find(vertPath + "|" + fragPath) != s_Resources.end())
+		std::string searchString = geometryPath.empty() ? vertPath + "|" + fragPath : vertPath + "|" + fragPath + "|" + geometryPath;
+		if (s_Resources.find(searchString) != s_Resources.end())
 		{
 			auto shader = std::dynamic_pointer_cast<Shader>(s_Resources.at(vertPath + "|" + fragPath));
 			if (shader) return shader;
 			//return (Shader*)s_Resources.at(vertPath + "|" + fragPath);
 		}
+		// no stored shader made from those file paths, so try to make one
 
 		std::shared_ptr<TextResource> vertexFile = LoadTextFile(vertPath);
 		std::shared_ptr<TextResource> fragmentFile = LoadTextFile(fragPath);
+		std::shared_ptr<TextResource> geometryFile = nullptr;
+		if(!geometryPath.empty())
+			geometryFile = LoadTextFile(geometryPath);
+
 		if (vertexFile == nullptr || fragmentFile == nullptr)
 		{
 			return nullptr;
 		}
-		std::string vertexGlsl = vertexFile->Text;
-		std::string fragmentGlsl = fragmentFile->Text;
+		//std::string vertexGlsl = vertexFile->Text;
+		//std::string fragmentGlsl = fragmentFile->Text;
 
+		if (!geometryPath.empty() && geometryFile == nullptr)
+			return nullptr;
 
-		// no stored shader made from those file paths, so make one
-		std::shared_ptr<Shader> shader = std::make_shared<Shader>(vertPath, fragPath);
+		// we have found all the shader files so we can go ahead and make the shader
+		std::shared_ptr<Shader> shader = std::make_shared<Shader>(vertPath, fragPath, geometryPath);
 
 		if (shader->IsValid())
 		{
-			s_Resources.emplace(vertPath + "|" + fragPath, shader);
+			s_Resources.emplace(searchString, shader);
 		}
 		return shader;
 	}

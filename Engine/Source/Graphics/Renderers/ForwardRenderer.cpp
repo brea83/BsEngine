@@ -24,9 +24,13 @@ namespace Pixie
 		m_Passes.push_back(std::move(pass));
 
 		FrameBufferSpecification frameBufferData;
-		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+		glm::vec2 viewportSize = EngineContext::GetEngine()->GetWindowSize();
 		frameBufferData.Width = viewportSize.x;
 		frameBufferData.Height = viewportSize.y;
+		FrameBufferTextureSpecification depthTextureSpec = FrameBufferTextureSpecification(FrameBufferTextureFormat::Depth24);
+		FrameBufferTextureSpecification colorTextureSpec = FrameBufferTextureSpecification(FrameBufferTextureFormat::RGBA8);
+		frameBufferData.Attachments.Attachments.push_back(colorTextureSpec);
+		frameBufferData.Attachments.Attachments.push_back(depthTextureSpec);
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
@@ -57,7 +61,7 @@ namespace Pixie
 		}
 
 		m_CameraBlockUBO = UniformBuffer(sizeof(CameraBlockData), GL_DYNAMIC_DRAW, 0 /*"CameraBlock", shaderIDs*/);
-		m_LightProjectionUBO = UniformBuffer(sizeof(LightProjUboData), GL_DYNAMIC_DRAW, 1/*"LightProjectionBlock", shaderIDs*/);
+		m_LightProjectionUBO = UniformBuffer(4 + sizeof(glm::vec4) + (sizeof(glm::mat4) * 16), GL_DYNAMIC_DRAW, 1/*"LightProjectionBlock", shaderIDs*/);
 
 
 	}
@@ -103,71 +107,29 @@ namespace Pixie
 
 		// main light data needed for shadowmapping is in m_LightProjectionUBO
 		GameObject mainLight = scene.GetMainLight();
-		glm::mat4 lightSpaceMatrix = glm::mat4();
-		glm::vec4 hypotheticalLightPos{ 1.0f };
+		
 
 
 		if (mainLight)
 		{
-			//TEMP 
-			// TODO: move camera frustrum fitting somewhere that makes more sense
-
-			std::vector< glm::vec4> frustumWS = GetFrustumCornersWS(projectionMatrix, viewMatrix);
-			glm::vec3 frustumCenter = GetFrustumCenter(frustumWS);
-
-
-			glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
-			float aspectRatio = viewportSize.x / viewportSize.y;
-			// light direction is used as position with an ortho projection
-			LightComponent& light = mainLight.GetComponent<LightComponent>();
-			TransformComponent lightTransform = mainLight.GetTransform();
-
-			glm::vec3 forward = lightTransform.Forward();
-			glm::vec3 forwardDegrees = glm::degrees(forward);
-
-			hypotheticalLightPos = glm::vec4(-1.0f * forward, 1);
-			m_LightTransfrom->SetPosition(frustumCenter + glm::vec3(hypotheticalLightPos));
-			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
-
-			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+			//ToDo: parameterize shadow cascade thresholds so editor can set them
+			float cameraFarPlane = mainCam.GetNearFar().y;
+			m_ShadowCascadeLevels = { cameraFarPlane / 50.0f, cameraFarPlane / 25.0f, cameraFarPlane / 10.0f, cameraFarPlane / 2.0f };
+			std::vector<glm::mat4> lightMatrices = GetLightSpaceMatrices(mainLight, mainCam);
 			
-
-			glm::vec3 minPointLS{ std::numeric_limits<float>::max() };
-			glm::vec3 maxPointLS{ std::numeric_limits<float>::lowest() };
-
-			for (const glm::vec4& point : frustumWS)
+			
+			m_LightProjectionUBO.Bind();
+			m_LightProjectionUBO.UpdateFloat(0, cameraFarPlane);
+			m_LightProjectionUBO.UpdateVec4(4, m_ShadowCascadeLevels);
+			
+			for (int i = 0; i < lightMatrices.size(); i++)
 			{
-				const glm::vec4 pointLS = m_LightView * point;
-
-				minPointLS.x = std::min(minPointLS.x, pointLS.x);
-				minPointLS.y = std::min(minPointLS.y, pointLS.y);
-				minPointLS.z = std::min(minPointLS.z, pointLS.z);
-
-				maxPointLS.x = std::max(maxPointLS.x, pointLS.x);
-				maxPointLS.y = std::max(maxPointLS.y, pointLS.y);
-				maxPointLS.z = std::max(maxPointLS.z, pointLS.z);
+				m_LightProjectionUBO.UpdateMat4(20 + (16 * i), lightMatrices[i]);
 			}
 
-			// zMult needs to be tuned to scene so TODO: parameterize this so it can be changed in editor
-			constexpr float zMult = 5.0f;
-			if (minPointLS.z < 0)
-				minPointLS.z *= zMult;
-			else
-				minPointLS.z /= zMult;
-
-			if (maxPointLS.z < 0)
-				maxPointLS.z /= zMult;
-			else
-				maxPointLS.z *= zMult;
-
-			m_LightProjection = glm::ortho<float>(minPointLS.x, maxPointLS.x, minPointLS.y, maxPointLS.y, minPointLS.z, maxPointLS.z);
-
-			lightSpaceMatrix = m_LightProjection * m_LightView;
-
-			m_LightProjectionUBO.Bind();
-			m_LightProjectionUBO.UpdateVec4(0, hypotheticalLightPos);
-			m_LightProjectionUBO.UpdateMat4(16, m_LightView);
-			m_LightProjectionUBO.UpdateMat4(80, m_LightProjection);
+			//m_LightProjectionUBO.UpdateVec4(0, hypotheticalLightPos);
+			//m_LightProjectionUBO.UpdateMat4(16, m_LightView);
+			//m_LightProjectionUBO.UpdateMat4(80, m_LightProjection);
 			m_LightProjectionUBO.UnBind();
 
 		}
@@ -281,5 +243,97 @@ namespace Pixie
 		}
 
 		return center /= frustumCorners.size();
+	}
+	std::vector<glm::mat4> ForwardRenderer::GetLightSpaceMatrices(GameObject& mainLight, Camera& camera)
+	{
+		std::vector<glm::mat4> lightSpaceMatrices;
+
+		std::vector<float> cascadeList = { m_ShadowCascadeLevels.x, m_ShadowCascadeLevels.y, m_ShadowCascadeLevels.z, m_ShadowCascadeLevels.w };
+		int cascadesCount = cascadeList.size();
+		
+		Camera camCopy = camera;
+		glm::vec2 camNearFarPlanes = camCopy.GetNearFar();
+		for (int i = 0; i < cascadesCount; i++)
+		{
+			if (i == 0)
+			{
+				camCopy.SetNearFar(camNearFarPlanes.x, cascadeList[i]);
+				lightSpaceMatrices.push_back(GetLightSpaceMatrix(mainLight, camCopy));
+			}
+			else if (i < cascadesCount)
+			{
+				camCopy.SetNearFar(cascadeList[i - 1], cascadeList[i]);
+				lightSpaceMatrices.push_back(GetLightSpaceMatrix(mainLight, camCopy));
+			}
+			else
+			{
+				camCopy.SetNearFar(cascadeList[i - 1], camera.GetNearFar().y);
+				lightSpaceMatrices.push_back(GetLightSpaceMatrix(mainLight, camCopy));
+			}
+		}
+
+		return lightSpaceMatrices;
+	}
+
+	glm::mat4 ForwardRenderer::GetLightSpaceMatrix(GameObject& mainLight, Camera& cameraSegment)
+	{
+		//camera matrices & frustrum
+		glm::mat4 viewMatrix = glm::inverse(mainLight.GetTransform().GetObjectToWorldMatrix());
+		std::vector<glm::vec4> frustumWS = GetFrustumCornersWS(cameraSegment.ProjectionMatrix(), viewMatrix);
+		glm::vec3 frustumCenter = GetFrustumCenter(frustumWS);
+
+		//light matrix
+		glm::mat4 lightSpaceMatrix = glm::mat4();
+		glm::vec4 hypotheticalLightPos{ 1.0f };
+
+		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+		float aspectRatio = viewportSize.x / viewportSize.y;
+		// light direction is used as position with an ortho projection
+		LightComponent& light = mainLight.GetComponent<LightComponent>();
+		TransformComponent lightTransform = mainLight.GetTransform();
+
+		glm::vec3 forward = lightTransform.Forward();
+		glm::vec3 forwardDegrees = glm::degrees(forward);
+
+		hypotheticalLightPos = glm::vec4(-1.0f * forward, 1);
+		m_LightTransfrom->SetPosition(frustumCenter + glm::vec3(hypotheticalLightPos));
+		m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
+
+		m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+
+
+		glm::vec3 minPointLS{ std::numeric_limits<float>::max() };
+		glm::vec3 maxPointLS{ std::numeric_limits<float>::lowest() };
+
+		for (const glm::vec4& point : frustumWS)
+		{
+			const glm::vec4 pointLS = m_LightView * point;
+
+			minPointLS.x = std::min(minPointLS.x, pointLS.x);
+			minPointLS.y = std::min(minPointLS.y, pointLS.y);
+			minPointLS.z = std::min(minPointLS.z, pointLS.z);
+
+			maxPointLS.x = std::max(maxPointLS.x, pointLS.x);
+			maxPointLS.y = std::max(maxPointLS.y, pointLS.y);
+			maxPointLS.z = std::max(maxPointLS.z, pointLS.z);
+		}
+
+		// zMult needs to be tuned to scene so TODO: parameterize this so it can be changed in editor
+		constexpr float zMult = 5.0f;
+		if (minPointLS.z < 0)
+			minPointLS.z *= zMult;
+		else
+			minPointLS.z /= zMult;
+
+		if (maxPointLS.z < 0)
+			maxPointLS.z /= zMult;
+		else
+			maxPointLS.z *= zMult;
+
+		m_LightProjection = glm::ortho<float>(minPointLS.x, maxPointLS.x, minPointLS.y, maxPointLS.y, minPointLS.z, maxPointLS.z);
+
+		lightSpaceMatrix = m_LightProjection * m_LightView;
+
+		return lightSpaceMatrix;
 	}
 }

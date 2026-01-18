@@ -23,9 +23,10 @@ layout (std140, binding = 0) uniform CameraBlock
 //uniform mat4 lightProjMat;
 layout (std140, binding = 1) uniform LightProjectionBlock
 {
-    vec4 mainLightPosition;
-    mat4 lightViewMat;
-    mat4 lightProjMat;
+    float farPlane;
+    vec4 cascadePlaneDistances;
+    //vec4 mainLightPosition; //alignment 0
+    mat4 lightSpaceMatrices[16];
 };
 
 
@@ -53,7 +54,26 @@ void main()
     gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
     OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
     OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
-    OUT.Pos_LS = lightProjMat * lightViewMat * transform * vec4(vertexPosition, 1.0);
+
+    float depthValue = abs(OUT.Pos_CS.z);
+    int cascadeCount = 4; //cascade distances are set via a vec four not a list
+    int layer = -1;
+    for (int i = 0; i < cascadeCount; ++i)
+    {
+        if (depthValue < cascadePlaneDistances[i])
+        {
+            layer = i;
+            break;
+        }
+    }
+    if (layer == -1)
+    {
+        layer = cascadeCount;
+    }
+    
+    OUT.Pos_LS = lightSpaceMatrices[layer] * vec4(OUT.Pos_WS, 1.0);
+
+    //OUT.Pos_LS = lightProjMat * lightViewMat * transform * vec4(vertexPosition, 1.0);
 
     mat3 MV3 = mat3(view * transform);
     mat3 M = mat3(transform);

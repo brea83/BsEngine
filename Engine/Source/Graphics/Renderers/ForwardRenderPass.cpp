@@ -93,39 +93,40 @@ namespace Pixie
 		float innerRadiusCos[MAX_LIGHTS];
 		float outerRadiusCos[MAX_LIGHTS];
 
-		int activeLights = 0;
+		int i = 0;
 		for (auto entity : group)
 		{
 			LightComponent& light = group.get<LightComponent>(entity);
 			TransformComponent& lightTransform = group.get<TransformComponent>(entity);
 			if (!light.Enabled) continue;
 
-			lightTypes[activeLights] = light.Type;
+			lightTypes[i] = light.Type;
 
-			lightPositions[activeLights * 4 + 0] = lightTransform.GetPosition().x;
-			lightPositions[activeLights * 4 + 1] = lightTransform.GetPosition().y;
-			lightPositions[activeLights * 4 + 2] = lightTransform.GetPosition().z;
+			lightPositions[i * 3 + 0] = lightTransform.GetPosition().x;
+			lightPositions[i * 3 + 1] = lightTransform.GetPosition().y;
+			lightPositions[i * 3 + 2] = lightTransform.GetPosition().z;
 
 			//glm::vec3 direction = lightTransform.GetRotationEuler(AngleType::Radians);
 			//direction = glm::normalize(direction);
-			lightDirections[activeLights * 3 + 0] = lightTransform.Forward().x;
-			lightDirections[activeLights * 3 + 1] = lightTransform.Forward().y;
-			lightDirections[activeLights * 3 + 2] = lightTransform.Forward().z;
+			lightDirections[i * 3 + 0] = lightTransform.Forward().x;
+			lightDirections[i * 3 + 1] = lightTransform.Forward().y;
+			lightDirections[i * 3 + 2] = lightTransform.Forward().z;
 
-			lightColors[activeLights * 4 + 0] = light.Color.r;
-			lightColors[activeLights * 4 + 1] = light.Color.g;
-			lightColors[activeLights * 4 + 2] = light.Color.b;
+			lightColors[i * 3 + 0] = light.Color.r;
+			lightColors[i * 3 + 1] = light.Color.g;
+			lightColors[i * 3 + 2] = light.Color.b;
 
-			lightAttenuations[activeLights * 4 + 0] = light.Attenuation.x;
-			lightAttenuations[activeLights * 4 + 1] = light.Attenuation.y;
-			lightAttenuations[activeLights * 4 + 2] = light.Attenuation.z;
+			lightAttenuations[i * 3 + 0] = light.Attenuation.x;
+			lightAttenuations[i * 3 + 1] = light.Attenuation.y;
+			lightAttenuations[i * 3 + 2] = light.Attenuation.z;
 
-			innerRadiusCos[activeLights] = glm::cos(glm::radians(light.InnerRadius));
-			outerRadiusCos[activeLights] = glm::cos(glm::radians(light.OuterRadius));
+			innerRadiusCos[i] = glm::cos(glm::radians(light.InnerRadius));
+			outerRadiusCos[i] = glm::cos(glm::radians(light.OuterRadius));
 
-			activeLights++;
+			i++;
 		}
 		
+		int activeLights = i;
 		//glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLightsCount"), activeLights);
 		glUniform1i(glGetUniformLocation(m_Shader->ShaderProgram, "activeLights"), activeLights);
 		glUniform3fv(glGetUniformLocation(m_Shader->ShaderProgram, "lightPosition"), activeLights, lightPositions);

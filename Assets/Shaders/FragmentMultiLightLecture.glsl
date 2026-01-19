@@ -236,6 +236,7 @@ void main()
 				if(Material.BUseNormalMap)
 				{
 					direction = IN.TBN * direction;
+					direction = normalize(direction);
 				}
 
 				float nDotL = clamp(dot(N, direction), 0.0, 1.0);
@@ -253,6 +254,7 @@ void main()
 			if(Material.BUseNormalMap)
 			{
 				direction = IN.TBN * direction;
+				direction = normalize(direction);
 			}
 
 			float nDotL = clamp(dot(N, direction), 0.0, 1.0);

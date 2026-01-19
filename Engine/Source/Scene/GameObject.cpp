@@ -27,7 +27,9 @@ namespace Pixie
 	{
 		if (!object.HasCompoenent<IDComponent>())
 		{
-			Logger::Log(LOG_ERROR, "Error: trying to serialize a gameobject with no GUID");
+			NameComponent* nameComponent = object.TryGetComponent<NameComponent>();
+			std::string name = nameComponent == nullptr ? "un-named entity" : nameComponent->Name;
+			Logger::Log(LOG_WARNING, "Skipping Serializeation of {} because it has no GUID", name);
 			return;
 		}
 

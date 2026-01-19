@@ -196,8 +196,17 @@ namespace Pixie
         if (m_ParentGuid != 0)
         {
             Scene* scene = EngineContext::GetEngine()->GetScene();
-            TransformComponent& parentTransform = scene->FindGameObjectByGUID(m_ParentGuid).GetTransform();
-            m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
+            GameObject parentObject = scene->FindGameObjectByGUID(m_ParentGuid);
+            if (parentObject)
+            {
+                TransformComponent& parentTransform = parentObject.GetTransform();
+                m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
+            }
+            else
+            {
+                m_WorldMatrix = m_LocalMatrix;
+            }
+
             return m_WorldMatrix;
         }
 

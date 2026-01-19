@@ -45,12 +45,88 @@ namespace Pixie
 		}
 
 		// right click on blank space
-		if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_NoOpenOverItems))
+		if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
 		{
 			if (ImGui::MenuItem("Create Empty"))
 			{
 				currentScene->CreateEmptyGameObject("Empty Object");
 			}
+
+			ImGui::Separator();
+			if (ImGui::MenuItem("Add Camera"))
+			{
+				GameObject newCamera = currentScene->CreateEmptyGameObject("Camera");
+				TransformComponent& transform = newCamera.GetTransform();
+				transform.SetPosition(glm::vec3(0.0f, 0.0f, -15.0f));
+				transform.SetRotationEuler(glm::vec3(0.0f, 180.0f, 0.0f));
+				newCamera.AddComponent<CameraComponent>();
+				newCamera.AddComponent<CameraController>();
+			}
+
+			ImGui::Separator();
+			if (ImGui::BeginMenu("Add Mesh Object"))
+			{
+				if (ImGui::MenuItem("Cube"))
+				{
+					currentScene->CreateCube();
+				}
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Sphere"))
+				{
+					currentScene->CreateSphere();
+				}
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Plane XZ"))
+				{
+					currentScene->CreatePlane(glm::vec3(-90.0f, 0.0f, 0.0f));
+				}
+
+				if (ImGui::MenuItem("Plane XY"))
+				{
+					currentScene->CreatePlane();
+				}
+
+				if (ImGui::MenuItem("Plane YZ"))
+				{
+					currentScene->CreatePlane(glm::vec3( 0.0f, -90.0f, 0.0f));
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::Separator();
+			if (ImGui::BeginMenu("Add Light"))
+			{
+				
+					if (ImGui::MenuItem("Directional Light"))
+					{
+						currentScene->TryCreateDirectionalLight();
+					}
+
+					if (ImGui::MenuItem("Point Light"))
+					{
+						GameObject newLight = currentScene->CreateEmptyGameObject("Point Light");
+						LightComponent& light = newLight.AddComponent<LightComponent>();
+						light.Type = LightType::Point;
+					}
+
+					if (ImGui::MenuItem("Spot Light"))
+					{
+						GameObject newLight = currentScene->CreateEmptyGameObject("Spot Light");
+						TransformComponent& transform = newLight.GetTransform();
+						transform.SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+						transform.SetRotationEuler(glm::vec3(-90.0f, 180.0f, 0.0f));
+
+						LightComponent& light = newLight.AddComponent<LightComponent>();
+						light.Type = LightType::Spot;
+					}
+
+					ImGui::EndMenu();
+				
+			}
+
 			ImGui::EndPopup();
 		}
 

@@ -61,6 +61,11 @@ namespace Pixie
 		Entity CreateEntity(const std::string& name = "");
 
 		GameObject CreateCube();
+		// creates a plane rotated to match the provided rotation in degrees default is paralell to the XZ plane
+		GameObject CreatePlane(glm::vec3 eulerRotation = glm::vec3(0.0f));
+		GameObject CreateSphere();
+		GameObject TryCreateDirectionalLight();
+		
 
 		CameraManager& GetCameraManager() { return m_CameraManager; }
 		void ForwardAspectRatio(float width, float height);

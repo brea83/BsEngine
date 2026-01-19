@@ -274,11 +274,42 @@ namespace Pixie
 
 	GameObject Scene::CreateCube()
 	{
-		//m_MeshComponents.emplace_back(new Cube());
 		GameObject object = CreateEmptyGameObject("Cube");
-		//object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
 		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Cube.obj");
 		return object;
+	}
+
+	GameObject Scene::CreatePlane(glm::vec3 eulerRotation)
+	{
+		GameObject object = CreateEmptyGameObject("Plane");
+		TransformComponent& transform = object.GetTransform();
+		transform.SetRotationEuler(eulerRotation);
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/quadPlane.obj");
+		return object;
+	}
+
+	GameObject Scene::CreateSphere()
+	{
+		GameObject object = CreateEmptyGameObject("Sphere");
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
+		return object;
+	}
+
+	GameObject Scene::TryCreateDirectionalLight()
+	{
+		if (GetMainLight())
+		{
+			Logger::Log(LOG_WARNING, "Tried to add a second Directional light. Pixie Engine does not yet support multiple directional lights in a scene");
+			return GameObject();
+		}
+
+		GameObject newLight = CreateEmptyGameObject("Directional Light");
+		TransformComponent& transform = newLight.GetTransform();
+		transform.SetRotationEuler(glm::vec3(-90.0f, 180.0f, 0.0f));
+
+		LightComponent& light = newLight.AddComponent<LightComponent>();
+		light.Type = LightType::Directional;
+		return newLight;
 	}
 
 

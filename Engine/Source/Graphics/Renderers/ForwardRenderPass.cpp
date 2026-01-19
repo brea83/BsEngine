@@ -80,6 +80,7 @@ namespace Pixie
 		if (!group)
 		{
 			Logger::Log(LOG_WARNING, "No light components found");
+			m_Shader->SetUniformBool("BUseLights", false);
 			return;
 		}
 

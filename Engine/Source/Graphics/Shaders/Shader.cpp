@@ -215,6 +215,18 @@ namespace Pixie
 		Logger::Log(LOG_TRACE, "........................");
 	}
 
+	bool Shader::HasUniformName(const std::string& name) const
+	{
+		if (m_Uniforms.find(name) != m_Uniforms.end())
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	const UniformInfo& Shader::GetUniformInfoByName(std::string name) const
 	{
 		if (m_Uniforms.find(name) != m_Uniforms.end())

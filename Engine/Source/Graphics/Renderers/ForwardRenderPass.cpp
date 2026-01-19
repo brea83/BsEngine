@@ -73,8 +73,22 @@ namespace Pixie
 
 		m_Shader->EndUse();
 	}
+	bool ForwardRenderPass::IsLit() const
+	{
+		UniformInfo uniform = m_Shader->GetUniformInfoByName("BUseLights");
+		if (uniform.IsValid())
+			return true;
+		else
+			return false;
+	}
 	void ForwardRenderPass::SendLightsToShader(entt::registry& registry)
 	{
+		if (m_LightsForcedOff)
+		{
+			m_Shader->SetUniformBool("BUseLights", false);
+			m_Shader->SetUniformBool("bUseShadowMap", false);
+			return;
+		}
 		auto group = registry.group<LightComponent>(entt::get<TransformComponent>);
 
 		if (!group)

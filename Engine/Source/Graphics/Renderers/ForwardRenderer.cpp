@@ -184,6 +184,16 @@ namespace Pixie
 		uint32_t prevPassColor{ 0 };
 
 		if (!m_bCameraFound) return;
+
+		if (m_WireFrameOnly)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
 		for (size_t i = 0; i < m_Passes.size(); i++)
 		{
 
@@ -219,6 +229,19 @@ namespace Pixie
 	void ForwardRenderer::EndFrame(Scene& scene)
 	{
 		m_FrameBuffer->UnBind();
+	}
+
+	void ForwardRenderer::ForceUnlit(bool value)
+	{
+		for (size_t i = 0; i < m_Passes.size(); i++)
+		{
+			m_Passes[i]->ForceLightsOff(value);
+		}
+	}
+
+	void ForwardRenderer::ForceWireFrame(bool value)
+	{
+		m_WireFrameOnly = value;
 	}
 
 	std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> ForwardRenderer::GetAllRenderBuffers()

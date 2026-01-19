@@ -65,7 +65,8 @@ namespace Pixie
 
 		std::string GetName() const;
 		// get uniform info for materials that use this shader
-
+		bool HasUniformName(const std::string& name) const;
+		const UniformInfo& GetUniformInfoByName(std::string name) const;
 		std::unordered_map<std::string, UniformInfo> GetUniforms() { return m_Uniforms; }
 
 	private:
@@ -83,7 +84,6 @@ namespace Pixie
 
 		std::string GetUniformNameFromShader(GLint index, GLint nameLength);
 		void PrintUniformMetadata(std::string name, UniformInfo uniform) const;
-		const UniformInfo& GetUniformInfoByName(std::string name) const;
 		void PrintMetadata() const;
 	};
 

@@ -26,6 +26,9 @@ namespace Pixie
 		void EnableGridShader(bool value) { m_DrawGridEnabled = value; }
 		bool IsGridShaderEnabled() { return m_DrawGridEnabled; }
 
+		virtual void ForceUnlit(bool value) = 0;
+		virtual void ForceWireFrame(bool value) = 0;
+
 		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() = 0;
 	protected:
 		EngineContext* m_Engine;

@@ -16,6 +16,9 @@ namespace Pixie
 		void RenderFrame(Scene& scene) override;
 		void EndFrame(Scene& scene) override;
 
+		virtual void ForceUnlit(bool value) override;
+		virtual void ForceWireFrame(bool value) override;
+
 		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() override;
 	protected:
 		std::shared_ptr<Camera> m_LightCamera{ nullptr };
@@ -25,6 +28,7 @@ namespace Pixie
 		UniformBuffer m_LightProjectionUBO;
 		UniformBuffer m_CameraBlockUBO;
 
+		bool m_WireFrameOnly{ false };
 		struct LightProjUboData
 		{
 			glm::vec4 mainLightPosition;

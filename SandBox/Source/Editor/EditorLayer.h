@@ -11,6 +11,7 @@ namespace Pixie
 	class Scene;
 	class ConsoleWindow;
 	class RenderInspectorPanel;
+	class Renderer;
 
 	//may need key, mouse, and application events
 	class EditorLayer : public ImGuiLayer
@@ -42,7 +43,12 @@ namespace Pixie
 		std::string m_CurrentScenePath{ "" };
 		SceneState m_SceneState{SceneState::Edit};
 		std::string m_PlayPauseText{ "Play" };
-
+		
+		Renderer* m_CurrentRenderer{ nullptr };
+		bool m_ForceUnlit{ false };
+		std::string m_LitButtonString{ "Lit" };
+		std::string m_UnlitButtonString{ "Unlit" };
+		bool m_DrawWireFrame{ false };
 
 		//SceneHierarchyPanel m_Hierarchy;
 		GameObject m_Selected{ entt::null, nullptr };
@@ -57,6 +63,7 @@ namespace Pixie
 		void DrawMainMenu(EngineContext* engine);
 		void DrawMainMenuBar2();
 
+		void DrawRendererToggles();
 		void DrawEditorCamTools(GameObject& activeCam);
 		
 		void DrawViewport(EngineContext& engine, GameObject& selected);

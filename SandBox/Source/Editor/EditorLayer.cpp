@@ -36,9 +36,10 @@ namespace Pixie
 	void EditorLayer::OnSceneChange(Scene* newScene, const std::string& filepath)
 	{
 		m_CurrentScene = newScene;
-		m_Selected = GameObject(entt::null, m_CurrentScene);
+		m_Selected = nullptr;
 		m_CurrentScenePath = filepath;
 		m_CurrentScene->ForwardAspectRatio(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
+		m_Hierarchy->OnSceneChange(m_CurrentScene);
 	}
 
 	void EditorLayer::OnAttach()
@@ -76,8 +77,9 @@ namespace Pixie
 
 		//m_AssetViewer = new AssetViewerPanel();
 		m_ConsoleWindow = std::make_shared<ConsoleWindow>();
-		//std::shared_ptr< spdlog::imgui_sink<std::mutex>> imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
-		
+		m_Hierarchy = std::make_shared<SceneHierarchyPanel>();
+		m_Hierarchy->OnSceneChange(m_CurrentScene);
+
 		spdlog::sink_ptr imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
 		imguiSink->set_pattern("%^%v%$");
 		Logger::GetCoreLogger()->sinks().push_back(imguiSink);
@@ -201,13 +203,13 @@ namespace Pixie
 		ImGui::End();
 
 		// this function will change which entity m_Selected represents
-		SceneHierarchyPanel::Draw(m_CurrentScene, m_Selected);
-
+		m_Hierarchy->Draw();
+		m_Selected = m_Hierarchy->GetSelected();
 		//Details view can't change which entity m_Selected represents, but its components can be changed
 		DetailsViewPanel::Draw(m_CurrentScene, m_Selected);
 		AssetViewerPanel::Draw();
 
-		DrawViewport(engine, m_Selected);
+		DrawViewport(engine);
 
 		m_ConsoleWindow->Draw();
 
@@ -470,7 +472,7 @@ namespace Pixie
 		//ImGui::End();
 	}
 
-	void EditorLayer::DrawViewport(EngineContext& engine, GameObject& selected)
+	void EditorLayer::DrawViewport(EngineContext& engine)
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 		if (m_CurrentScene == nullptr)
@@ -525,7 +527,7 @@ namespace Pixie
 		ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
 
 		if (camera)
-			DrawGizmos(camera, viewMatrix, selected);
+			DrawGizmos(camera, viewMatrix);
 
 		ImGui::End();
 	}
@@ -533,7 +535,7 @@ namespace Pixie
 	void EditorLayer::DrawGridLines(Camera* camera)
 	{}
 
-	void EditorLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& selected)
+	void EditorLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix)
 	{
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -542,7 +544,7 @@ namespace Pixie
 		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 		entt::registry& registry = m_CurrentScene->GetRegistry();
-		if (!registry.valid(selected) || m_GizmoType == -1)
+		if (m_Selected == nullptr || !registry.valid(*m_Selected) || m_GizmoType == -1)
 		{
 			return;
 		}
@@ -553,7 +555,7 @@ namespace Pixie
 		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 			m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
-		TransformComponent& transform = selected.GetTransform();
+		TransformComponent& transform = m_Selected->GetTransform();
 		//if (transform == nullptr) return;
 		glm::mat4 transformMatrix = transform.GetObjectToWorldMatrix();
 		//glm::mat4 localTransform = transform.GetLocal();

@@ -13,24 +13,24 @@
 
 namespace Pixie
 {
-	bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
+	bool DetailsViewPanel::Draw(Scene* scene, std::shared_ptr<GameObject> selected)
 	{
 
 		ImGui::Begin("Details View");
 		{
-			if (scene == nullptr || selected.GetScene() == nullptr)
+			if (scene == nullptr || selected == nullptr || selected->GetScene() == nullptr)
 			{
 				ImGui::End();
 				return false;
 			}
 			entt::registry& registry = scene->GetRegistry();
-			if (!registry.valid(selected))
+			if (!registry.valid(*selected))
 			{
 				ImGui::End();
 				return false;
 			}
 
-			NameComponent& nameComp = selected.GetComponent<NameComponent>();
+			NameComponent& nameComp = selected->GetComponent<NameComponent>();
 			static std::string editingName = nameComp.Name;
 
 
@@ -41,18 +41,18 @@ namespace Pixie
 			{
 				if (ImGui::Selectable("Mesh Component"))
 				{
-					selected.AddComponent<MeshComponent>();
+					selected->AddComponent<MeshComponent>();
 				}
 
 				if (ImGui::Selectable("Camera Component"))
 				{
-					selected.AddComponent<CameraComponent>();
-					CameraController& controller = selected.AddComponent<CameraController>();
+					selected->AddComponent<CameraComponent>();
+					CameraController& controller = selected->AddComponent<CameraController>();
 					//controller.UpdateFocalPoint(selected);
 				}
 				if (ImGui::Selectable("Light"))
 				{
-					selected.AddComponent<LightComponent>();
+					selected->AddComponent<LightComponent>();
 				}
 				ImGui::EndPopup();
 			}
@@ -65,7 +65,7 @@ namespace Pixie
 			//	
 
 			ImGui::SeparatorText("Componenets");
-			DrawComponents(scene, selected/*selectedObject->GetAllComponents()*/);
+			DrawComponents(scene, *selected/*selectedObject->GetAllComponents()*/);
 
 		}
 		ImGui::End();

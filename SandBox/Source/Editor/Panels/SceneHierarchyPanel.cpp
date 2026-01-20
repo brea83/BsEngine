@@ -10,17 +10,18 @@
 
 namespace Pixie
 {
-	void SceneHierarchyPanel::Draw(Scene* currentScene, GameObject& selected)
+	void SceneHierarchyPanel::Draw()
 	{
 		ImGui::Begin("HierarchyTree");
-		if (currentScene == nullptr)
+		if (m_CurrentScene == nullptr)
 		{
+			m_Selected = nullptr;
 			ImGui::End();
 			return;// entt::null;
 		}
 
 		//static Entity selected = Entity();
-		entt::registry& registry = currentScene->GetRegistry();
+		entt::registry& registry = m_CurrentScene->GetRegistry();
 
 
 		auto view = registry.view<HeirarchyComponent>();
@@ -32,16 +33,39 @@ namespace Pixie
 
 		for (entt::entity entity : view)
 		{
-			GameObject currentObject{ entity, currentScene };
+			GameObject currentObject{ entity, m_CurrentScene };
 			auto [family] = view.get(entity);
 			if (family.Parent != 0) continue;
 
-			DrawNode(selected, currentObject);
+			DrawNode(currentObject);
+		}
+		if(ImGui::BeginChild("##UnparentZone"))
+		{
+			ImGui::EndChild();
+		}
+		ImGuiDragDropFlags drop_target_flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(m_HeirarchyDragType.c_str(), drop_target_flags))
+			{
+				ImGui::SetTooltip("Unparent");
+				if (payload->IsDelivery())
+				{
+					IM_ASSERT(payload->DataSize == sizeof(GameObject));
+					GameObject droppedObject = *(const GameObject*)payload->Data;
+					droppedObject.SetParentNone();
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+		{
+			m_Selected = {};
 		}
 
 		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 		{
-			selected = {};
+			m_Selected = {};
 		}
 
 		// right click on blank space
@@ -49,13 +73,13 @@ namespace Pixie
 		{
 			if (ImGui::MenuItem("Create Empty"))
 			{
-				currentScene->CreateEmptyGameObject("Empty Object");
+				m_CurrentScene->CreateEmptyGameObject("Empty Object");
 			}
 
 			ImGui::Separator();
 			if (ImGui::MenuItem("Add Camera"))
 			{
-				GameObject newCamera = currentScene->CreateEmptyGameObject("Camera");
+				GameObject newCamera = m_CurrentScene->CreateEmptyGameObject("Camera");
 				TransformComponent& transform = newCamera.GetTransform();
 				transform.SetPosition(glm::vec3(0.0f, 0.0f, -15.0f));
 				transform.SetRotationEuler(glm::vec3(0.0f, 180.0f, 0.0f));
@@ -68,29 +92,29 @@ namespace Pixie
 			{
 				if (ImGui::MenuItem("Cube"))
 				{
-					currentScene->CreateCube();
+					m_CurrentScene->CreateCube();
 				}
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Sphere"))
 				{
-					currentScene->CreateSphere();
+					m_CurrentScene->CreateSphere();
 				}
 				ImGui::Separator();
 
 				if (ImGui::MenuItem("Plane XZ"))
 				{
-					currentScene->CreatePlane(glm::vec3(-90.0f, 0.0f, 0.0f));
+					m_CurrentScene->CreatePlane(glm::vec3(-90.0f, 0.0f, 0.0f));
 				}
 
 				if (ImGui::MenuItem("Plane XY"))
 				{
-					currentScene->CreatePlane();
+					m_CurrentScene->CreatePlane();
 				}
 
 				if (ImGui::MenuItem("Plane YZ"))
 				{
-					currentScene->CreatePlane(glm::vec3( 0.0f, -90.0f, 0.0f));
+					m_CurrentScene->CreatePlane(glm::vec3( 0.0f, -90.0f, 0.0f));
 				}
 
 				ImGui::EndMenu();
@@ -102,19 +126,19 @@ namespace Pixie
 				
 					if (ImGui::MenuItem("Directional Light"))
 					{
-						currentScene->TryCreateDirectionalLight();
+						m_CurrentScene->TryCreateDirectionalLight();
 					}
 
 					if (ImGui::MenuItem("Point Light"))
 					{
-						GameObject newLight = currentScene->CreateEmptyGameObject("Point Light");
+						GameObject newLight = m_CurrentScene->CreateEmptyGameObject("Point Light");
 						LightComponent& light = newLight.AddComponent<LightComponent>();
 						light.Type = LightType::Point;
 					}
 
 					if (ImGui::MenuItem("Spot Light"))
 					{
-						GameObject newLight = currentScene->CreateEmptyGameObject("Spot Light");
+						GameObject newLight = m_CurrentScene->CreateEmptyGameObject("Spot Light");
 						TransformComponent& transform = newLight.GetTransform();
 						transform.SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
 						transform.SetRotationEuler(glm::vec3(-90.0f, 180.0f, 0.0f));
@@ -135,7 +159,7 @@ namespace Pixie
 		//return selected;
 	}
 
-	void SceneHierarchyPanel::DrawNode(GameObject& selected, GameObject& entity)
+	void SceneHierarchyPanel::DrawNode(GameObject& entity)
 	{
 		std::string& entityName = entity.GetComponent<NameComponent>().Name;
 		std::string name = (entityName.empty()) ? "_NameEmpty_" : entityName;
@@ -145,7 +169,7 @@ namespace Pixie
 		std::vector<GameObject> children = entity.GetChildren();
 		bool bLeafNode = children.empty();
 
-		ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags = ((m_Selected != nullptr && *m_Selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
 		if (bLeafNode)
 		{
 			flags |= ImGuiTreeNodeFlags_Leaf;
@@ -156,9 +180,28 @@ namespace Pixie
 		}
 
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload(m_HeirarchyDragType.c_str(), &entity, sizeof(GameObject));
+			ImGui::Text(name.c_str());
+			ImGui::EndDragDropSource();
+		}
+		
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(m_HeirarchyDragType.c_str()))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(GameObject));
+				GameObject droppedObject = *(const GameObject*)payload->Data;
+
+				entity.AddChild(droppedObject);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
 		if (ImGui::IsItemClicked())
 		{
-			selected = entity;
+			m_Selected = std::make_shared<GameObject>(entity);
 		}
 
 		bool entityDeleted = false;
@@ -176,7 +219,7 @@ namespace Pixie
 			{
 				for (auto child : children)
 				{
-					DrawNode(selected, child);
+					DrawNode(child);
 				}
 			}
 
@@ -186,9 +229,18 @@ namespace Pixie
 		if (entityDeleted)
 		{
 			entity.m_Scene->RemoveGameObject(entity);
-			if (selected == entity)
-				selected = {};
+			if (*m_Selected == entity)
+				m_Selected = nullptr;
 		}
+	}
+	void SceneHierarchyPanel::OnSceneChange(Scene* newScene)
+	{
+		if (m_Selected != nullptr)
+		{
+			m_Selected = nullptr;
+		}
+
+		m_CurrentScene = newScene;
 	}
 }
 

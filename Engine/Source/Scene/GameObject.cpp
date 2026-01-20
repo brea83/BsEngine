@@ -165,6 +165,12 @@ namespace Pixie
 
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 		family.Parent = 0;
+
+		TransformComponent* transform = TryGetComponent<TransformComponent>();
+		if (transform)
+		{
+			transform->m_ParentGuid = 0;
+		}
 	}
 
 	void GameObject::SetParent(GameObject& newParent, bool bSentFromAddChild)

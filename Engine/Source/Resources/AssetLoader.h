@@ -46,6 +46,7 @@ namespace Pixie
 		static std::unordered_map<std::string, std::shared_ptr<Resource>> s_Resources;
 
 		static void ParsePathString(const std::string& inPath, std::string& outPath);
+		static std::filesystem::path ParsePathString(const std::filesystem::path& inPath);
 		static std::shared_ptr<Texture> LoadTextureParsedPath(const std::string& filePath, TextureType type = TextureType::Diffuse);
 
 		static std::string CheckForSerializedVersion(const std::filesystem::path& filePath);

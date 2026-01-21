@@ -15,17 +15,6 @@ namespace Pixie
 
 	void Scene::Initialize()
 	{
-		//GameObject mainCam = CreateEmptyGameObject("Main Camera");
-		//CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
-		//TransformComponent& transform = mainCam.GetComponent<TransformComponent>();
-		//transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
-		//transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
-
-		//mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
-
-		////DefaultCamera = mainCam;
-		//SetActiveCamera(mainCam);
-		// TODO: make catch so that editor camera isn't created and used in non editor modes
 		if (EngineContext::GetEngine()->IsEditorEnabled())
 		{
 			m_CameraManager.InitEditor();
@@ -66,6 +55,75 @@ namespace Pixie
 		cube1.AddChild(sphere);
 
 	}
+	 template<typename Component>
+	 static bool TryCopyEntityComponent(Entity destination, Entity source)
+	 {
+		 if (source.HasCompoenent<Component>())
+		 {
+			 destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
+			 return true;
+		 }
+		 else
+		 {
+			 return false;
+		 }
+	 }
+
+	template<typename Component>
+	static void CopyRegistryComponents(entt::registry& destination, entt::registry& source, const std::unordered_map<GUID, entt::entity>& guidToDestinationEntt)
+	{
+		auto view = source.view<Component>();
+		for (auto entity : view)
+		{
+			IDComponent* guidComponent = source.try_get<IDComponent>(entity);
+			if (!guidComponent) 
+				continue; // TODO: change how editor only things are handled, they should probably have guids too.
+			
+			GUID guid = guidComponent->ID;
+
+			if (guidToDestinationEntt.find(guid) != guidToDestinationEntt.end())
+			{
+				entt::entity newEnttID = guidToDestinationEntt.at(guid);
+
+				auto& sourceComponent = source.get<Component>(entity);
+
+				destination.emplace_or_replace<Component>(newEnttID, sourceComponent);
+			}
+
+		}
+	}
+
+	Scene* Scene::Copy(Scene* sourceScene)
+	{
+		Scene* newScene = new Scene();
+
+		newScene->m_Name = sourceScene->m_Name + " Copy";
+		
+		entt::registry& sourceRegistry = sourceScene->m_Registry;
+		entt::registry& destinationRegistry = newScene->m_Registry;
+
+
+		std::unordered_map<GUID, entt::entity> guidToDestinationEntt;
+		auto idView = sourceRegistry.view<IDComponent>();
+		for (auto entity : idView)
+		{
+			GUID guid = sourceRegistry.get<IDComponent>(entity).ID;
+			std::string name = sourceRegistry.get<NameComponent>(entity).Name;
+
+			Entity newEntity = newScene->CreateEntityWithGUID(guid, name);
+			guidToDestinationEntt[guid] = newEntity;
+		}
+
+		CopyRegistryComponents<TagComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<HeirarchyComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<TransformComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<MeshComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<LightComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<CameraComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<CameraController>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+
+		return newScene;
+	}
 
 	Scene::~Scene()
 	{
@@ -73,6 +131,7 @@ namespace Pixie
 
 	}
 
+	
 	void  Scene::BeginPlayMode()
 	{
 		m_CameraManager.OnBeginPlayMode();
@@ -198,26 +257,23 @@ namespace Pixie
 		return GameObject();
 	}
 
-	//ToStudy: what is the template sorcery? or rather, why does it work to itterate throught the components listed in AllComponents
-	// when used with CopyComponentIfExists(AllComponents{}, newEntity, entity);
-	template<typename... Component>
-	static bool TryCopyComponent(Entity destination, Entity source)
+	GameObject Scene::DuplicateGameObject(Entity sourceObject)
 	{
-		return false;
-	}
-	
-	template<typename... Component>
-	static void CopyEntityComponents(Entity destination, Entity source)
-	{
-		//TryCopyComponent<Component...>(destination, source);
-	}
-
-	GameObject Scene::DuplicateGameObject(GameObject sourceObject)
-	{
-		std::string name = sourceObject.GetName();
-		GameObject duplicate = CreateEmptyGameObject(name);
 		
-		//CopyEntityComponents(AllComponents{}, duplicate, sourceObject);
+		//std::string name = sourceObject.GetName();
+		//GameObject duplicate = CreateEmptyGameObject(name);
+
+		Entity entity = DuplicateEntity(sourceObject);
+		GameObject duplicate = GameObject(entity, this);
+		duplicate.AddComponent<IDComponent>();
+
+		HeirarchyComponent* family = duplicate.TryGetComponent<HeirarchyComponent>();
+		if (family)
+		{
+			GameObject parent = GameObject(sourceObject, this).GetParent(); //hilarious situation where parent doesn't know they are the parent yet because we copied the data from their other child
+			if(parent)
+				duplicate.SetParent(parent);
+		}
 
 		return duplicate;
 	}
@@ -289,6 +345,31 @@ namespace Pixie
 		NameComponent& nameComponent = entity.AddComponent<NameComponent>();
 		nameComponent.Name = name.empty() ? "Empty Entity" : name;
 		return entity;
+	}
+
+	Entity Scene::CreateEntityWithGUID(GUID guid, const std::string& name)
+	{
+		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(guid);
+		NameComponent& nameComponent = entity.AddComponent<NameComponent>();
+		nameComponent.Name = name.empty() ? "Empty Entity" : name;
+		return entity;
+	}
+
+
+	Entity Scene::DuplicateEntity(Entity source)
+	{
+		std::string name = source.GetName();
+		Entity duplicate = CreateEntity(name);
+
+		TryCopyEntityComponent<TagComponent>(duplicate, source);
+		TryCopyEntityComponent<HeirarchyComponent>(duplicate, source);
+		TryCopyEntityComponent<TransformComponent>(duplicate, source);
+		TryCopyEntityComponent<MeshComponent>(duplicate, source);
+		TryCopyEntityComponent<LightComponent>(duplicate, source);
+		TryCopyEntityComponent<CameraComponent>(duplicate, source);
+		TryCopyEntityComponent<CameraController>(duplicate, source);
+		return duplicate;
 	}
 
 	GameObject Scene::CreateCube()

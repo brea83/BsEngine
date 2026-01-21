@@ -37,6 +37,8 @@ namespace Pixie
 		void SaveSceneAs();
 		void OpenScene();
 
+		bool TryDuplicateSelected();
+
 		virtual void OnImGuiRender() override;
 
 	private:

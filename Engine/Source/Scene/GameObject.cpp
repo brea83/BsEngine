@@ -23,11 +23,6 @@ namespace Pixie
 		//Logger::Log(LOG_TRACE, "GameObject update, entity id: {}", (int)m_EntityHandle);
 	}
 
-	const std::string& GameObject::GetName() const
-	{
-		return GetComponent<NameComponent>().Name;
-	}
-
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
 	{
 		if (!object.HasCompoenent<IDComponent>())
@@ -196,7 +191,7 @@ namespace Pixie
 		{
 			GameObject parentObject = m_Scene->FindGameObjectByGUID(family.Parent);
 			if(parentObject)
-				parentObject.AddChild(*this);
+				parentObject.AddChild(*this, true);
 		}
 	}
 

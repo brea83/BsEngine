@@ -181,6 +181,16 @@ namespace Pixie
 		}
 	}
 
+	bool EditorLayer::TryDuplicateSelected()
+	{
+		if (m_SceneState != SceneState::Edit) return false;
+
+		if (m_Selected && m_CurrentScene)
+			m_CurrentScene->DuplicateGameObject(*m_Selected);
+			
+		return false;
+	}
+
 	void EditorLayer::OnImGuiRender()
 	{
 		EngineContext& engine = *EngineContext::GetEngine();
@@ -646,6 +656,19 @@ namespace Pixie
 				return true;
 			}
 			break;
+
+
+			// scene commands
+		case Key::D:
+			{
+				if (control)
+				{
+					TryDuplicateSelected();
+					return true;
+				}
+				break;
+			}
+
 		default:
 			break; 
 		}

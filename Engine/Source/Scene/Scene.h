@@ -44,10 +44,12 @@ namespace Pixie
 		GameObject FindGameObjectByName(const std::string& name);
 		GameObject FindGameObjectByGUID(GUID guid);
 
-		GameObject DuplicateGameObject(GameObject sourceObject);
+		GameObject DuplicateGameObject(Entity sourceObject);
 
 		void Initialize();
 		void PopulateWithTestObjects();
+
+		Scene* Copy(Scene* sourceScene);
 
 		void BeginPlayMode();
 		void EndPlayMode();
@@ -59,6 +61,8 @@ namespace Pixie
 		entt::registry& GetRegistry() { return m_Registry; }
 		const entt::registry& GetRegistry() const{ return m_Registry; }
 		Entity CreateEntity(const std::string& name = "");
+		Entity CreateEntityWithGUID(GUID guid, const std::string& name = "");
+		Entity DuplicateEntity(Entity source);
 
 		GameObject CreateCube();
 		// creates a plane rotated to match the provided rotation in degrees default is paralell to the XZ plane
@@ -103,6 +107,8 @@ namespace Pixie
 	private:
 		std::string m_Name{ "New Scene" };
 		entt::registry m_Registry;
+
+
 		CameraManager m_CameraManager;
 		SceneState m_SceneState{ SceneState::UnInitialized };
 

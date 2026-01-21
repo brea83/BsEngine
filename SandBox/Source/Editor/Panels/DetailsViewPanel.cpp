@@ -480,10 +480,8 @@ namespace Pixie
 			ImGui::PushID("CameraComponent");
 			ImGui::Separator();
 			CameraComponent& component = selected.GetComponent<CameraComponent>();
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
-			ImGui::Text(buffer);
+			
+			ImGui::Text("Camera Component");
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
 			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),

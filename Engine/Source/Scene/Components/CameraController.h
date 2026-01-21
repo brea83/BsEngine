@@ -1,7 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
-#include "Scene/Components/Component.h"
+//#include "Scene/Components/Component.h"
+#include "Resources/FileStream.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvents.h"
 #include "Events/KeyboardEvents.h"
@@ -31,7 +32,7 @@ namespace Pixie
 		void UpdateFocalPoint(Entity& gameObject);
 		void UpdateFocalPoint(TransformComponent& transform);
 
-		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
+		//static constexpr SerializableComponentID ID{ SerializableComponentID::CameraController };
 
 		void OnUpdate(float deltaTime, GameObject& gameObject);
 
@@ -54,17 +55,9 @@ namespace Pixie
 		void OnViewportSizeChange(float width, float height);
 
 
-		static void Serialize(StreamWriter* stream, const CameraController& component)
-		{
-			stream->WriteRaw<SerializableComponentID>(component.ID);
-		}
-		static bool Deserialize(StreamReader* stream, CameraController& component)
-		{
-			SerializableComponentID readID;
-			stream->ReadRaw<SerializableComponentID>(readID);
-			if (readID != component.ID) return false;
-			return true;
-		}
+		static void Serialize(StreamWriter* stream, const CameraController& component);
+	
+		static bool Deserialize(StreamReader* stream, CameraController& component);
 		
 	private:
 		/*entt::entity m_CameraEntity{ entt::null };

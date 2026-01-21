@@ -1,7 +1,8 @@
 #pragma once
 #include "Core.h"
 #include "Graphics/Camera.h"
-#include "Scene/Components/Component.h"
+#include "Resources/FileStream.h"
+//#include "Scene/Components/Component.h"
 
 
 namespace Pixie
@@ -11,9 +12,9 @@ namespace Pixie
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 
-		static constexpr SerializableComponentID ID{ SerializableComponentID::CameraComponent };
+		//static constexpr SerializableComponentID ID{ SerializableComponentID::CameraComponent };
 		Camera Cam;
-		std::string Name{ "Camera Component" };
+		//std::string Name{ "Camera Component" };
 		bool IsActive{ false };
 		bool IsDefault{ false };
 		bool IsOrthographic() { return Cam.IsOrthographic(); }
@@ -24,14 +25,17 @@ namespace Pixie
 
 		static void Serialize(StreamWriter* stream, const CameraComponent& component)
 		{
-			stream->WriteRaw<SerializableComponentID>(component.ID);
+			//stream->WriteString(component.Name);
+			stream->WriteRaw(component.IsActive);
+			stream->WriteRaw(component.IsDefault);
+			stream->WriteRaw(component.Cam);
 		}
-		static bool Deserialize(StreamReader* stream, CameraComponent& component)
-		{
-			SerializableComponentID readID;
-			stream->ReadRaw<SerializableComponentID>(readID);
-			if (readID != component.ID) return false;
-			return true;
-		}
+		static bool Deserialize(StreamReader* stream, CameraComponent& component);
+		//{
+		//	stream->ReadRaw(component.IsActive);
+		//	stream->ReadRaw(component.IsDefault);
+		//	stream->ReadRaw(component.Cam);
+		//	return true;
+		//}
 	};
 }

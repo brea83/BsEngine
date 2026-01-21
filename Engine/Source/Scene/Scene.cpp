@@ -198,9 +198,28 @@ namespace Pixie
 		return GameObject();
 	}
 
-	GameObject Scene::DuplicateGameObject(GameObject object)
+	//ToStudy: what is the template sorcery? or rather, why does it work to itterate throught the components listed in AllComponents
+	// when used with CopyComponentIfExists(AllComponents{}, newEntity, entity);
+	template<typename... Component>
+	static bool TryCopyComponent(Entity destination, Entity source)
 	{
-		return GameObject();
+		return false;
+	}
+	
+	template<typename... Component>
+	static void CopyEntityComponents(Entity destination, Entity source)
+	{
+		//TryCopyComponent<Component...>(destination, source);
+	}
+
+	GameObject Scene::DuplicateGameObject(GameObject sourceObject)
+	{
+		std::string name = sourceObject.GetName();
+		GameObject duplicate = CreateEmptyGameObject(name);
+		
+		//CopyEntityComponents(AllComponents{}, duplicate, sourceObject);
+
+		return duplicate;
 	}
 
 	void Scene::ForwardAspectRatio(float width, float height)

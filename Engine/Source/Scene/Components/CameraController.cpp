@@ -10,13 +10,32 @@
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
-#include "Scene/Components/Transform.h"
-#include "Scene/Components/CameraComponent.h"
+#include "Transform.h"
+#include "CameraComponent.h"
+#include "Component.h"
 
 //#define BIND_EVENT_FUNCTION(x) [this](auto&&... args) -> decltype(auto){ return this->x(std::forward<decltype(args)>(args)...);}
 
 namespace Pixie
 {
+	void CameraController::Serialize(StreamWriter* stream, const CameraController& component)
+	{
+		// old version of GameObject serialization called this but current version does not. 
+		// consider repurposing or removing this function.
+		//stream->WriteRaw<SerializableComponentID>(component.ID);
+	}
+
+	bool CameraController::Deserialize(StreamReader* stream, CameraController& component)
+	{
+		//new serialization of GameObject uses fileWriter->WriteRaw(object.GetComponent<CameraController>());
+		// so this is for legacy reading of old save files, or to be repurposed
+
+		SerializableComponentID readID;
+		stream->ReadRaw<SerializableComponentID>(readID);
+		if (readID != SerializableComponentID::CameraController) return false;
+		return true;
+	}
+
 	void CameraController::UpdateFocalPoint(Entity& gameObject)
 	{
 		if (!gameObject.HasCompoenent<TransformComponent>())

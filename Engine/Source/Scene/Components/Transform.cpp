@@ -6,6 +6,7 @@
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
 #include "EngineContext.h"
+#include "GUID.h"
 //
 namespace Pixie
 {
@@ -215,6 +216,8 @@ namespace Pixie
 
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
     {
+        // current scene and game object serialization uses WriteRaw for TransformComponent
+        // so this function should never be called.
         stream->WriteRaw<GUID>(component.m_ParentGuid);
         stream->WriteRaw<GUID>(component.m_Guid);
 

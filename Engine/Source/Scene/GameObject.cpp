@@ -23,6 +23,11 @@ namespace Pixie
 		//Logger::Log(LOG_TRACE, "GameObject update, entity id: {}", (int)m_EntityHandle);
 	}
 
+	const std::string& GameObject::GetName() const
+	{
+		return GetComponent<NameComponent>().Name;
+	}
+
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
 	{
 		if (!object.HasCompoenent<IDComponent>())
@@ -78,10 +83,10 @@ namespace Pixie
 				fileWriter->WriteRaw<LightComponent>(object.GetComponent<LightComponent>());
 
 			if (id == SerializableComponentID::CameraComponent)
-				fileWriter->WriteObject(object.GetComponent<CameraComponent>());
+				fileWriter->WriteRaw(object.GetComponent<CameraComponent>());
 
 			if (id == SerializableComponentID::CameraController)
-				fileWriter->WriteObject(object.GetComponent<CameraController>());
+				fileWriter->WriteRaw(object.GetComponent<CameraController>());
 		}
 
 	}
@@ -136,13 +141,13 @@ namespace Pixie
 
 			if (id == SerializableComponentID::CameraComponent)
 			{
-				fileReader->ReadObject(object.GetOrAddComponent<CameraComponent>());
+				fileReader->ReadRaw(object.GetOrAddComponent<CameraComponent>());
 				continue;
 			}
 
 			if (id == SerializableComponentID::CameraController)
 			{
-				fileReader->ReadObject(object.GetOrAddComponent<CameraController>());
+				fileReader->ReadRaw(object.GetOrAddComponent<CameraController>());
 				continue;
 			}
 		}

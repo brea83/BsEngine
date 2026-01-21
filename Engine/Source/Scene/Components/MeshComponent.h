@@ -1,7 +1,8 @@
 #pragma once
 #include "Core.h"
 #include "BsPrecompileHeader.h"
-#include "Scene/Components/Component.h"
+//#include "Scene/Components/Component.h"
+#include "Resources/FileStream.h"
 #include "MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
 #include "Graphics/Texture.h"
@@ -24,7 +25,7 @@ namespace Pixie
 		MeshComponent(const std::string& modelFilePath, const std::string& textureFilePath = "");
 		~MeshComponent();
 
-		static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
+		//static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
 		bool Reload();
 
 		void SetMesh(std::shared_ptr<Mesh>& mesh) { m_Mesh = mesh; }

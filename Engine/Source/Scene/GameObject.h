@@ -20,6 +20,7 @@ namespace Pixie
 		TransformComponent& GetTransform();
 
 		GUID GetGUID() const { return GetComponent<IDComponent>().ID; }
+		const std::string& GetName() const;
 
 		Scene* GetScene() { return m_Scene; }
 		const Scene* GetScene() const { return m_Scene; }

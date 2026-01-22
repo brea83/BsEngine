@@ -9,7 +9,10 @@ namespace Pixie
 
 	const std::string& Entity::GetName() const
 	{
-		return GetComponent<NameComponent>().Name;
+		if (HasCompoenent<NameComponent>())
+			return GetComponent<NameComponent>().Name;
+		else
+			return "No Name";
 	}
 
 	void Entity::WarnSceneNull(entt::entity entityHandle, const std::string& attemptedAction)

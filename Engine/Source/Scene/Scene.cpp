@@ -56,17 +56,26 @@ namespace Pixie
 
 	}
 	 template<typename Component>
-	 static bool TryCopyEntityComponent(Entity destination, Entity source)
+	 // returns pointer to destination's copy of component if successful, nullptr if unsuccessfull
+	 static void TryCopyEntityComponent(Entity destination, Entity source)
 	 {
 		 if (source.HasCompoenent<Component>())
 		 {
 			 destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
-			 return true;
 		 }
-		 else
-		 {
-			 return false;
-		 }
+		 //return destination.TryGetComponent<Component>();
+	 }
+
+	 static void TryCopyAllComponents(Entity destination, Entity source)
+	 {
+		 
+		 TryCopyEntityComponent<TagComponent>(destination, source);
+		 TryCopyEntityComponent<TransformComponent>(destination, source);
+		 TryCopyEntityComponent<MeshComponent>(destination, source);
+		 TryCopyEntityComponent<LightComponent>(destination, source);
+		 TryCopyEntityComponent<CameraComponent>(destination, source);
+		 TryCopyEntityComponent<CameraController>(destination, source);
+
 	 }
 
 	template<typename Component>
@@ -257,25 +266,57 @@ namespace Pixie
 		return GameObject();
 	}
 
-	GameObject Scene::DuplicateGameObject(Entity sourceObject)
+	GameObject Scene::DuplicateGameObject(GameObject sourceObject)
 	{
 		
-		//std::string name = sourceObject.GetName();
-		//GameObject duplicate = CreateEmptyGameObject(name);
+		std::string name = sourceObject.GetName() + " Copy";
+		GameObject duplicate = CreateEmptyGameObject(name);
+		// create new guid for game object 
+		TryCopyAllComponents(duplicate, sourceObject);
 
-		Entity entity = DuplicateEntity(sourceObject);
-		GameObject duplicate = GameObject(entity, this);
-		duplicate.AddComponent<IDComponent>();
-
-		HeirarchyComponent* family = duplicate.TryGetComponent<HeirarchyComponent>();
-		if (family)
+		bool bNeedsToDupllicateFamily = sourceObject.HasCompoenent<HeirarchyComponent>();
+		if (bNeedsToDupllicateFamily)
 		{
-			GameObject parent = GameObject(sourceObject, this).GetParent(); //hilarious situation where parent doesn't know they are the parent yet because we copied the data from their other child
-			if(parent)
+			HeirarchyComponent& destinationFamily = duplicate.GetComponent<HeirarchyComponent>();
+
+			// send duplicate's info to their new parent
+			GameObject parent = sourceObject.GetParent();
+			if (parent)
 				duplicate.SetParent(parent);
+
+			// recursively create duplicate children
+			std::vector<GameObject> children = sourceObject.GetChildren();
+
+			for (GameObject child : children)
+			{
+				GameObject duplicateChild = DuplicateChild(duplicate, child);
+			}
 		}
 
 		return duplicate;
+	}
+
+	GameObject Scene::DuplicateChild(GameObject destinationParent, GameObject sourceChild)
+	{
+		std::string name = sourceChild.GetName() + " Copy";
+		GameObject duplicateChild = CreateEmptyGameObject(name);
+		// create new guid for game object 
+		TryCopyAllComponents(duplicateChild, sourceChild);
+
+		HeirarchyComponent& destinationFamily = duplicateChild.GetComponent<HeirarchyComponent>();
+
+		// send duplicate's info to their new parent
+		duplicateChild.SetParent(destinationParent);
+
+		// recursively create duplicate children
+		std::vector<GameObject> children = sourceChild.GetChildren();
+
+		for (GameObject child : children)
+		{
+			GameObject duplicateChildofChild = DuplicateChild(duplicateChild, child);
+		}
+
+		return duplicateChild;
 	}
 
 	void Scene::ForwardAspectRatio(float width, float height)

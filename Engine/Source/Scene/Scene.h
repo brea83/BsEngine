@@ -44,7 +44,8 @@ namespace Pixie
 		GameObject FindGameObjectByName(const std::string& name);
 		GameObject FindGameObjectByGUID(GUID guid);
 
-		GameObject DuplicateGameObject(Entity sourceObject);
+		GameObject DuplicateGameObject(GameObject sourceObject);
+		GameObject DuplicateChild(GameObject destinationParent, GameObject sourceChild);
 
 		void Initialize();
 		void PopulateWithTestObjects();

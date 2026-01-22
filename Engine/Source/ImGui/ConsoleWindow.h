@@ -13,7 +13,7 @@ namespace Pixie
 
         LogLevel Level{LogLevel::Off};
         std::string_view LoggerName;
-        std::time_t Time;
+        std::time_t Time{ 0 };
         //std::string Source;
         std::string Message{ "" };
         //std::size_t Color_range_start{ 0 };

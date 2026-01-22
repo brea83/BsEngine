@@ -31,15 +31,15 @@ namespace Pixie
 
 		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() = 0;
 	protected:
-		EngineContext* m_Engine;
+		EngineContext* m_Engine{ nullptr };
 		std::vector<std::unique_ptr<RenderPass>> m_Passes;
 
-		std::shared_ptr<FrameBuffer> m_FrameBuffer;
+		std::shared_ptr<FrameBuffer> m_FrameBuffer{ nullptr };
 
-		bool m_bCameraFound;
-		bool m_DrawGridEnabled;
-		std::shared_ptr<Shader> m_GridShader;
-		std::shared_ptr<Mesh> m_EditorGrid;
+		bool m_bCameraFound{ false };
+		bool m_DrawGridEnabled{ false };
+		std::shared_ptr<Shader> m_GridShader{ nullptr };
+		std::shared_ptr<Mesh> m_EditorGrid{ nullptr };
 
 	};
 

@@ -77,6 +77,12 @@ namespace Pixie
 		 TryCopyEntityComponent<CameraController>(destination, source);
 
 	 }
+	 static void TryCopyAllComponents(GameObject destination, GameObject source)
+	 {
+		 Entity duplicate = Entity(destination, destination.GetScene());
+		 Entity original = Entity(source, source.GetScene());
+		 TryCopyAllComponents(duplicate, original);
+	 }
 
 	template<typename Component>
 	static void CopyRegistryComponents(entt::registry& destination, entt::registry& source, const std::unordered_map<GUID, entt::entity>& guidToDestinationEntt)

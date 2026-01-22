@@ -25,8 +25,8 @@ namespace Pixie
 
 		FrameBufferSpecification frameBufferData;
 		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
-		frameBufferData.Width = viewportSize.x;
-		frameBufferData.Height = viewportSize.y;
+		frameBufferData.Width = (uint32_t)viewportSize.x;
+		frameBufferData.Height = (uint32_t)viewportSize.y;
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
@@ -304,6 +304,6 @@ namespace Pixie
 			center += glm::vec3(point);
 		}
 
-		return center /= frustumCorners.size();
+		return center /= (float)frustumCorners.size();
 	}
 }

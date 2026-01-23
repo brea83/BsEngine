@@ -9,6 +9,7 @@
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/QuadMesh.h"
 #include "Graphics/Primitives/Cube.h"
+#include "Graphics/Primitives/CircleMesh.h"
 #include "Scene/Components/MaterialInstance.h"
 
 #include <chrono>
@@ -358,9 +359,21 @@ namespace Pixie
 				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Cube"));
 				if (resourcePtr) return resourcePtr;
 			}
-			std::shared_ptr<Mesh> mesh = std::make_shared<Cube>();
-
+			std::shared_ptr<Mesh> mesh = LoadMesh("../Assets/Meshes/Cube.obj");//std::make_shared<Cube>();
+				
 			s_Resources.emplace("PrimitiveMesh_Cube", mesh);
+			return mesh;
+		}
+		case PrimitiveMeshType::Circle:
+		{
+			if (s_Resources.find("PrimitiveMesh_Circle") != s_Resources.end())
+			{
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Circle"));
+				if (resourcePtr) return resourcePtr;
+			}
+			std::shared_ptr<Mesh> mesh = std::make_shared<CircleMesh>();
+
+			s_Resources.emplace("PrimitiveMesh_Circle", mesh);
 			return mesh;
 		}
 		default:

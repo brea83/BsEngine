@@ -44,6 +44,7 @@ namespace Pixie
 		LightComponent* light = object.TryGetComponent<LightComponent>();
 		CameraComponent* camera = object.TryGetComponent<CameraComponent>();
 		CameraController* camController = object.TryGetComponent<CameraController>();
+		CircleRendererComponent* circleComponent = object.TryGetComponent<CircleRendererComponent>();
 
 		std::vector<SerializableComponentID> components;
 		if (tag) components.push_back(SerializableComponentID::TagComponent);
@@ -54,6 +55,7 @@ namespace Pixie
 		if (light) components.push_back(SerializableComponentID::LightComponent);
 		if (camera) components.push_back(SerializableComponentID::CameraComponent);
 		if (camController) components.push_back(SerializableComponentID::CameraController);
+		if (circleComponent) components.push_back(SerializableComponentID::CircleRenderer);
 
 		fileWriter->WriteArray<SerializableComponentID>(components);
 
@@ -82,6 +84,9 @@ namespace Pixie
 
 			if (id == SerializableComponentID::CameraController)
 				fileWriter->WriteRaw(object.GetComponent<CameraController>());
+			
+			if (id == SerializableComponentID::CircleRenderer)
+				fileWriter->WriteObject(object.GetComponent<CircleRendererComponent>());
 		}
 
 	}
@@ -143,6 +148,12 @@ namespace Pixie
 			if (id == SerializableComponentID::CameraController)
 			{
 				fileReader->ReadRaw(object.GetOrAddComponent<CameraController>());
+				continue;
+			}
+
+			if (id == SerializableComponentID::CircleRenderer)
+			{
+				fileReader->ReadObject(object.GetOrAddComponent<CircleRendererComponent>());
 				continue;
 			}
 		}

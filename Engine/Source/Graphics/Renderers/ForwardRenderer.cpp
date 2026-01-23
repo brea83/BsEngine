@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "ForwardRenderPass.h"
+#include "CircleRenderPass.h"
 #include "ShadowPass.h"
 #include "EngineContext.h"
 #include "GlfwWrapper.h"
@@ -22,6 +23,9 @@ namespace Pixie
 
 		std::unique_ptr<ForwardRenderPass> pass = std::make_unique<ForwardRenderPass>();
 		m_Passes.push_back(std::move(pass));
+
+		std::unique_ptr<CircleRenderPass> circlePass = std::make_unique<CircleRenderPass>();
+		m_Passes.push_back(std::move(circlePass));
 
 		FrameBufferSpecification frameBufferData;
 		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();

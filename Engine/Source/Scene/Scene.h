@@ -99,6 +99,8 @@ namespace Pixie
 		template<>
 		void OnComponentAdded<MeshComponent>(Entity& entity, MeshComponent& component);
 		template<>
+		void OnComponentAdded<CircleRendererComponent>(Entity& entity, CircleRendererComponent& component);
+		template<>
 		void OnComponentAdded<LightComponent>(Entity& entity, LightComponent& component);
 		template<>
 		void OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component);

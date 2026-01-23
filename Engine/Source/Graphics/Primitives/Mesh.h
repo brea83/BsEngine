@@ -11,7 +11,8 @@ namespace Pixie
 	{
 		Triangle,
 		Quad,
-		Cube
+		Cube,
+		Circle
 	};
 
 	class Mesh : public Renderable
@@ -54,7 +55,7 @@ namespace Pixie
 		};
 
 		//constructors and properties
-		Mesh(const std::string& name = "Default Name");
+		Mesh(const std::string& name = "Default Mesh Name");
 		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const std::string& name = "Default Mesh Name");
 
 		virtual ~Mesh();

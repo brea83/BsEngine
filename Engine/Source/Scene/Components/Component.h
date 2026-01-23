@@ -25,6 +25,7 @@ namespace Pixie
         LightComponent,
         CameraComponent,
         CameraController,
+        CircleRenderer,
         IDComponent
     };
 
@@ -188,6 +189,6 @@ namespace Pixie
         }
     };
 
-
+    
 
 }

@@ -16,6 +16,7 @@ namespace Pixie
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, const std::string& name)
         : Renderable(name), m_Vertices(vertices), m_Indices(indices)
     {
+        Logger::Log(LOG_TRACE, "creating and Initializing Mesh: {}", name);
         Init();
     }
 

@@ -54,6 +54,11 @@ namespace Pixie
 				{
 					selected->AddComponent<LightComponent>();
 				}
+
+				if (ImGui::Selectable("CircleRenderer"))
+				{
+					selected->AddComponent<CircleRendererComponent>();
+				}
 				ImGui::EndPopup();
 			}
 			if (ImGui::Button("AddComponent"))
@@ -474,6 +479,31 @@ namespace Pixie
 			ImGui::PopID();
 		}
 
+		if (selected.HasCompoenent<CircleRendererComponent>())
+		{
+			ImGui::PushID("CircleRenderer");
+			CircleRendererComponent& component = selected.GetComponent<CircleRendererComponent>();
+			ImGui::Text("Circle Renderer Component");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			ImGui::DragFloat("Line Width", &component.LineWidth, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+
+			ImGui::PopID();
+		}
+
 		if (selected.HasCompoenent<CameraComponent>())
 		{
 			CameraManager& camManager = scene->GetCameraManager();
@@ -675,7 +705,7 @@ namespace Pixie
 				paramsOuter.Max = 180.0f;
 				paramsOuter.ResetValue = 15.0f;
 				paramsOuter.Speed = 0.01f;
-				DrawFloatControl("Inner Radius", light.OuterRadius, paramsOuter);
+				DrawFloatControl("Outer Radius", light.OuterRadius, paramsOuter);
 			}
 
 			if (removeComponent)

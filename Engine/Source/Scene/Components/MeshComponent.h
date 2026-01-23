@@ -98,6 +98,20 @@ namespace Pixie
 
 		friend class DetailsViewPanel;
 	};
+
+	struct CircleRendererComponent
+	{
+		CircleRendererComponent();
+		CircleRendererComponent(const glm::vec4& color);
+
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float Radius{ 0.5f };
+		float LineWidth{ 0.01f }; // range 0 to 1. 1 = filled circle
+		float Fade{ 0.005f }; // softens and blurs edges of circle
+		static void Serialize(StreamWriter* stream, const CircleRendererComponent& component);
+		static bool Deserialize(StreamReader* stream, CircleRendererComponent& component);
+		std::shared_ptr<Mesh> MeshResource { nullptr };
+	};
 }
 
 

@@ -494,6 +494,10 @@ namespace Pixie
 	 void Scene::OnComponentAdded<LightComponent>(Entity& entity, LightComponent & component)
 	{}
 
+	 template<>
+	 void Scene::OnComponentAdded<CircleRendererComponent>(Entity& entity, CircleRendererComponent& component)
+	 {}
+
 	template<>
 	 void Scene::OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component)
 	{

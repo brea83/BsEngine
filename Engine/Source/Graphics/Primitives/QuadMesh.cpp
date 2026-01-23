@@ -1,6 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "QuadMesh.h"
-#include <glad/glad.h>
+//#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Pixie
@@ -10,14 +10,14 @@ namespace Pixie
 	{
 		m_Vertices = {
 			Vertex{{-0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f, 0.0f }}, // top left
+			Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}, // bottom right
 			Vertex{{ 0.5f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 1.0f, 0.0f, 1.0f }}, // top right
 			Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f, 0.0f }}, // bottom left
-			Vertex{{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}, // bottom right
 		};
 
 		m_Indices = {
 			0, 1, 2,
-			1, 2, 3
+			2, 3, 0
 		};
 
 

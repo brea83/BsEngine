@@ -29,6 +29,7 @@ namespace Pixie
 
 	void ShadowPass::Execute(Scene& sceneToRender, uint32_t prevPassDepthID, uint32_t prevPassColorID)
 	{
+		if (m_LightsForcedOff) return;
 		// start rendering
 		m_Shader->Use();
 		m_FrameBuffer->Bind();
@@ -53,17 +54,25 @@ namespace Pixie
 		m_Shader->EndUse();
 	}
 
-	uint32_t ShadowPass::GetFrameBufferID()
+	uint32_t ShadowPass::GetFrameBufferID() const
 	{
 		return m_FrameBuffer->GetFrameBufferID();
 	}
 
-	uint32_t ShadowPass::GetColorAttatchmentID()
+	uint32_t ShadowPass::GetColorAttatchmentID() const
 	{
 		return m_FrameBuffer->GetColorAttachmentID();
 	}
-	uint32_t ShadowPass::GetDepthAttatchmentID()
+	uint32_t ShadowPass::GetDepthAttatchmentID() const
 	{
 		return m_FrameBuffer->GetDepthAttatchmentID();
+	}
+	bool ShadowPass::IsLit() const
+	{
+		UniformInfo uniform = m_Shader->GetUniformInfoByName("mainLightPosition");
+		if (uniform.IsValid())
+			return true;
+		else
+			return false;
 	}
 }

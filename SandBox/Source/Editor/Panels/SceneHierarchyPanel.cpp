@@ -10,56 +10,137 @@
 
 namespace Pixie
 {
-	void SceneHierarchyPanel::Draw(Scene* currentScene, GameObject& selected)
+	void SceneHierarchyPanel::Draw()
 	{
 		ImGui::Begin("HierarchyTree");
-		if (currentScene == nullptr)
+		if (m_CurrentScene == nullptr)
 		{
+			m_Selected = nullptr;
 			ImGui::End();
 			return;// entt::null;
 		}
-
-		//static Entity selected = Entity();
-		entt::registry& registry = currentScene->GetRegistry();
-
-
-		auto view = registry.view<HeirarchyComponent>();
-		if (!view)
+		if(ImGui::BeginChild("##UnparentZone"))
 		{
-			ImGui::End();
-			return;// selected;
-		}
+			entt::registry& registry = m_CurrentScene->GetRegistry();
 
-		for (entt::entity entity : view)
-		{
-			GameObject currentObject{ entity, currentScene };
-			auto [family] = view.get(entity);
-			if (family.Parent != 0) continue;
 
-			DrawNode(selected, currentObject);
-		}
-
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-		{
-			selected = {};
-		}
-
-		// right click on blank space
-		if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_NoOpenOverItems))
-		{
-			if (ImGui::MenuItem("Create Empty"))
+			auto view = registry.view<HeirarchyComponent>();
+			if (!view)
 			{
-				currentScene->CreateEmptyGameObject("Empty Object");
+				ImGui::End();
+				return;// selected;
 			}
-			ImGui::EndPopup();
-		}
 
+			for (entt::entity entity : view)
+			{
+				GameObject currentObject{ entity, m_CurrentScene };
+				auto [family] = view.get(entity);
+				if (family.Parent != 0) continue;
+
+				DrawNode(currentObject);
+			}
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+			{
+				m_Selected = {};
+			}
+
+			// right click on blank space
+			if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_MouseButtonRight | ImGuiPopupFlags_NoOpenOverItems))
+			{
+				if (ImGui::MenuItem("Create Empty"))
+				{
+					m_CurrentScene->CreateEmptyGameObject("Empty Object");
+				}
+
+				ImGui::Separator();
+				if (ImGui::MenuItem("Add Camera"))
+				{
+					GameObject newCamera = m_CurrentScene->CreateEmptyGameObject("Camera");
+					TransformComponent& transform = newCamera.GetTransform();
+					transform.SetPosition(glm::vec3(0.0f, 0.0f, -15.0f));
+					transform.SetRotationEuler(glm::vec3(0.0f, 180.0f, 0.0f));
+					newCamera.AddComponent<CameraComponent>();
+					newCamera.AddComponent<CameraController>();
+				}
+
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Add Mesh Object"))
+				{
+					if (ImGui::MenuItem("Cube"))
+					{
+						m_CurrentScene->CreateCube();
+					}
+					ImGui::Separator();
+
+					if (ImGui::MenuItem("Sphere"))
+					{
+						m_CurrentScene->CreateSphere();
+					}
+					ImGui::Separator();
+
+					if (ImGui::MenuItem("Plane XZ"))
+					{
+						m_CurrentScene->CreatePlane(glm::vec3(-90.0f, 0.0f, 0.0f));
+					}
+
+					if (ImGui::MenuItem("Plane XY"))
+					{
+						m_CurrentScene->CreatePlane();
+					}
+
+					if (ImGui::MenuItem("Plane YZ"))
+					{
+						m_CurrentScene->CreatePlane(glm::vec3(0.0f, -90.0f, 0.0f));
+					}
+
+					ImGui::EndMenu();
+				}
+
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Add Light"))
+				{
+
+					if (ImGui::MenuItem("Directional Light"))
+					{
+						m_CurrentScene->TryCreateDirectionalLight();
+					}
+
+					if (ImGui::MenuItem("Point Light"))
+					{
+						GameObject newLight = m_CurrentScene->CreateEmptyGameObject("Point Light");
+						LightComponent& light = newLight.AddComponent<LightComponent>();
+						light.Type = LightType::Point;
+					}
+
+					if (ImGui::MenuItem("Spot Light"))
+					{
+						GameObject newLight = m_CurrentScene->CreateEmptyGameObject("Spot Light");
+						TransformComponent& transform = newLight.GetTransform();
+						transform.SetPosition(glm::vec3(0.0f, 10.0f, 0.0f));
+						transform.SetRotationEuler(glm::vec3(-90.0f, 180.0f, 0.0f));
+
+						LightComponent& light = newLight.AddComponent<LightComponent>();
+						light.Type = LightType::Spot;
+					}
+
+					ImGui::EndMenu();
+
+				}
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::EndChild();
+		}
+		DropItemUnparents();
+		
 		ImGui::End();
 
 		//return selected;
 	}
 
-	void SceneHierarchyPanel::DrawNode(GameObject& selected, GameObject& entity)
+	void SceneHierarchyPanel::DrawNode(GameObject& entity)
 	{
 		std::string& entityName = entity.GetComponent<NameComponent>().Name;
 		std::string name = (entityName.empty()) ? "_NameEmpty_" : entityName;
@@ -69,7 +150,7 @@ namespace Pixie
 		std::vector<GameObject> children = entity.GetChildren();
 		bool bLeafNode = children.empty();
 
-		ImGuiTreeNodeFlags flags = ((selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
+		ImGuiTreeNodeFlags flags = ((m_Selected != nullptr && *m_Selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth;
 		if (bLeafNode)
 		{
 			flags |= ImGuiTreeNodeFlags_Leaf;
@@ -80,9 +161,18 @@ namespace Pixie
 		}
 
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flags, name.c_str());
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload(m_HeirarchyDragType.c_str(), &entity, sizeof(GameObject));
+			ImGui::Text(name.c_str());
+			ImGui::EndDragDropSource();
+		}
+		DropItemAsChild(entity);
+		
+
 		if (ImGui::IsItemClicked())
 		{
-			selected = entity;
+			m_Selected = std::make_shared<GameObject>(entity);
 		}
 
 		bool entityDeleted = false;
@@ -100,7 +190,7 @@ namespace Pixie
 			{
 				for (auto child : children)
 				{
-					DrawNode(selected, child);
+					DrawNode(child);
 				}
 			}
 
@@ -110,8 +200,49 @@ namespace Pixie
 		if (entityDeleted)
 		{
 			entity.m_Scene->RemoveGameObject(entity);
-			if (selected == entity)
-				selected = {};
+			if (m_Selected != nullptr && *m_Selected == entity)
+				m_Selected = nullptr;
+		}
+	}
+	void SceneHierarchyPanel::OnSceneChange(Scene* newScene)
+	{
+		if (m_Selected != nullptr)
+		{
+			m_Selected = nullptr;
+		}
+
+		m_CurrentScene = newScene;
+	}
+	void SceneHierarchyPanel::DropItemUnparents()
+	{
+		ImGuiDragDropFlags drop_target_flags = ImGuiDragDropFlags_AcceptBeforeDelivery | ImGuiDragDropFlags_AcceptNoPreviewTooltip;
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(m_HeirarchyDragType.c_str(), drop_target_flags))
+			{
+				ImGui::SetTooltip("Unparent");
+				if (payload->IsDelivery())
+				{
+					IM_ASSERT(payload->DataSize == sizeof(GameObject));
+					GameObject droppedObject = *(const GameObject*)payload->Data;
+					droppedObject.SetParentNone();
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+	}
+	void SceneHierarchyPanel::DropItemAsChild(GameObject& targetObject)
+	{
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(m_HeirarchyDragType.c_str()))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(GameObject));
+				GameObject droppedObject = *(const GameObject*)payload->Data;
+
+				targetObject.AddChild(droppedObject);
+			}
+			ImGui::EndDragDropTarget();
 		}
 	}
 }

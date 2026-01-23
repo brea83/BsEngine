@@ -11,7 +11,7 @@ namespace Pixie
     class DetailsViewPanel
     {
     public:
-        static bool Draw(Scene* scene, GameObject& selcected);
+        static bool Draw(Scene* scene, std::shared_ptr<GameObject> selected);
 
     protected:
        // std::string_view m_SelectedName;

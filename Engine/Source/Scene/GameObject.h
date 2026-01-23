@@ -20,9 +20,10 @@ namespace Pixie
 		TransformComponent& GetTransform();
 
 		GUID GetGUID() const { return GetComponent<IDComponent>().ID; }
+		
 
 		Scene* GetScene() { return m_Scene; }
-		const Scene* GetScene() const { return m_Scene; }
+		
 
 		void SetParentNone();
 		void SetParent(GameObject& newParent, bool bSentFromAddChild = false);

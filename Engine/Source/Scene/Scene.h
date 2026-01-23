@@ -44,10 +44,13 @@ namespace Pixie
 		GameObject FindGameObjectByName(const std::string& name);
 		GameObject FindGameObjectByGUID(GUID guid);
 
-		GameObject DuplicateGameObject(GameObject object);
-		
+		GameObject DuplicateGameObject(GameObject sourceObject);
+		GameObject DuplicateChild(GameObject destinationParent, GameObject sourceChild);
+
 		void Initialize();
 		void PopulateWithTestObjects();
+
+		Scene* Copy(Scene* sourceScene);
 
 		void BeginPlayMode();
 		void EndPlayMode();
@@ -59,8 +62,15 @@ namespace Pixie
 		entt::registry& GetRegistry() { return m_Registry; }
 		const entt::registry& GetRegistry() const{ return m_Registry; }
 		Entity CreateEntity(const std::string& name = "");
+		Entity CreateEntityWithGUID(GUID guid, const std::string& name = "");
+		Entity DuplicateEntity(Entity source);
 
 		GameObject CreateCube();
+		// creates a plane rotated to match the provided rotation in degrees default is paralell to the XZ plane
+		GameObject CreatePlane(glm::vec3 eulerRotation = glm::vec3(0.0f));
+		GameObject CreateSphere();
+		GameObject TryCreateDirectionalLight();
+		
 
 		CameraManager& GetCameraManager() { return m_CameraManager; }
 		void ForwardAspectRatio(float width, float height);
@@ -89,6 +99,8 @@ namespace Pixie
 		template<>
 		void OnComponentAdded<MeshComponent>(Entity& entity, MeshComponent& component);
 		template<>
+		void OnComponentAdded<CircleRendererComponent>(Entity& entity, CircleRendererComponent& component);
+		template<>
 		void OnComponentAdded<LightComponent>(Entity& entity, LightComponent& component);
 		template<>
 		void OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component);
@@ -98,6 +110,8 @@ namespace Pixie
 	private:
 		std::string m_Name{ "New Scene" };
 		entt::registry m_Registry;
+
+
 		CameraManager m_CameraManager;
 		SceneState m_SceneState{ SceneState::UnInitialized };
 

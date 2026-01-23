@@ -1,6 +1,7 @@
 #pragma once
-#include "Scene/Components/Component.h"
+//#include "Scene/Components/Component.h"
 #include "Resources/AssetLoader.h"
+#include "Resources/FileStream.h"
 
 namespace Pixie
 {
@@ -9,7 +10,7 @@ namespace Pixie
         MaterialInstance() = default;
         MaterialInstance(const MaterialInstance&) = default;
 
-        static constexpr SerializableComponentID ID{ SerializableComponentID::MaterialInstance };
+        //static constexpr SerializableComponentID ID{ SerializableComponentID::MaterialInstance };
         std::string BaseMapPath{ "" };
         std::shared_ptr<Texture> BaseMap{ nullptr };
 

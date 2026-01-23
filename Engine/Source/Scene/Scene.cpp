@@ -15,17 +15,6 @@ namespace Pixie
 
 	void Scene::Initialize()
 	{
-		//GameObject mainCam = CreateEmptyGameObject("Main Camera");
-		//CameraComponent& camera = mainCam.AddComponent<CameraComponent>();
-		//TransformComponent& transform = mainCam.GetComponent<TransformComponent>();
-		//transform.SetPosition(glm::vec3(0.0f, 0.0f, -10.0f));
-		//transform.SetRotationEuler(glm::vec3(90.0f, 0.0f, 0.0f), AngleType::Degrees);
-
-		//mainCam.AddComponent<CameraController, entt::entity>(mainCam.GetEnttHandle());
-
-		////DefaultCamera = mainCam;
-		//SetActiveCamera(mainCam);
-		// TODO: make catch so that editor camera isn't created and used in non editor modes
 		if (EngineContext::GetEngine()->IsEditorEnabled())
 		{
 			m_CameraManager.InitEditor();
@@ -66,6 +55,90 @@ namespace Pixie
 		cube1.AddChild(sphere);
 
 	}
+	 template<typename Component>
+	 // returns pointer to destination's copy of component if successful, nullptr if unsuccessfull
+	 static void TryCopyEntityComponent(Entity destination, Entity source)
+	 {
+		 if (source.HasCompoenent<Component>())
+		 {
+			 destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
+		 }
+		 //return destination.TryGetComponent<Component>();
+	 }
+
+	 static void TryCopyAllComponents(Entity destination, Entity source)
+	 {
+		 
+		 TryCopyEntityComponent<TagComponent>(destination, source);
+		 TryCopyEntityComponent<TransformComponent>(destination, source);
+		 TryCopyEntityComponent<MeshComponent>(destination, source);
+		 TryCopyEntityComponent<LightComponent>(destination, source);
+		 TryCopyEntityComponent<CameraComponent>(destination, source);
+		 TryCopyEntityComponent<CameraController>(destination, source);
+
+	 }
+	 static void TryCopyAllComponents(GameObject destination, GameObject source)
+	 {
+		 Entity duplicate = Entity(destination, destination.GetScene());
+		 Entity original = Entity(source, source.GetScene());
+		 TryCopyAllComponents(duplicate, original);
+	 }
+
+	template<typename Component>
+	static void CopyRegistryComponents(entt::registry& destination, entt::registry& source, const std::unordered_map<GUID, entt::entity>& guidToDestinationEntt)
+	{
+		auto view = source.view<Component>();
+		for (auto entity : view)
+		{
+			IDComponent* guidComponent = source.try_get<IDComponent>(entity);
+			if (!guidComponent) 
+				continue; // TODO: change how editor only things are handled, they should probably have guids too.
+			
+			GUID guid = guidComponent->ID;
+
+			if (guidToDestinationEntt.find(guid) != guidToDestinationEntt.end())
+			{
+				entt::entity newEnttID = guidToDestinationEntt.at(guid);
+
+				auto& sourceComponent = source.get<Component>(entity);
+
+				destination.emplace_or_replace<Component>(newEnttID, sourceComponent);
+			}
+
+		}
+	}
+
+	Scene* Scene::Copy(Scene* sourceScene)
+	{
+		Scene* newScene = new Scene();
+
+		newScene->m_Name = sourceScene->m_Name + " Copy";
+		
+		entt::registry& sourceRegistry = sourceScene->m_Registry;
+		entt::registry& destinationRegistry = newScene->m_Registry;
+
+
+		std::unordered_map<GUID, entt::entity> guidToDestinationEntt;
+		auto idView = sourceRegistry.view<IDComponent>();
+		for (auto entity : idView)
+		{
+			GUID guid = sourceRegistry.get<IDComponent>(entity).ID;
+			std::string name = sourceRegistry.get<NameComponent>(entity).Name;
+
+			Entity newEntity = newScene->CreateEntityWithGUID(guid, name);
+			guidToDestinationEntt[guid] = newEntity;
+		}
+
+		CopyRegistryComponents<TagComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<HeirarchyComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<TransformComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<MeshComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<LightComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<CameraComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<CameraController>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+
+		return newScene;
+	}
 
 	Scene::~Scene()
 	{
@@ -73,6 +146,7 @@ namespace Pixie
 
 	}
 
+	
 	void  Scene::BeginPlayMode()
 	{
 		m_CameraManager.OnBeginPlayMode();
@@ -198,9 +272,57 @@ namespace Pixie
 		return GameObject();
 	}
 
-	GameObject Scene::DuplicateGameObject(GameObject object)
+	GameObject Scene::DuplicateGameObject(GameObject sourceObject)
 	{
-		return GameObject();
+		
+		std::string name = sourceObject.GetName() + " Copy";
+		GameObject duplicate = CreateEmptyGameObject(name);
+		// create new guid for game object 
+		TryCopyAllComponents(duplicate, sourceObject);
+
+		bool bNeedsToDupllicateFamily = sourceObject.HasCompoenent<HeirarchyComponent>();
+		if (bNeedsToDupllicateFamily)
+		{
+			HeirarchyComponent& destinationFamily = duplicate.GetComponent<HeirarchyComponent>();
+
+			// send duplicate's info to their new parent
+			GameObject parent = sourceObject.GetParent();
+			if (parent)
+				duplicate.SetParent(parent);
+
+			// recursively create duplicate children
+			std::vector<GameObject> children = sourceObject.GetChildren();
+
+			for (GameObject child : children)
+			{
+				GameObject duplicateChild = DuplicateChild(duplicate, child);
+			}
+		}
+
+		return duplicate;
+	}
+
+	GameObject Scene::DuplicateChild(GameObject destinationParent, GameObject sourceChild)
+	{
+		std::string name = sourceChild.GetName() + " Copy";
+		GameObject duplicateChild = CreateEmptyGameObject(name);
+		// create new guid for game object 
+		TryCopyAllComponents(duplicateChild, sourceChild);
+
+		HeirarchyComponent& destinationFamily = duplicateChild.GetComponent<HeirarchyComponent>();
+
+		// send duplicate's info to their new parent
+		duplicateChild.SetParent(destinationParent);
+
+		// recursively create duplicate children
+		std::vector<GameObject> children = sourceChild.GetChildren();
+
+		for (GameObject child : children)
+		{
+			GameObject duplicateChildofChild = DuplicateChild(duplicateChild, child);
+		}
+
+		return duplicateChild;
 	}
 
 	void Scene::ForwardAspectRatio(float width, float height)
@@ -272,13 +394,69 @@ namespace Pixie
 		return entity;
 	}
 
+	Entity Scene::CreateEntityWithGUID(GUID guid, const std::string& name)
+	{
+		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(guid);
+		NameComponent& nameComponent = entity.AddComponent<NameComponent>();
+		nameComponent.Name = name.empty() ? "Empty Entity" : name;
+		return entity;
+	}
+
+
+	Entity Scene::DuplicateEntity(Entity source)
+	{
+		std::string name = source.GetName();
+		Entity duplicate = CreateEntity(name);
+
+		TryCopyEntityComponent<TagComponent>(duplicate, source);
+		TryCopyEntityComponent<HeirarchyComponent>(duplicate, source);
+		TryCopyEntityComponent<TransformComponent>(duplicate, source);
+		TryCopyEntityComponent<MeshComponent>(duplicate, source);
+		TryCopyEntityComponent<LightComponent>(duplicate, source);
+		TryCopyEntityComponent<CameraComponent>(duplicate, source);
+		TryCopyEntityComponent<CameraController>(duplicate, source);
+		return duplicate;
+	}
+
 	GameObject Scene::CreateCube()
 	{
-		//m_MeshComponents.emplace_back(new Cube());
 		GameObject object = CreateEmptyGameObject("Cube");
-		//object.AddComponent<MeshComponent, PrimitiveMeshType>(PrimitiveMeshType::Cube);
 		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Cube.obj");
 		return object;
+	}
+
+	GameObject Scene::CreatePlane(glm::vec3 eulerRotation)
+	{
+		GameObject object = CreateEmptyGameObject("Plane");
+		TransformComponent& transform = object.GetTransform();
+		transform.SetRotationEuler(eulerRotation);
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/quadPlane.obj");
+		return object;
+	}
+
+	GameObject Scene::CreateSphere()
+	{
+		GameObject object = CreateEmptyGameObject("Sphere");
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
+		return object;
+	}
+
+	GameObject Scene::TryCreateDirectionalLight()
+	{
+		if (GetMainLight())
+		{
+			Logger::Log(LOG_WARNING, "Tried to add a second Directional light. Pixie Engine does not yet support multiple directional lights in a scene");
+			return GameObject();
+		}
+
+		GameObject newLight = CreateEmptyGameObject("Directional Light");
+		TransformComponent& transform = newLight.GetTransform();
+		transform.SetRotationEuler(glm::vec3(-90.0f, 180.0f, 0.0f));
+
+		LightComponent& light = newLight.AddComponent<LightComponent>();
+		light.Type = LightType::Directional;
+		return newLight;
 	}
 
 
@@ -315,6 +493,10 @@ namespace Pixie
 	template<>
 	 void Scene::OnComponentAdded<LightComponent>(Entity& entity, LightComponent & component)
 	{}
+
+	 template<>
+	 void Scene::OnComponentAdded<CircleRendererComponent>(Entity& entity, CircleRendererComponent& component)
+	 {}
 
 	template<>
 	 void Scene::OnComponentAdded<CameraComponent>(Entity& entity, CameraComponent& component)

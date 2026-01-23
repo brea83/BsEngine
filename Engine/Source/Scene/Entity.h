@@ -19,8 +19,10 @@ namespace Pixie
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
 
+		const std::string& GetName() const;
 		entt::entity GetEnttHandle() const { return m_EntityHandle; }
-
+		const Scene* GetSceneConst() const { return m_Scene; }
+		Scene* GetScene() const { return m_Scene; }
 		// Component function templates defined lower in the file to make 
 		// reading what functions are available less cluttered
 		template <typename Type>

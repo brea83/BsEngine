@@ -36,9 +36,10 @@ namespace Pixie
 	void EditorLayer::OnSceneChange(Scene* newScene, const std::string& filepath)
 	{
 		m_CurrentScene = newScene;
-		m_Selected = GameObject(entt::null, m_CurrentScene);
+		m_Selected = nullptr;
 		m_CurrentScenePath = filepath;
 		m_CurrentScene->ForwardAspectRatio(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
+		m_Hierarchy->OnSceneChange(m_CurrentScene);
 	}
 
 	void EditorLayer::OnAttach()
@@ -70,13 +71,15 @@ namespace Pixie
 		ImGui_ImplGlfw_InitForOpenGL(engine->GetGlfwWindow(), true);
 		ImGui_ImplOpenGL3_Init();
 
-		m_CurrentScene = EngineContext::GetEngine()->GetScene();
+		m_CurrentScene = engine->GetScene();
+		m_CurrentRenderer = engine->GetRenderer();
 		//m_Hierarchy.SetContext(EngineContext::GetEngine()->GetScene());
 
 		//m_AssetViewer = new AssetViewerPanel();
 		m_ConsoleWindow = std::make_shared<ConsoleWindow>();
-		//std::shared_ptr< spdlog::imgui_sink<std::mutex>> imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
-		
+		m_Hierarchy = std::make_shared<SceneHierarchyPanel>();
+		m_Hierarchy->OnSceneChange(m_CurrentScene);
+
 		spdlog::sink_ptr imguiSink = std::make_shared< spdlog::imgui_sink<std::mutex>>(m_ConsoleWindow);
 		imguiSink->set_pattern("%^%v%$");
 		Logger::GetCoreLogger()->sinks().push_back(imguiSink);
@@ -178,6 +181,16 @@ namespace Pixie
 		}
 	}
 
+	bool EditorLayer::TryDuplicateSelected()
+	{
+		if (m_SceneState != SceneState::Edit) return false;
+
+		if (m_Selected && m_CurrentScene)
+			m_CurrentScene->DuplicateGameObject(*m_Selected);
+			
+		return false;
+	}
+
 	void EditorLayer::OnImGuiRender()
 	{
 		EngineContext& engine = *EngineContext::GetEngine();
@@ -200,13 +213,13 @@ namespace Pixie
 		ImGui::End();
 
 		// this function will change which entity m_Selected represents
-		SceneHierarchyPanel::Draw(m_CurrentScene, m_Selected);
-
+		m_Hierarchy->Draw();
+		m_Selected = m_Hierarchy->GetSelected();
 		//Details view can't change which entity m_Selected represents, but its components can be changed
 		DetailsViewPanel::Draw(m_CurrentScene, m_Selected);
 		AssetViewerPanel::Draw();
 
-		DrawViewport(engine, m_Selected);
+		DrawViewport(engine);
 
 		m_ConsoleWindow->Draw();
 
@@ -295,14 +308,28 @@ namespace Pixie
 				ImGui::End;
 				return;
 			}
+			
 			if (ImGui::BeginMenuBar())
 			{
-				GameObject activeCam = m_CurrentScene->GetActiveCameraGameObject();
-				if (activeCam)
+				if (ImGui::BeginTable("Toolbar2", 2, ImGuiTableFlags_SizingFixedFit))
 				{
-					DrawEditorCamTools(activeCam);
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+					if (m_CurrentRenderer)
+					{
+						DrawRendererToggles();
+					}
+
+
+					ImGui::TableSetColumnIndex(1);
+					GameObject activeCam = m_CurrentScene->GetActiveCameraGameObject();
+					if (activeCam)
+					{
+						DrawEditorCamTools(activeCam);
+					}
+
+					ImGui::EndTable();
 				}
-				
 				ImGui::EndMenuBar();
 			}
 			ImGui::End();
@@ -310,8 +337,79 @@ namespace Pixie
 
 	}
 
+	void EditorLayer::DrawRendererToggles()
+	{
+		
+		float offset = ImGui::GetContentRegionAvail().x * 0.5f - (ImGui::GetStyle().ItemSpacing.x * 0.5f);
+		ImVec2 buttonSize = ImVec2(ImGui::GetStyle().FramePadding.x * 4.0f, ImGui::GetFrameHeight());
+		buttonSize.x += ImGui::CalcTextSize("WireFrame").x;
+		ImGui::InvisibleButton("paddingLeft", buttonSize);
+		if (m_ForceUnlit)
+		{
+			ImGui::SetCursorPosX(offset - buttonSize.x);
+			// Highlight the button
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0F);
+			ImGui::PushStyleColor(
+				ImGuiCol_Border, ImGui::GetStyleColorVec4(ImGuiCol_TextSelectedBg));
+			if (ImGui::Button(m_UnlitButtonString.c_str(), buttonSize))
+			{
+				m_CurrentRenderer->ForceUnlit(false);
+				m_ForceUnlit = false;
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Toggle Lit");
+			}
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+		}
+		else
+		{
+			ImGui::SetCursorPosX(offset - buttonSize.x);
+			if (ImGui::Button(m_LitButtonString.c_str(), buttonSize))
+			{
+				m_CurrentRenderer->ForceUnlit(true);
+				m_ForceUnlit = true;
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Toggle Unlit");
+			}
+
+		}
+
+		bool needPopStyle = false;
+		if (m_DrawWireFrame)
+		{
+			// Highlight the button
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0F);
+			ImGui::PushStyleColor(ImGuiCol_Border, ImGui::GetStyleColorVec4(ImGuiCol_TextSelectedBg));
+			needPopStyle = true;
+		}
+
+		//ImGui::SetCursorPosX(offset);
+		if (ImGui::Button("WireFrame", buttonSize))
+		{
+			m_CurrentRenderer->ForceWireFrame(!m_DrawWireFrame);
+			m_DrawWireFrame = !m_DrawWireFrame;
+		}
+
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip("Toggle WireFrame Mode");
+		}
+
+		if(needPopStyle	)
+		{
+			ImGui::PopStyleColor();
+			ImGui::PopStyleVar();
+		}
+		ImGui::InvisibleButton("paddingRight", buttonSize);
+	}
+
 	void EditorLayer::DrawEditorCamTools(GameObject& activeCam)
 	{
+		//ImGui::Begin("Possessed Camera Tools", NULL, ImGuiWindowFlags_MenuBar);
 
 		CameraController& camController = activeCam.GetComponent<CameraController>();
 		Camera& camera = activeCam.GetComponent<CameraComponent>().Cam;
@@ -322,11 +420,18 @@ namespace Pixie
 		ImGuiStyle& style = ImGui::GetStyle();
 		const float global_scale = style.FontScaleMain * style.FontScaleDpi;
 
-		ImGui::PushFont(nullptr, style.FontSizeBase * 1.2 * global_scale);
-		ImGui::Text("Active Camera: ");
-		ImGui::SameLine();
-		ImGui::Text(activeCam.GetComponent<NameComponent>().Name.c_str());
-		ImGui::PopFont();
+
+		//if (ImGui::BeginMenuBar())
+		//{
+			ImGui::PushFont(nullptr, style.FontSizeBase * 1.2 * global_scale);
+			ImGui::Text("Active Camera: ");
+			ImGui::SameLine();
+			ImGui::Text(activeCam.GetComponent<NameComponent>().Name.c_str());
+			ImGui::PopFont();
+
+			//ImGui::EndMenuBar();
+		//}
+		
 
 		if (ImGui::Button("CamFlyMode"))
 		{
@@ -341,32 +446,43 @@ namespace Pixie
 		}
 
 		ImGui::SetItemTooltip("Tab to toggle fly controlls");
+		ImGui::SameLine();
 
 		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.1f);
 		ImGui::Text("Cam Speed");
+		ImGui::SameLine();
 		if (ImGui::DragFloat("##Speed", &translationSpeed))
 		{
 			camController.SetTranslationSpeed(translationSpeed);
 		}
+
+		ImGui::SameLine();
 		ImGui::Text("Look Sensitivity");
+		ImGui::SameLine();
 		if (ImGui::DragFloat("##Sensitivity", &rotationSpeed))
 		{
 			camController.SetRotationSpeed(rotationSpeed);
 		}
+
+		ImGui::SameLine();
 		ImGui::Text("Zoom");
+		ImGui::SameLine();
 		if (ImGui::DragFloat("##Zoomvalue", &zoom))
 		{
 			camera.SetZoom(zoom);
 		}
+		ImGui::SameLine();
 		if (ImGui::Button("ResetZoom"))
 		{
 			camera.SetZoom(1.0f);
 			zoom = 1.0f;
 		}
 		ImGui::PopItemWidth();
+
+		//ImGui::End();
 	}
 
-	void EditorLayer::DrawViewport(EngineContext& engine, GameObject& selected)
+	void EditorLayer::DrawViewport(EngineContext& engine)
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
 		if (m_CurrentScene == nullptr)
@@ -377,8 +493,12 @@ namespace Pixie
 
 		if (ImGui::BeginMenuBar())
 		{
-			
-			if (ImGui::Button(m_PlayPauseText.c_str()))
+			float offset = ImGui::GetContentRegionAvail().x * 0.5f - (ImGui::GetStyle().ItemSpacing.x * 0.5f);
+			ImVec2 buttonSize = ImVec2(ImGui::GetStyle().FramePadding.x * 4.0f, ImGui::GetFrameHeight());
+			buttonSize.x += ImGui::CalcTextSize("PAUSE").x;
+
+			ImGui::SetCursorPosX(offset - buttonSize.x);
+			if (ImGui::Button(m_PlayPauseText.c_str(), buttonSize))
 			{
 				if (m_SceneState == SceneState::Edit)
 				{
@@ -417,7 +537,7 @@ namespace Pixie
 		ImGui::Image((void*)textureID, currentSize, { 0, 1 }, { 1, 0 });
 
 		if (camera)
-			DrawGizmos(camera, viewMatrix, selected);
+			DrawGizmos(camera, viewMatrix);
 
 		ImGui::End();
 	}
@@ -425,7 +545,7 @@ namespace Pixie
 	void EditorLayer::DrawGridLines(Camera* camera)
 	{}
 
-	void EditorLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix, GameObject& selected)
+	void EditorLayer::DrawGizmos(Camera* camera, glm::mat4 viewMatrix)
 	{
 		auto viewportMinRegion = ImGui::GetWindowContentRegionMin();
 		auto viewportMaxRegion = ImGui::GetWindowContentRegionMax();
@@ -434,7 +554,7 @@ namespace Pixie
 		m_ViewportBounds[1] = { viewportMaxRegion.x + viewportOffset.x, viewportMaxRegion.y + viewportOffset.y };
 
 		entt::registry& registry = m_CurrentScene->GetRegistry();
-		if (!registry.valid(selected) || m_GizmoType == -1)
+		if (m_Selected == nullptr || !registry.valid(*m_Selected) || m_GizmoType == -1)
 		{
 			return;
 		}
@@ -445,7 +565,7 @@ namespace Pixie
 		ImGuizmo::SetRect(m_ViewportBounds[0].x, m_ViewportBounds[0].y,
 			m_ViewportBounds[1].x - m_ViewportBounds[0].x, m_ViewportBounds[1].y - m_ViewportBounds[0].y);
 
-		TransformComponent& transform = selected.GetTransform();
+		TransformComponent& transform = m_Selected->GetTransform();
 		//if (transform == nullptr) return;
 		glm::mat4 transformMatrix = transform.GetObjectToWorldMatrix();
 		//glm::mat4 localTransform = transform.GetLocal();
@@ -536,6 +656,19 @@ namespace Pixie
 				return true;
 			}
 			break;
+
+
+			// scene commands
+		case Key::D:
+			{
+				if (control)
+				{
+					TryDuplicateSelected();
+					return true;
+				}
+				break;
+			}
+
 		default:
 			break; 
 		}

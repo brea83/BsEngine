@@ -6,6 +6,10 @@
 #include <glm/glm.hpp>
 #include <EnTT/entt.hpp>
 #include "Resources/FileStream.h"
+#include "Transform.h"
+#include "CameraComponent.h"
+#include "CameraController.h"
+#include "MeshComponent.h"
 
 
 namespace Pixie
@@ -21,6 +25,7 @@ namespace Pixie
         LightComponent,
         CameraComponent,
         CameraController,
+        CircleRenderer,
         IDComponent
     };
 
@@ -183,5 +188,7 @@ namespace Pixie
             return true;
         }
     };
+
+    
 
 }

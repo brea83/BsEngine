@@ -114,6 +114,8 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
     <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
     <ClCompile Include="Dependencies\ImGuizmo\ImGuizmo.cpp">
@@ -202,6 +204,8 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
+    <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
     <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -282,6 +286,8 @@
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Assets\Shaders\CircleFragment.glsl" />
+    <None Include="..\Assets\Shaders\CircleVertex.glsl" />
     <None Include="..\Assets\Shaders\EmptyFragment.glsl" />
     <None Include="..\Assets\Shaders\FragmentMultiLightLecture.glsl" />
     <None Include="..\Assets\Shaders\FragmentShader.glsl" />

@@ -11,6 +11,8 @@ namespace Pixie
 	class Scene;
 	class ConsoleWindow;
 	class RenderInspectorPanel;
+	class SceneHierarchyPanel;
+	class Renderer;
 
 	//may need key, mouse, and application events
 	class EditorLayer : public ImGuiLayer
@@ -35,6 +37,8 @@ namespace Pixie
 		void SaveSceneAs();
 		void OpenScene();
 
+		bool TryDuplicateSelected();
+
 		virtual void OnImGuiRender() override;
 
 	private:
@@ -42,10 +46,15 @@ namespace Pixie
 		std::string m_CurrentScenePath{ "" };
 		SceneState m_SceneState{SceneState::Edit};
 		std::string m_PlayPauseText{ "Play" };
+		
+		Renderer* m_CurrentRenderer{ nullptr };
+		bool m_ForceUnlit{ false };
+		std::string m_LitButtonString{ "Lit" };
+		std::string m_UnlitButtonString{ "Unlit" };
+		bool m_DrawWireFrame{ false };
 
-
-		//SceneHierarchyPanel m_Hierarchy;
-		GameObject m_Selected{ entt::null, nullptr };
+		std::shared_ptr<SceneHierarchyPanel> m_Hierarchy;
+		std::shared_ptr <GameObject> m_Selected{ nullptr };
 		int m_GizmoType{ -1 };
 
 		std::shared_ptr<ConsoleWindow> m_ConsoleWindow{ nullptr };
@@ -57,12 +66,13 @@ namespace Pixie
 		void DrawMainMenu(EngineContext* engine);
 		void DrawMainMenuBar2();
 
+		void DrawRendererToggles();
 		void DrawEditorCamTools(GameObject& activeCam);
 		
-		void DrawViewport(EngineContext& engine, GameObject& selected);
+		void DrawViewport(EngineContext& engine);
 
 		void DrawGridLines(Camera* camera);
-		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix/*TransformComponent& camTransform*/, GameObject& selected);
+		void DrawGizmos(Camera* camera, glm::mat4 viewMatrix);
 
 		bool OnKeyPressed(KeyPressedEvent& event);
 	};

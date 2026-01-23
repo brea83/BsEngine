@@ -13,24 +13,24 @@
 
 namespace Pixie
 {
-	bool DetailsViewPanel::Draw(Scene* scene, GameObject& selected)
+	bool DetailsViewPanel::Draw(Scene* scene, std::shared_ptr<GameObject> selected)
 	{
 
 		ImGui::Begin("Details View");
 		{
-			if (scene == nullptr || selected.GetScene() == nullptr)
+			if (scene == nullptr || selected == nullptr || selected->GetScene() == nullptr)
 			{
 				ImGui::End();
 				return false;
 			}
 			entt::registry& registry = scene->GetRegistry();
-			if (!registry.valid(selected))
+			if (!registry.valid(*selected))
 			{
 				ImGui::End();
 				return false;
 			}
 
-			NameComponent& nameComp = selected.GetComponent<NameComponent>();
+			NameComponent& nameComp = selected->GetComponent<NameComponent>();
 			static std::string editingName = nameComp.Name;
 
 
@@ -41,18 +41,23 @@ namespace Pixie
 			{
 				if (ImGui::Selectable("Mesh Component"))
 				{
-					selected.AddComponent<MeshComponent>();
+					selected->AddComponent<MeshComponent>();
 				}
 
 				if (ImGui::Selectable("Camera Component"))
 				{
-					selected.AddComponent<CameraComponent>();
-					CameraController& controller = selected.AddComponent<CameraController>();
+					selected->AddComponent<CameraComponent>();
+					CameraController& controller = selected->AddComponent<CameraController>();
 					//controller.UpdateFocalPoint(selected);
 				}
 				if (ImGui::Selectable("Light"))
 				{
-					selected.AddComponent<LightComponent>();
+					selected->AddComponent<LightComponent>();
+				}
+
+				if (ImGui::Selectable("CircleRenderer"))
+				{
+					selected->AddComponent<CircleRendererComponent>();
 				}
 				ImGui::EndPopup();
 			}
@@ -65,7 +70,7 @@ namespace Pixie
 			//	
 
 			ImGui::SeparatorText("Componenets");
-			DrawComponents(scene, selected/*selectedObject->GetAllComponents()*/);
+			DrawComponents(scene, *selected/*selectedObject->GetAllComponents()*/);
 
 		}
 		ImGui::End();
@@ -474,16 +479,39 @@ namespace Pixie
 			ImGui::PopID();
 		}
 
+		if (selected.HasCompoenent<CircleRendererComponent>())
+		{
+			ImGui::PushID("CircleRenderer");
+			CircleRendererComponent& component = selected.GetComponent<CircleRendererComponent>();
+			ImGui::Text("Circle Renderer Component");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			ImGui::DragFloat("Line Width", &component.LineWidth, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+
+			ImGui::PopID();
+		}
+
 		if (selected.HasCompoenent<CameraComponent>())
 		{
 			CameraManager& camManager = scene->GetCameraManager();
 			ImGui::PushID("CameraComponent");
 			ImGui::Separator();
 			CameraComponent& component = selected.GetComponent<CameraComponent>();
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), component.Name.c_str());
-			ImGui::Text(buffer);
+			
+			ImGui::Text("Camera Component");
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
 			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
@@ -677,7 +705,7 @@ namespace Pixie
 				paramsOuter.Max = 180.0f;
 				paramsOuter.ResetValue = 15.0f;
 				paramsOuter.Speed = 0.01f;
-				DrawFloatControl("Inner Radius", light.OuterRadius, paramsOuter);
+				DrawFloatControl("Outer Radius", light.OuterRadius, paramsOuter);
 			}
 
 			if (removeComponent)

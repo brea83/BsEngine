@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "ForwardRenderPass.h"
+#include "CircleRenderPass.h"
 #include "ShadowPass.h"
 #include "EngineContext.h"
 #include "GlfwWrapper.h"
@@ -23,10 +24,13 @@ namespace Pixie
 		std::unique_ptr<ForwardRenderPass> pass = std::make_unique<ForwardRenderPass>();
 		m_Passes.push_back(std::move(pass));
 
+		std::unique_ptr<CircleRenderPass> circlePass = std::make_unique<CircleRenderPass>();
+		m_Passes.push_back(std::move(circlePass));
+
 		FrameBufferSpecification frameBufferData;
 		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
-		frameBufferData.Width = viewportSize.x;
-		frameBufferData.Height = viewportSize.y;
+		frameBufferData.Width = (uint32_t)viewportSize.x;
+		frameBufferData.Height = (uint32_t)viewportSize.y;
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
@@ -184,6 +188,16 @@ namespace Pixie
 		uint32_t prevPassColor{ 0 };
 
 		if (!m_bCameraFound) return;
+
+		if (m_WireFrameOnly)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+
 		for (size_t i = 0; i < m_Passes.size(); i++)
 		{
 
@@ -219,6 +233,19 @@ namespace Pixie
 	void ForwardRenderer::EndFrame(Scene& scene)
 	{
 		m_FrameBuffer->UnBind();
+	}
+
+	void ForwardRenderer::ForceUnlit(bool value)
+	{
+		for (size_t i = 0; i < m_Passes.size(); i++)
+		{
+			m_Passes[i]->ForceLightsOff(value);
+		}
+	}
+
+	void ForwardRenderer::ForceWireFrame(bool value)
+	{
+		m_WireFrameOnly = value;
 	}
 
 	std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> ForwardRenderer::GetAllRenderBuffers()
@@ -281,6 +308,6 @@ namespace Pixie
 			center += glm::vec3(point);
 		}
 
-		return center /= frustumCorners.size();
+		return center /= (float)frustumCorners.size();
 	}
 }

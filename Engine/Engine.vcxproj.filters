@@ -66,6 +66,8 @@
     <ClCompile Include="Source\ImGui\ConsoleWindow.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
+    <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
+    <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -146,6 +148,8 @@
     <ClInclude Include="Source\ImGui\ConsoleWindow.h" />
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
+    <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
+    <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />
@@ -164,6 +168,8 @@
     <None Include="..\Assets\Shaders\GridFragment.glsl" />
     <None Include="..\Assets\Shaders\GridVertex.glsl" />
     <None Include="..\Assets\Shaders\SimpleDepthFragment.glsl" />
+    <None Include="..\Assets\Shaders\CircleFragment.glsl" />
+    <None Include="..\Assets\Shaders\CircleVertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />

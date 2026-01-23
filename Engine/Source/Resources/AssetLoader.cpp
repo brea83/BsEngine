@@ -9,6 +9,7 @@
 #include "Graphics/Primitives/Triangle.h"
 #include "Graphics/Primitives/QuadMesh.h"
 #include "Graphics/Primitives/Cube.h"
+#include "Graphics/Primitives/CircleMesh.h"
 #include "Scene/Components/MaterialInstance.h"
 
 #include <chrono>
@@ -168,6 +169,9 @@ namespace Pixie
 		std::string relativePath = "";
 		ParsePathString(filePath, relativePath);
 
+		std::filesystem::path relPath = filePath;
+		relPath = relPath.relative_path();
+
 		if (relativePath != "" && relativePath != filePath)
 		{
 			return LoadTextureParsedPath(relativePath, type);
@@ -241,7 +245,8 @@ namespace Pixie
 
 	bool AssetLoader::LoadMesh(GameObject& rootObject, MeshComponent& component, const std::filesystem::path filePath)
 	{
-		std::filesystem::path serializedPath = CheckForSerializedVersion(filePath);
+		std::filesystem::path relativePath = ParsePathString(filePath);
+		std::filesystem::path serializedPath = CheckForSerializedVersion(relativePath);
 		if (serializedPath != "" && serializedPath.extension() == ".pmesh")
 		{
 			auto timerStart = std::chrono::high_resolution_clock::now();
@@ -354,9 +359,21 @@ namespace Pixie
 				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Cube"));
 				if (resourcePtr) return resourcePtr;
 			}
-			std::shared_ptr<Mesh> mesh = std::make_shared<Cube>();
-
+			std::shared_ptr<Mesh> mesh = LoadMesh("../Assets/Meshes/Cube.obj");//std::make_shared<Cube>();
+				
 			s_Resources.emplace("PrimitiveMesh_Cube", mesh);
+			return mesh;
+		}
+		case PrimitiveMeshType::Circle:
+		{
+			if (s_Resources.find("PrimitiveMesh_Circle") != s_Resources.end())
+			{
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Circle"));
+				if (resourcePtr) return resourcePtr;
+			}
+			std::shared_ptr<Mesh> mesh = std::make_shared<CircleMesh>();
+
+			s_Resources.emplace("PrimitiveMesh_Circle", mesh);
 			return mesh;
 		}
 		default:
@@ -702,14 +719,65 @@ namespace Pixie
 	void AssetLoader::ParsePathString(const std::string& inPath, std::string& outPath)
 	{
 		//prep filepath
-
-		if (inPath.substr(0, inPath.find_first_of('\\')) == "..")
+		std::filesystem::path path = inPath;
+		bool bIsInAssetsFolderPath{ false };
+		outPath = "../";
+		
+		if (inPath.substr(0,9) != "../Assets")
 		{
-			outPath = "../Assets" + inPath.substr(inPath.find_first_of('\\'));
+			for (auto part : path)
+			{
+				if (part == "Assets")
+				{
+					bIsInAssetsFolderPath = true;
+				}
+
+				if (bIsInAssetsFolderPath)
+				{
+					outPath += part.string();
+
+					if (part.has_extension())
+						continue;
+
+					outPath += "/";
+				}
+				//Logger::Log(LOG_DEBUG, "{}", part.string());
+			}
+
+			//outPath = "../Assets" + inPath.substr(inPath.find("Assets"));
 			return;
 		}
 
+	
 		outPath = inPath;
+	}
+
+	std::filesystem::path AssetLoader::ParsePathString(const std::filesystem::path& inPath)
+	{
+		bool bIsInAssetsFolderPath{ false };
+		std::filesystem::path outPath = "../";
+
+		for (auto part : inPath)
+		{
+			if (part == "Assets")
+			{
+				bIsInAssetsFolderPath = true;
+			}
+
+			if (bIsInAssetsFolderPath)
+			{
+				outPath += part.string();
+
+				if (part.has_extension())
+					continue;
+
+				outPath += "/";
+			}
+			//Logger::Log(LOG_DEBUG, "{}", part.string());
+		}
+
+		return bIsInAssetsFolderPath ? outPath : inPath;
+		
 	}
 
 	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath, TextureType type)

@@ -7,6 +7,14 @@ namespace Pixie
 		: m_EntityHandle(handle), m_Scene(scene)
 	{}
 
+	const std::string& Entity::GetName() const
+	{
+		if (HasCompoenent<NameComponent>())
+			return GetComponent<NameComponent>().Name;
+		else
+			return "No Name";
+	}
+
 	void Entity::WarnSceneNull(entt::entity entityHandle, const std::string& attemptedAction)
 	{
 		Logger::Log(LOG_WARNING, "Entity with entt handle: {}, tried to {}, but m_Scene is NULLPTR", (uint32_t)entityHandle, attemptedAction);

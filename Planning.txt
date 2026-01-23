@@ -1,4 +1,19 @@
+Warning: Read Me is unfinished.
+Pixie Engie started as an unnamed project for my Engine and Tools specialization course.
 
+The goal is to have a simple engine that will support the creation of a basic spline related game by the end of February 2026.
+
+Right now Pixie Engine is only compatible for Windows platforms that support openGL.
+this repository has some external library dependancies that are not in the uploaded includes.
+TODO: write clear instalation instructions and move as many include files as possible into the repository.
+
+At the moment the Solution is set up so that there is a core Engine project, and then a SandBox template that holds editor code. I believe I am going to end up transfering to a three project set up where the game project is separated out from the editor and engine, but can use them as libraries.   
+
+Pixie Engine is currently single threaded, though I hope to transition it to having audio, physics / object updating, and rendering on different threads.
+
+About A Scene
+Unrotated cameras look into the -Z axis with +X to the right and +Y is up.
+-----------------------------------
 
 THREADING ?
 

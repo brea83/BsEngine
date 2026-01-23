@@ -27,7 +27,9 @@ namespace Pixie
 	{
 		if (!object.HasCompoenent<IDComponent>())
 		{
-			Logger::Log(LOG_ERROR, "Error: trying to serialize a gameobject with no GUID");
+			NameComponent* nameComponent = object.TryGetComponent<NameComponent>();
+			std::string name = nameComponent == nullptr ? "un-named entity" : nameComponent->Name;
+			Logger::Log(LOG_WARNING, "Skipping Serializeation of {} because it has no GUID", name);
 			return;
 		}
 
@@ -42,6 +44,7 @@ namespace Pixie
 		LightComponent* light = object.TryGetComponent<LightComponent>();
 		CameraComponent* camera = object.TryGetComponent<CameraComponent>();
 		CameraController* camController = object.TryGetComponent<CameraController>();
+		CircleRendererComponent* circleComponent = object.TryGetComponent<CircleRendererComponent>();
 
 		std::vector<SerializableComponentID> components;
 		if (tag) components.push_back(SerializableComponentID::TagComponent);
@@ -52,6 +55,7 @@ namespace Pixie
 		if (light) components.push_back(SerializableComponentID::LightComponent);
 		if (camera) components.push_back(SerializableComponentID::CameraComponent);
 		if (camController) components.push_back(SerializableComponentID::CameraController);
+		if (circleComponent) components.push_back(SerializableComponentID::CircleRenderer);
 
 		fileWriter->WriteArray<SerializableComponentID>(components);
 
@@ -76,10 +80,13 @@ namespace Pixie
 				fileWriter->WriteRaw<LightComponent>(object.GetComponent<LightComponent>());
 
 			if (id == SerializableComponentID::CameraComponent)
-				fileWriter->WriteObject(object.GetComponent<CameraComponent>());
+				fileWriter->WriteRaw(object.GetComponent<CameraComponent>());
 
 			if (id == SerializableComponentID::CameraController)
-				fileWriter->WriteObject(object.GetComponent<CameraController>());
+				fileWriter->WriteRaw(object.GetComponent<CameraController>());
+			
+			if (id == SerializableComponentID::CircleRenderer)
+				fileWriter->WriteObject(object.GetComponent<CircleRendererComponent>());
 		}
 
 	}
@@ -134,13 +141,19 @@ namespace Pixie
 
 			if (id == SerializableComponentID::CameraComponent)
 			{
-				fileReader->ReadObject(object.GetOrAddComponent<CameraComponent>());
+				fileReader->ReadRaw(object.GetOrAddComponent<CameraComponent>());
 				continue;
 			}
 
 			if (id == SerializableComponentID::CameraController)
 			{
-				fileReader->ReadObject(object.GetOrAddComponent<CameraController>());
+				fileReader->ReadRaw(object.GetOrAddComponent<CameraController>());
+				continue;
+			}
+
+			if (id == SerializableComponentID::CircleRenderer)
+			{
+				fileReader->ReadObject(object.GetOrAddComponent<CircleRendererComponent>());
 				continue;
 			}
 		}
@@ -163,6 +176,12 @@ namespace Pixie
 
 		HeirarchyComponent& family = GetComponent<HeirarchyComponent>();
 		family.Parent = 0;
+
+		TransformComponent* transform = TryGetComponent<TransformComponent>();
+		if (transform)
+		{
+			transform->m_ParentGuid = 0;
+		}
 	}
 
 	void GameObject::SetParent(GameObject& newParent, bool bSentFromAddChild)
@@ -183,7 +202,7 @@ namespace Pixie
 		{
 			GameObject parentObject = m_Scene->FindGameObjectByGUID(family.Parent);
 			if(parentObject)
-				parentObject.AddChild(*this);
+				parentObject.AddChild(*this, true);
 		}
 	}
 

@@ -155,4 +155,34 @@ namespace Pixie
 		m_Mesh->Render(currentShader);
 	}
 
+	//========================================================
+	// Circle renderer stuff
+	//========================================================
+	CircleRendererComponent::CircleRendererComponent()
+	{
+		MeshResource = AssetLoader::LoadPrimitive(PrimitiveMeshType::Circle);
+	}
+
+	CircleRendererComponent::CircleRendererComponent(const glm::vec4& color)
+		: Color(color)
+	{
+		MeshResource = AssetLoader::LoadPrimitive(PrimitiveMeshType::Circle);
+	}
+
+	void CircleRendererComponent::Serialize(StreamWriter* stream, const CircleRendererComponent& component)
+	{
+		stream->WriteRaw(component.Color);
+		stream->WriteRaw(component.Radius);
+		stream->WriteRaw(component.LineWidth);
+		stream->WriteRaw(component.Fade);
+	}
+
+	bool CircleRendererComponent::Deserialize(StreamReader* stream, CircleRendererComponent& component)
+	{
+		stream->ReadRaw(component.Color);
+		stream->ReadRaw(component.Radius);
+		stream->ReadRaw(component.LineWidth);
+		stream->ReadRaw(component.Fade);
+		return true;
+	}
 }

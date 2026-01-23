@@ -6,6 +6,7 @@
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
 #include "EngineContext.h"
+#include "GUID.h"
 //
 namespace Pixie
 {
@@ -196,8 +197,17 @@ namespace Pixie
         if (m_ParentGuid != 0)
         {
             Scene* scene = EngineContext::GetEngine()->GetScene();
-            TransformComponent& parentTransform = scene->FindGameObjectByGUID(m_ParentGuid).GetTransform();
-            m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
+            GameObject parentObject = scene->FindGameObjectByGUID(m_ParentGuid);
+            if (parentObject)
+            {
+                TransformComponent& parentTransform = parentObject.GetTransform();
+                m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
+            }
+            else
+            {
+                m_WorldMatrix = m_LocalMatrix;
+            }
+
             return m_WorldMatrix;
         }
 
@@ -206,6 +216,8 @@ namespace Pixie
 
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
     {
+        // current scene and game object serialization uses WriteRaw for TransformComponent
+        // so this function should never be called.
         stream->WriteRaw<GUID>(component.m_ParentGuid);
         stream->WriteRaw<GUID>(component.m_Guid);
 

@@ -155,7 +155,7 @@ namespace Pixie
 		return shader;
 	}
 
-	std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath, MaterialTextureType type)
+	std::shared_ptr<Texture> AssetLoader::LoadTexture(const std::string& filePath, TextureType type)
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
@@ -712,7 +712,7 @@ namespace Pixie
 		outPath = inPath;
 	}
 
-	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath, MaterialTextureType type)
+	std::shared_ptr<Texture> AssetLoader::LoadTextureParsedPath(const std::string& filePath, TextureType type)
 	{
 		if (s_Resources.find(filePath) != s_Resources.end())
 		{
@@ -879,17 +879,17 @@ namespace Pixie
 		
 
 		//std::vector<std::shared_ptr<Texture>> diffuseMaps = LoadMaterialTextures(material,
-		//	aiTextureType_DIFFUSE, MaterialTextureType::Diffuse);
+		//	aiTextureType_DIFFUSE, TextureType::Diffuse);
 		std::string diffusePath;
-		std::shared_ptr<Texture> diffuseMap = GetTextureFromMaterial(material, aiTextureType_DIFFUSE, MaterialTextureType::Diffuse, diffusePath);
+		std::shared_ptr<Texture> diffuseMap = GetTextureFromMaterial(material, aiTextureType_DIFFUSE, TextureType::Diffuse, diffusePath);
 
 		std::string normalPath;
-		std::shared_ptr<Texture> normalMap = GetTextureFromMaterial(material, aiTextureType_NORMALS, MaterialTextureType::Normal, normalPath);
+		std::shared_ptr<Texture> normalMap = GetTextureFromMaterial(material, aiTextureType_NORMALS, TextureType::Normal, normalPath);
 
 		std::string metallicPath;
-		std::shared_ptr<Texture> metallicMap = GetTextureFromMaterial(material, aiTextureType_METALNESS, MaterialTextureType::Metalness, metallicPath);
+		std::shared_ptr<Texture> metallicMap = GetTextureFromMaterial(material, aiTextureType_METALNESS, TextureType::Metalness, metallicPath);
 		std::string specularPath;
-		std::shared_ptr<Texture> specularMAp = GetTextureFromMaterial(material, aiTextureType_SPECULAR, MaterialTextureType::Specular, specularPath);
+		std::shared_ptr<Texture> specularMAp = GetTextureFromMaterial(material, aiTextureType_SPECULAR, TextureType::Specular, specularPath);
 		
 		if (diffuseMap)
 		{
@@ -918,7 +918,7 @@ namespace Pixie
 		return true;
 	}
 
-	std::shared_ptr<Texture> AssetLoader::GetTextureFromMaterial(aiMaterial* material, aiTextureType type, MaterialTextureType pixieTextureType, std::string& outFilePath)
+	std::shared_ptr<Texture> AssetLoader::GetTextureFromMaterial(aiMaterial* material, aiTextureType type, TextureType pixieTextureType, std::string& outFilePath)
 	{
 
 		for (unsigned int i = 0; i < material->GetTextureCount(type); i++)

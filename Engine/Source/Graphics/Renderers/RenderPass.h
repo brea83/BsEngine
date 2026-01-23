@@ -3,7 +3,8 @@
 
 // ToDo: PBR lighting
 // ToDo: Dithered lighting
-// ToDo: baked Lightmaps and shadow maps
+// ToDo: Shadow pass
+// ToDo: Lightmaps and shadow maps
 // ToStudy: Deffered Rendering
 
 namespace Pixie

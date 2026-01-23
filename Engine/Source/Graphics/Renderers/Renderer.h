@@ -20,7 +20,7 @@ namespace Pixie
 		virtual void EndFrame(Scene& scene) = 0;
 
 		std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
-		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetFirstColorAttachmentID(); }
+		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentID(); }
 
 		std::shared_ptr<Shader> GetGridShader() { return m_GridShader; }
 		void EnableGridShader(bool value) { m_DrawGridEnabled = value; }

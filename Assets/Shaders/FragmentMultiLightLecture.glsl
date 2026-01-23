@@ -65,7 +65,7 @@ uniform MaterialData Material;
 uniform sampler2D shadowMap;
 uniform float lightNearPlane;
 uniform float lightFarPlane;
-uniform float shadowBiasMult = 0.015; // values under 1 seem better, below zero creates a lot of shadow acne
+uniform float shadowBiasMult = 0.000059; // values under 1 seem better, below zero creates a lot of shadow acne
 
 uniform vec4 ambientLight = vec4(0.05, 0.05, 0.05, 1.0);
 uniform int  lightTypes[MAX_LIGHTS];
@@ -92,7 +92,7 @@ float LinearizeDepth(float depth)
     return (2.0 * lightNearPlane * lightFarPlane) / (lightFarPlane + lightNearPlane - z * (lightFarPlane - lightNearPlane));	
 }
 
-float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
+float ShadowCalculation(vec4 fragPosLightSpace, float nDotL)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -110,13 +110,12 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
     float currentDepth = projCoords.z;
 	
 	vec3 lightDir = normalize((mainLightPosition.xyz) - IN.Pos_WS);
-	float nDotL = clamp(dot(normal, lightDir), 0.0, 1.0);
-	float bias = tan(acos(nDotL)) * 0.005;
-//	bias *= shadowBiasMult;
-	bias = clamp(bias, 0.0, 0.0015);
+    //float bias = max(0.05 * (1.0 - dot(normalizedNormal, lightDir)), 0.005);
+	float bias = tan(acos(nDotL));
+	bias *= shadowBiasMult;
+	bias = clamp(bias, 0.0, 0.1);
     // check whether current frag pos is in shadow with edge softening 
 	float shadow = 0.0;
-	//float bias = max(0.05 * (1.0 - nDotL), 0.005) * shadowBiasMult; // this formula starts at 0.005 for the biasMult
 //	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
 //	for(int x = -1; x <= 1; x++)
 //	{
@@ -128,7 +127,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
 //		}
 //	}
 //	shadow /= 9.0;
-//     
+     
 	shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
 
     return shadow;
@@ -243,7 +242,7 @@ void main()
 				vec3 H = normalize((direction + V));
 				float nDotH = clamp(dot(N, H), 0.0, 1.0);
 
-				shadowMask = ShadowCalculation(IN.Pos_LS, N);
+				shadowMask = ShadowCalculation(IN.Pos_LS, nDotL);
 
 				accumulatedDiffuse += GetDirectionalLuminosity(nDotL, lightColor[i]);
 				accumulatedSpecular += GetDirectionalSpecular(nDotH, lightColor[i], smoothness, Material.SpecularPower);

@@ -405,7 +405,7 @@ namespace Pixie
 			if (FileProperty("Normal Map", material.NormalMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, MaterialTextureType::Normal);
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, TextureType::Normal);
 				if (newTexture == nullptr)
 				{
 					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() NORMAL TEXTURE There was an error loading Texture file, reverting to old Texture path");
@@ -432,7 +432,7 @@ namespace Pixie
 			if (FileProperty("Metallic Map", material.MetallicMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, MaterialTextureType::GltfMetalicRoughness);
+				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, TextureType::GltfMetalicRoughness);
 				if (newTexture == nullptr)
 				{
 					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() METALLIC TEXTURE There was an error loading Texture file, reverting to old Texture path");

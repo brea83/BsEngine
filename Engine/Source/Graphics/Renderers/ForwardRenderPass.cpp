@@ -36,7 +36,7 @@ namespace Pixie
 		{
 			uint32_t slot = 4; // slots 0 through 3 are taken by diffuse, normals, metalic/rough, and specular maps
 			glActiveTexture(GL_TEXTURE0 + slot);
-			glBindTexture(GL_TEXTURE_2D_ARRAY, prevPassDepthID);
+			glBindTexture(GL_TEXTURE_2D, prevPassDepthID);
 			m_Shader->SetUniformInt("shadowMap", slot);
 
 			m_Shader->SetUniformBool("bUseShadowMap", true);

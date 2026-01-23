@@ -12,21 +12,16 @@
 
 namespace Pixie
 {
-	ShadowPass::ShadowPass(int cascadesCount)
-		: m_CascadesCount(cascadesCount)
+	ShadowPass::ShadowPass()
 	{
-		FrameBufferTextureSpecification depthTextureSpec = FrameBufferTextureSpecification(FrameBufferTextureFormat::Depth24, cascadesCount + 1);
-		//FrameBufferTextureSpecification colorTextureSpec = FrameBufferTextureSpecification(FrameBufferTextureFormat::RGBA8);
 		FrameBufferSpecification frameBufferData;
 		frameBufferData.Width = 1024;
 		frameBufferData.Height = 1024;
-		frameBufferData.Attachments.Attachments.push_back(depthTextureSpec);
-		//frameBufferData.Attachments.Attachments.push_back(colorTextureSpec);
 
 		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
 
-		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/CascadesDepthVertex.glsl", "../Assets/Shaders/SimpleDepthFragment.glsl", "../Assets/Shaders/CascadesDepthGeometry.glsl");
+		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/SimpleDepthVertex.glsl", "../Assets/Shaders/SimpleDepthFragment.glsl");
 	}
 
 	ShadowPass::~ShadowPass()
@@ -37,7 +32,6 @@ namespace Pixie
 		// start rendering
 		m_Shader->Use();
 		m_FrameBuffer->Bind();
-		glClear(GL_DEPTH_BUFFER_BIT);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetFirstColorAttachmentID());
 		// render meshes

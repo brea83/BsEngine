@@ -5,13 +5,10 @@ layout(location = 1) out vec3 screenSpacePos;
 
 layout (std140, binding = 1) uniform LightProjectionBlock
 {
-    float farPlane;
-    vec4 cascadePlaneDistances;
-    //vec4 mainLightPosition; //alignment 0
-    mat4 lightSpaceMatrices[16];
+    vec4 mainLightPosition;
+    mat4 lightViewMat;
+    mat4 lightProjMat;
 };
-
-
 
 //// lightType enum in Component.h
 // enum LightType
@@ -65,8 +62,7 @@ uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 uniform MaterialData Material;
 
 //uniform bool bUseShadowMap;
-uniform sampler2DArray shadowMap;
-uniform sampler2D shadowMapOLD;
+uniform sampler2D shadowMap;
 uniform float lightNearPlane;
 uniform float lightFarPlane;
 uniform float shadowBiasMult = 0.015; // values under 1 seem better, below zero creates a lot of shadow acne
@@ -96,70 +92,7 @@ float LinearizeDepth(float depth)
     return (2.0 * lightNearPlane * lightFarPlane) / (lightFarPlane + lightNearPlane - z * (lightFarPlane - lightNearPlane));	
 }
 
-float ShadowCalcFromTex3D(float nDotL)
-{
-	// get texture layer
-	float depthValueCS = abs(IN.Pos_CS.z);
-	int layer = -1;
-	float returnLayer = -1.0;
-	// cascade count is always 4 since the cascade layers are in a vec4
-	int cascadeCount = 4;
-	float[4] cascadePlanes = {cascadePlaneDistances.x, cascadePlaneDistances.y, cascadePlaneDistances.z, cascadePlaneDistances.w};
-    for (int i = 0; i < cascadeCount; ++i)
-    {
-        if (depthValueCS < cascadePlanes[i])
-        {
-            layer = i;
-			returnLayer = i;
-            break;
-        }
-    }
-    if (layer == -1)
-    {
-        layer = cascadeCount;
-		returnLayer = 4.0;
-    }
-	vec4 pos_LS = lightSpaceMatrices[layer] * vec4(IN.Pos_WS, 1.0);
-	return (returnLayer * 0.1) + 0.1;
-	// get projection coords
-	vec3 projCoords = pos_LS.xyz / pos_LS.w;
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float currentDepth = projCoords.z;
-
-	if( currentDepth > 1.0)
-	{
-		return 0.0;
-	}
-
-	 // calculate bias (based on depth map resolution and slope)
-    float bias = max(0.05 * (1.0 - nDotL), 0.005);
-    const float biasModifier = 0.5f;
-    if (layer == cascadeCount)
-    {
-        bias *= 1 / (farPlane * biasModifier);
-    }
-    else
-    {
-        bias *= 1 / (cascadePlaneDistances[layer] * biasModifier);
-    }
-
-    // PCF
-    float shadow = 0.0;
-    vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture(shadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
-            shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;        
-        }    
-    }
-    shadow /= 9.0;
-
-	return shadow;
-}
-float ShadowCalculation(vec4 fragPosLightSpace, float nDotL)
+float ShadowCalculation(vec4 fragPosLightSpace, vec3 normal)
 {
     // perform perspective divide
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -172,12 +105,12 @@ float ShadowCalculation(vec4 fragPosLightSpace, float nDotL)
 	}
 
     // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    float closestDepth = texture(shadowMapOLD, projCoords.xy).r; 
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
     // get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
 	
-	//vec3 lightDir = normalize((mainLightPosition.xyz) - IN.Pos_WS);
-	//float nDotL = clamp(dot(normal, lightDir), 0.0, 1.0);
+	vec3 lightDir = normalize((mainLightPosition.xyz) - IN.Pos_WS);
+	float nDotL = clamp(dot(normal, lightDir), 0.0, 1.0);
 	float bias = tan(acos(nDotL)) * 0.005;
 //	bias *= shadowBiasMult;
 	bias = clamp(bias, 0.0, 0.0015);
@@ -246,10 +179,6 @@ void main()
 {
 	screenSpacePos = gl_FragCoord.xyz;
 	FragColor = vec4(0, 0, 0, 1);
-
-//	FragColor.r = IN.Pos_LS.z;
-//	return;
-
 	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb;
 	//textureColor = pow(textureColor, vec3(Gamma));
 
@@ -314,7 +243,7 @@ void main()
 				vec3 H = normalize((direction + V));
 				float nDotH = clamp(dot(N, H), 0.0, 1.0);
 
-				shadowMask = ShadowCalcFromTex3D( nDotL);
+				shadowMask = ShadowCalculation(IN.Pos_LS, N);
 
 				accumulatedDiffuse += GetDirectionalLuminosity(nDotL, lightColor[i]);
 				accumulatedSpecular += GetDirectionalSpecular(nDotH, lightColor[i], smoothness, Material.SpecularPower);
@@ -352,7 +281,7 @@ void main()
 			}
 			
 		}	
-		FragColor.r = shadowMask;//(ambientLight.xyz + (1.0 - shadowMask) * (accumulatedDiffuse + accumulatedSpecular)) * textureColor;
+		FragColor.rgb = (ambientLight.xyz + (1.0 - shadowMask) * (accumulatedDiffuse + accumulatedSpecular)) * textureColor;
 		
 
 	}

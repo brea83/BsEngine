@@ -12,14 +12,14 @@ namespace Pixie
 	public:
 		//------------------ constructors and properties
 
-		Shader(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath = "");
+		Shader(const std::string& vertPath, const std::string& fragPath);
 		~Shader();
 
 		unsigned int ShaderProgram{ 0 };
 
 		//--------------- methods
 
-		void Compile(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath = "");
+		void Compile(const std::string& vertPath, const std::string& fragPath);
 		void ReCompile(const std::string& barDelineatedPaths);
 		bool IsValid() { return ShaderProgram != 0; }
 
@@ -37,10 +37,9 @@ namespace Pixie
 	private:
 		std::shared_ptr<TextResource> m_VertexSource;
 		std::shared_ptr<TextResource> m_FragmentSource;
-		std::shared_ptr<TextResource> m_GeometrySource;
 
 		unsigned int CompileShader(int glShaderType, const std::string& filePath);
-		unsigned int LinkShader(unsigned int vertexShader, unsigned int geometryShader, unsigned int fragmentShader);
+		unsigned int LinkShader(unsigned int vertexShader, unsigned int fragmentShader);
 
 	};
 

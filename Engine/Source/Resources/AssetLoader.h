@@ -25,7 +25,7 @@ namespace Pixie
 
 		static std::shared_ptr<TextResource> LoadTextFile(const std::string& filePath);
 		static bool ReLoadTextFile(const std::string& filePath);
-		static std::shared_ptr<Shader> LoadShader(const std::string& vertPath, const std::string& fragPath, const std::string& geometryPath = "");
+		static std::shared_ptr<Shader> LoadShader(const std::string& vertPath, const std::string& fragPath);
 		static std::shared_ptr<Texture> LoadTexture(const std::string& filePath, MaterialTextureType type = MaterialTextureType::Diffuse);
 
 		static std::filesystem::path CreatePrefab(GameObject& baseObject);

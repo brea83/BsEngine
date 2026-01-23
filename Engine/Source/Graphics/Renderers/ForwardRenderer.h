@@ -25,14 +25,11 @@ namespace Pixie
 		UniformBuffer m_LightProjectionUBO;
 		UniformBuffer m_CameraBlockUBO;
 
-		glm::vec4 m_ShadowCascadeLevels;
-
 		struct LightProjUboData
 		{
-			float farPlane; // alignment 0 and takes up 4 
-			//glm::vec4 mainLightPosition; //alignment 4
-			glm::vec4 cascadePlaneDistances;// [16] in shader;
-			std::vector<glm::mat4> lightSpaceMatrices; // [16] in shader ;
+			glm::vec4 mainLightPosition;
+			glm::mat4 lightViewMatrix;
+			glm::mat4 lightProjectionMatrix;
 		};
 
 		struct CameraBlockData
@@ -44,8 +41,7 @@ namespace Pixie
 
 		std::vector<glm::vec4> GetFrustumCornersWS(const glm::mat4& projection, const glm::mat4& view);
 		glm::vec3 GetFrustumCenter(const std::vector<glm::vec4>& frustumCorners);
-		std::vector<glm::mat4> GetLightSpaceMatrices(GameObject& mainLight, Camera& camera);
-		glm::mat4 GetLightSpaceMatrix(GameObject& mainLight, Camera& cameraSegment);
+
 	};
 
 }

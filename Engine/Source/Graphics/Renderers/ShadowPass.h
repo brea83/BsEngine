@@ -9,7 +9,7 @@ namespace Pixie
 	class ShadowPass : public RenderPass
 	{
 	public:
-		ShadowPass(int cascadesCount = 4);
+		ShadowPass();
 		virtual ~ShadowPass();
 
 		// Inherited via RenderPass
@@ -23,7 +23,5 @@ namespace Pixie
 	protected:
 		std::shared_ptr<FrameBuffer> m_FrameBuffer;
 		std::shared_ptr<Shader> m_Shader;
-
-		int m_CascadesCount{ 4 };
 	};
 }

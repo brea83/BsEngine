@@ -292,7 +292,7 @@ namespace Pixie
 		{
 			if (m_CurrentScene == nullptr)
 			{
-				ImGui::End();
+				ImGui::End;
 				return;
 			}
 			if (ImGui::BeginMenuBar())

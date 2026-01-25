@@ -27,12 +27,17 @@ namespace Pixie
 		std::unique_ptr<CircleRenderPass> circlePass = std::make_unique<CircleRenderPass>();
 		m_Passes.push_back(std::move(circlePass));
 
-		FrameBufferSpecification frameBufferData;
-		glm::vec2 viewportSize = EngineContext::GetEngine()->GetViewportSize();
+		ModularFBSpecification frameBufferData;
+		glm::vec2 viewportSize = EngineContext::GetEngine()->GetWindowSize();
 		frameBufferData.Width = (uint32_t)viewportSize.x;
 		frameBufferData.Height = (uint32_t)viewportSize.y;
+		ModularFBTextureSpecification colorSpec = ModularFBTextureSpecification(FrameBufferTextureFormat::RGBA8);
+		frameBufferData.Attachments.Attachments.push_back(colorSpec);
 
-		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
+		ModularFBTextureSpecification depthSpec = ModularFBTextureSpecification(FrameBufferTextureFormat::Depth24);
+		frameBufferData.Attachments.Attachments.push_back(depthSpec);
+
+		m_FrameBuffer = ModularFrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
 
 		m_LightCamera = std::make_shared<Camera>(45.0f, 1.0f);
@@ -206,7 +211,7 @@ namespace Pixie
 			prevPassDepth = m_Passes[i]->GetDepthAttatchmentID();
 			prevPassColor = m_Passes[i]->GetColorAttatchmentID();
 			
-			std::shared_ptr<FrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
+			std::shared_ptr<ModularFrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
 			if (passBuffer != nullptr)
 				m_FrameBuffer->Bind();
 		}
@@ -248,12 +253,12 @@ namespace Pixie
 		m_WireFrameOnly = value;
 	}
 
-	std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> ForwardRenderer::GetAllRenderBuffers()
+	std::unordered_map<std::string, std::shared_ptr<ModularFrameBuffer>> ForwardRenderer::GetAllRenderBuffers()
 	{
-		std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> renderBuffers;
+		std::unordered_map<std::string, std::shared_ptr<ModularFrameBuffer>> renderBuffers;
 		for (size_t i = 0; i < m_Passes.size(); i++)
 		{
-			std::shared_ptr<FrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
+			std::shared_ptr<ModularFrameBuffer> passBuffer = m_Passes[i]->GetFrameBuffer();
 			if (passBuffer == nullptr) continue;
 
 			std::shared_ptr<Shader> shader = m_Passes[i]->GetShader();

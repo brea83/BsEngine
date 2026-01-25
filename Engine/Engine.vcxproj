@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Graphics\ModularFrameBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
@@ -204,6 +205,7 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Graphics\ModularFrameBuffer.h" />
     <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
     <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />

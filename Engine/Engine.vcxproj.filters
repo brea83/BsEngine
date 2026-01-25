@@ -68,6 +68,7 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
+    <ClCompile Include="Source\Graphics\ModularFrameBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
     <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
     <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
+    <ClInclude Include="Source\Graphics\ModularFrameBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

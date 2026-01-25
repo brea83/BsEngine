@@ -3,6 +3,7 @@
 #include "EngineContext.h"
 #include "Resources/AssetLoader.h"
 #include "ForwardRenderer.h"
+#include "Graphics/ModularFrameBuffer.h"
 #include "Scene/GameObject.h"
 #include "Scene/Components/Component.h"
 
@@ -14,11 +15,16 @@ namespace Pixie
 {
 	ShadowPass::ShadowPass()
 	{
-		FrameBufferSpecification frameBufferData;
+		ModularFBSpecification frameBufferData;
 		frameBufferData.Width = 1024;
 		frameBufferData.Height = 1024;
+		ModularFBTextureSpecification colorSpec = ModularFBTextureSpecification( FrameBufferTextureFormat::RGBA8 );
+		frameBufferData.Attachments.Attachments.push_back(colorSpec);
 
-		m_FrameBuffer = FrameBuffer::Create(frameBufferData);
+		ModularFBTextureSpecification depthSpec = ModularFBTextureSpecification(FrameBufferTextureFormat::Depth24);
+		frameBufferData.Attachments.Attachments.push_back(depthSpec);
+
+		m_FrameBuffer = ModularFrameBuffer::Create(frameBufferData);
 		glEnable(GL_DEPTH_TEST);
 
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/SimpleDepthVertex.glsl", "../Assets/Shaders/SimpleDepthFragment.glsl");
@@ -34,7 +40,8 @@ namespace Pixie
 		m_Shader->Use();
 		m_FrameBuffer->Bind();
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachmentID());
+		glBindTexture(GL_TEXTURE_2D, 0);
+		//glBindTexture(GL_TEXTURE_2D, m_FrameBuffer->GetColorAttachmentID());
 		// render meshes
 		entt::registry& registry = sceneToRender.GetRegistry();
 		auto group = registry.group<MeshComponent>(entt::get<TransformComponent>);
@@ -50,8 +57,12 @@ namespace Pixie
 			mesh.RenderWithoutMaterial(*m_Shader);
 		}
 		glCullFace(GL_BACK);
-		glBindTexture(GL_TEXTURE_2D, 0);
 		m_Shader->EndUse();
+	}
+
+	std::shared_ptr<ModularFrameBuffer> ShadowPass::GetFrameBuffer() const
+	{
+		return m_FrameBuffer;
 	}
 
 	uint32_t ShadowPass::GetFrameBufferID() const

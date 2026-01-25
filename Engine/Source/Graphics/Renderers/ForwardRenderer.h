@@ -19,7 +19,7 @@ namespace Pixie
 		virtual void ForceUnlit(bool value) override;
 		virtual void ForceWireFrame(bool value) override;
 
-		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() override;
+		virtual std::unordered_map<std::string, std::shared_ptr<ModularFrameBuffer>> GetAllRenderBuffers() override;
 	protected:
 		std::shared_ptr<Camera> m_LightCamera{ nullptr };
 		std::shared_ptr<TransformComponent> m_LightTransfrom{ nullptr };

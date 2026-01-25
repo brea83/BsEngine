@@ -3,7 +3,7 @@
 #include <memory>
 #include "Scene/Scene.h"
 #include "RenderPass.h"
-#include "Graphics/FrameBuffer.h"
+#include "Graphics/ModularFrameBuffer.h"
 
 namespace Pixie
 {
@@ -19,7 +19,7 @@ namespace Pixie
 		virtual void RenderFrame(Scene& scene) = 0;
 		virtual void EndFrame(Scene& scene) = 0;
 
-		std::shared_ptr<FrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
+		std::shared_ptr<ModularFrameBuffer> GetFrameBuffer() const { return m_FrameBuffer; }
 		virtual uint32_t GetFrameBufferID() { return m_FrameBuffer->GetColorAttachmentID(); }
 
 		std::shared_ptr<Shader> GetGridShader() { return m_GridShader; }
@@ -29,12 +29,12 @@ namespace Pixie
 		virtual void ForceUnlit(bool value) = 0;
 		virtual void ForceWireFrame(bool value) = 0;
 
-		virtual std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> GetAllRenderBuffers() = 0;
+		virtual std::unordered_map<std::string, std::shared_ptr<ModularFrameBuffer>> GetAllRenderBuffers() = 0;
 	protected:
 		EngineContext* m_Engine{ nullptr };
 		std::vector<std::unique_ptr<RenderPass>> m_Passes;
 
-		std::shared_ptr<FrameBuffer> m_FrameBuffer{ nullptr };
+		std::shared_ptr<ModularFrameBuffer> m_FrameBuffer{ nullptr };
 
 		bool m_bCameraFound{ false };
 		bool m_DrawGridEnabled{ false };

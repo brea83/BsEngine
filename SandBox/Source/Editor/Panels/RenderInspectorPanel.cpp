@@ -11,7 +11,7 @@ namespace Pixie
     {
         ImGui::Begin("Render Inspector");
 
-        std::unordered_map<std::string, std::shared_ptr<FrameBuffer>> frameBuffers = EngineContext::GetEngine()->GetRenderer()->GetAllRenderBuffers();
+        std::unordered_map<std::string, std::shared_ptr<ModularFrameBuffer>> frameBuffers = EngineContext::GetEngine()->GetRenderer()->GetAllRenderBuffers();
 
         ImVec2 regionAvailable = ImGui::GetContentRegionAvail();
         float heightPerRow = regionAvailable.y / frameBuffers.size();

@@ -20,6 +20,7 @@ namespace Pixie
 		frameBufferData.Height = 1024;
 		ModularFBTextureSpecification colorSpec = ModularFBTextureSpecification( FrameBufferTextureFormat::RGBA8 );
 		frameBufferData.Attachments.Attachments.push_back(colorSpec);
+		frameBufferData.Attachments.Attachments.push_back(colorSpec);
 
 		ModularFBTextureSpecification depthSpec = ModularFBTextureSpecification(FrameBufferTextureFormat::Depth24);
 		frameBufferData.Attachments.Attachments.push_back(depthSpec);

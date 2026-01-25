@@ -205,13 +205,13 @@ namespace Pixie
 			
 		}
 
-		if (m_ColorAttachments.size() > 1)
+		if (m_ColorAttachments.size() >= 1)
 		{
 			if (m_ColorAttachments.size() > 4)
 				Logger::Log(LOG_WARNING, "more than 4 color attatchments created, but only 4 will be used by the frameBuffer");
 
 			GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
-			glDrawBuffers(m_ColorAttachments.size(), buffers);
+			glDrawBuffers(4, buffers);
 		}
 		else if (m_ColorAttachments.empty())
 		{

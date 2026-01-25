@@ -288,6 +288,27 @@ namespace Pixie
         return inCamera.ProjectionMatrix();
     }
 
+    void CameraManager::FocusOnGameObject(std::shared_ptr<GameObject> targetObject, bool bRotateOnly)
+    {
+        TransformComponent& targetTransform = targetObject->GetTransform();
+
+        GameObject activeCamObject = GetActiveCameraObject();
+        TransformComponent& cameraTransform = activeCamObject.GetTransform();
+        
+        if (!bRotateOnly)
+        {
+            glm::vec3 newPosition = targetTransform.GetPosition();
+            newPosition += m_TargetPosOffset;
+            cameraTransform.SetPosition(newPosition);
+            cameraTransform.SetRotationEuler(m_TargetRotation);
+        }
+        else
+        {
+            cameraTransform.LookAt(targetTransform.GetPosition());
+        }
+
+    }
+
     GameObject CameraManager::GetActiveCameraObject()
     {
         return GameObject(m_ActiveCamera, m_Scene);

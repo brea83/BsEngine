@@ -177,6 +177,22 @@ namespace Pixie
         }
     }
 
+    void TransformComponent::LookAt(glm::vec3 target)
+    {
+
+        glm::mat4 newTransform = glm::lookAt(m_Position, target, glm::vec3(0.0f, 1.0f, 0.0f));
+
+        glm::vec3 scale;
+        glm::vec3 rotation;
+        glm::vec3 translation;
+
+        Decompose(newTransform, scale, rotation, translation);
+
+        SetPosition(translation);
+        SetRotationEuler(rotation, AngleType::Radians);
+        SetScale(scale);
+    }
+
     glm::vec3 TransformComponent::GetScale()
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)

@@ -43,7 +43,10 @@ namespace Pixie
 		glm::vec3 Right() const;
 		glm::vec3 Down() const;
 
+		// rotation in radians
 		static void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);
+		
+		// rotation in radians
 		static bool Decompose(glm::mat4 const& transform, glm::vec3& scale, glm::vec3& rotation, glm::vec3& translation);
 
 		void Rotate(float angle, glm::vec3 axis, AngleType angleType = AngleType::Degrees);
@@ -51,6 +54,8 @@ namespace Pixie
 		void SetRotationQuaternion(glm::quat orientation, AngleType angleType = AngleType::Degrees);
 
 		glm::vec3 GetRotationEuler(AngleType angleType = AngleType::Degrees);
+
+		void LookAt(glm::vec3 target);
 		
 		void SetScale(glm::vec3 value) { m_Scale = value; m_ScaleDirty = true; }
 		glm::vec3 GetScale();

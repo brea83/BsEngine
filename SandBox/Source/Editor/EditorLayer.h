@@ -39,6 +39,8 @@ namespace Pixie
 
 		bool TryDuplicateSelected();
 
+		bool FocusOnSelected();
+
 		virtual void OnImGuiRender() override;
 
 	private:

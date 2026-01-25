@@ -191,6 +191,15 @@ namespace Pixie
 		return false;
 	}
 
+	bool EditorLayer::FocusOnSelected()
+	{
+		if (m_Selected == nullptr) return false;
+		if (!(*m_Selected)) return false; // raw GameObjects used as a bool ´should use Entity::operator bool() which checks if the entt entity is valid 
+		
+		m_CurrentScene->GetCameraManager().FocusOnGameObject(m_Selected);
+		return true;
+	}
+
 	void EditorLayer::OnImGuiRender()
 	{
 		EngineContext& engine = *EngineContext::GetEngine();
@@ -668,6 +677,14 @@ namespace Pixie
 				}
 				break;
 			}
+		case Key::F:
+		{
+			if (control)
+			{
+				return FocusOnSelected();
+			}
+			break;
+		}
 
 		default:
 			break; 

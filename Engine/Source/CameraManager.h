@@ -46,6 +46,7 @@ namespace Pixie
 
 		static glm::mat4 GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix);
 
+		void FocusOnGameObject(std::shared_ptr<GameObject> targetObject, bool bRotateOnly = false);
 		// ToDo: Add camera blend stuff. 
 		// I think that will mean I'll need update methods for lerping?
 
@@ -58,6 +59,11 @@ namespace Pixie
 		entt::entity m_EditorCamera{ entt::null };
 
 		bool OnKeyPressed(KeyPressedEvent& event);
+
+		// offsets for FocusOnGameObject
+		glm::vec3 m_TargetPosOffset{ 0.0f, 7.0f, -10.0f };
+		// rotation in degrees
+		glm::vec3 m_TargetRotation{ -30.0f, 180.0f, 0.0f }; 
 
 	};
 

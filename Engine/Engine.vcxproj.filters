@@ -68,6 +68,9 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsEngine.cpp" />
+    <ClCompile Include="Source\Scene\Components\Collider.cpp" />
+    <ClCompile Include="Source\Scene\Components\CollisionComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -150,6 +153,9 @@
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
     <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
     <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
+    <ClInclude Include="Source\Physics\PhysicsEngine.h" />
+    <ClInclude Include="Source\Scene\Components\Collider.h" />
+    <ClInclude Include="Source\Scene\Components\CollisionComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />
@@ -174,5 +180,6 @@
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />
     <Text Include="..\Planning.txt" />
+    <Text Include="..\PhysicsModuleNotes.txt" />
   </ItemGroup>
 </Project>

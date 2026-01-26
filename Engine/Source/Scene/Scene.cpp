@@ -512,5 +512,11 @@ namespace Pixie
 	{
 		 component.UpdateFocalPoint(entity);
 	}
+
+	 template<>
+	 void Scene::OnComponentAdded<CollisionComponent>(Entity& entity, CollisionComponent& component)
+	 {
+		 Logger::Log(LOG_TRACE, "Scene called OnComponentAdded<CollisionComponent>");
+	 }
 	
 }

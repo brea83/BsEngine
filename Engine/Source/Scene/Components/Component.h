@@ -10,6 +10,7 @@
 #include "CameraComponent.h"
 #include "CameraController.h"
 #include "MeshComponent.h"
+#include "CollisionComponent.h"
 
 
 namespace Pixie

@@ -114,6 +114,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Scene\Components\CollisionComponent.cpp" />
+    <ClCompile Include="Source\Scene\Components\Collider.cpp" />
+    <ClCompile Include="Source\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\CircleRenderPass.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\CircleMesh.cpp" />
     <ClCompile Include="Source\Graphics\Renderers\ShadowPass.cpp" />
@@ -204,6 +207,9 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Scene\Components\CollisionComponent.h" />
+    <ClInclude Include="Source\Scene\Components\Collider.h" />
+    <ClInclude Include="Source\Physics\PhysicsEngine.h" />
     <ClInclude Include="Source\Graphics\Renderers\CircleRenderPass.h" />
     <ClInclude Include="Source\Graphics\Primitives\CircleMesh.h" />
     <ClInclude Include="Source\Graphics\Renderers\ShadowPass.h" />
@@ -300,6 +306,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\FGEngineSpecializationNotes.txt" />
+    <Text Include="..\PhysicsModuleNotes.txt" />
     <Text Include="..\Planning.txt" />
   </ItemGroup>
   <ItemGroup>

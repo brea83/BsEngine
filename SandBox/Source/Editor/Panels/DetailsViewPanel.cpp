@@ -55,9 +55,14 @@ namespace Pixie
 					selected->AddComponent<LightComponent>();
 				}
 
-				if (ImGui::Selectable("CircleRenderer"))
+				if (ImGui::Selectable("Circle Renderer"))
 				{
 					selected->AddComponent<CircleRendererComponent>();
+				}
+
+				if (ImGui::Selectable("Collision component"))
+				{
+					selected->AddComponent<CollisionComponent>();
 				}
 				ImGui::EndPopup();
 			}
@@ -500,6 +505,47 @@ namespace Pixie
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 			ImGui::DragFloat("Line Width", &component.LineWidth, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
+
+			ImGui::PopID();
+		}
+
+		if (selected.HasCompoenent<CollisionComponent>())
+		{
+			ImGui::PushID("CollisionComponent");
+			ImGui::Separator();
+			CollisionComponent& component = selected.GetComponent<CollisionComponent>();
+			ImGui::Text("Collision Component");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			ImGui::Text("Collider Type");
+			ImGui::SameLine();
+			int currentType = static_cast<int>(component.Type);
+			if (ImGui::Combo("##ColliderType", &currentType, CollisionComponent::TypeNames, IM_ARRAYSIZE(CollisionComponent::TypeNames)))
+			{
+				ColliderType newType = static_cast<ColliderType>(currentType);
+
+				if (newType != component.Type)
+				{
+					component.Type = newType;
+					scene->GetRegistry().patch<CollisionComponent>(selected.GetEnttHandle());
+				}
+			}
+
+			if (removeComponent)
+			{
+				selected.RemoveComponent<CollisionComponent>();
+			}
 
 			ImGui::PopID();
 		}

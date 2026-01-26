@@ -1,0 +1,82 @@
+Day 1 
+============================
+intro to the game assignment, and physics module.
+
+We are making our physics engine this week
+but it's not rigid bodies, or angular momentum 
+
+we will more be talking about architecture and collisions
+
+user interaction
+	then game logic
+
+	then physics engine update
+		positional logic
+		collision detection
+		collision resolution
+
+hand all that back to renderer
+render
+
+the monkey engine
+	start main loop
+	has an editor update separate from play update
+
+	if sumulate true
+		run physics update
+then render
+
+
+the spline engine
+
+main engine loop start
+	if playing == false
+		editor update
+		editor physics update
+
+	if playing == true
+		game update
+			game systems
+				can fetch the list of collisions from the physics engine 
+		physics update
+			collision detection
+			collision resolution
+	
+	then hand off to renderer
+
+
+	collisions should not just return a bool but a struct of relevant data about the collision
+
+	collision response after the collision detection
+		elaborate physics responses is out of scope for this project unless you are implementing a third party engine
+
+	CheckIntersections()	returns a vector of collisions
+
+	enum is better than dynamic class for checking collider types at runtime
+
+	we should start with sphere to sphere collisions
+
+
+	struct CollisionEvent
+		entity a
+		entity b
+
+	class PhysicsSystem
+		public:
+		void UpdatePhysics(Scene);
+		void DrawDebugColliders();
+
+		static bool CheckIntersect(collider a, collider b);
+
+		const std::vector<CollisionEvent& GetcollisionEvents() const;
+
+		void ClearEvents(); // clears the collisionEvents vector
+
+		private:
+		vector<CollisionEvent> m_collisionEvents;
+		float m_CurrentTime;
+		float m_TotalTime;
+		float m_HoizontalMovement;
+
+TODAY'S TASK
+	SET UP PHYSICS SYSTEM CLASS AND START ON SPHERE TO SPHERE COLLISIONS

@@ -17,11 +17,11 @@ namespace Pixie
 
 	void Entity::WarnSceneNull(entt::entity entityHandle, const std::string& attemptedAction)
 	{
-		Logger::Log(LOG_WARNING, "Entity with entt handle: {}, tried to {}, but m_Scene is NULLPTR", (uint32_t)entityHandle, attemptedAction);
+		Logger::Core(LOG_WARNING, "Entity with entt handle: {}, tried to {}, but m_Scene is NULLPTR", (uint32_t)entityHandle, attemptedAction);
 	}
 
 	void Entity::WarnEntityInvalid(const std::string& attemptedAction)
 	{
-		Logger::Log(LOG_WARNING, "Invalid Entity tried to: {}", attemptedAction);
+		Logger::Core(LOG_WARNING, "Invalid Entity tried to: {}", attemptedAction);
 	}
 }

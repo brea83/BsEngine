@@ -10,8 +10,8 @@ namespace Pixie
 {
 	void StbImageWrapper::LoadImage(const std::string& filePath, StbImageData& imageData)
 	{
-		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::" );
-		Logger::Log(LOG_TRACE, "stbi trying to load file path: {}", filePath);
+		Logger::Core(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::" );
+		Logger::Core(LOG_TRACE, "stbi trying to load file path: {}", filePath);
 
 		stbi_set_flip_vertically_on_load(true);
 		unsigned char* data = stbi_load(filePath.c_str(), &imageData.Width, &imageData.Height, &imageData.ChannelsCount, 0);
@@ -35,11 +35,11 @@ namespace Pixie
 			}
 			imageData.StbData = data;
 			imageData.BLoadSuccess = true;
-			Logger::Log(LOG_TRACE, "FILE LOAD SUCCESS");
+			Logger::Core(LOG_TRACE, "FILE LOAD SUCCESS");
 		}
 		else
 		{
-			Logger::Log(LOG_ERROR, "FAILED TO LOAD TEXTURE: {}", filePath);
+			Logger::Core(LOG_ERROR, "FAILED TO LOAD TEXTURE: {}", filePath);
 			imageData.BLoadSuccess = false;
 		}
 

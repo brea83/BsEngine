@@ -44,7 +44,7 @@ namespace Pixie
 				if (sphereCollider)
 					return CheckSphereIntersect(sphereCollider, colliderB);
 				else
-					Logger::Log(LOG_ERROR, "Collider A had type == Sphere, but could not cast to SphereCollider"); // hopefully this never runs
+					Logger::Core(LOG_ERROR, "Collider A had type == Sphere, but could not cast to SphereCollider"); // hopefully this never runs
 				break;
 			}
 			case Pixie::ColliderType::Plane:
@@ -65,7 +65,7 @@ namespace Pixie
 			}
 			default:
 			{
-				Logger::Log(LOG_ERROR, "Collider A had an invalid Type"); // hopefully this never runs
+				Logger::Core(LOG_ERROR, "Collider A had an invalid Type"); // hopefully this never runs
 				break;
 			}
 		}
@@ -91,7 +91,7 @@ namespace Pixie
 				}
 				else
 				{
-					Logger::Log(LOG_ERROR, "Collider A had type == Sphere, but could not cast to SphereCollider"); // hopefully this never runs
+					Logger::Core(LOG_ERROR, "Collider A had type == Sphere, but could not cast to SphereCollider"); // hopefully this never runs
 				}
 				break;
 			}
@@ -113,7 +113,7 @@ namespace Pixie
 			}
 			default:
 			{
-				Logger::Log(LOG_ERROR, "Collider B had an invalid Type"); // hopefully this never runs
+				Logger::Core(LOG_ERROR, "Collider B had an invalid Type"); // hopefully this never runs
 				break;
 			}
 		}

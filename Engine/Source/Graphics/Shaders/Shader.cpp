@@ -33,7 +33,7 @@ namespace Pixie
 		}
 		else
 		{
-			Logger::Log(LOG_ERROR, "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE");
+			Logger::Core(LOG_ERROR, "ERROR, TRIED TO COMPILE A SHADER WITH INVALID GL TYPE");
 			return 0;
 		}
 
@@ -51,8 +51,8 @@ namespace Pixie
 			glGetShaderInfoLog(shaderObject, 512, NULL, infoLog);
 			std::string shaderTypeName = glShaderType == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ";
 
-			Logger::Log(LOG_ERROR, "ERROR, {} SHADER COMPILATION FAILED", shaderTypeName);
-			Logger::Log(LOG_ERROR, "{}", infoLog);
+			Logger::Core(LOG_ERROR, "ERROR, {} SHADER COMPILATION FAILED", shaderTypeName);
+			Logger::Core(LOG_ERROR, "{}", infoLog);
 			return 0;
 		}
 
@@ -78,8 +78,8 @@ namespace Pixie
 		if (!success)
 		{
 			glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-			Logger::Log(LOG_ERROR, "ERROR SHADER PROGRAM LINKING FAILED");
-			Logger::Log(LOG_ERROR, "{}", infoLog);
+			Logger::Core(LOG_ERROR, "ERROR SHADER PROGRAM LINKING FAILED");
+			Logger::Core(LOG_ERROR, "{}", infoLog);
 			return 0;
 		}
 
@@ -127,9 +127,9 @@ namespace Pixie
 			glGetProgramResourceName(ShaderProgram, GL_UNIFORM_BLOCK, i, nameData.size(), NULL, &nameData[0]);
 			std::string name(nameData.begin(), nameData.end() - 1);
 
-			//Logger::Log(LOG_INFO, "Found uniform block index {}, named: {}", block.Index, name);
-			//Logger::Log(LOG_INFO, "                    Size: {}", block.Size);
-			//Logger::Log(LOG_INFO, "     Num Active Uniforms: {}", block.NumVariables);
+			//Logger::Core(LOG_INFO, "Found uniform block index {}, named: {}", block.Index, name);
+			//Logger::Core(LOG_INFO, "                    Size: {}", block.Size);
+			//Logger::Core(LOG_INFO, "     Num Active Uniforms: {}", block.NumVariables);
 
 			// get a list of the active uniforms
 			std::vector<GLint> blockUniforms(block.NumVariables);
@@ -149,8 +149,8 @@ namespace Pixie
 				m_Uniforms[uniformName] = uniform;
 
 				block.UniformNames[j] = uniformName;
-				//Logger::Log(LOG_INFO, "Block uniform {} named: {}", UniformInfo::TypeEnumToString(values[1]), uniformName);
-				//Logger::Log(LOG_INFO, "     Array length: {}", uniform.ArraySize);
+				//Logger::Core(LOG_INFO, "Block uniform {} named: {}", UniformInfo::TypeEnumToString(values[1]), uniformName);
+				//Logger::Core(LOG_INFO, "     Array length: {}", uniform.ArraySize);
 			}
 			m_UniformBlocks[name] = block;
 		}
@@ -170,14 +170,14 @@ namespace Pixie
 			//skip uniforms that are in a block
 			if (values[0] != -1)
 			{
-				//Logger::Log(LOG_TRACE, "skipping uniform in block number: {}", values[0]);
+				//Logger::Core(LOG_TRACE, "skipping uniform in block number: {}", values[0]);
 				continue;
 			}
 
 			std::string name = GetUniformNameFromShader(i, values[2]);
 
-			//Logger::Log(LOG_INFO, "Found uniform {} named: {}", UniformInfo::TypeEnumToString(values[1]), name);
-			//Logger::Log(LOG_INFO, "     Array length: {}", values[4]);
+			//Logger::Core(LOG_INFO, "Found uniform {} named: {}", UniformInfo::TypeEnumToString(values[1]), name);
+			//Logger::Core(LOG_INFO, "     Array length: {}", values[4]);
 
 			UniformInfo uniform;
 			uniform.Location = values[3];
@@ -202,17 +202,17 @@ namespace Pixie
 
 	void Shader::PrintUniformMetadata(std::string name, UniformInfo uniform) const
 	{
-		Logger::Log(LOG_TRACE, "{}", name);
-		Logger::Log(LOG_TRACE, "........................");
+		Logger::Core(LOG_TRACE, "{}", name);
+		Logger::Core(LOG_TRACE, "........................");
 		if(uniform.IsBlockUniform())
-			Logger::Log(LOG_TRACE, "     Offset: {}", uniform.Location);
+			Logger::Core(LOG_TRACE, "     Offset: {}", uniform.Location);
 		else
-			Logger::Log(LOG_TRACE, "   Location: {}", uniform.Location);
+			Logger::Core(LOG_TRACE, "   Location: {}", uniform.Location);
 
-		Logger::Log(LOG_TRACE, "       Type: {}", UniformInfo::TypeEnumToString(uniform.Type));
-		Logger::Log(LOG_TRACE, " Array Size: {}", uniform.ArraySize);
-		Logger::Log(LOG_TRACE, "Block Index: {}", uniform.BlockIndex);
-		Logger::Log(LOG_TRACE, "........................");
+		Logger::Core(LOG_TRACE, "       Type: {}", UniformInfo::TypeEnumToString(uniform.Type));
+		Logger::Core(LOG_TRACE, " Array Size: {}", uniform.ArraySize);
+		Logger::Core(LOG_TRACE, "Block Index: {}", uniform.BlockIndex);
+		Logger::Core(LOG_TRACE, "........................");
 	}
 
 	bool Shader::HasUniformName(const std::string& name) const
@@ -241,23 +241,23 @@ namespace Pixie
 
 	void Shader::PrintMetadata() const
 	{
-		Logger::Log(LOG_TRACE, "========================");
+		Logger::Core(LOG_TRACE, "========================");
 		std::string shaderName = GetName();
-		Logger::Log(LOG_TRACE, "Shader Program: {}", shaderName);
-		Logger::Log(LOG_TRACE, "ID: {}", ShaderProgram);
-		Logger::Log(LOG_TRACE, "________________________");
-		Logger::Log(LOG_TRACE, "________________________");
+		Logger::Core(LOG_TRACE, "Shader Program: {}", shaderName);
+		Logger::Core(LOG_TRACE, "ID: {}", ShaderProgram);
+		Logger::Core(LOG_TRACE, "________________________");
+		Logger::Core(LOG_TRACE, "________________________");
 
 		for (auto pair : m_UniformBlocks)
 		{
 			std::string name = pair.first;
 			UniformBlockInfo block = pair.second;
-			Logger::Log(LOG_TRACE, "Block: {}", name);
-			Logger::Log(LOG_TRACE, "Index: {}", block.Index);
-			Logger::Log(LOG_TRACE, "________________________");
+			Logger::Core(LOG_TRACE, "Block: {}", name);
+			Logger::Core(LOG_TRACE, "Index: {}", block.Index);
+			Logger::Core(LOG_TRACE, "________________________");
 
-			Logger::Log(LOG_TRACE, "Uniforms");
-			Logger::Log(LOG_TRACE, "------------------------");
+			Logger::Core(LOG_TRACE, "Uniforms");
+			Logger::Core(LOG_TRACE, "------------------------");
 
 			for (std::string uniformName : block.UniformNames)
 			{
@@ -268,16 +268,16 @@ namespace Pixie
 				}
 				else
 				{
-					Logger::Log(LOG_TRACE, "Could not find Uniform named: {}", name);
+					Logger::Core(LOG_TRACE, "Could not find Uniform named: {}", name);
 				}
 			}
 
-			Logger::Log(LOG_TRACE, "________________________");
-			Logger::Log(LOG_TRACE, "________________________");
+			Logger::Core(LOG_TRACE, "________________________");
+			Logger::Core(LOG_TRACE, "________________________");
 		}
 
-		Logger::Log(LOG_TRACE, "Other Uniforms");
-		Logger::Log(LOG_TRACE, "------------------------");
+		Logger::Core(LOG_TRACE, "Other Uniforms");
+		Logger::Core(LOG_TRACE, "------------------------");
 		for (auto pair : m_Uniforms)
 		{
 			std::string name = pair.first;
@@ -286,27 +286,27 @@ namespace Pixie
 			if (uniform.IsBlockUniform()) continue;
 			PrintUniformMetadata(name, uniform);
 		}
-		Logger::Log(LOG_TRACE, "========================");
+		Logger::Core(LOG_TRACE, "========================");
 	}
 
 	void Shader::Compile(const std::string& vertPath, const std::string& fragPath)
 	{
 		std::string name = GetName() == "" ? vertPath : GetName();
 
-		Logger::Log(LOG_TRACE, "Compiling shader {}", name);
+		Logger::Core(LOG_TRACE, "Compiling shader {}", name);
 		unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER, vertPath);//LoadVertexShader(vertPath);
 		if (vertexShader == 0) return;
 		unsigned int fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragPath);//LoadFragmentShader(fragPath);
 		if (fragmentShader == 0) return;
-		Logger::Log(LOG_TRACE, "Linking...");
+		Logger::Core(LOG_TRACE, "Linking...");
 		unsigned int linkedProgram = LinkShader(vertexShader, fragmentShader);
 		if (linkedProgram == 0) return;
 		ShaderProgram = linkedProgram;
 
-		Logger::Log(LOG_TRACE, "Getting Uniform Metadata...");
+		Logger::Core(LOG_TRACE, "Getting Uniform Metadata...");
 		ExtractUniformMetadata();
 		//PrintMetadata();
-		Logger::Log(LOG_TRACE, "Compile Completed Successfully");
+		Logger::Core(LOG_TRACE, "Compile Completed Successfully");
 	}
 
 	void Shader::ReCompile(const std::string& barDelineatedPaths)

@@ -17,9 +17,9 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	
-	Pixie::Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
-	Pixie::Logger::Log(Pixie::LogLevel::Trace, "EngineContext::Init() successfull   ie. program started");
-	Pixie::Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
+	Pixie::Logger::Core(Pixie::LogLevel::Trace, "====================================================================");
+	Pixie::Logger::Core(Pixie::LogLevel::Trace, "EngineContext::Init() successfull   ie. program started");
+	Pixie::Logger::Core(Pixie::LogLevel::Trace, "====================================================================");
 #pragma region TEMPE POPULATE START SCENE
 	//engine->GetScene()->PopulateWithTestObjects();
 #pragma endregion 1 cube and 1 viking house

@@ -100,7 +100,7 @@ namespace Pixie
 			assert(m_Scene != nullptr);
 		}
 
-		if (HasCompoenent<Type>()) Logger::Log(LOG_WARNING, "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT");
+		if (HasCompoenent<Type>()) Logger::Core(LOG_WARNING, "WARNING: CURRENTLY ADDING COMPONENT OF DUPLICATE TYPE WILL OVERWRITE THE OLD COMPOENENT");
 		Type& component = m_Scene->GetRegistry().emplace_or_replace<Type>(m_EntityHandle, std::forward<Args>(args)...);
 		m_Scene->OnComponentAdded<Type>(*this, component);
 		return component;
@@ -128,7 +128,7 @@ namespace Pixie
 			WarnSceneNull(m_EntityHandle, "get a component");
 			assert(m_Scene != nullptr);
 		}
-		if (!HasCompoenent<Type>()) Logger::Log(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
+		if (!HasCompoenent<Type>()) Logger::Core(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
 		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 	}
 

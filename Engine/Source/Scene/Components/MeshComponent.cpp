@@ -88,7 +88,7 @@ namespace Pixie
 
 	MeshComponent::~MeshComponent()
 	{
-		Logger::Log(LOG_TRACE, "DELETING {}", m_Name);
+		Logger::Core(LOG_TRACE, "DELETING {}", m_Name);
 	}
 
 	void MeshComponent::OnUpdate()

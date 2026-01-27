@@ -119,14 +119,14 @@ namespace Pixie
         entt::registry& registry = m_Scene->GetRegistry();
         if (m_EditorCamera == entityToRemove)
         {
-            Logger::Log(LOG_WARNING, "You may not delete the editor camera");
+            Logger::Core(LOG_WARNING, "You may not delete the editor camera");
             return false;
         }
 
         auto view = registry.view<CameraComponent>();
         if (view.size() < 2)
         {
-            Logger::Log(LOG_WARNING, "You may not delete the only camera");
+            Logger::Core(LOG_WARNING, "You may not delete the only camera");
             return false;
         }
 
@@ -139,7 +139,7 @@ namespace Pixie
         
         if (sceneCameraCount < 2)
         {
-            Logger::Log(LOG_WARNING, "You may not delete the only non editor camera");
+            Logger::Core(LOG_WARNING, "You may not delete the only non editor camera");
             return false;
         }
         return true;

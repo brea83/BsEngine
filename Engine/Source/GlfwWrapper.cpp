@@ -40,7 +40,7 @@ namespace Pixie
 
 		if (!glfwInit())
 		{
-			Logger::Log(LOG_ERROR, "Failed to init GLFW");
+			Logger::Core(LOG_ERROR, "Failed to init GLFW");
 			return -1;
 		}
 		// window settings set up as done in Learn OpenGl's tutorial
@@ -52,7 +52,7 @@ namespace Pixie
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
 		if (!m_Window)
 		{
-			Logger::Log(LOG_ERROR, "Failed to create GLFW window");
+			Logger::Core(LOG_ERROR, "Failed to create GLFW window");
 
 			glfwTerminate();
 			return -1;
@@ -178,7 +178,7 @@ namespace Pixie
 		// initialize GLAD to load openGL function pointers
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
-			Logger::Log(LOG_ERROR, "Failed to initialize GLAD");
+			Logger::Core(LOG_ERROR, "Failed to initialize GLAD");
 			return -1;
 		}
 

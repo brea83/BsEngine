@@ -86,7 +86,7 @@ namespace Pixie
 		if (camComponent == nullptr)
 		{
 			m_bCameraFound = false;
-			Logger::Log(LOG_WARNING, "No Camera in the scene is set to active");
+			Logger::Core(LOG_WARNING, "No Camera in the scene is set to active");
 			return;
 		}
 		Camera& mainCam = camComponent->Cam;

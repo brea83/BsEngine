@@ -290,7 +290,7 @@ namespace Pixie
 			ImGui::InputTextWithHint("##EditableString", value.c_str(), &editingValue);
 			if (ImGui::IsItemDeactivatedAfterEdit())
 			{
-				Logger::Log(LOG_DEBUG, "DetailsViewPanel::DrawSTringProperty() pressed enter on text input");
+				Logger::Core(LOG_DEBUG, "DetailsViewPanel::DrawSTringProperty() pressed enter on text input");
 				if (value != editingValue)
 				{
 					if (editingValue != "" && editingValue != " ")
@@ -375,7 +375,7 @@ namespace Pixie
 			{
 				if (!AssetLoader::LoadMesh(selected, component, component.m_FilePath))
 				{
-					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() MESH FILE There was an error loading mesh file, reverting to old mesh path");
+					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() MESH FILE There was an error loading mesh file, reverting to old mesh path");
 					component.m_FilePath = previousMeshPath;
 					component.Reload();
 				}
@@ -392,7 +392,7 @@ namespace Pixie
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.BaseMapPath);
 				if (newTexture == nullptr)
 				{
-					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() BASE TEXTURE There was an error loading Texture file, reverting to old Texture path");
+					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() BASE TEXTURE There was an error loading Texture file, reverting to old Texture path");
 					material.BaseMapPath = previousBasePath;
 				}
 				else
@@ -418,7 +418,7 @@ namespace Pixie
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, TextureType::Normal);
 				if (newTexture == nullptr)
 				{
-					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() NORMAL TEXTURE There was an error loading Texture file, reverting to old Texture path");
+					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() NORMAL TEXTURE There was an error loading Texture file, reverting to old Texture path");
 					material.NormalMapPath = previousBasePath;
 				}
 				else
@@ -445,7 +445,7 @@ namespace Pixie
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, TextureType::GltfMetalicRoughness);
 				if (newTexture == nullptr)
 				{
-					Logger::Log(LOG_WARNING, "DetailsViewPanel::DrawComponents() METALLIC TEXTURE There was an error loading Texture file, reverting to old Texture path");
+					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() METALLIC TEXTURE There was an error loading Texture file, reverting to old Texture path");
 					material.MetallicMapPath = previousMetalPath;
 				}
 				else

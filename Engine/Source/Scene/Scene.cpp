@@ -200,7 +200,7 @@ namespace Pixie
 	{
 		if (!m_Registry.valid(objectToRemove))
 		{
-			Logger::Log(LOG_WARNING, "Tried to remove game object with entt handle: {}, from Scene, but could not find it", int(objectToRemove));
+			Logger::Core(LOG_WARNING, "Tried to remove game object with entt handle: {}, from Scene, but could not find it", int(objectToRemove));
 			return;
 		}
 
@@ -380,7 +380,7 @@ namespace Pixie
 
 		if (directionalLights.size() < 1) return GameObject();
 		
-		if(directionalLights.size() > 1) Logger::Log(LOG_WARNING, "Warning: more than one directional light in scene, but Scene::GetMainLight() only returns the first one found");
+		if(directionalLights.size() > 1) Logger::Core(LOG_WARNING, "Warning: more than one directional light in scene, but Scene::GetMainLight() only returns the first one found");
 
 		return GameObject(directionalLights.front(), this);
 	}
@@ -446,7 +446,7 @@ namespace Pixie
 	{
 		if (GetMainLight())
 		{
-			Logger::Log(LOG_WARNING, "Tried to add a second Directional light. Pixie Engine does not yet support multiple directional lights in a scene");
+			Logger::Core(LOG_WARNING, "Tried to add a second Directional light. Pixie Engine does not yet support multiple directional lights in a scene");
 			return GameObject();
 		}
 
@@ -516,7 +516,7 @@ namespace Pixie
 	 template<>
 	 void Scene::OnComponentAdded<CollisionComponent>(Entity& entity, CollisionComponent& component)
 	 {
-		 Logger::Log(LOG_TRACE, "Scene called OnComponentAdded<CollisionComponent>");
+		 Logger::Core(LOG_TRACE, "Scene called OnComponentAdded<CollisionComponent>");
 	 }
 	
 }

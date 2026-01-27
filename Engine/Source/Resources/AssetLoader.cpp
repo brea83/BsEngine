@@ -31,14 +31,14 @@ namespace Pixie
 		statusEx.dwLength = sizeof(statusEx);
 		GlobalMemoryStatusEx(&statusEx);
 		
-		//Logger::Log(LOG_INFO, "********************");
-		//Logger::Log(LOG_INFO, "Physical Memory");
-		//Logger::Log(LOG_INFO, "Total: {:d}", statusEx.ullTotalPhys / (1024 * 1024));
-		//Logger::Log(LOG_INFO, "Available: {:d}", statusEx.ullAvailPhys / (1024 * 1024));
+		//Logger::Core(LOG_INFO, "********************");
+		//Logger::Core(LOG_INFO, "Physical Memory");
+		//Logger::Core(LOG_INFO, "Total: {:d}", statusEx.ullTotalPhys / (1024 * 1024));
+		//Logger::Core(LOG_INFO, "Available: {:d}", statusEx.ullAvailPhys / (1024 * 1024));
 		
 
 		bool result = minimumAvailableMb < statusEx.ullAvailPhys / (1024 * 1024);
-		if (!result) Logger::Log(LOG_WARNING, "Available memory < minimum required. {:d} < {:d}", statusEx.ullAvailPhys / (1024 * 1024), minimumAvailableMb);
+		if (!result) Logger::Core(LOG_WARNING, "Available memory < minimum required. {:d} < {:d}", statusEx.ullAvailPhys / (1024 * 1024), minimumAvailableMb);
 		//std::cout << "Available memory > minimum required == " << result << std::endl;
 		return result;
 	}
@@ -47,7 +47,7 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			Logger::Log(LOG_ERROR, "LOAD TEXT FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			Logger::Core(LOG_ERROR, "LOAD TEXT FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
 			//std::cout << "" << std::endl;
 			return nullptr;
 		}
@@ -62,7 +62,7 @@ namespace Pixie
 		std::ifstream file(filePath);
 		if (!file.is_open())
 		{
-			Logger::Log(LOG_ERROR, "Failed to open file: {}", filePath);
+			Logger::Core(LOG_ERROR, "Failed to open file: {}", filePath);
 			//std::cerr << "Failed to open file: " << filePath << std::endl;
 			return nullptr;
 		}
@@ -89,7 +89,7 @@ namespace Pixie
 		std::ifstream file(filePath);
 		if (!file.is_open())
 		{
-			Logger::Log(LOG_ERROR, "Failed to open file: {}", filePath);
+			Logger::Core(LOG_ERROR, "Failed to open file: {}", filePath);
 			//std::cerr << "Failed to open file: " << filePath << std::endl;
 			return false;
 		}
@@ -115,7 +115,7 @@ namespace Pixie
 			s_Resources.emplace(fileName, textSource);
 			return true;
 		}
-		Logger::Log(LOG_ERROR, "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp");
+		Logger::Core(LOG_ERROR, "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp");
 		//std::cout << "ERROR, FILE FOUND IN ASSETS, BUT COULD NOT BE ACCESSED AS A TextResource.cpp" << std::endl;
 		return false;
 	}
@@ -124,7 +124,7 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			Logger::Log(LOG_ERROR, "LOAD SHADER FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			Logger::Core(LOG_ERROR, "LOAD SHADER FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
 			//std::cout << "LOAD SHADER FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
@@ -160,7 +160,7 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			Logger::Log(LOG_ERROR, "LOAD TEXTURE FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			Logger::Core(LOG_ERROR, "LOAD TEXTURE FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
 			//std::cout << "LOAD TEXTURE FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
@@ -190,7 +190,7 @@ namespace Pixie
 
 		if (s_Resources.find(pathString) != s_Resources.end())
 		{
-			Logger::Log(LOG_ERROR, "Cannot create new prefab named {}, this name is already taken. \
+			Logger::Core(LOG_ERROR, "Cannot create new prefab named {}, this name is already taken. \
 				Either change the object's name or use the OverWrite/Save-Changes for Prefab", path.stem().string());
 			//std::cout << "Cannot create new prefab with this name it already exists." << std::endl;
 			//std::cout << "Either change the object's name or use the OverWrite/Save-Changes for Prefab" << std::endl;
@@ -209,7 +209,7 @@ namespace Pixie
 	{
 		if (filePath.extension() != "pmeta")
 		{
-			Logger::Log(LOG_WARNING, "tried to load prefab but it was not a .pmeta file, returning invalid GameObject.");
+			Logger::Core(LOG_WARNING, "tried to load prefab but it was not a .pmeta file, returning invalid GameObject.");
 			//std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
 			return GameObject();
 		}
@@ -229,7 +229,7 @@ namespace Pixie
 	{
 		if (filePath.extension() != "pmeta")
 		{
-			Logger::Log(LOG_WARNING, "tried to load prefab but it was not a .pmeta file.");
+			Logger::Core(LOG_WARNING, "tried to load prefab but it was not a .pmeta file.");
 			//std::cout << "tried to load prefab but it was not a .pmeta file" << std::endl;
 			return false;
 		}
@@ -254,7 +254,7 @@ namespace Pixie
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
 
-			Logger::Log(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
+			Logger::Core(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
 			//std::cout << "Loading serialized mesh took: " << duration.count() << " milliseconds." << std::endl;
 
 			if (mesh)
@@ -277,7 +277,7 @@ namespace Pixie
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
-			Logger::Log(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
+			Logger::Core(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
 			//std::cout << "Loading Obj took: " << duration.count() << " milliseconds." << std::endl;
 			
 			if (mesh)
@@ -298,7 +298,7 @@ namespace Pixie
 			std::shared_ptr<Mesh> mesh = LoadSerializedMesh(serializedPath);
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
-			Logger::Log(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
+			Logger::Core(LOG_INFO, "Loading serialized mesh took: {} milliseconds", duration.count());
 			//std::cout << "Loading serialized mesh took: " << duration.count() << " milliseconds." << std::endl;
 
 			return mesh;
@@ -317,7 +317,7 @@ namespace Pixie
 			auto timerEnd = std::chrono::high_resolution_clock::now();
 
 			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(timerEnd - timerStart);
-			Logger::Log(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
+			Logger::Core(LOG_INFO, "Loading Obj took: {} milliseconds", duration.count());
 			//std::cout << "Loading Obj took: " << duration.count() << " milliseconds." << std::endl;
 		}
 
@@ -386,7 +386,7 @@ namespace Pixie
 	{
 		if (!IsMemoryAvailable(MimimumAvailableMb))
 		{
-			Logger::Log(LOG_ERROR, "LOAD OBJ FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
+			Logger::Core(LOG_ERROR, "LOAD OBJ FILE ERROR: available memory less than {:d}", MimimumAvailableMb);
 			//std::cout << "LOAD OBJ FILE ERROR: available memory less than " << std::endl;
 			return nullptr;
 		}
@@ -406,9 +406,9 @@ namespace Pixie
 		}
 		std::string name = filePath.substr(filePath.find_last_of('/') + 1, filePath.find_last_of("."));
 
-		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
-		Logger::Log(LOG_TRACE, "IMPORTING OBJ: {}", name);
-		Logger::Log(LOG_TRACE, "FilePath: {}", filePath);
+		Logger::Core(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
+		Logger::Core(LOG_TRACE, "IMPORTING OBJ: {}", name);
+		Logger::Core(LOG_TRACE, "FilePath: {}", filePath);
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "IMPORTING OBJ " << name << std::endl;
 		//std::cout << " FilePath: " << filePath << std::endl;
@@ -658,7 +658,7 @@ namespace Pixie
 
 		if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
 		{
-			Logger::Log(LOG_ERROR, "ERROR::ASSIMP:: {}", importer.GetErrorString());
+			Logger::Core(LOG_ERROR, "ERROR::ASSIMP:: {}", importer.GetErrorString());
 			//std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 			return false;
 		}
@@ -667,12 +667,12 @@ namespace Pixie
 		if (assimpScene->mMetaData)
 		{
 			assimpScene->mMetaData->Get("UnitScaleFactor", factor);
-			Logger::Log(LOG_TRACE, "Scene Unit Scale Factor is {}", factor);
+			Logger::Core(LOG_TRACE, "Scene Unit Scale Factor is {}", factor);
 			//std::cout << "Scene Unit Scale Factor is " << factor << std::endl;
 		}
 
-		Logger::Log(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
-		Logger::Log(LOG_TRACE, "IMPORTING: {}", filePath.string());
+		Logger::Core(LOG_TRACE, ":::::::::::::::::::::::::::::::::::::::::::::");
+		Logger::Core(LOG_TRACE, "IMPORTING: {}", filePath.string());
 		//std::cout << ":::::::::::::::::::::::::::::::::::::::::::::#" << std::endl;
 		//std::cout << "IMPORTING " << filePath << std::endl;
 
@@ -688,7 +688,7 @@ namespace Pixie
 		if (rootNode->mMetaData)
 		{
 			rootNode->mMetaData->Get("UnitScaleFactor", factor);
-			Logger::Log(LOG_TRACE, "Node Unit Scale Factor is {}", factor);
+			Logger::Core(LOG_TRACE, "Node Unit Scale Factor is {}", factor);
 			//std::cout << "Node Unit Scale Factor is " << factor << std::endl;
 		}
 
@@ -702,7 +702,7 @@ namespace Pixie
 		for (auto pair : s_Resources)
 		{
 			int useCount = pair.second.use_count();
-			//Logger::Log(LOG_TRACE, "{} has {} live pointers", pair.first, std::to_string(useCount));
+			//Logger::Core(LOG_TRACE, "{} has {} live pointers", pair.first, std::to_string(useCount));
 			if (useCount <= 2)
 			{
 				// two uses means one is this for loop and the other is the instance in s_Resources ie: nothing outside the loader is using it
@@ -741,7 +741,7 @@ namespace Pixie
 
 					outPath += "/";
 				}
-				//Logger::Log(LOG_DEBUG, "{}", part.string());
+				//Logger::Core(LOG_DEBUG, "{}", part.string());
 			}
 
 			//outPath = "../Assets" + inPath.substr(inPath.find("Assets"));
@@ -773,7 +773,7 @@ namespace Pixie
 
 				outPath += "/";
 			}
-			//Logger::Log(LOG_DEBUG, "{}", part.string());
+			//Logger::Core(LOG_DEBUG, "{}", part.string());
 		}
 
 		return bIsInAssetsFolderPath ? outPath : inPath;
@@ -995,8 +995,8 @@ namespace Pixie
 			material->GetTexture(type, i, &filePath);
 
 			/*std::string typeName = TextureTypeToString.at(bsTextureType);
-			Logger::Log(LOG_TRACE, "TEXTURE PATH: {}", filePath.C_Str() );
-			Logger::Log(LOG_TRACE, "TYPE: {}", typeName);
+			Logger::Core(LOG_TRACE, "TEXTURE PATH: {}", filePath.C_Str() );
+			Logger::Core(LOG_TRACE, "TYPE: {}", typeName);
 			*/
 			std::shared_ptr<Texture> texture = AssetLoader::LoadTexture(filePath.C_Str());
 			if (texture == nullptr) continue;
@@ -1045,7 +1045,7 @@ namespace Pixie
 			for (unsigned int i = 1; i < node->mNumMeshes; i++)
 			{
 				aiMesh* aiMesh = assimpScene->mMeshes[node->mMeshes[i]];
-				//Logger::Log(LOG_TRACE, "------------------------------");
+				//Logger::Core(LOG_TRACE, "------------------------------");
 				std::shared_ptr<Mesh> mesh = ProcessMesh(aiMesh, assimpScene);
 
 				if (!mesh) continue;

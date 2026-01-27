@@ -40,7 +40,7 @@ namespace Pixie
 	{
 		if (!gameObject.HasCompoenent<TransformComponent>())
 		{
-			Logger::Log(LOG_WARNING, "Cam Controller on entity {}: Tried to set focal point without a transform component, focal point defaults to (0,0,0)", (int)gameObject.GetEnttHandle());
+			Logger::Core(LOG_WARNING, "Cam Controller on entity {}: Tried to set focal point without a transform component, focal point defaults to (0,0,0)", (int)gameObject.GetEnttHandle());
 			return;
 		}
 
@@ -61,7 +61,7 @@ namespace Pixie
 
 		TransformComponent& transform = gameObject.GetTransform();
 
-		//Logger::Log(LOG_TRACE, "Camera Controller Component update");
+		//Logger::Core(LOG_TRACE, "Camera Controller Component update");
 
 		if (m_Type == CameraMoveType::Fly)
 		{
@@ -251,8 +251,8 @@ namespace Pixie
 		{
 		case Inputs::Keyboard::W:
 			m_TranslationDirection.z = m_TranslationDirection.z == 1 ? 0 : m_TranslationDirection.z;
-			//Logger::Log(LOG_DEBUG, "{}", event.ToString());
-			//Logger::Log(LOG_DEBUG, "{}", m_TranslationDirection);
+			//Logger::Core(LOG_DEBUG, "{}", event.ToString());
+			//Logger::Core(LOG_DEBUG, "{}", m_TranslationDirection);
 			return true;
 		case Inputs::Keyboard::S:
 			m_TranslationDirection.z = m_TranslationDirection.z == -1 ? 0 : m_TranslationDirection.z;

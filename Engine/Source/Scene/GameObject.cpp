@@ -20,7 +20,7 @@ namespace Pixie
 
 	void GameObject::OnUpdate(float deltaTime)
 	{
-		//Logger::Log(LOG_TRACE, "GameObject update, entity id: {}", (int)m_EntityHandle);
+		//Logger::Core(LOG_TRACE, "GameObject update, entity id: {}", (int)m_EntityHandle);
 	}
 
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
@@ -29,7 +29,7 @@ namespace Pixie
 		{
 			NameComponent* nameComponent = object.TryGetComponent<NameComponent>();
 			std::string name = nameComponent == nullptr ? "un-named entity" : nameComponent->Name;
-			Logger::Log(LOG_WARNING, "Skipping Serializeation of {} because it has no GUID", name);
+			Logger::Core(LOG_WARNING, "Skipping Serializeation of {} because it has no GUID", name);
 			return;
 		}
 

@@ -18,7 +18,7 @@ namespace Pixie
 
 		if (pMetaType != "Prefab")
 		{
-			Logger::Log(LOG_ERROR, "Pmeta file was not a prefab type, cannot deserialize as prefab");
+			Logger::Core(LOG_ERROR, "Pmeta file was not a prefab type, cannot deserialize as prefab");
 			return false;
 		}
 
@@ -29,9 +29,9 @@ namespace Pixie
 		{
 			if (version != s_Version)
 			{
-				Logger::Log(LOG_WARNING, "Warning serialization version doesn't match.");
-				Logger::Log(LOG_WARNING, "Pixie Engine Expects: {}", s_Version);
-				Logger::Log(LOG_WARNING, "Found: {}", version);
+				Logger::Core(LOG_WARNING, "Warning serialization version doesn't match.");
+				Logger::Core(LOG_WARNING, "Pixie Engine Expects: {}", s_Version);
+				Logger::Core(LOG_WARNING, "Found: {}", version);
 			}
 		}
 

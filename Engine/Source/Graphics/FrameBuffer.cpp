@@ -78,7 +78,7 @@ namespace Pixie
 		// CHECK TO SEE IF IT WORKS	
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
-			Logger::Log(LOG_ERROR, "Failed create or resize framebuffer");
+			Logger::Core(LOG_ERROR, "Failed create or resize framebuffer");
 		}
 
 

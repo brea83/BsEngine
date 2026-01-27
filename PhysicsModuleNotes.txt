@@ -80,3 +80,23 @@ main engine loop start
 
 TODAY'S TASK
 	SET UP PHYSICS SYSTEM CLASS AND START ON SPHERE TO SPHERE COLLISIONS
+============================
+Day 2
+============================
+Oriented Bounding Boxes
+
+	BoxCollider
+		Mat4 transform
+		vec3 offset
+		vec3 extents
+
+example of sphere and box collision
+	get sphere position in the box's local space. this allows us to treat the box as an AABB (axis aligned bounding box)
+
+example of box to box intersection detection
+	see slides for details
+
+went over the separating axis theorem
+	Two convex shapes do not collide if and only if there exists an axis along which their projections do not overlap.
+
+	dot product of the point to the axis results in the length of that projection on the axis.

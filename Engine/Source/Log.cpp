@@ -32,8 +32,8 @@ namespace Pixie
 		s_SandboxLogger->set_level(spdlog::level::trace);
 		s_SandboxLogger->flush_on(spdlog::level::trace);
 
-		Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
-		Logger::Log(Pixie::LogLevel::Trace, "EngineContext::Init() -> Logger Initialized");
-		Logger::Log(Pixie::LogLevel::Trace, "====================================================================");
+		Logger::Core(Pixie::LogLevel::Trace, "====================================================================");
+		Logger::Core(Pixie::LogLevel::Trace, "EngineContext::Init() -> Logger Initialized");
+		Logger::Core(Pixie::LogLevel::Trace, "====================================================================");
 	}
 }

@@ -27,18 +27,18 @@ namespace Pixie
 		inline static std::shared_ptr<spdlog::logger>& GetSandboxLogger() { return s_SandboxLogger; }
 
 		// usage 
-		//Pixie::Logger::Log(LOG_TRACE, "trace with formatting {}", 12);
-		//Pixie::Logger::Log(LOG_INFO, "info with formatting int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-		//Pixie::Logger::Log(LOG_DEBUG, "debug with formatting, Positional args are {1} {0}..", "too", "supported");
-		//Pixie::Logger::Log(LOG_WARNING, "warning with formatting Support for floats {:03.2f}", 1.23456);
-		//Pixie::Logger::Log(LOG_ERROR, "error with formatting {:04d}", 12);
-		//Pixie::Logger::Log(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
+		//Pixie::Logger::Core(LOG_TRACE, "trace with formatting {}", 12);
+		//Pixie::Logger::Core(LOG_INFO, "info with formatting int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+		//Pixie::Logger::Core(LOG_DEBUG, "debug with formatting, Positional args are {1} {0}..", "too", "supported");
+		//Pixie::Logger::Core(LOG_WARNING, "warning with formatting Support for floats {:03.2f}", 1.23456);
+		//Pixie::Logger::Core(LOG_ERROR, "error with formatting {:04d}", 12);
+		//Pixie::Logger::Core(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
 		template <typename... Args>
-		inline static void Log(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args) 
+		inline static void Core(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args) 
 		{
 			if (!s_CoreLogger)
 			{	
-				std::cerr << "ERROR:: Logger::Log() called before Logger::Init()" << std::endl;
+				std::cerr << "ERROR:: Logger::Core() called before Logger::Init()" << std::endl;
 				return;
 			}
 			switch (logLevel)
@@ -68,14 +68,14 @@ namespace Pixie
 		}
 
 		// usage 
-		//Pixie::Logger::Debug(LOG_TRACE, "trace with formatting {}", 12);
-		//Pixie::Logger::Debug(LOG_INFO, "info with formatting int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-		//Pixie::Logger::Debug(LOG_DEBUG, "debug with formatting, Positional args are {1} {0}..", "too", "supported");
-		//Pixie::Logger::Debug(LOG_WARNING, "warning with formatting Support for floats {:03.2f}", 1.23456);
-		//Pixie::Logger::Debug(LOG_ERROR, "error with formatting {:04d}", 12);
-		//Pixie::Logger::Debug(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
+		//Pixie::Logger::Game(LOG_TRACE, "trace with formatting {}", 12);
+		//Pixie::Logger::Game(LOG_INFO, "info with formatting int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+		//Pixie::Logger::Game(LOG_DEBUG, "debug with formatting, Positional args are {1} {0}..", "too", "supported");
+		//Pixie::Logger::Game(LOG_WARNING, "warning with formatting Support for floats {:03.2f}", 1.23456);
+		//Pixie::Logger::Game(LOG_ERROR, "error with formatting {:04d}", 12);
+		//Pixie::Logger::Game(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
 		template <typename... Args>
-		inline static void Debug(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args)
+		inline static void Game(LogLevel logLevel, spdlog::format_string_t<Args...> format, Args &&... args)
 		{
 			if (!s_SandboxLogger)
 			{
@@ -114,8 +114,8 @@ namespace Pixie
 
 		static void TestCallback(const spdlog::details::log_msg& msg)
 		{
-			Logger::Debug(LogLevel::Trace, "callback from engine log to sandbox log");
-			Logger::Debug(LogLevel::Debug, msg.payload);
+			Logger::Game(LogLevel::Trace, "callback from engine log to sandbox log");
+			Logger::Game(LogLevel::Debug, msg.payload);
 		}
 
 	private:

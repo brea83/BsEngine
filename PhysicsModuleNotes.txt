@@ -100,3 +100,36 @@ went over the separating axis theorem
 	Two convex shapes do not collide if and only if there exists an axis along which their projections do not overlap.
 
 	dot product of the point to the axis results in the length of that projection on the axis.
+============================
+Day 3
+============================
+
+ray casts and raycast to aabb
+
+we will use a thing called the "slab" technique
+	if the biggest entry point offset by the extents of a box of any axis along the ray is smaller than the smallest exit point offset by the extents of a box on any axis along the ray. 
+		with the exceptions
+			when rhe ray does not have an entry or exit point along the ray.
+			when  smallest exit point is negative
+			if the origin of the ray is insice to box we automatically have an intersection
+
+should be cheaper than separating axis theorem collisions
+
+Position = start + (distance * direction);
+
+online theorems call distance t for time
+
+check each axis 
+position.x = start.x + (distance * direction.x)
+x(t) = o.x + (t * d.x);
+
+translate the box into an aabb by moving the ray into the box's object space
+	this allows us to disregard the position of the box and only use its extents
+
+we know the start and end extents of the box on the axis, so we can solve for distance/time of the ray intersecting those points
+Distance1 = (xmax - start.x)/ direction.x
+Distance2 = (xmin - start.x)/ direction.x
+
+the smallest of the two distances is when our ray enters the slab, and the larger is when it enters the slab
+test all three axis of the aabb
+gather and compare the entry and exit points to look for overlaps

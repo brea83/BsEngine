@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "CircleRenderPass.h"
 #include "Graphics/Primitives/CircleMesh.h"
+#include "Scene/Components/Collider.h"
 
 namespace Pixie
 {
@@ -21,23 +22,54 @@ namespace Pixie
         {
             TransformComponent& transform = group.get<TransformComponent>(entity);
             CircleRendererComponent& circle = group.get<CircleRendererComponent>(entity);
-
+            
             //std::shared_ptr<CircleMesh> mesh = std::dynamic_pointer_cast<CircleMesh>(circle.MeshResource);
-
             m_Shader->SetUniformMat4("Transform", transform.GetObjectToWorldMatrix());
-
-
-            m_Shader->SetUniformVec4("Color", circle.Color);
-            m_Shader->SetUniformFloat("Radius", circle.Radius);
-            m_Shader->SetUniformFloat("LineWidth", circle.LineWidth);
-            m_Shader->SetUniformFloat("Fade", circle.Fade);
+            SetCircleUniforms(circle );
             
             //mesh->Render(*m_Shader);
 
             circle.MeshResource->Render(*m_Shader);
         }
 
+        if (!m_BDrawDebug)
+        {
+            m_Shader->EndUse();
+            return;
+        }
+
+        CircleRendererComponent colliderCircle = CircleRendererComponent();
+        colliderCircle.Color = glm::vec4(0.1f, 0.9f, 0.1f, 1.0f);
+        glm::mat4 rotationXY = glm::mat4(1.0f);
+        glm::mat4 rotationXZ = glm::rotate(rotationXY, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        glm::mat4 rotationYZ = glm::rotate(rotationXY, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        
+        SetCircleUniforms(colliderCircle);
+
+        for (auto&& [entity, collider] : registry.view<SphereCollider>().each())
+        {
+            m_Shader->SetUniformMat4("Transform", rotationXY);
+            colliderCircle.MeshResource->Render(*m_Shader);
+
+            m_Shader->SetUniformMat4("Transform", rotationXZ);
+            colliderCircle.MeshResource->Render(*m_Shader);
+
+            m_Shader->SetUniformMat4("Transform", rotationYZ);
+            colliderCircle.MeshResource->Render(*m_Shader);
+        }
+
         m_Shader->EndUse();
+    }
+
+    void CircleRenderPass::SetCircleUniforms(CircleRendererComponent& circle)
+    {
+       
+
+
+        m_Shader->SetUniformVec4("Color", circle.Color);
+        m_Shader->SetUniformFloat("Radius", circle.Radius);
+        m_Shader->SetUniformFloat("LineWidth", circle.LineWidth);
+        m_Shader->SetUniformFloat("Fade", circle.Fade);
     }
 
 }

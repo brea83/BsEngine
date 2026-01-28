@@ -18,6 +18,8 @@ namespace Pixie
         void ForceLightsOff(bool value) override { };
     protected:
         std::shared_ptr<Shader> m_Shader;
-        
+        bool m_BDrawDebug{ true };
+
+        void SetCircleUniforms(CircleRendererComponent& circle);
     };
 }

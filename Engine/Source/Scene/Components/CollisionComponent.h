@@ -17,6 +17,7 @@ namespace Pixie
 		static void on_update(entt::registry& registry, const entt::entity entt);
 		static void on_destroy(entt::registry& registry, const entt::entity entt);
 
+		static void RemoveAllColliders(entt::registry& registry, const entt::entity entt);
 	};
 }
 

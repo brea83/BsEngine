@@ -6,6 +6,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
+#include <glm/gtx/matrix_query.hpp>
 
 namespace Pixie
 {
@@ -15,13 +16,31 @@ namespace Pixie
 	void PhysicsEngine::Update(Scene* scene)
 	{
 		entt::registry& registry = scene->GetRegistry();
-		auto view = registry.view<CollisionComponent>();
+		auto view = registry.view<CollisionComponent, SphereCollider, TransformComponent>();
 
-		for (auto entity : view)
+		for (auto&& [entity, collisonComp, collider, transform] : registry.view<CollisionComponent, SphereCollider, TransformComponent>().each())
 		{
-			CollisionComponent& component = view.get<CollisionComponent>(entity);
+			if (collisonComp.Type == ColliderType::END || !collisonComp.BIsActive) continue;
+			
+			if (glm::isIdentity(transform.GetObjectToWorldMatrix(), 0.01f) && glm::isIdentity(collider.Transform, 0.01f))
+			{
+				// matrices are identity and match don't need to sync collider transform
+				continue;
+			}
 
-			if (component.Type == ColliderType::END || !component.BIsActive) continue;
+			// sync transform
+			glm::vec3 center = transform.GetPosition();
+			glm::quat orientation = transform.GetRotationQuaternion();
+			glm::vec3 scale = transform.GetScale();
+
+			scale *= collider.Radius;
+
+			glm::mat4 identity = glm::mat4(1.0f);
+			glm::mat4 translation = glm::translate(identity, center);
+			glm::mat4 rotation = glm::mat4_cast(orientation);
+			glm::mat4 scaleMat = glm::scale(identity, scale);
+
+			collider.Transform = translation * rotation * scaleMat;
 
 			// add to octree
 			
@@ -52,10 +71,6 @@ namespace Pixie
 				break;
 			}
 			case Pixie::ColliderType::Cube:
-			{
-				break;
-			}
-			case Pixie::ColliderType::AABB:
 			{
 				break;
 			}
@@ -100,10 +115,6 @@ namespace Pixie
 				break;
 			}
 			case Pixie::ColliderType::Cube:
-			{
-				break;
-			}
-			case Pixie::ColliderType::AABB:
 			{
 				break;
 			}

@@ -54,6 +54,8 @@ namespace Pixie
 		void SetRotationQuaternion(glm::quat orientation, AngleType angleType = AngleType::Degrees);
 
 		glm::vec3 GetRotationEuler(AngleType angleType = AngleType::Degrees);
+		// quaternion rotation in radians
+		glm::quat GetRotationQuaternion();
 
 		void LookAt(glm::vec3 target);
 		

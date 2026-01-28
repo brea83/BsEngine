@@ -177,6 +177,15 @@ namespace Pixie
         }
     }
 
+    glm::quat TransformComponent::GetRotationQuaternion()
+    {
+        if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
+        {
+            RecalculateModelMatrix();
+        }
+        return m_Orientation;
+    }
+
     void TransformComponent::LookAt(glm::vec3 target)
     {
 

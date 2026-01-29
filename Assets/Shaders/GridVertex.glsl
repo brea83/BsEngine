@@ -17,7 +17,7 @@ layout (std140, binding = 0) uniform CameraBlock
     vec4 cameraPosition;
 };
 
-uniform int MajorGridDivisions = 10; // suggested range 2 to 25, default 10
+uniform int MajorGridDivisions = 5; // suggested range 2 to 25, default 10
 
 
 out VS_OUT
@@ -31,7 +31,7 @@ out VS_OUT
 
 void main()
 {
-    gl_Position = projection * view * transform * vec4(vertexPosition, 1.0);
+    gl_Position = projection * view  * vec4(vertexPosition, 1.0);
 
     //OUT.Pos_WS =  vec3(transform * vec4(vertexPosition, 1.0));
     //OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));

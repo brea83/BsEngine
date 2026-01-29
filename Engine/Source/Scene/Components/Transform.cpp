@@ -212,6 +212,13 @@ namespace Pixie
         return m_Scale;
     }
 
+    float TransformComponent::GetLargestScaleComponent()
+    {
+        float max = glm::max(glm::abs(m_Scale.x), glm::abs(m_Scale.y));
+        max = glm::max(max, glm::abs(m_Scale.z));
+        return max;
+    }
+
     glm::mat4& TransformComponent::GetObjectToWorldMatrix()
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)

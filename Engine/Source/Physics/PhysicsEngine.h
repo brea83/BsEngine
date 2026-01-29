@@ -18,8 +18,11 @@ namespace Pixie
 	{
 	public:
 		PhysicsEngine();
-		void Update(Scene* scene);
-		void DrawDebugColliders(Scene* scene);
+		void OnUpdate(Scene* scene, float deltaTime);
+		//void UpdateEditor(Scene* scene, float deltatime)
+
+		// when I have batching set up this will be where I batch the colliders and send them to the renderer
+		//void DrawDebugColliders(Scene* scene);
 
 		static bool CheckIntersect(Collider* colliderA, Collider* colliderB);
 		const std::vector<CollisionEvent>& GetCollisions() const { return m_Collisions; }

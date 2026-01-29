@@ -48,13 +48,21 @@ namespace Pixie
 
         for (auto&& [entity, collider] : registry.view<SphereCollider>().each())
         {
-            m_Shader->SetUniformMat4("Transform", rotationXY);
+            glm::mat4 identity = glm::mat4(1.0f);
+            glm::mat4 scale = glm::scale(identity, glm::vec3(collider.Radius * collider.Transform->GetLargestScaleComponent()));
+            glm::mat4 translation = glm::translate(identity, collider.Transform->GetPosition());
+            
+            glm::mat4 circleXY = translation * rotationXY * scale;
+            glm::mat4 circleXZ = translation * rotationXZ * scale;
+            glm::mat4 circleYZ = translation * rotationYZ * scale;
+
+            m_Shader->SetUniformMat4("Transform", circleXY);
             colliderCircle.MeshResource->Render(*m_Shader);
 
-            m_Shader->SetUniformMat4("Transform", rotationXZ);
+            m_Shader->SetUniformMat4("Transform", circleXZ);
             colliderCircle.MeshResource->Render(*m_Shader);
 
-            m_Shader->SetUniformMat4("Transform", rotationYZ);
+            m_Shader->SetUniformMat4("Transform", circleYZ);
             colliderCircle.MeshResource->Render(*m_Shader);
         }
 

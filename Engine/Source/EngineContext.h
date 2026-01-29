@@ -1,9 +1,9 @@
 #pragma once
 #include "Core.h"
-#include <deque>
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
+#include <deque>
 #include <glm/glm.hpp>
 
 // ToDo: playmode and simulated playmode in editor
@@ -15,6 +15,7 @@ namespace Pixie
 	class Scene;
 	class Renderer;
 	class ImGuiLayer;
+	class PhysicsEngine;
 
 	class EngineContext
 	{
@@ -35,6 +36,8 @@ namespace Pixie
 		Scene* GetScene() { return m_ActiveScene; }
 
 		Renderer* GetRenderer() { return m_Renderer; }
+
+		static PhysicsEngine* GetPhysics() { if (m_Engine != nullptr) { return m_Engine->m_Physics; } else { return nullptr; } }
 
 		void SetImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }
 
@@ -75,9 +78,11 @@ namespace Pixie
 		float m_DeltaTime{ 0.0f };
 		float m_LastFrameTime{ 0.0f };
 
-		std::shared_ptr<Window> m_MainWindow;
-		Scene* m_ActiveScene;
-		Renderer* m_Renderer;
+		std::shared_ptr<Window> m_MainWindow{ nullptr };
+		Scene* m_ActiveScene{ nullptr };
+		Renderer* m_Renderer{ nullptr };
+
+		PhysicsEngine* m_Physics{ nullptr };
 
 		ImGuiLayer* m_ImGuiLayer{ nullptr };
 

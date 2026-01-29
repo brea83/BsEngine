@@ -22,6 +22,8 @@ namespace Pixie
 	{
 
 	public:
+		static constexpr auto in_place_delete = true;
+
 		TransformComponent() = default;
 		TransformComponent(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
 		TransformComponent(const TransformComponent&) = default;
@@ -61,6 +63,7 @@ namespace Pixie
 		
 		void SetScale(glm::vec3 value) { m_Scale = value; m_ScaleDirty = true; }
 		glm::vec3 GetScale();
+		float GetLargestScaleComponent();
 		
 		// methods
 		glm::mat4& GetObjectToWorldMatrix();
@@ -81,6 +84,16 @@ namespace Pixie
 
 		static void Serialize(StreamWriter* stream, const TransformComponent& component);
 		static bool Deserialize(StreamReader* stream, TransformComponent& component);
+
+		static glm::vec3 ExtractScale(glm::mat4& transform)
+		{
+			glm::vec3 scale;
+			scale.x = glm::length(glm::vec3(transform[0])); // Basis vector X
+			scale.y = glm::length(glm::vec3(transform[1])); // Basis vector Y
+			scale.z = glm::length(glm::vec3(transform[2])); // Basis vector Z
+			return scale;
+		}
+
 	private:
 		glm::vec3 m_Position { 0.0f };
 		bool m_PositionDirty { true };

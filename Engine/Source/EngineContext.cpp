@@ -4,6 +4,7 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #include "GlfwWrapper.h"
+#include "Physics/PhysicsEngine.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
 #include "Graphics/Renderers/ForwardRenderer.h"
@@ -40,7 +41,13 @@ namespace Pixie
 		// configure glfw and glad state in Window class
 		if (!m_MainWindow->Init()) return false;
 		m_MainWindow->SetEventCallback(BIND_EVENT_FUNCTION(EngineContext::OnEvent));
-		// don't start making render passes if we have no window
+		
+		if (m_Physics != nullptr)
+		{
+			delete m_Physics;
+			Logger::Core(LOG_WARNING, "Engine Context has been initialized a second time, clearing old physics engine and making a new one.");
+		}
+		m_Physics = new PhysicsEngine();
 
 		if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 		m_Renderer->Init();
@@ -119,6 +126,9 @@ namespace Pixie
 			{
 				m_ActiveScene->OnUpdate(m_DeltaTime);
 			}
+
+			// right now physics is only testing collisions, and I want to test it in editor mode so there is not yet a separate runtime or editor update. 
+			m_Physics->OnUpdate(m_ActiveScene, m_DeltaTime);
 		}
 
 		if (m_EditorEnabled)

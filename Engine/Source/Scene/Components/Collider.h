@@ -1,9 +1,12 @@
 #pragma once
+#include <EnTT/entt.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Pixie
 {
+	class TransformComponent;
+
 	enum class ColliderType
 	{
 		Sphere,
@@ -24,7 +27,9 @@ namespace Pixie
 			: Type(type) { }
 
 		ColliderType Type{ ColliderType::Sphere };
-		glm::mat4 Transform{ glm::mat4(1.0f)};
+		//glm::mat4 Transform{ glm::mat4(1.0f)};
+
+		TransformComponent* Transform{ nullptr };
 	};
 
 	class SphereCollider : public Collider
@@ -35,6 +40,10 @@ namespace Pixie
 
 
 		float Radius{ 0.5f };
+
+		static void on_construct(entt::registry& registry, const entt::entity entt);
+		static void on_update(entt::registry& registry, const entt::entity entt);
+		static void on_destroy(entt::registry& registry, const entt::entity entt);
 
 	};
 

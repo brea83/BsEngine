@@ -5,6 +5,7 @@
 #include "Scene/Components/Transform.h"
 
 #include <glm/glm.hpp>
+#include <glm/ext/matrix_relational.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/matrix_query.hpp>
 
@@ -13,7 +14,7 @@ namespace Pixie
 	PhysicsEngine::PhysicsEngine()
 	{}
 	
-	void PhysicsEngine::Update(Scene* scene)
+	void PhysicsEngine::OnUpdate(Scene* scene, float deltaTime)
 	{
 		entt::registry& registry = scene->GetRegistry();
 		auto view = registry.view<CollisionComponent, SphereCollider, TransformComponent>();
@@ -21,35 +22,15 @@ namespace Pixie
 		for (auto&& [entity, collisonComp, collider, transform] : registry.view<CollisionComponent, SphereCollider, TransformComponent>().each())
 		{
 			if (collisonComp.Type == ColliderType::END || !collisonComp.BIsActive) continue;
-			
-			if (glm::isIdentity(transform.GetObjectToWorldMatrix(), 0.01f) && glm::isIdentity(collider.Transform, 0.01f))
-			{
-				// matrices are identity and match don't need to sync collider transform
-				continue;
-			}
 
-			// sync transform
-			glm::vec3 center = transform.GetPosition();
-			glm::quat orientation = transform.GetRotationQuaternion();
-			glm::vec3 scale = transform.GetScale();
-
-			scale *= collider.Radius;
-
-			glm::mat4 identity = glm::mat4(1.0f);
-			glm::mat4 translation = glm::translate(identity, center);
-			glm::mat4 rotation = glm::mat4_cast(orientation);
-			glm::mat4 scaleMat = glm::scale(identity, scale);
-
-			collider.Transform = translation * rotation * scaleMat;
-
-			// add to octree
+			// TODO: add to octree
 			
 		}
 
 	}
 	
-	void PhysicsEngine::DrawDebugColliders(Scene* scene)
-	{}
+	//void PhysicsEngine::DrawDebugColliders(Scene* scene)
+	//{}
 
 	bool PhysicsEngine::CheckIntersect(Collider* colliderA, Collider* colliderB)
 	{
@@ -91,6 +72,9 @@ namespace Pixie
 	bool PhysicsEngine::CheckSphereIntersect(SphereCollider* sphereA, Collider* colliderB)
 	{
 		ColliderType typeB = colliderB->Type;
+		// need to check effective radius if the parent object has undergone a transform that should scale the collider too
+		// this bit of math on the transform is extracting the scale of the X vector. and because we want spheres to stay uniform, we want to ignore the other axis scale
+		float radiusA = sphereA->Radius * sphereA->Transform->GetLargestScaleComponent();
 
 		switch (typeB)
 		{
@@ -99,10 +83,11 @@ namespace Pixie
 				auto* sphereB = static_cast<SphereCollider*>(colliderB);
 				if (sphereB)
 				{
-					float r = sphereA->Radius + sphereB->Radius;
+					float radiusB = sphereB->Radius *sphereB->Transform->GetLargestScaleComponent();
+					float r = radiusA + radiusB;
 
 					// is the square distance between A and B < r squared? if so they intersect
-					return glm::distance2(sphereA->Transform[3], sphereB->Transform[3]) < (r * r);
+					Logger::Core(LOG_DEBUG, "Collision found");;// ]) < (r * r);
 				}
 				else
 				{

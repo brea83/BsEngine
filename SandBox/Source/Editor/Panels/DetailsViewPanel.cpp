@@ -541,6 +541,21 @@ namespace Pixie
 					scene->GetRegistry().patch<CollisionComponent>(selected.GetEnttHandle());
 				}
 			}
+			ImGui::Checkbox("Active", &component.BIsActive);
+
+
+			// specific colliders
+
+			if (selected.HasCompoenent<SphereCollider>())
+			{
+				SphereCollider& collider = selected.GetComponent<SphereCollider>();
+				SliderParams params;
+				params.ResetValue = 0.5f;
+				params.Speed = 0.001;
+				params.Min = 0.0f;
+
+				DrawFloatControl("Radius", collider.Radius, params);
+			}
 
 			if (removeComponent)
 			{

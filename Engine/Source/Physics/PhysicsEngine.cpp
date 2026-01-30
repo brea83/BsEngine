@@ -3,28 +3,87 @@
 #include "Scene/Components/Collider.h"
 #include "Scene/Components/CollisionComponent.h"
 #include "Scene/Components/Transform.h"
+#include "DataStructures/KDTree.h"
 
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext/matrix_relational.hpp>
 #include <glm/gtx/norm.hpp>
 #include <glm/gtx/matrix_query.hpp>
 
 namespace Pixie
 {
+	using KDTreeVec3 = Data::KDTreeVec3;
+	using KDNode = Data::KDNode;
+
 	PhysicsEngine::PhysicsEngine()
 	{}
 	
 	void PhysicsEngine::OnUpdate(Scene* scene, float deltaTime)
 	{
-		entt::registry& registry = scene->GetRegistry();
-		auto view = registry.view<CollisionComponent, SphereCollider, TransformComponent>();
+		m_Collisions.clear();
 
-		for (auto&& [entity, collisonComp, collider, transform] : registry.view<CollisionComponent, SphereCollider, TransformComponent>().each())
+		entt::registry& registry = scene->GetRegistry();
+		//auto view = registry.view<CollisionComponent, SphereCollider, TransformComponent>();
+
+		std::vector<entt::entity> entityList;
+		std::vector<glm::vec3> positions;
+		float largestRadius = FLT_MIN;
+
+		for (auto&& [entity, collisonComp, transform] : registry.view<CollisionComponent, TransformComponent>().each())
 		{
 			if (collisonComp.Type == ColliderType::END || !collisonComp.BIsActive) continue;
 
-			// TODO: add to octree
+			//add to list to turn into kd Tree
+			entityList.emplace_back(entity);
+			positions.emplace_back(transform.GetPosition());
+
+			SphereCollider* sphere = registry.try_get<SphereCollider>(entity);
+			if (sphere)
+			{
+				largestRadius = glm::max(largestRadius, sphere->Radius);
+			}
+		}
+
+		if (positions.empty()) return; // early out don't do physics check because there are no physics enabled components
+		// KDNodes preserve original index position as Node.Index so we can use that to lookup the entity
+		KDTreeVec3 kdTree = KDTreeVec3(positions);
+		
+
+		std::vector<CollisionEvent> collisionPairsBroadPhase;
+
+		for (auto&& [entity, sphere, transform] : registry.view<SphereCollider, TransformComponent>().each())
+		{
+			// use largest radius to make search range of kdTree
+			std::vector<KDNode*> nodesInRange = kdTree.FindNodesInRange(transform.GetPosition(), sphere.Radius + largestRadius);
+
+			for (KDNode* node : nodesInRange)
+			{
+				if (entityList[node->Index] == entity)
+				{
+					// do not make a pair with self
+					continue;
+				}
+				CollisionEvent pair = CollisionEvent{ Entity(entity, scene), Entity(entityList[node->Index], scene) };
+
+				if (collisionPairsBroadPhase.empty() || std::find(collisionPairsBroadPhase.begin(), collisionPairsBroadPhase.end(), pair) != collisionPairsBroadPhase.end())
+				{
+					collisionPairsBroadPhase.push_back(pair);
+				}
+			}
+		}
+
+		// narrow phase
+		for (CollisionEvent pair : collisionPairsBroadPhase)
+		{
+			SphereCollider* sphereA = pair.A.TryGetComponent<SphereCollider>();
+			SphereCollider* sphereB = pair.B.TryGetComponent<SphereCollider>();
 			
+			if (CheckIntersect(sphereA, sphereB))
+			{
+				m_Collisions.push_back(pair);
+			}
+
 		}
 
 	}

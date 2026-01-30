@@ -7,8 +7,21 @@ namespace Pixie
 	
 	struct CollisionEvent
 	{
+		CollisionEvent() = default;
+
 		Entity A;
 		Entity B;
+
+		bool operator==(const CollisionEvent& other) const
+		{
+			return (A == other.A && B == other.B)
+				|| (A == other.B && B == other.A);
+		}
+
+		bool operator!=(const CollisionEvent& other) const
+		{
+			return !(*this == other);
+		}
 	};
 
 	class Collider;

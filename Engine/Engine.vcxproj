@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\DataStructures\KDTree.cpp" />
     <ClCompile Include="Source\Scene\Components\CollisionComponent.cpp" />
     <ClCompile Include="Source\Scene\Components\Collider.cpp" />
     <ClCompile Include="Source\Physics\PhysicsEngine.cpp" />
@@ -205,8 +206,10 @@
     <ClCompile Include="Source\Resources\StreamReader.cpp" />
     <ClCompile Include="Source\WindowsPlatformUtils.cpp" />
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
+    <ClCompile Include="Source\DataStructures\Trees.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\DataStructures\KDTree.h" />
     <ClInclude Include="Source\Scene\Components\CollisionComponent.h" />
     <ClInclude Include="Source\Scene\Components\Collider.h" />
     <ClInclude Include="Source\Physics\PhysicsEngine.h" />
@@ -290,6 +293,7 @@
     <ClInclude Include="Source\Resources\StreamWriter.h" />
     <ClInclude Include="Source\Resources\StreamReader.h" />
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
+    <ClInclude Include="Source\DataStructures\Trees.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\CircleFragment.glsl" />

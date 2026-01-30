@@ -280,6 +280,22 @@ namespace Pixie
 					m_CurrentScene->PopulateWithTestObjects();
 				}
 
+				if (ImGui::BeginMenu("Test Collisions"))
+				{
+					if (ImGui::MenuItem("10"))
+					{
+						m_CurrentScene->CollisionStressTest(10);
+					}
+					if (ImGui::MenuItem("20"))
+					{
+						m_CurrentScene->CollisionStressTest(20);
+					}
+					if (ImGui::MenuItem("50"))
+					{
+						m_CurrentScene->CollisionStressTest(50);
+					}
+					ImGui::EndMenu();
+				}
 				if (ImGui::MenuItem("Empty GameObject"))
 				{
 					m_CurrentScene->CreateEmptyGameObject("Empty");

@@ -6,6 +6,7 @@
 #include "EngineContext.h"
 #include "Entity.h"
 
+
 namespace Pixie
 {
 	Scene::Scene() 
@@ -55,6 +56,29 @@ namespace Pixie
 		cube1.AddChild(sphere);
 
 	}
+	void Scene::CollisionStressTest(int colliderCount)
+	{
+		// random generator
+		
+		for (int i = 0; i < colliderCount; i++)
+		{
+			glm::vec3 randomPosition;
+			randomPosition.x = glm::min((float)(std::rand()) / (float)(rand()), 20.0f);
+			randomPosition.y = glm::min((float)(std::rand()) / (float)(rand()), 20.0f);
+			randomPosition.z = glm::min((float)(std::rand()) / (float)(rand()), 20.0f);
+
+			GameObject sphere = CreateEmptyGameObject("Sphere");
+			TransformComponent& transform3 = sphere.GetComponent<TransformComponent>();
+			transform3.SetPosition(randomPosition);
+
+			CollisionComponent& collisionComp = sphere.AddComponent<CollisionComponent>();
+			collisionComp.Type = ColliderType::Sphere;
+			SphereCollider& collider = sphere.AddComponent<SphereCollider>();
+
+			collider.Radius = glm::min((float)(std::rand()) / (float)(rand()), 3.0f);
+		}
+	}
+
 	 template<typename Component>
 	 // returns pointer to destination's copy of component if successful, nullptr if unsuccessfull
 	 static void TryCopyEntityComponent(Entity destination, Entity source)

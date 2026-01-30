@@ -49,6 +49,7 @@ namespace Pixie
 
 		void Initialize();
 		void PopulateWithTestObjects();
+		void CollisionStressTest(int colliderCount = 20);
 
 		Scene* Copy(Scene* sourceScene);
 

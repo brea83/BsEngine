@@ -62,6 +62,10 @@ namespace Pixie
 		// Extents are half width, height, depth in x, y, z
 		glm::vec3 Extents{ 0.5f };
 
+		static void on_construct(entt::registry& registry, const entt::entity entt);
+		static void on_update(entt::registry& registry, const entt::entity entt);
+		static void on_destroy(entt::registry& registry, const entt::entity entt);
+
 		static void Serialize(StreamWriter* stream, const CubeCollider& collider);
 		static bool Deserialize(StreamReader* stream, CubeCollider& collider);
 

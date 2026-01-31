@@ -32,11 +32,28 @@ namespace Pixie
 	//=========================
 	// CUBE COLLIDER
 	//=========================
-	void CubeCollider::Serialize(StreamWriter* stream, const CubeCollider& collider)
+	void CubeCollider::on_construct(entt::registry& registry, const entt::entity entt)
+	{
+		CubeCollider& collider = registry.get<CubeCollider>(entt);
+		collider.Transform = registry.try_get<TransformComponent>(entt);
+	}
+	void CubeCollider::on_update(entt::registry& registry, const entt::entity entt)
 	{}
+
+	void CubeCollider::on_destroy(entt::registry& registry, const entt::entity entt)
+	{}
+	void CubeCollider::Serialize(StreamWriter* stream, const CubeCollider& collider)
+	{
+		stream->WriteRaw<ColliderType>(collider.Type);
+		stream->WriteRaw<bool>(collider.Colliding);
+		stream->WriteRaw<glm::vec3>(collider.Extents);
+	}
 	bool CubeCollider::Deserialize(StreamReader * stream, CubeCollider & collider)
 	{
-		return false;
+		stream->ReadRaw<ColliderType>(collider.Type);
+		stream->ReadRaw<bool>(collider.Colliding);
+		stream->ReadRaw<glm::vec3>(collider.Extents);
+		return true;
 	}
 	//=========================
 	// PLANE COLLIDER

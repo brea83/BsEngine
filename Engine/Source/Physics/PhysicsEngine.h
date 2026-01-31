@@ -27,6 +27,17 @@ namespace Pixie
 	class Collider;
 	class SphereCollider;
 
+	struct AxisProjection
+	{
+		AxisProjection() = default;
+		AxisProjection(const AxisProjection&) = default;
+		AxisProjection(float min, float max)
+			: Min(min), Max(max) { }
+
+		float Min{ 0 };
+		float Max{ 0 };
+	};
+
 	class PhysicsEngine
 	{
 	public:
@@ -45,6 +56,12 @@ namespace Pixie
 		std::vector<CollisionEvent> m_NewCollisions;
 		std::vector<CollisionEvent> m_OngoingCollisions;
 		static bool CheckSphereIntersect(SphereCollider* sphereA, Collider* colliderB);
+		static bool CheckCubeIntersect(CubeCollider* cubeA, Collider* colliderB);
+		
+		static AxisProjection ProjectCubeOnAxis(CubeCollider* cube, const glm::vec3& axis);
+		static std::vector<glm::vec3> GetCandidateAxes(CubeCollider* cubeA, CubeCollider* cubeB);
+		std::pair<Collider*, Collider*> GetColliderPointers(const CollisionEvent& collisionPair) const;
 	};
+
 }
 

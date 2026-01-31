@@ -83,7 +83,7 @@ namespace Pixie
 	}
 
 
-	bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& values, float resetValue, float columnWidth)
+	bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& values, SliderParams params, float columnWidth)
 	{
 		bool bValueChanged = false;
 
@@ -107,11 +107,11 @@ namespace Pixie
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
 			if (ImGui::Button("X"))
 			{
-				values.x = resetValue;
+				values.x = params.ResetValue;
 				bValueChanged = true;
 			}
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatX", &values.x, 0.1f))
+			if (ImGui::DragFloat("##floatX", &values.x, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
 			{
 				bValueChanged = true;
 			}
@@ -125,11 +125,11 @@ namespace Pixie
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.6f, 0.05f, 1.0f });
 			if (ImGui::Button("Y"))
 			{
-				values.y = resetValue;
+				values.y = params.ResetValue;
 				bValueChanged = true;
 			}
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatY", &values.y, 0.1f))
+			if (ImGui::DragFloat("##floatY", &values.y, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
 			{
 				bValueChanged = true;
 			}
@@ -143,11 +143,11 @@ namespace Pixie
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.0f, 0.6f, 1.0f });
 			if (ImGui::Button("Z"))
 			{
-				values.z = resetValue;
+				values.z = params.ResetValue;
 				bValueChanged = true;
 			}
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatZ", &values.z, 0.1f))
+			if (ImGui::DragFloat("##floatZ", &values.z, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
 			{
 				bValueChanged = true;
 			}
@@ -162,7 +162,7 @@ namespace Pixie
 		return bValueChanged;
 	}
 
-	bool DetailsViewPanel::DrawVec2Control(const std::string& label, glm::vec2& values, glm::vec2 resetValue, float columnWidth)
+	bool DetailsViewPanel::DrawVec2Control(const std::string& label, glm::vec2& values, SliderParams params, float columnWidth)
 	{
 		bool bValueChanged = false;
 
@@ -186,11 +186,11 @@ namespace Pixie
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
 			if (ImGui::Button("X"))
 			{
-				values.x = resetValue.x;
+				values.x = params.ResetValue;
 				bValueChanged = true;
 			}
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatX", &values.x, 0.1f))
+			if (ImGui::DragFloat("##floatX", &values.x, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
 			{
 				bValueChanged = true;
 			}
@@ -204,11 +204,11 @@ namespace Pixie
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.6f, 0.05f, 1.0f });
 			if (ImGui::Button("Y"))
 			{
-				values.y = resetValue.y;
+				values.y = params.ResetValue;
 				bValueChanged = true;
 			}
 			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatY", &values.y, 0.1f))
+			if (ImGui::DragFloat("##floatY", &values.y, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
 			{
 				bValueChanged = true;
 			}
@@ -323,27 +323,29 @@ namespace Pixie
 			ImGui::SeparatorText("Transform");
 
 			TransformComponent& transform = selected.GetTransform();
-			//glm::vec3 position = transform->GetPosition();
-			//glm::vec3 rotation = transform.GetRotationEuler();
-			//glm::vec3 scale = transform.GetScale();
-			if (DrawVec3Control("Position", transform.m_Position))
+			
+			SliderParams params;
+			params.Speed = 0.01f;
+			if (DrawVec3Control("Position", transform.m_Position, params))
 			{
 				transform.m_PositionDirty = true;
 			}
 
 			//translate rotation from radians to degrees
 			glm::vec3 eulerDegrees = transform.GetRotationEuler();
-			if (DrawVec3Control("Rotation", eulerDegrees))
+			if (DrawVec3Control("Rotation", eulerDegrees, params))
 			{
 				transform.SetRotationEuler(eulerDegrees);
 			}
-			if (DrawVec3Control("Scale", transform.m_Scale, 1.0f))
+
+			params.ResetValue = 1.0f;
+			if (DrawVec3Control("Scale", transform.m_Scale, params))
 			{
 				transform.m_ScaleDirty = true;
 			}
 
 			ImGui::TextWrapped("There is a known issue with ImGuizmo's Rotation gizmo:");
-			ImGui::TextWrapped("If the camera forward and right vectors are paralel to one of the gizmo circle planes those handles will not behave.");
+			ImGui::TextWrapped("If the camera forward vector is paralel to one of the gizmo circle planes those handles will not behave.");
 		}
 
 		if (selected.HasCompoenent<MeshComponent>())
@@ -557,6 +559,18 @@ namespace Pixie
 				DrawFloatControl("Radius", collider.Radius, params);
 			}
 
+			if (selected.HasCompoenent<CubeCollider>())
+			{
+				CubeCollider& collider = selected.GetComponent<CubeCollider>();
+				SliderParams params;
+				params.ResetValue = 0.5f;
+				params.Speed = 0.001;
+				params.Min = 0.0f;
+
+				DrawVec3Control("Extents", collider.Extents, params);
+				ImGui::SetItemTooltip("Extents are the HALF width/height/depth values");
+			}
+
 			if (removeComponent)
 			{
 				selected.RemoveComponent<CollisionComponent>();
@@ -743,16 +757,19 @@ namespace Pixie
 
 			}*/
 			
+			SliderParams attenuationParams;
+			attenuationParams.Speed = 0.001f;
+			attenuationParams.Format = "%.4f";
 			if (light.Type == LightType::Point)
 			{
-				DrawVec3Control("Attenuations", light.Attenuation);
+				DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
 
 			}
 
 			if (light.Type == LightType::Spot)
 			{
 				//DrawVec3Control("Direction", light.Direction, 0.5f);
-				DrawVec3Control("Attenuations", light.Attenuation);
+				DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
 
 				SliderParams params;
 				params.Min = 1.0f;
@@ -800,7 +817,12 @@ namespace Pixie
 
 		if (!camera.m_LockAspectRatio)
 			ImGui::BeginDisabled();
-		if (DrawVec2Control("Aspect Ratio", size, viewportSize, labelWidth))
+
+		SliderParams viewportParams;
+		viewportParams.Speed = 0.01f;
+		viewportParams.Min = 0.01f;
+		viewportParams.ResetValue = 1.0f;
+		if (DrawVec2Control("Aspect Ratio", size, viewportParams, labelWidth))
 		{
 			camera.m_ManualRatio = size.x / size.y;
 		}

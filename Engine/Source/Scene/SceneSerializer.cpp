@@ -52,8 +52,8 @@ namespace Pixie
 
 			fileStream.ReadObject<GameObject>(object);
 		}
-
-		m_Scene->Initialize();
+		// moved initialize into EngineContext.SetScene()
+		//m_Scene->Initialize();
 		return true;
 	}
 }

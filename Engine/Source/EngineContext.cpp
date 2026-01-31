@@ -111,6 +111,7 @@ namespace Pixie
 			delete m_ActiveScene;
 		}
 		m_ActiveScene = newScene;
+		m_ActiveScene->Initialize();
 	}
 
 	void EngineContext::Update()

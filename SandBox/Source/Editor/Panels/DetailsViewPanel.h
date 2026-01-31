@@ -6,7 +6,6 @@
 namespace Pixie
 {
     class Scene;
-    class Component;
 
     class DetailsViewPanel
     {

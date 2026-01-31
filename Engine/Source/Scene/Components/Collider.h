@@ -1,4 +1,5 @@
 #pragma once
+#include "Resources/FileStream.h"
 #include <EnTT/entt.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -25,9 +26,10 @@ namespace Pixie
 		Collider() = default;
 		Collider(ColliderType type) 
 			: Type(type) { }
+		Collider(const Collider&) = default;
 
 		ColliderType Type{ ColliderType::Sphere };
-		//glm::mat4 Transform{ glm::mat4(1.0f)};
+		bool Colliding{ false };
 
 		TransformComponent* Transform{ nullptr };
 	};
@@ -38,12 +40,15 @@ namespace Pixie
 		SphereCollider() 
 			: Collider(ColliderType::Sphere), Radius(0.5f) { }
 
-
+		SphereCollider(const SphereCollider&) = default;
 		float Radius{ 0.5f };
 
 		static void on_construct(entt::registry& registry, const entt::entity entt);
 		static void on_update(entt::registry& registry, const entt::entity entt);
 		static void on_destroy(entt::registry& registry, const entt::entity entt);
+
+		static void Serialize(StreamWriter* stream, const SphereCollider& collider);
+		static bool Deserialize(StreamReader* stream, SphereCollider& collider);
 
 	};
 
@@ -53,9 +58,12 @@ namespace Pixie
 		CubeCollider()
 			: Collider(ColliderType::Cube), Extents(0.5f)
 		{}
-
+		CubeCollider(const CubeCollider&) = default;
 		// Extents are half width, height, depth in x, y, z
 		glm::vec3 Extents{ 0.5f };
+
+		static void Serialize(StreamWriter* stream, const CubeCollider& collider);
+		static bool Deserialize(StreamReader* stream, CubeCollider& collider);
 
 	};
 
@@ -65,9 +73,13 @@ namespace Pixie
 		PlaneCollider()
 			: Collider(ColliderType::Plane), Extents(0.5f)
 		{}
+		PlaneCollider(const PlaneCollider&) = default;
 
 		// Extents are half width, height, depth in x, y, z
 		glm::vec3 Extents{ 0.5f };
+
+		static void Serialize(StreamWriter* stream, const PlaneCollider& collider);
+		static bool Deserialize(StreamReader* stream, PlaneCollider& collider);
 
 	};
 
@@ -77,9 +89,11 @@ namespace Pixie
 		MeshCollider()
 			: Collider(ColliderType::Mesh)/*, Extents(0.5f)*/
 		{}
+		MeshCollider(const MeshCollider&) = default;
 		// TODO: HOW DO?
 		// Extents are half width, height, depth in x, y, z
 		//glm::vec3 Extents{ 0.5f };
-
+		static void Serialize(StreamWriter* stream, const MeshCollider& collider);
+		static bool Deserialize(StreamReader* stream, MeshCollider& collider);
 	};
 }

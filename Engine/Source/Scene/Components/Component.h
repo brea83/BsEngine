@@ -27,7 +27,8 @@ namespace Pixie
         CameraComponent,
         CameraController,
         CircleRenderer,
-        IDComponent
+        IDComponent,
+        CollisionComponent,
     };
 
     struct IDComponent

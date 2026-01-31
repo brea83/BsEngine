@@ -21,7 +21,12 @@ namespace Pixie
 	
 	void PhysicsEngine::OnUpdate(Scene* scene, float deltaTime)
 	{
-		m_Collisions.clear();
+		std::vector<CollisionEvent> lastFrameCollisions;
+		lastFrameCollisions.reserve(m_NewCollisions.size() + m_OngoingCollisions.size());
+		lastFrameCollisions.insert(lastFrameCollisions.end(), m_NewCollisions.begin(), m_NewCollisions.end());
+		lastFrameCollisions.insert(lastFrameCollisions.end(), m_OngoingCollisions.begin(), m_OngoingCollisions.end());
+
+		ClearEvents();
 
 		entt::registry& registry = scene->GetRegistry();
 		//auto view = registry.view<CollisionComponent, SphereCollider, TransformComponent>();
@@ -41,6 +46,7 @@ namespace Pixie
 			SphereCollider* sphere = registry.try_get<SphereCollider>(entity);
 			if (sphere)
 			{
+				sphere->Colliding = false;
 				largestRadius = glm::max(largestRadius, sphere->Radius);
 			}
 		}
@@ -66,7 +72,7 @@ namespace Pixie
 				}
 				CollisionEvent pair = CollisionEvent{ Entity(entity, scene), Entity(entityList[node->Index], scene) };
 
-				if (collisionPairsBroadPhase.empty() || std::find(collisionPairsBroadPhase.begin(), collisionPairsBroadPhase.end(), pair) != collisionPairsBroadPhase.end())
+				if (collisionPairsBroadPhase.empty() || std::find(collisionPairsBroadPhase.begin(), collisionPairsBroadPhase.end(), pair) == collisionPairsBroadPhase.end())
 				{
 					collisionPairsBroadPhase.push_back(pair);
 				}
@@ -74,14 +80,23 @@ namespace Pixie
 		}
 
 		// narrow phase
-		for (CollisionEvent pair : collisionPairsBroadPhase)
+		for (const CollisionEvent& pair : collisionPairsBroadPhase)
 		{
 			SphereCollider* sphereA = pair.A.TryGetComponent<SphereCollider>();
 			SphereCollider* sphereB = pair.B.TryGetComponent<SphereCollider>();
 			
 			if (CheckIntersect(sphereA, sphereB))
 			{
-				m_Collisions.push_back(pair);
+				if (lastFrameCollisions.empty() || std::find(lastFrameCollisions.begin(), lastFrameCollisions.end(), pair) == lastFrameCollisions.end())
+				{
+					m_NewCollisions.push_back(pair);
+					Logger::Core(LOG_DEBUG, "New Collision found");
+				}
+				else
+				{
+					m_OngoingCollisions.push_back(pair);
+					//Logger::Core(LOG_DEBUG, "ongoing Collision found");
+				}
 			}
 
 		}
@@ -134,6 +149,8 @@ namespace Pixie
 		// need to check effective radius if the parent object has undergone a transform that should scale the collider too
 		// this bit of math on the transform is extracting the scale of the X vector. and because we want spheres to stay uniform, we want to ignore the other axis scale
 		float radiusA = sphereA->Radius * sphereA->Transform->GetLargestScaleComponent();
+		glm::vec3 positionA = sphereA->Transform->GetPosition();
+		glm::vec3 positionB = colliderB->Transform->GetPosition();
 
 		switch (typeB)
 		{
@@ -146,7 +163,12 @@ namespace Pixie
 					float r = radiusA + radiusB;
 
 					// is the square distance between A and B < r squared? if so they intersect
-					Logger::Core(LOG_DEBUG, "Collision found");;// ]) < (r * r);
+					if (glm::distance2(positionA, positionB) < r * r)
+					{
+						sphereA->Colliding = true;
+						sphereB->Colliding = true;
+						return true;
+					}
 				}
 				else
 				{

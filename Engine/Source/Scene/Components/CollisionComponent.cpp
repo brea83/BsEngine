@@ -151,4 +151,15 @@ namespace Pixie
 			registry.remove<MeshCollider>(entt);
 		}
 	}
+	void CollisionComponent::Serialize(StreamWriter* stream, const CollisionComponent& component)
+	{
+		stream->WriteRaw<ColliderType>(component.Type);
+		stream->WriteRaw<bool>(component.BIsActive);
+	}
+	bool CollisionComponent::Deserialize(StreamReader * stream, CollisionComponent & component)
+	{
+		stream->ReadRaw<ColliderType>(component.Type);
+		stream->ReadRaw<bool>(component.BIsActive);
+		return true;
+	}
 }

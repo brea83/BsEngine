@@ -109,6 +109,18 @@ namespace Pixie
 		void OnComponentAdded<CameraController>(Entity& entity, CameraController& component);
 		template<>
 		void OnComponentAdded<CollisionComponent>(Entity& entity, CollisionComponent& component);
+		template<>
+		void OnComponentAdded<SphereCollider>(Entity& entity, SphereCollider& component)
+		{ }
+		template<>
+		void OnComponentAdded<CubeCollider>(Entity& entity, CubeCollider& component)
+		{ }
+		template<>
+		void OnComponentAdded<PlaneCollider>(Entity& entity, PlaneCollider& component)
+		{ }
+		template<>
+		void OnComponentAdded<MeshCollider>(Entity& entity, MeshCollider& component)
+		{ }
 	private:
 		std::string m_Name{ "New Scene" };
 		entt::registry m_Registry;

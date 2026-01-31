@@ -81,13 +81,14 @@ namespace Pixie
 
 	 template<typename Component>
 	 // returns pointer to destination's copy of component if successful, nullptr if unsuccessfull
-	 static void TryCopyEntityComponent(Entity destination, Entity source)
+	 static Component* TryCopyEntityComponent(Entity destination, Entity source)
 	 {
 		 if (source.HasCompoenent<Component>())
 		 {
-			 destination.AddOrReplaceComponent<Component>(source.GetComponent<Component>());
+			 Component& comp = source.GetComponent<Component>();
+			destination.AddOrReplaceComponent<Component>(comp);
 		 }
-		 //return destination.TryGetComponent<Component>();
+		 return nullptr;
 	 }
 
 	 static void TryCopyAllComponents(Entity destination, Entity source)
@@ -99,6 +100,7 @@ namespace Pixie
 		 TryCopyEntityComponent<LightComponent>(destination, source);
 		 TryCopyEntityComponent<CameraComponent>(destination, source);
 		 TryCopyEntityComponent<CameraController>(destination, source);
+		 TryCopyEntityComponent<CollisionComponent>(destination, source);
 
 	 }
 	 static void TryCopyAllComponents(GameObject destination, GameObject source)
@@ -322,7 +324,25 @@ namespace Pixie
 				GameObject duplicateChild = DuplicateChild(duplicate, child);
 			}
 		}
+		
+		if(sourceObject.HasCompoenent<CollisionComponent>() && sourceObject.GetComponent<CollisionComponent>().Type != ColliderType::END)
+		{
+			SphereCollider* sphere = TryCopyEntityComponent<SphereCollider>(duplicate, sourceObject);
+			if (sphere)
+				sphere->Transform = &duplicate.GetTransform();
 
+			CubeCollider* cube = TryCopyEntityComponent<CubeCollider>(duplicate, sourceObject);
+			if (cube)
+				cube->Transform = &duplicate.GetTransform();
+
+			PlaneCollider* plane = TryCopyEntityComponent<PlaneCollider>(duplicate, sourceObject);
+			if (plane)
+				plane->Transform = &duplicate.GetTransform();
+
+			MeshCollider* mesh = TryCopyEntityComponent<MeshCollider>(duplicate, sourceObject);
+			if (mesh)
+				mesh->Transform = &duplicate.GetTransform();
+		}
 		return duplicate;
 	}
 

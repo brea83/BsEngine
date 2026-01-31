@@ -7,6 +7,7 @@
 #include "Components/Transform.h"
 #include "Components/MeshComponent.h"
 #include "Components/CameraController.h"
+#include "Components/CollisionComponent.h"
 
 namespace Pixie
 {
@@ -45,6 +46,7 @@ namespace Pixie
 		CameraComponent* camera = object.TryGetComponent<CameraComponent>();
 		CameraController* camController = object.TryGetComponent<CameraController>();
 		CircleRendererComponent* circleComponent = object.TryGetComponent<CircleRendererComponent>();
+		CollisionComponent* collision = object.TryGetComponent<CollisionComponent>();
 
 		std::vector<SerializableComponentID> components;
 		if (tag) components.push_back(SerializableComponentID::TagComponent);
@@ -56,6 +58,7 @@ namespace Pixie
 		if (camera) components.push_back(SerializableComponentID::CameraComponent);
 		if (camController) components.push_back(SerializableComponentID::CameraController);
 		if (circleComponent) components.push_back(SerializableComponentID::CircleRenderer);
+		if (collision) components.push_back(SerializableComponentID::CollisionComponent);
 
 		fileWriter->WriteArray<SerializableComponentID>(components);
 
@@ -87,6 +90,43 @@ namespace Pixie
 			
 			if (id == SerializableComponentID::CircleRenderer)
 				fileWriter->WriteObject(object.GetComponent<CircleRendererComponent>());
+
+			if (id == SerializableComponentID::CollisionComponent)
+			{
+				CollisionComponent& component = object.GetComponent<CollisionComponent>();
+				fileWriter->WriteObject(component);
+				switch (component.Type)
+				{
+					case Pixie::ColliderType::Sphere:
+					{
+						SphereCollider& collider = object.GetComponent<SphereCollider>();
+						fileWriter->WriteObject(collider);
+						break;
+					}
+					case Pixie::ColliderType::Plane:
+					{
+						PlaneCollider& collider = object.GetComponent<PlaneCollider>();
+						fileWriter->WriteObject(collider);
+						break;
+					}
+					case Pixie::ColliderType::Cube:
+					{
+						CubeCollider& collider = object.GetComponent<CubeCollider>();
+						fileWriter->WriteObject(collider);
+						break;
+					}
+					case Pixie::ColliderType::Mesh:
+					{
+						MeshCollider& collider = object.GetComponent<MeshCollider>();
+						fileWriter->WriteObject(collider);
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}
 		}
 
 	}
@@ -154,6 +194,50 @@ namespace Pixie
 			if (id == SerializableComponentID::CircleRenderer)
 			{
 				fileReader->ReadObject(object.GetOrAddComponent<CircleRendererComponent>());
+				continue;
+			}
+
+			if (id == SerializableComponentID::CollisionComponent)
+			{
+				CollisionComponent& component = object.GetOrAddComponent<CollisionComponent>();
+				fileReader->ReadObject(component);
+
+				switch (component.Type)
+				{
+				case Pixie::ColliderType::Sphere:
+				{
+					SphereCollider& collider = object.GetOrAddComponent<SphereCollider>();
+					fileReader->ReadObject(collider);
+					collider.Transform = &object.GetTransform();
+					break;
+				}
+				case Pixie::ColliderType::Plane:
+				{
+					PlaneCollider& collider = object.GetOrAddComponent<PlaneCollider>();
+					fileReader->ReadObject(collider);
+					collider.Transform = &object.GetTransform();
+					break;
+				}
+				case Pixie::ColliderType::Cube:
+				{
+					CubeCollider& collider = object.GetOrAddComponent<CubeCollider>();
+					fileReader->ReadObject(collider);
+					collider.Transform = &object.GetTransform();
+					break;
+				}
+				case Pixie::ColliderType::Mesh:
+				{
+					MeshCollider& collider = object.GetOrAddComponent<MeshCollider>();
+					fileReader->ReadObject(collider);
+					collider.Transform = &object.GetTransform();
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+
 				continue;
 			}
 		}

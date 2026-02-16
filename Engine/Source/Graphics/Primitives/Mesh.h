@@ -12,7 +12,8 @@ namespace Pixie
 		Triangle,
 		Quad,
 		Cube,
-		Circle
+		Circle,
+		Sphere
 	};
 
 	class Mesh : public Renderable

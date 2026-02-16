@@ -376,6 +376,18 @@ namespace Pixie
 			s_Resources.emplace("PrimitiveMesh_Circle", mesh);
 			return mesh;
 		}
+		case PrimitiveMeshType::Sphere:
+		{
+			if (s_Resources.find("PrimitiveMesh_Sphere") != s_Resources.end())
+			{
+				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Sphere"));
+				if (resourcePtr) return resourcePtr;
+			}
+			std::shared_ptr<Mesh> mesh = LoadMesh("../Assets/Meshes/SphereSmooth.obj");//std::make_shared<Cube>();
+
+			s_Resources.emplace("PrimitiveMesh_Sphere", mesh);
+			return mesh;
+		}
 		default:
 			break;
 		}

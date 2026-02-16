@@ -79,7 +79,7 @@ namespace Pixie
 		GameObject sphere = CreateEmptyGameObject("Sphere");
 		TransformComponent& transform3 = sphere.GetComponent<TransformComponent>();
 		transform3.SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
-		sphere.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
+		sphere.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/SphereSmooth.obj");
 
 		cube1.AddChild(sphere);
 
@@ -593,7 +593,7 @@ namespace Pixie
 	GameObject Scene::CreateSphere()
 	{
 		GameObject object = CreateEmptyGameObject("Sphere");
-		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/Sphere.obj");
+		object.AddComponent<MeshComponent, const std::string&>("../Assets/Meshes/SphereSmooth.obj");
 		return object;
 	}
 

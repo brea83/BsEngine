@@ -38,7 +38,7 @@ out vec4 FragColor;
 uniform int PlaneAxisEnum; // 0, 1, 2 == XZ, YZ, YX
 
 // all line widths should range between 0 and 1
-uniform float AxisLineWidth = 0.05;
+uniform float AxisLineWidth = 0.07;
 uniform float MajorLineWidth = 0.03;
 uniform float MinorLineWidth = 0.01;
 
@@ -51,14 +51,14 @@ struct AxisColors
 	vec4 Dash;
 };
 
-uniform AxisColors XAxisColor = AxisColors(vec4(1, 0, 0, 1), vec4(0.5, 0, 0, 1));
-uniform AxisColors YAxisColor = AxisColors(vec4(0, 1, 0, 1), vec4(0, 0.5, 0, 1));
-uniform AxisColors ZAxisColor = AxisColors(vec4(0, 0, 1, 1), vec4(0, 0, 0.5, 1));
+uniform AxisColors XAxisColor = AxisColors(vec4(1, 0, 0, 1), vec4(0.25, 0, 0, 1));
+uniform AxisColors YAxisColor = AxisColors(vec4(0, 1, 0, 1), vec4(0, 0.25, 0, 1));
+uniform AxisColors ZAxisColor = AxisColors(vec4(0, 0, 1, 1), vec4(0, 0, 0.25, 1));
 uniform vec4 CenterColor = vec4(1, 1, 1, 1);
 
 uniform float AxisDashScale = 1.33;
 
-uniform vec4 BaseColor = vec4(1, 1, 1, 0);
+uniform vec4 BaseColor = vec4(0.2, 0.1, 0.3, 0);
 
 float SaturateF(float value)
 {
@@ -96,6 +96,7 @@ void main()
 	vec2 axisLineAA = uvDeriv * 1.5;
 	vec2 axisLines2 = smoothstep(axisDrawWidth + axisLineAA, axisDrawWidth - axisLineAA, abs(IN.UV.zw * 2.0));
 	axisLines2 *= SaturateV2( vec2(AxisLineWidth) / axisDrawWidth);
+	
 
 	// major lines
 	float div = max(2.0, round(IN.MajorGridDiv));
@@ -144,11 +145,11 @@ void main()
 	float minorGrid = mix(minorGrid2.x, 1.0, minorGrid2.y);
 	float majorGrid = mix(majorGrid2.x, 1.0, majorGrid2.y);
 
-	vec2 axisDashUV = abs(fract((IN.UV.zw + vec2(asixlineWidth) * 0.5) * AxisDashScale) * 2.0 -1.0) - 0.5;
-	vec2 axisDashDeriv = uvDeriv * AxisDashScale * 1.5;
-	vec2 axisDash = smoothstep(-axisDashDeriv, axisDashDeriv, axisDashUV);
-	axisDash = abs(IN.UV.z) > 0.5 || abs(IN.UV.w) > 0.5 ? axisDash : vec2(1.0);
-
+//	vec2 axisDashUV = abs(fract((IN.UV.zw + vec2(asixlineWidth) * 0.5) * AxisDashScale) * 2.0 -1.0) - 0.5;
+//	vec2 axisDashDeriv = uvDeriv * AxisDashScale * 1.5;
+//	vec2 axisDash = smoothstep(-axisDashDeriv, axisDashDeriv, axisDashUV);
+//	axisDash = (IN.UV.z) > 0.5 || (IN.UV.w) > 0.5 ? axisDash : vec2(1.0);
+//
 	// Line COLORS
 	// ----------------------------------
 
@@ -183,8 +184,9 @@ void main()
 		bAxisDashColor = YAxisColor.Dash;
 	}
 
-	aAxisColor = mix(aAxisDashColor, aAxisColor, axisDash.y);
-	bAxisColor = mix(bAxisDashColor, bAxisColor, axisDash.x);
+	vec2 axisLinesMix = (IN.UV.z) > 0.5 || (IN.UV.w) > 0.5 ? vec2(1.0) : vec2(0.0);
+	aAxisColor = mix(aAxisDashColor, aAxisColor, axisLinesMix.y);
+	bAxisColor = mix(bAxisDashColor, bAxisColor, axisLinesMix.x);
 	aAxisColor = mix(aAxisColor, CenterColor, axisLines2.y);
 
 	vec4 axisLines = mix(bAxisColor * axisLines2.y, aAxisColor, axisLines2.x);

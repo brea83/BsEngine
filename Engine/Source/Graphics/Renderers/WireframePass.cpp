@@ -13,7 +13,9 @@ namespace Pixie
 		for (Mesh::Vertex& vertex : m_CubePrimitive->m_Vertices)
 		{
 			vertex.Position *= 2.0f;
+			vertex.Color = glm::vec3(1.0f);
 		}
+		m_CubePrimitive->Init();
 		//m_SpherePrimitive = AssetLoader::LoadPrimitive(PrimitiveMeshType::Sphere);
 
 	}
@@ -35,14 +37,25 @@ namespace Pixie
 		glm::vec4 frustumColor = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 		m_Shader->SetUniformVec4("BaseColor", frustumColor);
 
+
 		for (auto entity : group)
 		{
 			CameraComponent& camera = group.get<CameraComponent>(entity);
+			if (camera.IsActive)
+				continue;
 			glm::mat4 viewMatrix = glm::inverse(group.get<TransformComponent>(entity).GetObjectToWorldMatrix());
 			//m_Shader->SetUniformMat4("Transform", transformMatrix);
 			glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
 			m_Shader->SetUniformMat4("Transform", frustMatrix);
 
+			std::vector<glm::vec4> tempVerts;
+			for (Mesh::Vertex& vertex : m_CubePrimitive->m_Vertices)
+			{
+				glm::vec4 newVert = glm::vec4(vertex.Position, 1.0f);
+				newVert = frustMatrix * newVert;
+				newVert = newVert / newVert.w;
+				tempVerts.push_back(newVert);
+			}
 			m_CubePrimitive->Render(*m_Shader);
 		}
 

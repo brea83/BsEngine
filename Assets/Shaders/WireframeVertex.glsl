@@ -47,9 +47,9 @@ void main()
 //    else
 //    {
         vec4 Pos_WS =  Transform * vec4(vertexPosition, 1.0);
-        //Pos_WS = Pos_WS / Pos_WS.w;
+        Pos_WS = Pos_WS / Pos_WS.w;
         gl_Position = projection * view * Pos_WS;//Transform * vec4(vertexPosition, 1.0);
-        gl_Position /= Pos_WS.w;
+        //gl_Position /= Pos_WS.w;
         //OUT.Pos_CS = vec3(view * transform * vec4(vertexPosition, 1.0));
 
         //mat3 MV3 = mat3(view * Transform);

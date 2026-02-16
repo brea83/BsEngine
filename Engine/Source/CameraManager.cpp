@@ -21,7 +21,9 @@ namespace Pixie
             entity.GetComponent<CameraComponent>().Cam.SetNearFar(1.0f, 100.0f);
         }
 
-        m_ActiveCamera = m_EditorCamera;
+        GameObject editorCam = GameObject(m_EditorCamera, m_Scene);
+        SetActiveCamera(editorCam);
+       //m_ActiveCamera = m_EditorCamera;
     }
 
     void CameraManager::Init()

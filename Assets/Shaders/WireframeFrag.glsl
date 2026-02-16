@@ -23,5 +23,5 @@ in VS_OUT
 void main()
 {
 	FragColor = BaseColor ;
-	//FragColor.rgb *= IN.VertexColor;
+	FragColor.rgb *= IN.VertexColor;
 }

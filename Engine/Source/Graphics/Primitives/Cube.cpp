@@ -13,31 +13,31 @@ namespace Pixie
 		{
 			m_Vertices = {
 				// back face
-				Vertex{{-0.5f,  0.5f, -0.0f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 1.0f, 0.0f }}, // top left
-				Vertex{{ 0.5f,  0.5f, -0.0f}, {1.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
-				Vertex{{-0.5f, -0.5f, -0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }}, // bottom left
-				Vertex{{ 0.5f, -0.5f, -0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 0.0f }}, // bottom right
+				Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }}, // back top left
+				Vertex{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // back bottom left
+				Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}, {0.5f, 0.0f, 0.5f}, { 1.0f, 1.0f }}, // back bottom right
+				Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.5f, 0.0f, 0.0f}, { 1.0f, 0.0f }}, // back top Right
 
 				// front face
-				Vertex{{-0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, { 0.0f, 0.0f }}, // top left
-				Vertex{{ 0.5f,  0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 1.0f}, { 1.0f, 1.0f }}, // top right
-				Vertex{{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }}, // bottom left
-				Vertex{{ 0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }}, // bottom right
+				Vertex{{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, { 0.0f, 1.0f }}, // front top left
+				Vertex{{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, { 0.0f, 1.0f }}, // front bottom left
+				Vertex{{ 0.5f, -0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.5f, 0.0f}, { 0.0f, 1.0f }}, // front bottom right
+				Vertex{{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 0.5f}, { 0.0f, 0.0f }}, // front top right
 			};
 
 			m_Indices = {  //idicies of the vertexies list to use as points of a triangle
 				// back face
-				0, 1, 2, 1, 2, 3,
-				// front face
-				4, 5, 6 , 5, 6, 7,
+				0, 1, 2, 2, 3, 0,
 				// top face
-				0, 1, 5 , 1, 5, 4,
-				// bottom fac
-				2, 3, 7 , 2, 7, 6,
+				0, 3, 7 , 7, 4, 0,
 				// left face
-				0, 4, 2 , 4, 2, 6,
+				0, 4, 5 , 0, 5, 1,
+				// bottom fac
+				1, 5, 6 , 1, 6, 2,
 				//right face
-				1, 5, 7 , 1, 3, 7,
+				2, 6, 7 , 7, 3, 2,
+				// front face
+				7, 6, 5 , 5, 4, 7,
 			};
 		}
 		else
@@ -100,6 +100,9 @@ namespace Pixie
 
 	void Cube::Init()
 	{
+		if (VBO) glDeleteBuffers(1, &VBO);
+		if (VAO) glDeleteVertexArrays(1, &VAO);
+		if (EBO) glDeleteBuffers(1, &EBO);
 		// generate vert array and vert buffer
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);

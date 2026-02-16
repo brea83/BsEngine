@@ -83,6 +83,14 @@ namespace Pixie
 					selected->AddComponent<MovementComponent>();
 				}
 
+				if (selected->HasCompoenent<MovementComponent>())
+				{
+					if (ImGui::Selectable("Movement constraints") )
+					{
+						selected->AddComponent<MovementConstraintsComponent>();
+					}
+				}
+
 				if (ImGui::Selectable("FollowComponent"))
 				{
 					selected->AddComponent<FollowComponent>();
@@ -525,6 +533,82 @@ namespace Pixie
 			}
 		}
 
+		if (selected.HasCompoenent<MovementConstraintsComponent>())
+		{
+			ImGui::PushID("MoveConstraints");
+			ImGui::Separator();
+			MovementConstraintsComponent& component = selected.GetComponent<MovementConstraintsComponent>();
+			ImGui::Text("Movement Constraints");
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			ImGui::Text("Constrain on Global Position");
+			ImGui::SameLine();
+			ImGui::Checkbox("##isGlobal", &component.BConstraintOnGlobalPosition);
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("false == only constrained on local position");
+			}
+
+			ImGui::Text("Use Camera Frustum as Bounds");
+			ImGui::SameLine();
+			ImGui::Checkbox("##isFrustum", &component.BUseCamFrustum);
+
+			if (!component.BUseCamFrustum)
+			{
+				SliderParams params;
+				params.ResetValue = 1.0f;
+				params.Speed = 0.01f;
+
+				DrawVec3Control("Minimum Position", component.MinPosition, params);
+				DrawVec3Control("Maximum Position", component.MaxPosition, params);
+			}
+			else
+			{
+				GameObject target = scene->FindGameObjectByGUID(component.CameraID);
+				std::string targetString = target ? target.GetName() : "";
+				ImGui::SeparatorText("Camera to use");
+				ImGui::BeginDisabled();
+				DrawStringProperty("##Target", targetString, targetString);
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
+					{
+						IM_ASSERT(payload->DataSize == sizeof(GameObject));
+						GameObject droppedObject = *(const GameObject*)payload->Data;
+						CameraComponent* cam = droppedObject.TryGetComponent<CameraComponent>();
+
+						if (cam)
+						{
+							glm::mat4 projection = cam->Cam.ProjectionMatrix();
+							glm::mat4 view = glm::inverse(droppedObject.GetTransform().GetObjectToWorldMatrix());
+							component.CameraID = droppedObject.GetGUID();
+							component.FrustumMatrix =Frustum::CalcFrustumMatrix(projection, view);
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::EndDisabled();
+			}
+
+			ImGui::PopID();
+
+			if (removeComponent)
+			{
+				selected.RemoveComponent<MovementConstraintsComponent>();
+			}
+		}
+
 		if (selected.HasCompoenent<FollowComponent>())
 		{
 			ImGui::PushID("FollowerComponent");
@@ -548,6 +632,7 @@ namespace Pixie
 			params.Speed = 0.001f;
 			params.ResetValue = 0.0f;
 			DrawVec3Control("Offset", component.Offset, params);
+			DrawFloatControl("Rounding Error", component.FollowThreshold, params);
 
 			GameObject target = scene->FindGameObjectByGUID(component.EntityToFollow);
 			std::string targetString = target ? target.GetName() : "";

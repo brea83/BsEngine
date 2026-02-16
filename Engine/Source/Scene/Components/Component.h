@@ -193,6 +193,20 @@ namespace Pixie
         }
     };
 
+    struct MovementConstraintsComponent
+    {
+        MovementConstraintsComponent() = default;
+        MovementConstraintsComponent(const MovementConstraintsComponent&) = default;
+
+        // if false constraint is on local position
+        bool BConstraintOnGlobalPosition{ true }; 
+        bool BUseCamFrustum{ true };
+        glm::vec3 MinPosition{ -5.0f };
+        glm::vec3 MaxPosition{ 5.0f };
+        
+        GUID CameraID{ 0 };
+        glm::mat4 FrustumMatrix;
+    };
 
     struct MovementComponent
     {
@@ -233,6 +247,8 @@ namespace Pixie
         FollowComponent(const FollowComponent&) = default;
 
         glm::vec3 Offset{ 0.5f, 1.0f, 5.0f };
+        float MinDistFromTarget{ 0.01f };
+        float FollowThreshold{ 0.1f };
         GUID EntityToFollow{ 0 };
         bool FollowSplineIfAvailable{ true };
         // used for following splines

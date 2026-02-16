@@ -102,7 +102,7 @@ namespace Pixie
 		}
 		 else if (follow && orbit)
 		{
-			Logger::Core(LOG_WARNING, "Entity, {}, has both follow component and orbit component, using the transform of follow entity as origin for orbit", GetName());
+			//Logger::Core(LOG_WARNING, "Entity, {}, has both follow component and orbit component, using the transform of follow entity as origin for orbit", GetName());
 			GameObject target = m_Scene->FindGameObjectByGUID(follow->EntityToFollow);
 			glm::vec3 targetPos = target.GetTransform().GetPosition();
 

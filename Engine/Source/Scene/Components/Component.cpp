@@ -38,6 +38,34 @@ namespace Pixie
         else
         {
             glm::vec3 targetPos = target.GetTransform().GetPosition() + Offset;
+            //float distance = glm::distance(targetPos, currentPosition);
+            
+            glm::vec3 vecToTarget = targetPos - currentPosition;
+            float distance = glm::length(vecToTarget);
+            if (distance <= MinDistFromTarget)
+            {
+                return glm::vec3(0.0f);
+            }
+            if (distance <= FollowThreshold && distance >= -FollowThreshold)
+            {
+                //moveComponent.Direction = glm::normalize(targetPos - currentPosition);
+                //glm::vec3 movement = moveComponent.Speed * deltaTime * moveComponent.Direction;
+                return glm::mix(glm::vec3(0.0f), vecToTarget, deltaTime * moveComponent.Speed);
+            }
+            //==========================================================
+            //THESE CONDITIONS CAUSE BOUNCING AROUND THE TARGET POINT
+            //if (vecToTarget.x >= 0.5f || vecToTarget.x <= -0.5f)
+            //    moveComponent.Direction.x = vecToTarget.x;
+
+            //if (vecToTarget.y >= 0.5f || vecToTarget.y <= -0.5f)
+            //    moveComponent.Direction.y = vecToTarget.y;
+            //    
+            //if (vecToTarget.z >= 0.5f || vecToTarget.z <= -0.5f)
+            //    moveComponent.Direction.z = vecToTarget.z;
+            //moveComponent.Direction = glm::normalize(moveComponent.Direction);
+            //return moveComponent.Speed * deltaTime * moveComponent.Direction;
+            //==========================================================
+                //return moveComponent.Speed * deltaTime * moveComponent.Direction; // use prev direction
             moveComponent.Direction = glm::normalize(targetPos - currentPosition);
             return moveComponent.Speed * deltaTime * moveComponent.Direction;
         }

@@ -54,6 +54,11 @@ namespace Pixie
 
 		return center /= (float)frustumCorners.size();
     }
+
+	glm::mat4 Frustum::CalcFrustumMatrix(const glm::mat4& projection, const glm::mat4& view)
+	{
+		return glm::inverse(projection * view);
+	}
     
 	void Frustum::Render(std::shared_ptr<Shader> shader)
     {}

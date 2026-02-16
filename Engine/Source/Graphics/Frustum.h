@@ -17,6 +17,7 @@ namespace Pixie
 
 		static std::vector<glm::vec4> CalcFrustumCornersWS(const glm::mat4& projection, const glm::mat4& view);
 		static glm::vec3 CalcFrustumCenter(const std::vector<glm::vec4>& frustumCorners);
+		static glm::mat4 CalcFrustumMatrix(const glm::mat4& projection, const glm::mat4& view);
 
 		void Render(std::shared_ptr<Shader> shader);
 	private:

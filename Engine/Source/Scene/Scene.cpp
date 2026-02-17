@@ -214,6 +214,7 @@ namespace Pixie
 		CopyRegistryComponents<SplineComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<FollowComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<OrbitComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<MovementConstraintsComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 
 		return newScene;
 	}

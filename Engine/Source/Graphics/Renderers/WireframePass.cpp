@@ -43,7 +43,7 @@ namespace Pixie
 			CameraComponent& camera = group.get<CameraComponent>(entity);
 			if (camera.IsActive)
 				continue;
-			glm::mat4 viewMatrix = glm::inverse(group.get<TransformComponent>(entity).GetObjectToWorldMatrix());
+			glm::mat4 viewMatrix = glm::inverse(group.get<TransformComponent>(entity).GetModelMatrix());
 			//m_Shader->SetUniformMat4("Transform", transformMatrix);
 			glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
 			m_Shader->SetUniformMat4("Transform", frustMatrix);

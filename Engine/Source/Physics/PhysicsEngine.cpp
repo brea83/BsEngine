@@ -224,7 +224,7 @@ namespace Pixie
 				if (cube == nullptr) break;
 
 				// CS = cube's local space
-				glm::vec3 spherePosCS = glm::inverse(cube->Transform->GetObjectToWorldMatrix()) * glm::vec4(positionA, 1.0f);
+				glm::vec3 spherePosCS = glm::inverse(cube->Transform->GetModelMatrix()) * glm::vec4(positionA, 1.0f);
 
 				glm::vec3 closestPoint = glm::clamp(spherePosCS, -cube->Extents, cube->Extents);
 				float squareDistance = glm::length2(spherePosCS - closestPoint);
@@ -305,7 +305,7 @@ namespace Pixie
 
 	AxisProjection PhysicsEngine::ProjectCubeOnAxis(CubeCollider* cube, const glm::vec3& axis)
 	{
-		glm::mat4 cubeTransform = cube->Transform->GetObjectToWorldMatrix();
+		glm::mat4 cubeTransform = cube->Transform->GetModelMatrix();
 		float centerProjection = glm::dot(glm::vec3(cubeTransform[3]), axis);
 		glm::vec3 right = glm::normalize(cubeTransform[0]);
 		glm::vec3 up = glm::normalize(cubeTransform[1]);
@@ -324,8 +324,8 @@ namespace Pixie
 	{
 		std::vector<glm::vec3> axes;
 		axes.reserve(12);
-		glm::mat4 transformA = cubeA->Transform->GetObjectToWorldMatrix();
-		glm::mat4 transformB = cubeB->Transform->GetObjectToWorldMatrix();
+		glm::mat4 transformA = cubeA->Transform->GetModelMatrix();
+		glm::mat4 transformB = cubeB->Transform->GetModelMatrix();
 
 		for (int i = 0; i < 3; i++)
 		{

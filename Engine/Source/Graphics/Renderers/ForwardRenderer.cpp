@@ -98,7 +98,7 @@ namespace Pixie
 		// set up rendering camera info
 		TransformComponent& transform = cameraEntity.GetComponent<TransformComponent>();
 		glm::vec4 camPosition = glm::vec4(transform.GetPosition(), 1);
-		glm::mat4 viewMatrix = glm::inverse(transform.GetObjectToWorldMatrix());
+		glm::mat4 viewMatrix = glm::inverse(transform.GetModelMatrix());
 		
 		glm::mat4 projectionMatrix = mainCam.ProjectionMatrix();
 
@@ -142,7 +142,7 @@ namespace Pixie
 			m_LightTransfrom->SetPosition(hypotheticalLightPos);
 			m_LightTransfrom->SetRotationEuler(lightTransform.GetRotationEuler());
 
-			m_LightView = glm::inverse(m_LightTransfrom->GetObjectToWorldMatrix());
+			m_LightView = glm::inverse(m_LightTransfrom->GetModelMatrix());
 			
 
 			glm::vec3 minPointLS{ std::numeric_limits<float>::max() };

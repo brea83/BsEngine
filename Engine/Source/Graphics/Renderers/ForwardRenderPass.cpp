@@ -58,7 +58,7 @@ namespace Pixie
 		for (auto entity : group)
 		{
 			TransformComponent& transform = group.get<TransformComponent>(entity);
-			m_Shader->SetUniformMat4("transform", transform.GetObjectToWorldMatrix());
+			m_Shader->SetUniformMat4("transform", transform.GetModelMatrix());
 
 			MeshComponent& mesh = group.get<MeshComponent>(entity);
 

@@ -219,7 +219,7 @@ namespace Pixie
         return max;
     }
 
-    glm::mat4& TransformComponent::GetObjectToWorldMatrix()
+    glm::mat4& TransformComponent::GetModelMatrix()
     {
         if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
         {
@@ -233,7 +233,7 @@ namespace Pixie
             if (parentObject)
             {
                 TransformComponent& parentTransform = parentObject.GetTransform();
-                m_WorldMatrix = parentTransform.GetObjectToWorldMatrix() * m_LocalMatrix;
+                m_WorldMatrix = parentTransform.GetModelMatrix() * m_LocalMatrix;
             }
             else
             {
@@ -244,6 +244,29 @@ namespace Pixie
         }
 
         return m_LocalMatrix;
+    }
+
+    glm::mat4 TransformComponent::GetLocalToWorldMatrix()
+    {
+        if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
+        {
+            RecalculateModelMatrix();
+        }
+        glm::mat4 conversionMatrix = glm::mat4(1.0f); //identity matrix
+        if (m_ParentGuid != 0)
+        {
+            std::shared_ptr<Scene> scene = EngineContext::GetEngine()->GetScene();
+            GameObject parentObject = scene->FindGameObjectByGUID(m_ParentGuid);
+            if (parentObject)
+            {
+                TransformComponent& parentTransform = parentObject.GetTransform();
+                conversionMatrix = parentTransform.GetLocalToWorldMatrix() * conversionMatrix;
+            }
+
+            return conversionMatrix;
+        }
+
+        return conversionMatrix;
     }
 
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
@@ -283,7 +306,7 @@ namespace Pixie
         m_RotationDirty = false;
 
         if (m_ParentGuid != 0)
-            m_WorldMatrix = GetObjectToWorldMatrix();
+            m_WorldMatrix = GetModelMatrix();
     }
 
     void TransformComponent::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)

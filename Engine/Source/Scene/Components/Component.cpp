@@ -142,6 +142,73 @@ namespace Pixie
         registry.remove<HasUpdateableComponents>(entt);
     }
 
+    // movement constraints
+    glm::vec3 MovementConstraintsComponent::ConstrainOnFrustum(GameObject& object, glm::vec3 currentWorldPos, glm::vec3& moveAmount)
+    {
+        std::shared_ptr<Scene> scene = object.GetScene();
+
+        glm::vec4 newPosition = glm::vec4(currentWorldPos + moveAmount, 1.0f);
+        //position in Frustum-Space
+        CameraManager& camManager = scene->GetCameraManager();
+        GameObject camObject = camManager.GetActiveCameraObject();
+        CameraComponent& cam = camObject.GetComponent<CameraComponent>();
+        TransformComponent& camTransform = camObject.GetTransform();
+
+        glm::mat4 storedFrustum{ 1.0f };
+        auto& frustumMap = camManager.GetFrustums();
+        if (frustumMap.find(CameraID) != frustumMap.end())
+        {
+            storedFrustum = frustumMap.at(CameraID).GetMatrix();
+        }
+        glm::mat4 frustum = cam.Cam.ProjectionMatrix() * glm::inverse(camTransform.GetModelMatrix());
+
+        glm::vec4 posInFS = frustum * newPosition;
+        posInFS = posInFS / posInFS.w;
+
+        if ((posInFS.x > -1.0f * posInFS.w && posInFS.x < posInFS.w)
+            && (posInFS.y > -1.0f * posInFS.w && posInFS.y < posInFS.w)
+            && (posInFS.z > -1.0f * posInFS.w && posInFS.z < posInFS.w))
+        {
+            return moveAmount;
+        }
+
+        //Logger::Game(LOG_DEBUG, "{} is at local pos ({},{},{}) and global pos ({},{},{})", object.GetName(), localPos.x,localPos.y,localPos.z, globalPos.x, globalPos.y, globalPos.z);
+        //outside near || far planes
+        if (posInFS.z <= -1.0f * posInFS.w || posInFS.z >= posInFS.w)
+            return glm::vec3(0.0f);
+        //outside left
+        if (posInFS.x <= -1.0f * posInFS.w)
+            moveAmount.x += posInFS.x + posInFS.w;
+        //outside right
+        if (posInFS.x >= posInFS.w)
+            moveAmount.x += posInFS.x - posInFS.w;
+        //outside bottom
+        if (posInFS.y <= -1.0f * posInFS.w)
+            moveAmount.y -= posInFS.y + posInFS.w;
+        //outside top
+        if (posInFS.y >= posInFS.w)
+            moveAmount.y -= posInFS.y - posInFS.w;
+
+        return moveAmount;
+    }
+
+    glm::vec3 MovementConstraintsComponent::ConstrainMoveAmount(GameObject& object, TransformComponent& transform, glm::vec3& moveAmount)
+    {
+        
+        glm::vec4 position = glm::vec4(transform.GetPosition(), 1.0f);
+
+        if (BUseCamFrustum)
+        {
+            return ConstrainOnFrustum(object, transform.GetModelMatrix()[3], moveAmount);
+        }
+        else
+        {
+            //TODO implement other movement constraints
+            return moveAmount;
+        }
+
+        
+    }
 
     // movement component 
 

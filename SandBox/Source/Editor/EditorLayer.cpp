@@ -719,7 +719,7 @@ namespace Pixie
 
 	void EditorLayer::DrawGizmo(TransformComponent & transform, Camera * camera, glm::mat4 & viewMatrix)
 	{
-		glm::mat4 transformMatrix = transform.GetObjectToWorldMatrix();
+		glm::mat4 transformMatrix = transform.GetModelMatrix();
 		//glm::mat4 localTransform = transform.GetLocal();
 
 		glm::vec3 oldTranslation;

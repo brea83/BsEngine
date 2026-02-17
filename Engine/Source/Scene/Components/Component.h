@@ -34,7 +34,8 @@ namespace Pixie
         MovementComponent,
         SplineComponent,
         FollowComponent,
-        OrbitComponent
+        OrbitComponent,
+        MovementConstraints,
     };
 
     struct IDComponent
@@ -201,11 +202,19 @@ namespace Pixie
         // if false constraint is on local position
         bool BConstraintOnGlobalPosition{ true }; 
         bool BUseCamFrustum{ true };
-        glm::vec3 MinPosition{ -5.0f };
-        glm::vec3 MaxPosition{ 5.0f };
+        // uses only the z values in cam frustum mode as alteranate near and far planes
+        glm::vec3 MinPosition{ -0.0f };
+        glm::vec3 MaxPosition{ 0.0f };
         
         GUID CameraID{ 0 };
-        glm::mat4 FrustumMatrix;
+        glm::mat4 FrustumMatrix{1.0f};
+
+        glm::vec3 ConstrainMoveAmount(GameObject& object, TransformComponent& transform, glm::vec3& moveAmount);
+
+    private:
+        glm::vec3 ConstrainOnFrustum(GameObject& object, glm::vec3 currentWorldPos, glm::vec3& moveAmount);
+
+
     };
 
     struct MovementComponent
@@ -309,7 +318,18 @@ namespace Pixie
 
     // empty components to use for organizing views and groups only
     struct EditorOnly
-    { };
+    { 
+        EditorOnly() = default;
+        EditorOnly(const EditorOnly&) = default;
+        bool Placeholder{ true };
+    };
+
+    struct DoNotSaveToScene
+    {
+        DoNotSaveToScene() = default;
+        DoNotSaveToScene(const DoNotSaveToScene&) = default;
+        bool DoNotSave{ true };
+    };
 
     struct HasUpdateableComponents
     {

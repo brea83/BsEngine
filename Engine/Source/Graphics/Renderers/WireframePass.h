@@ -27,7 +27,6 @@ namespace Pixie
 		std::shared_ptr<Shader> m_Shader{nullptr};
 		MaterialInstance m_FallbackMaterial{};
 		std::shared_ptr<Mesh> m_CubePrimitive{ nullptr };
-		//TODO: add sphere as primitive
 		//std::shared_ptr<Mesh> m_SpherePrimitive{ nullptr };
 	};
 }

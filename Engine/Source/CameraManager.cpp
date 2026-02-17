@@ -160,19 +160,36 @@ namespace Pixie
 
     void CameraManager::OnBeginPlayMode()
     {
-        if (EngineContext::GetEngine()->IsEditorEnabled() && m_ActiveCamera == m_EditorCamera)
+        auto view = m_Scene->GetRegistry().view<MovementConstraintsComponent>();
+        GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
+
+        //if (EngineContext::GetEngine()->IsEditorEnabled() && m_ActiveCamera == m_EditorCamera)
+        //{
+        if (m_DefaultCamera == entt::null) return;
+        //set active camera to main scene camera
+        m_ActiveCamera = m_DefaultCamera;
+        if (!activeCam) return;
+
+        CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
+
+        glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
+
+        cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
+        //}
+
+        //TODO: add check to update frustum constraints when active cam changes
+        for (auto entity : view)
         {
-            if (m_DefaultCamera == entt::null) return;
-            //set active camera to main scene camera
-            m_ActiveCamera = m_DefaultCamera;
-            GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
-            if (!activeCam) return;
+            MovementConstraintsComponent& constraints = view.get<MovementConstraintsComponent>(entity);
+            if (constraints.BUseCamFrustum)
+            {
+                constraints.CameraID = activeCam.GetGUID();
+                if (m_Frustums.find(constraints.CameraID) != m_Frustums.end())
+                    constraints.FrustumMatrix = m_Frustums.at(constraints.CameraID).GetMatrix();
+                else
+                    constraints.FrustumMatrix = activeCam.GetComponent<CameraComponent>().Cam.ProjectionMatrix() * glm::inverse(activeCam.GetTransform().GetModelMatrix());
+            }
 
-            CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
-
-            glm::vec2 viewport = EngineContext::GetEngine()->GetViewportSize();
-
-            cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
         }
     }
 
@@ -219,15 +236,16 @@ namespace Pixie
 
         cameraComponent.Cam.SetAspectRatio(viewport.x / viewport.y);
 
-        if (m_DefaultCamera != entt::null && m_DefaultCamera != entt::tombstone) return ; // early out b/c we have default already
 
         GameObject cameraObject = GameObject(entity, m_Scene);
 
         if (!cameraObject)
             return;
-        m_Frustums[entity] = Frustum();
-        m_Frustums[entity].Recalculate(cameraComponent.Cam.ProjectionMatrix(), glm::inverse(cameraObject.GetTransform().GetObjectToWorldMatrix()));
+        GUID id = cameraObject.GetGUID();
+        m_Frustums[id] = Frustum();
+        m_Frustums.at(id).Recalculate(cameraObject);//Initialize(cameraComponent.Cam.ProjectionMatrix(), glm::inverse(cameraObject.GetTransform().GetModelMatrix()));
 
+        if (m_DefaultCamera != entt::null && m_DefaultCamera != entt::tombstone) return ; // early out b/c we have default already
         if (cameraObject.TryGetComponent<HeirarchyComponent>() == nullptr) return; // early out b/c this is an editor not scene camera
 
         m_DefaultCamera = entity;
@@ -378,7 +396,7 @@ namespace Pixie
 
         //glm::vec3 up = glm::normalize(glm::cross(right, forward));
 
-        viewMatrix = glm::inverse(transform.GetObjectToWorldMatrix());//glm::lookAt(position, position + forward, up);
+        viewMatrix = glm::inverse(transform.GetModelMatrix());//glm::lookAt(position, position + forward, up);
 
 
         CameraComponent& cameraComponent = activeCam.GetComponent<CameraComponent>();
@@ -403,7 +421,7 @@ namespace Pixie
 
     glm::mat4 CameraManager::GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix)
     {
-        outViewMatrix = glm::inverse(inTransform.GetObjectToWorldMatrix());//glm::lookAt(position, position + forward, up);
+        outViewMatrix = glm::inverse(inTransform.GetModelMatrix());//glm::lookAt(position, position + forward, up);
 
         return inCamera.ProjectionMatrix();
     }

@@ -30,16 +30,16 @@ namespace Pixie
 			if (startIndex + 1 >= spline.Points.size() && !spline.IsLoop)
 			{
 				// time has passed the end of the spline
-				return glm::vec3(spline.Points[spline.Points.size() - 1]->GetObjectToWorldMatrix()[3]);
+				return glm::vec3(spline.Points[spline.Points.size() - 1]->GetModelMatrix()[3]);
 			}
 
 			if (startIndex < 0 && !spline.IsLoop)
 			{
-				return spline.Points[0]->GetObjectToWorldMatrix()[3];
+				return spline.Points[0]->GetModelMatrix()[3];
 			}
 			
-			glm::vec3 start = spline.Points[startIndex]->GetObjectToWorldMatrix()[3];
-			glm::vec3  end = spline.Points[startIndex + 1]->GetObjectToWorldMatrix()[3];
+			glm::vec3 start = spline.Points[startIndex]->GetModelMatrix()[3];
+			glm::vec3  end = spline.Points[startIndex + 1]->GetModelMatrix()[3];
 			return glm::mix(start, end, input.SegmentT);
 		}
 
@@ -52,18 +52,18 @@ namespace Pixie
 			if (startIndex +3 >= spline.Points.size() && !spline.IsLoop)
 			{
 				// time has passed the end of the spline
-				return spline.Points[spline.Points.size() - 1]->GetObjectToWorldMatrix()[3];
+				return spline.Points[spline.Points.size() - 1]->GetModelMatrix()[3];
 			}
 
 			if (startIndex < 0 && !spline.IsLoop)
 			{
-				return spline.Points[0]->GetObjectToWorldMatrix()[3];
+				return spline.Points[0]->GetModelMatrix()[3];
 			}
 
-			glm::vec3 pointA = spline.Points[startIndex + 0]->GetObjectToWorldMatrix()[3];
-			glm::vec3 pointB = spline.Points[startIndex + 1]->GetObjectToWorldMatrix()[3]; // controll point
-			glm::vec3 pointC = spline.Points[startIndex + 2]->GetObjectToWorldMatrix()[3]; // controll point
-			glm::vec3 pointD = spline.Points[startIndex + 3]->GetObjectToWorldMatrix()[3];
+			glm::vec3 pointA = spline.Points[startIndex + 0]->GetModelMatrix()[3];
+			glm::vec3 pointB = spline.Points[startIndex + 1]->GetModelMatrix()[3]; // controll point
+			glm::vec3 pointC = spline.Points[startIndex + 2]->GetModelMatrix()[3]; // controll point
+			glm::vec3 pointD = spline.Points[startIndex + 3]->GetModelMatrix()[3];
 
 			glm::vec3 lerpA = glm::mix(pointA, pointB, input.SegmentT);
 			glm::vec3 lerpB = glm::mix(pointB, pointC, input.SegmentT);

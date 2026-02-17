@@ -17,6 +17,14 @@ namespace Pixie
 	EditorCamera::EditorCamera(entt::entity entity, std::shared_ptr<Scene> scene, float fov, float aspectRatio, float nearClip, float farClip)
 		: Entity(entity, scene)
 	{
+		AddOrReplaceComponent<IDComponent>();
+		AddOrReplaceComponent<EditorOnly>();
+		//TODO: remove this so scenes will save where the editor cam was last set
+		//this will take some refactoring of how the editor cam is set up on scene load
+		// for no we attach DoNotSaveToScene to avoid all that
+		AddComponent<DoNotSaveToScene>();
+
+
 		TransformComponent& transform = AddComponent<TransformComponent>();
 		transform.SetPosition(glm::vec3(0.0f, 10.0f, -15.0f));
 		transform.SetRotationEuler(glm::vec3(-30.0f, 180.0f, 0.0f));
@@ -29,7 +37,6 @@ namespace Pixie
 		CameraController& controller = AddComponent<CameraController>();
 		//Entity entityAccessor = Entity(entity, scene);
 		//controller.UpdateFocalPoint(entityAccessor);
-
 	}
 
 	Camera& EditorCamera::Cam()

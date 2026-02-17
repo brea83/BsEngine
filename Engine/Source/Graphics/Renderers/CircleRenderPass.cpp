@@ -21,7 +21,7 @@ namespace Pixie
         glm::mat4 viewMatrix{ 1.0f };
         if (cam)
         {
-            viewMatrix = glm::inverse(cam.GetTransform().GetObjectToWorldMatrix());
+            viewMatrix = glm::inverse(cam.GetTransform().GetModelMatrix());
         }
 
         auto group = registry.group<CircleRendererComponent>(entt::get<TransformComponent>);
@@ -36,7 +36,7 @@ namespace Pixie
             //std::shared_ptr<CircleMesh> mesh = std::dynamic_pointer_cast<CircleMesh>(circle.MeshResource);
            
 
-            m_Shader->SetUniformMat4("Transform", transform.GetObjectToWorldMatrix());
+            m_Shader->SetUniformMat4("Transform", transform.GetModelMatrix());
             SetCircleUniforms(circle );
             
             //mesh->Render(*m_Shader);

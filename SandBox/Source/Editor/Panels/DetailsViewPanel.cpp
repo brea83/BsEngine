@@ -552,35 +552,49 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			ImGui::Text("Constrain on Global Position");
-			ImGui::SameLine();
-			ImGui::Checkbox("##isGlobal", &component.BConstraintOnGlobalPosition);
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetTooltip("false == only constrained on local position");
-			}
-
 			ImGui::Text("Use Camera Frustum as Bounds");
 			ImGui::SameLine();
 			ImGui::Checkbox("##isFrustum", &component.BUseCamFrustum);
 
-			if (!component.BUseCamFrustum)
+			if (component.BUseCamFrustum)
 			{
-				SliderParams params;
-				params.ResetValue = 1.0f;
-				params.Speed = 0.01f;
-
-				DrawVec3Control("Minimum Position", component.MinPosition, params);
-				DrawVec3Control("Maximum Position", component.MaxPosition, params);
+				component.BConstraintOnGlobalPosition = true;
 			}
 			else
 			{
+				ImGui::Text("Constrain on Global Position");
+				ImGui::SameLine();
+				ImGui::Checkbox("##isGlobal", &component.BConstraintOnGlobalPosition);
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip("false == only constrained on local position");
+				}
+			}
+
+			SliderParams params;
+			params.ResetValue = 1.0f;
+			params.Speed = 0.01f;
+			if (!component.BUseCamFrustum)
+			{
+				DrawVec3Control("Minimum Position", component.MinPosition, params);
+				DrawVec3Control("Maximum Position", component.MaxPosition, params);
+			}			
+			else
+			{
+				if (component.CameraID == 0)
+				{
+					GameObject defaultCam = scene->GetCameraManager().GetDefaultCamera();
+					if (defaultCam)
+						component.CameraID = defaultCam.GetGUID();
+				}
 				GameObject target = scene->FindGameObjectByGUID(component.CameraID);
-				std::string targetString = target ? target.GetName() : "";
+				std::string targetString = target ? target.GetName() : " ";
 				ImGui::SeparatorText("Camera to use");
 				ImGui::BeginDisabled();
 				DrawStringProperty("##Target", targetString, targetString);
-				if (ImGui::BeginDragDropTarget())
+				// maybe renable selecting which cam to constrain to later
+				// for now auto constraining to the active/default cam seems best for player constraint
+				/*if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
 					{
@@ -597,8 +611,12 @@ namespace Pixie
 						}
 					}
 					ImGui::EndDragDropTarget();
-				}
+				}*/
 				ImGui::EndDisabled();
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip("will automatically constrain to active cam at runtime, or default cam at edit time");
+				}
 			}
 
 			ImGui::PopID();

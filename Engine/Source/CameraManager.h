@@ -7,6 +7,7 @@
 #include <EnTT/entt.hpp>
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include "GUID.h" 
 
 namespace Pixie
 {
@@ -48,7 +49,7 @@ namespace Pixie
 		void SetDefaultCamera(GameObject& gameObject);
 		void SetEditorCamActive();
 
-		std::unordered_map<entt::entity, Frustum>& GetFrustums() { return m_Frustums; }
+		std::unordered_map<GUID, Frustum>& GetFrustums() { return m_Frustums; }
 
 		static glm::mat4 GetProjectionOutView(Camera& inCamera, TransformComponent& inTransform, glm::mat4& outViewMatrix);
 
@@ -64,7 +65,7 @@ namespace Pixie
 		entt::entity m_DefaultCamera{ entt::null };
 		entt::entity m_EditorCamera{ entt::null };
 
-		std::unordered_map<entt::entity, Frustum> m_Frustums;
+		std::unordered_map<GUID, Frustum> m_Frustums;
 
 		bool OnKeyPressed(KeyPressedEvent& event);
 		bool OnKeyReleased(KeyReleasedEvent& event);

@@ -66,7 +66,8 @@ namespace Pixie
 		float GetLargestScaleComponent();
 		
 		// methods
-		glm::mat4& GetObjectToWorldMatrix();
+		glm::mat4& GetModelMatrix();
+		glm::mat4 GetLocalToWorldMatrix();
 
 		glm::mat4 GetLocal() const { return m_LocalMatrix; }
 		glm::mat4 GetWorld() const { return m_WorldMatrix; }

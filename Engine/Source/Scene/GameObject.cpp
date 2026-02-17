@@ -155,18 +155,26 @@ namespace Pixie
 			return false;
 		}
 
+
 		TransformComponent& transform = GetTransform();
-		transform.SetPosition(transform.GetPosition() + movement);
+		if (HasCompoenent<MovementConstraintsComponent>())
+		{
+			MovementConstraintsComponent& constraints = GetComponent<MovementConstraintsComponent>();
+			movement = constraints.ConstrainMoveAmount(*this, transform, movement);
+		}
+
+		glm::vec3 newPosition = transform.GetPosition() + movement;
+		transform.SetPosition(newPosition);
 		return true;
 	}
 
 	void GameObject::Serialize(StreamWriter* fileWriter, const GameObject& object)
 	{
-		if (!object.HasCompoenent<IDComponent>())
+		if (object.HasCompoenent<DoNotSaveToScene>())
 		{
 			NameComponent* nameComponent = object.TryGetComponent<NameComponent>();
 			std::string name = nameComponent == nullptr ? "un-named entity" : nameComponent->Name;
-			Logger::Core(LOG_WARNING, "Skipping Serializeation of {} because it has no GUID", name);
+			Logger::Core(LOG_WARNING, "Skipping Serializeation of {} because it is marked Do not Save to scene", name);
 			return;
 		}
 
@@ -188,6 +196,7 @@ namespace Pixie
 		SplineComponent* spline = object.TryGetComponent<SplineComponent>();
 		FollowComponent* follow = object.TryGetComponent<FollowComponent>();
 		OrbitComponent* orbit = object.TryGetComponent<OrbitComponent>();
+		MovementConstraintsComponent* moveConstraints = object.TryGetComponent<MovementConstraintsComponent>();
 
 		std::vector<SerializableComponentID> components;
 		if (tag) components.push_back(SerializableComponentID::TagComponent);
@@ -205,6 +214,7 @@ namespace Pixie
 		if (spline) components.push_back(SerializableComponentID::SplineComponent);
 		if (follow) components.push_back(SerializableComponentID::FollowComponent);
 		if (orbit) components.push_back(SerializableComponentID::OrbitComponent);
+		if (moveConstraints) components.push_back(SerializableComponentID::MovementConstraints);
 
 		fileWriter->WriteArray<SerializableComponentID>(components);
 
@@ -286,6 +296,9 @@ namespace Pixie
 
 			if (id == SerializableComponentID::OrbitComponent)
 				fileWriter->WriteObject(object.GetComponent<OrbitComponent>());
+
+			if (id == SerializableComponentID::MovementConstraints)
+				fileWriter->WriteRaw(object.GetComponent<MovementConstraintsComponent>());
 
 		}
 
@@ -437,6 +450,14 @@ namespace Pixie
 				OrbitComponent& component = object.GetOrAddComponent<OrbitComponent>();
 
 				fileReader->ReadObject(component);
+				continue;
+			}
+
+			if (id == SerializableComponentID::MovementConstraints)
+			{
+				MovementConstraintsComponent& component = object.GetOrAddComponent<MovementConstraintsComponent>();
+
+				fileReader->ReadRaw(component);
 				continue;
 			}
 		}

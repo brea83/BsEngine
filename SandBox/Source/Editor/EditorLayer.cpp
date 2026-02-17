@@ -139,7 +139,7 @@ namespace Pixie
 		EngineContext::GetEngine()->SetScene(runtimeCopy);
 		//
 		//m_CurrentScene = runtimeCopy;
-		m_CurrentScene->Initialize();
+		runtimeCopy->Initialize();
 
 		////m_CurrentScene->BeginPlayMode();
 		//m_EditorState = SceneState::Play;

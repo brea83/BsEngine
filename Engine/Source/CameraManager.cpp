@@ -56,7 +56,7 @@ namespace Pixie
         }
 
         // now that default is set up set up starting active cam
-        if (EngineContext::GetEngine()->IsEditorEnabled())
+        if (EngineContext::GetEngine()->IsEditorEnabled() && m_Scene->GetSceneState() == SceneState::Edit())
         {
             InitEditor();
         }
@@ -69,6 +69,8 @@ namespace Pixie
     void CameraManager::OnEditorUpdate(float deltaTime)
     {
         GameObject activeCam = GameObject(m_ActiveCamera, m_Scene);
+        if (!activeCam)
+            return;
         CameraController* controller = activeCam.TryGetComponent<CameraController>();
         if (!controller) return;
         controller->OnUpdate(deltaTime, activeCam);

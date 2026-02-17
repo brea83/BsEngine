@@ -17,7 +17,6 @@ namespace Pixie
 	void Scene::Initialize()
 	{
 		m_CameraManager = CameraManager{ shared_from_this(), false };
-		m_CameraManager.Init();
 		
 		if (EngineContext::GetEngine()->IsEditorEnabled())
 		{
@@ -27,6 +26,7 @@ namespace Pixie
 		{
 			m_SceneState = SceneState::Play;
 		}
+		m_CameraManager.Init();
 
 		auto view = m_Registry.view<SplineComponent>();
 

@@ -11,7 +11,38 @@ namespace Pixie
 {
 	std::shared_ptr<Scene> Scene::Create()
 	{
-		return std::make_shared<Scene>(Private());
+		std::shared_ptr<Scene> newScene = std::make_shared<Scene>(Private());
+		newScene->InitializeEnttMeta();
+		return newScene;
+	}
+
+	void Pixie::Scene::InitializeEnttMeta()
+	{
+		Logger::Core(LOG_INFO, "Testing entt meta reflection for scene {}.", m_Name);
+		
+		entt::meta_factory<std::string>{}
+		.type("String")
+			.func<&std::string::c_str>("c_str");
+		
+		entt::meta_factory<TagComponent>{}
+		.type("TagComponent")
+			.data<&TagComponent::Tag>("Tag")
+			.func<&TagComponent::Serialize>("Serialize")
+			.func<&TagComponent::Deserialize>("Deserialize");
+
+		entt::meta_factory<MovementConstraintsComponent>{}
+		.type("MovmentConstraintsComponent")
+			.data<&MovementConstraintsComponent::BConstraintOnGlobalPosition>("BConstraintOnGlobalPosition")
+			.data< &MovementConstraintsComponent::BUseCamFrustum>("BUseCamFrustrum")
+			.data< &MovementConstraintsComponent::MinPosition>("MinPosition")
+			.data< &MovementConstraintsComponent::MaxPosition>("MaxPosition")
+			.data< &MovementConstraintsComponent::CameraID>("CameraID")
+			.data< &MovementConstraintsComponent::FrustumMatrix>("FrustumMatrix")
+			.func< &MovementConstraintsComponent::ConstrainMoveAmount>("ConstrainMoveAmount")
+			.func< &MovementConstraintsComponent::ConstrainOnFrustum>("ConstrainOnFrustum");
+
+		
+
 	}
 
 	void Scene::Initialize()
@@ -44,7 +75,7 @@ namespace Pixie
 		if (spline.PointIDs.empty())
 			return;
 
-		int numPoints = spline.PointIDs.size();
+		int numPoints = (int)spline.PointIDs.size();
 
 		spline.Points.clear();
 		spline.Points.reserve(numPoints);

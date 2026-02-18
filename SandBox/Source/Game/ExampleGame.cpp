@@ -41,7 +41,7 @@ namespace Pixie
 	void ExampleGame::OnBeginPlay(std::shared_ptr<Scene> scene)
 	{
 		m_CurrentScene = scene;
-		OnBeginPlay();
+		m_CurrentScene->BeginPlayMode();
 	}
 
 	void ExampleGame::OnBeginPlay()
@@ -90,7 +90,9 @@ namespace Pixie
 			return false;
 
 		if (currentState->GetType() == PlayingState::Type())
-			m_CurrentScene->BeginPlayMode();
+		{
+			OnBeginPlay(m_CurrentScene);
+		}
 
 		if (currentState->GetType() == EditState::Type())
 			m_CurrentScene->EditMode();

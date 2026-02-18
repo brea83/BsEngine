@@ -30,6 +30,7 @@ namespace Pixie
 
         static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth = 10.0f);
 
+        static bool ItterateThroughComponents(std::shared_ptr<Scene> scene, GameObject& selected);
         static void DrawComponents(std::shared_ptr<Scene> scene, GameObject& selected/*std::unordered_map<size_t, std::shared_ptr<Component>>& componentMap*/);
 
         static void DrawOrthographicCamProps(Camera& camera);

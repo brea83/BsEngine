@@ -362,8 +362,37 @@ namespace Pixie
 		return bValueSubmitted;
 	}
 
+	bool DetailsViewPanel::ItterateThroughComponents(std::shared_ptr<Scene> scene, GameObject& selected)
+	{
+		for (auto&& [id, type] : entt::resolve())
+		{
+			Logger::Core(LOG_INFO, "------------------------------");
+			Logger::Core(LOG_DEBUG, "Found metadata for: {}", type.name());
+
+			for (auto&& [id, metaData] : type.data())
+			{
+				Logger::Core(LOG_DEBUG, "{}: {}", metaData.type().info().name(), metaData.name());
+				auto info = metaData.type().info();
+			}
+
+			for (auto&& [id, func] : type.func())
+			{
+				Logger::Core(LOG_TRACE, "{}: returns : {}", func.name(), func.ret().info().name());
+				Logger::Core(LOG_TRACE, "accepts {} arguments", func.arity());
+
+				for (int i = 0; i < func.arity(); i++)
+				{
+					Logger::Core(LOG_TRACE, "{}", func.arg(i).info().name());
+				}
+			}
+			
+		}
+		return false;
+	}
+
 	void DetailsViewPanel::DrawComponents(std::shared_ptr<Scene> scene, GameObject& selected)
 	{
+		ItterateThroughComponents(scene, selected);
 		entt::registry& registry = scene->GetRegistry();
 		if (selected.HasCompoenent<TransformComponent>())
 		{

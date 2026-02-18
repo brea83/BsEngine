@@ -130,6 +130,8 @@ namespace Pixie
 		bool OnSceneChanged(SceneChangedEvent& event);
 		void InitializeSplineComponent(SplineComponent& spline);
 
+		void InitializeEnttMeta();
+
 		friend class SceneSerializer;
 		friend class Entity;
 	};

@@ -16,6 +16,7 @@
 
 namespace Pixie
 {
+    
     enum class SerializableComponentID
     {
         TagComponent,
@@ -213,7 +214,7 @@ namespace Pixie
 
     private:
         glm::vec3 ConstrainOnFrustum(GameObject& object, glm::vec3 currentWorldPos, glm::vec3& moveAmount);
-
+        friend class Scene;
 
     };
 

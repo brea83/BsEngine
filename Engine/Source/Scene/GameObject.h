@@ -59,7 +59,7 @@ namespace Pixie
 		virtual bool Move(float deltaTime);
 		// basic handling of object movment from the following components MovementComponent, FollowComponent, and Orbit Component
 		// Returns the next desired position as an offset from current position intended to be added.
-		virtual glm::vec3 HandleMovementComponents(float deltaTime);
+		virtual InterpolatedTransform HandleMovementComponents(float deltaTime);
 	private:
 		friend class Scene;
 	};

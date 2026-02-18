@@ -5,6 +5,8 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/norm.hpp>
+#include <glm/gtx/matrix_interpolation.hpp>
+#include <glm/ext/matrix_relational.hpp>
 
 namespace Pixie
 {
@@ -73,6 +75,39 @@ namespace Pixie
 			glm::vec3 lerpE = glm::mix(lerpB, lerpC, input.SegmentT);
 
 			return glm::mix(lerpD, lerpE, input.SegmentT);
+		}
+
+		//does not return scaling of splines only rotation and translation
+		glm::mat4 DeCasteljauTransform(const SplineComponent& spline, float t)
+		{
+			SegmentRelativeT input = GetTSegmentData(t, spline.GetNumSegments());
+
+			//cubic beziers share their last point so each segment sould start on a mult of 3 or on 0
+			int startIndex = input.Segment * 3;
+			if (startIndex + 3 >= spline.Points.size() && !spline.IsLoop)
+			{
+				// time has passed the end of the spline
+				return spline.Points[spline.Points.size() - 1]->GetModelMatrix();
+			}
+
+			if (startIndex < 0 && !spline.IsLoop)
+			{
+				return spline.Points[0]->GetModelMatrix();
+			}
+
+			glm::mat4 pointA = spline.Points[startIndex + 0]->GetUnscaledModelMatrix();
+			glm::mat4 pointB = spline.Points[startIndex + 1]->GetUnscaledModelMatrix(); // controll point
+			glm::mat4 pointC = spline.Points[startIndex + 2]->GetUnscaledModelMatrix(); // controll point
+			glm::mat4 pointD = spline.Points[startIndex + 3]->GetUnscaledModelMatrix();
+				 
+			glm::mat4 lerpA = glm::interpolate(pointA, pointB, input.SegmentT);
+			glm::mat4 lerpB = glm::interpolate(pointB, pointC, input.SegmentT);
+			glm::mat4 lerpC = glm::interpolate(pointC, pointD, input.SegmentT);
+				 
+			glm::mat4 lerpD = glm::interpolate(lerpA, lerpB, input.SegmentT);
+			glm::mat4 lerpE = glm::interpolate(lerpB, lerpC, input.SegmentT);
+
+			return glm::interpolate(lerpD, lerpE, input.SegmentT);
 		}
 	}
 
@@ -342,6 +377,56 @@ namespace Pixie
 		}
 
 		return glm::vec3(-1.0f);
+	}
+
+	bool SplineComponent::IsTAtOrPastEndPoint(float T)
+	{
+		SegmentRelativeT segmentData = Spline::GetTSegmentData(T, GetNumSegments());
+
+		int segmentIndexMult = 1;
+		switch (m_Type)
+		{
+		case Pixie::SplineType::Linear:
+			break;
+		case Pixie::SplineType::CubicBezier:
+			segmentIndexMult = 3;
+		case Pixie::SplineType::Cardinal:
+			break;
+		case Pixie::SplineType::CatmulRom:
+			break;
+		case Pixie::SplineType::B:
+			break;
+		default:
+			break;
+		}
+		int startIndex = segmentData.Segment * segmentIndexMult;
+		return startIndex + segmentIndexMult >= Points.size();
+	}
+
+
+	glm::mat4 SplineComponent::GetTransformAtT(float T)
+	{
+		if (Points.size() <= 0)
+			return glm::mat4(1.0f);
+
+		switch (m_Type)
+		{
+		case Pixie::SplineType::Linear:
+			break;
+			//return Spline::LinearPos(*this, T);
+		case Pixie::SplineType::CubicBezier:
+			return Spline::DeCasteljauTransform(*this, T);
+		case Pixie::SplineType::Cardinal:
+			break;
+		case Pixie::SplineType::CatmulRom:
+			break;
+		case Pixie::SplineType::B:
+			break;
+		default:
+			break;
+		}
+
+		return glm::mat4(1.0f);
 	}
 
 	// currently brute forces it

@@ -64,18 +64,18 @@ namespace Pixie
         //direction.x = cos(m_EulerRotation.x) * sin(m_EulerRotation.y);
         //direction.y = sin(m_EulerRotation.x);
         //direction.z = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
-
-        return -1.0f * glm::normalize(m_LocalMatrix[2]);//glm::normalize(direction);
+        //return glm::normalize(direction);
+        return -1.0f * glm::normalize(m_WorldMatrix[2]);//-1.0f * glm::normalize(m_LocalMatrix[2]);
     }
 
     glm::vec3 TransformComponent::Up() const
     {
-        return glm::normalize(m_LocalMatrix[1]);//glm::normalize(glm::cross(Right(), Forward()));
+        return -1.0f * glm::normalize(m_WorldMatrix[1]);//glm::normalize(m_LocalMatrix[1]);//glm::normalize(glm::cross(Right(), Forward()));
     }
 
     glm::vec3 TransformComponent::Left() const
     {
-        return glm::normalize(m_LocalMatrix[0]);
+        return glm::normalize(m_WorldMatrix[0]);//glm::normalize(m_LocalMatrix[0]);
     }
 
     glm::vec3 TransformComponent::Right() const
@@ -85,7 +85,7 @@ namespace Pixie
         //right.x = sin(m_EulerRotation.y - 3.14f / 2.0f);
         //right.y = 0;
         //right.z = cos(m_EulerRotation.y - 3.14f / 2.0f);
-        return  -1.0f * glm::normalize(m_LocalMatrix[0]);//glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        return -1.0f * glm::normalize(m_WorldMatrix[0]);//-1.0f * glm::normalize(m_LocalMatrix[0]);//glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
     }
 
     glm::vec3 TransformComponent::Down() const
@@ -269,6 +269,35 @@ namespace Pixie
         return conversionMatrix;
     }
 
+    glm::mat4 TransformComponent::GetUnscaledModelMatrix()
+    {
+        if (m_PositionDirty || m_ScaleDirty || m_RotationDirty)
+        {
+            RecalculateModelMatrix();
+        } 
+
+        glm::mat4 unscaled{ 1.0f }; //identity matrix
+        if (m_Scale.x != 1.0f || m_Scale.y != 1.0f || m_Scale.z != 1.0f)
+            unscaled = CalculateUnscaledLocalMatrix();
+        else
+            unscaled = m_LocalMatrix;
+
+        if (m_ParentGuid != 0)
+        {
+            std::shared_ptr<Scene> scene = EngineContext::GetEngine()->GetScene();
+            GameObject parentObject = scene->FindGameObjectByGUID(m_ParentGuid);
+            if (parentObject)
+            {
+                TransformComponent& parentTransform = parentObject.GetTransform();
+                unscaled = parentTransform.GetUnscaledModelMatrix() * unscaled;
+            }
+
+            return unscaled;
+        }
+
+        return unscaled;
+    }
+
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
     {
         // current scene and game object serialization uses WriteRaw for TransformComponent
@@ -281,6 +310,18 @@ namespace Pixie
     bool TransformComponent::Deserialize(StreamReader * stream, TransformComponent & component)
     {
         return false;
+    }
+
+    glm::mat4 TransformComponent::CalculateUnscaledLocalMatrix()
+    {
+        glm::mat4 identity = glm::mat4(1.0f);
+        glm::mat4 translation = glm::translate(identity, m_Position);
+
+        //m_Orientation = glm::normalize(m_Orientation);
+        glm::mat4 rotation = glm::mat4_cast(m_Orientation);
+
+       
+        return translation * rotation * identity;
     }
 
     void TransformComponent::RecalculateModelMatrix()
@@ -307,6 +348,8 @@ namespace Pixie
 
         if (m_ParentGuid != 0)
             m_WorldMatrix = GetModelMatrix();
+        else
+            m_WorldMatrix = m_LocalMatrix;
     }
 
     void TransformComponent::Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation)

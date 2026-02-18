@@ -48,8 +48,10 @@ namespace Pixie
 		Move(deltaTime);
 	}
 
-	glm::vec3 GameObject::HandleMovementComponents(float deltaTime)
+	InterpolatedTransform GameObject::HandleMovementComponents(float deltaTime)
 	{
+		InterpolatedTransform result = InterpolatedTransform();
+
 		FollowComponent* follow = TryGetComponent<FollowComponent>();
 		OrbitComponent* orbit = TryGetComponent<OrbitComponent>();
 		TransformComponent& transform = GetTransform();
@@ -74,10 +76,11 @@ namespace Pixie
 					targetPos = target.GetTransform().GetPosition() + follow->Offset;
 				}
 
-				return targetPos - currentPosition;
+				result.Position = targetPos - currentPosition;
+				return result;
 			}
 			else
-				return glm::vec3(0.0f);
+				return result;
 		}
 
 		MovementComponent& moveComponent = GetComponent<MovementComponent>();
@@ -89,16 +92,19 @@ namespace Pixie
 				Logger::Core(LOG_WARNING, "entity, {}, has an active player input component. using player input component. movement is being generated based on input, if npc movement type components are desired remove or deactivate the input component.", GetName());
 			
 			if (moveComponent.Direction == glm::vec3(0.0f))
-				return moveComponent.Direction;
+				return result;
 
 			glm::vec3 direction = glm::normalize(moveComponent.Direction);
 			float velocity = moveComponent.Speed * deltaTime; // adjust accordingly
 
-			glm::vec3 forward = transform.Forward() * direction.z;
-			glm::vec3 right = transform.Right() * direction.x;
+			// player needs to have movement flipped based on camera orientation
+			TransformComponent& camTransform = m_Scene->GetActiveCameraGameObject().GetTransform();
+			glm::vec3 right = camTransform.Left() * direction.x;
 			glm::vec3 up = transform.Up() * direction.y;
+			glm::vec3 forward = glm::cross(camTransform.Left(), transform.Up()) * direction.z;
 
-			return  (velocity * (forward + right + up));
+			result.Position = (velocity * (forward + right + up));
+			return result;
 		}
 		 else if (follow && orbit)
 		{
@@ -110,7 +116,9 @@ namespace Pixie
 			glm::vec3 newPosition = targetPos;
 			newPosition.x += orbit->Radius * glm::cos(orbit->AccumulatedAngle);
 			newPosition.y += orbit->Radius * glm::sin(orbit->AccumulatedAngle);
-			return newPosition - currentPosition;
+
+			result.Position = newPosition - currentPosition;
+			return result;
 		}
 		else if (orbit)
 		{
@@ -118,11 +126,13 @@ namespace Pixie
 			glm::vec3 newPosition = orbit->Origin;
 			newPosition.x += orbit->Radius * glm::cos(orbit->AccumulatedAngle);
 			newPosition.y += orbit->Radius * glm::sin(orbit->AccumulatedAngle);
-			return newPosition - currentPosition;
+			
+			result.Position = newPosition - currentPosition;
+			return result;
 		}
 		else if (follow)
 		{
-			return follow->HandleFollowing(deltaTime, m_Scene, moveComponent, currentPosition);
+			return follow->AltFollowing(deltaTime, m_Scene, moveComponent, currentPosition);
 			/*GameObject target = m_Scene->FindGameObjectByGUID(follow->EntityToFollow);
 			if (!target)
 				return glm::vec3(0.0f);
@@ -144,13 +154,13 @@ namespace Pixie
 			}*/
 
 		}
-		return glm::vec3(0.0f);
+		return result;
 	}
 
 	bool GameObject::Move(float deltaTime)
 	{
-		glm::vec3 movement = HandleMovementComponents(deltaTime);
-		if (movement == glm::vec3(0.0f))
+		InterpolatedTransform movement = HandleMovementComponents(deltaTime);
+		if (movement.Position == glm::vec3(0.0f) && movement.Orientation == glm::quat(0.0f, 0.0f, 0.0f, 1.0f))
 		{
 			return false;
 		}
@@ -160,11 +170,13 @@ namespace Pixie
 		if (HasCompoenent<MovementConstraintsComponent>())
 		{
 			MovementConstraintsComponent& constraints = GetComponent<MovementConstraintsComponent>();
-			movement = constraints.ConstrainMoveAmount(*this, transform, movement);
+			movement.Position = constraints.ConstrainMoveAmount(*this, transform, movement.Position);
 		}
 
-		glm::vec3 newPosition = transform.GetPosition() + movement;
+		glm::vec3 newPosition = transform.GetPosition() + movement.Position;
 		transform.SetPosition(newPosition);
+
+		transform.SetRotationQuaternion(movement.Orientation, AngleType::Radians);
 		return true;
 	}
 

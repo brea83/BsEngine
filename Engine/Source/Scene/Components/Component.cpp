@@ -3,6 +3,8 @@
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext/matrix_relational.hpp>
 
 
 //Component::Component(/*GameObject* parent, const std::string& name*/)
@@ -121,6 +123,105 @@ namespace Pixie
         }
         }
         return glm::vec3(0.0f);
+    }
+
+    InterpolatedTransform FollowComponent::AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition)
+    {
+        InterpolatedTransform result = InterpolatedTransform();
+
+        GameObject target = scene->FindGameObjectByGUID(EntityToFollow);
+        if (!target)
+            return result;
+
+        if (target.HasCompoenent<SplineComponent>() && FollowSplineIfAvailable)
+        {
+            SplineComponent& spline = target.GetComponent<SplineComponent>();
+            return AltSplineFollowing(deltaTime, spline, moveComponent, currentPosition);
+        }
+        else
+        {
+            glm::vec3 targetPos = target.GetTransform().GetPosition() + Offset;
+            //float distance = glm::distance(targetPos, currentPosition);
+
+            glm::vec3 vecToTarget = targetPos - currentPosition;
+            float distance = glm::length(vecToTarget);
+            if (distance <= MinDistFromTarget)
+            {
+                return result;
+            }
+            if (distance <= FollowThreshold && distance >= -FollowThreshold)
+            {
+                result.Position = glm::mix(glm::vec3(0.0f), vecToTarget, deltaTime * moveComponent.Speed);
+                return result;
+            }
+            moveComponent.Direction = glm::normalize(targetPos - currentPosition);
+            result.Position = moveComponent.Speed * deltaTime * moveComponent.Direction;
+            return result;
+        }
+    }
+
+    InterpolatedTransform FollowComponent::AltSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition)
+    {
+        InterpolatedTransform result = InterpolatedTransform();
+
+        if (FollowDirection == 0)
+            return result;
+
+        bool bStartIsEnd = FollowType == SplineEndBehavior::PingPong && FollowDirection < 0;
+        
+        bool bEndPointReached = false; 
+        if (bStartIsEnd)
+            bEndPointReached = AccumulatedTime <= 0.0f;
+        else
+            bEndPointReached = spline.IsTAtOrPastEndPoint(AccumulatedTime);
+
+        // accumulate time for next loop 
+        AccumulatedTime += deltaTime * moveComponent.Speed * FollowDirection;
+
+        if (!bEndPointReached)
+        {
+            glm::mat4 splineAtT = spline.GetTransformAtT(AccumulatedTime);
+
+            glm::vec3 scale;
+            //glm::quat orientation;
+            //glm::vec3 translation;
+            TransformComponent::Decompose(splineAtT, scale, result.Orientation, result.Position);
+
+           // result.Orientation = orientation;
+           // result.Position = translation + Offset;
+            result.Position = result.Position + Offset - currentPosition;
+            return result;
+        }
+
+        switch (FollowType)
+        {
+        case Pixie::SplineEndBehavior::Stop:
+        {
+            FollowDirection = 0;
+            AccumulatedTime = 0.0f;
+            break;
+        }
+        case Pixie::SplineEndBehavior::PingPong:
+        {
+            FollowDirection *= -1;
+            //AccumulatedTime = 0.0f;
+            break;
+        }
+        case Pixie::SplineEndBehavior::TeleportToStart:
+        {
+            FollowDirection = 1;
+            AccumulatedTime = 0.0f;
+            break;
+        }
+        default:
+        {
+            FollowDirection = 0;
+            AccumulatedTime = 0.0f;
+            break;
+        }
+        }
+
+        return result;
     }
 
     void FollowComponent::on_construct(entt::registry& registry, const entt::entity entt)

@@ -250,6 +250,12 @@ namespace Pixie
     };
 
     class Scene;
+    struct InterpolatedTransform
+    {
+        glm::vec3 Position{ 0.0f };
+        glm::quat Orientation{ 0.0f, 0.0f, 0.0f, 1.0f };
+        glm::vec3 EulerAngles{ 0.0f };
+    };
     struct FollowComponent
     {
         FollowComponent() = default;
@@ -267,6 +273,9 @@ namespace Pixie
 
         glm::vec3 HandleFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition);
         glm::vec3 HandleSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition);
+        
+        InterpolatedTransform AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition);
+        InterpolatedTransform AltSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition);
 
         static const char* TypeNames[(unsigned long long)SplineEndBehavior::END];
 

@@ -127,7 +127,7 @@ namespace Pixie
 
 			glm::vec3 forward = transform.Forward() * m_TranslationDirection.z;
 			glm::vec3 right = transform.Right() * m_TranslationDirection.x;
-			glm::vec3 up = transform.Up() * m_TranslationDirection.y;
+			glm::vec3 up = transform.Down() * m_TranslationDirection.y;
 
 			glm::vec3 currentPosition = transform.GetPosition();
 

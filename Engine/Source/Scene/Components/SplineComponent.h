@@ -51,6 +51,10 @@ namespace Pixie
         glm::vec3 GetTangent(float T);
         int GetNumSegments() const;
         glm::vec3 GetPostionT(float T);
+        bool IsTAtOrPastEndPoint(float T);
+
+        //returns identiy matrix if no points or interpolation possible
+        glm::mat4 GetTransformAtT(float T);
 
         //returns worldspace position closest to input worldSpacePos 
         glm::vec3 GetClosestPosition(glm::vec3 worldSpacePos, float granularity = 0.2f);
@@ -99,6 +103,7 @@ namespace Pixie
         // interpolate position along spline at time t
         static glm::vec3 DeCasteljauPos(const SplineComponent& spline, float t);
 
+        static glm::mat4 DeCasteljauTransform(const SplineComponent& spline, float t);
     }
 
 }

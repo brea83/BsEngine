@@ -68,6 +68,7 @@ namespace Pixie
 		// methods
 		glm::mat4& GetModelMatrix();
 		glm::mat4 GetLocalToWorldMatrix();
+		glm::mat4 GetUnscaledModelMatrix();
 
 		glm::mat4 GetLocal() const { return m_LocalMatrix; }
 		glm::mat4 GetWorld() const { return m_WorldMatrix; }
@@ -107,6 +108,7 @@ namespace Pixie
 		glm::vec3 m_Scale { 1.0f };
 		bool m_ScaleDirty { false };
 		
+		glm::mat4 CalculateUnscaledLocalMatrix();
 		void RecalculateModelMatrix();
 		glm::mat4 m_LocalMatrix{ 1.0f };
 

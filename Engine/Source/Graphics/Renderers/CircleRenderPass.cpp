@@ -163,15 +163,15 @@ namespace Pixie
             //draw path indicators
 
             m_Shader->SetUniformFloat("LineWidth", 0.5f);
-            float t = 0;
+            float t = 0.0f;
             int numSegments = spline.GetNumSegments();
             if (numSegments <= 0)
                 return;
 
             while (t < spline.GetNumSegments() )
             {
-                t += 0.1;
-                if (glm::mod<float>(t, 1) == 0)
+                t += 0.1f;
+                if (glm::mod<float>(t, 1.0f) == 0.0f)
                 {
                     continue;
                 }

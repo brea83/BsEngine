@@ -149,26 +149,29 @@ namespace Pixie
 		std::vector<KDNode*> KDTreeVec3::FindNodesInRange(glm::vec3 value, float fRange)
 		{
 			std::vector<KDNode*> nodesInRange;
-			FindNodesInRange(Root, value, fRange, 0, nodesInRange);
+			FindNodesInRange(Root, value, fRange * fRange, 0, nodesInRange);
 			return nodesInRange;
 		}
 
-		void KDTreeVec3::FindNodesInRange(KDNode* node, glm::vec3 value, float fRange, uint32_t iDimension, std::vector<KDNode*>& nodesInRange)
+		void KDTreeVec3::FindNodesInRange(KDNode* node, glm::vec3 value, float squaredRange, uint32_t iDimension, std::vector<KDNode*>& nodesInRange)
 		{
 			if (node == nullptr) return;
 
 			float squaredDistance = glm::distance2(value, node->Value);
-
-			if (squaredDistance <= fRange * fRange)
-			{
-				nodesInRange.push_back(node);
-			}
-
-			//begin search of children
 			KDSearchData data = GetNextSearchData(value, node, iDimension);
 
-			// search next branch
-			FindNodesInRange(data.NextBranch, value, fRange, data.NextDimension, nodesInRange);
+			if (squaredDistance <= squaredRange)//fRange * fRange)
+			{
+				nodesInRange.push_back(node);
+				// if node is in range check both its children
+				FindNodesInRange(data.NextBranch, value, squaredRange, data.NextDimension, nodesInRange);
+				FindNodesInRange(data.OtherBranch, value, squaredRange, data.NextDimension, nodesInRange);
+			}
+			else
+			{
+				//it didn't intersect so try the branch that should be closest
+				FindNodesInRange(data.NextBranch, value, squaredRange, data.NextDimension, nodesInRange);
+			}
 		}
 	}
 }

@@ -392,7 +392,7 @@ namespace Pixie
 
 	void DetailsViewPanel::DrawComponents(std::shared_ptr<Scene> scene, GameObject& selected)
 	{
-		ItterateThroughComponents(scene, selected);
+		//ItterateThroughComponents(scene, selected);
 		entt::registry& registry = scene->GetRegistry();
 		if (selected.HasCompoenent<TransformComponent>())
 		{

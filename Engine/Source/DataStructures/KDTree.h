@@ -61,7 +61,7 @@ namespace Pixie
 			KDNode* GetClosest(glm::vec3& value, KDNode* A, KDNode* B);
 
 			std::vector<KDNode*> FindNodesInRange(glm::vec3 value, float fRange);
-			void FindNodesInRange(KDNode* node, glm::vec3 value, float fRange, uint32_t iDimension, std::vector<KDNode*>& nodesInRange);
+			void FindNodesInRange(KDNode* node, glm::vec3 value, float squaredRange, uint32_t iDimension, std::vector<KDNode*>& nodesInRange);
 
 		};
 

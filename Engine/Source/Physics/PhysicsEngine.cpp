@@ -120,10 +120,14 @@ namespace Pixie
 				if (lastFrameCollisions.empty() || std::find(lastFrameCollisions.begin(), lastFrameCollisions.end(), pair) == lastFrameCollisions.end())
 				{
 					m_NewCollisions.push_back(pair);
+					colliders.first->Colliding = true;
+					colliders.second->Colliding = true;
 					Logger::Core(LOG_DEBUG, "New Collision found");
 				}
 				else
 				{
+					colliders.first->Colliding = true;
+					colliders.second->Colliding = true;
 					m_OngoingCollisions.push_back(pair);
 					//Logger::Core(LOG_DEBUG, "ongoing Collision found");
 				}
@@ -203,8 +207,8 @@ namespace Pixie
 					// is the square distance between A and B < r squared? if so they intersect
 					if (glm::distance2(positionA, positionB) < r * r)
 					{
-						sphereA->Colliding = true;
-						sphereB->Colliding = true;
+						/*sphereA->Colliding = true;
+						sphereB->Colliding = true;*/
 						return true;
 					}
 				}

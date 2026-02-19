@@ -1,6 +1,8 @@
 #include "BsPrecompileHeader.h"
 #include "WireframePass.h"
 #include "Graphics/Primitives/Cube.h"
+#include "Scene/Components/Collider.h"
+#include "Core.h"
 
 namespace Pixie
 {
@@ -8,14 +10,15 @@ namespace Pixie
 	{
 		// set up shader
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/WireframeVertex.glsl", "../Assets/Shaders/WireframeFrag.glsl");
-		m_CubePrimitive = std::make_shared<Cube>(true);//AssetLoader::LoadPrimitive(PrimitiveMeshType::Cube);
+		m_CubeNDC = std::make_shared<Cube>(true);
+		m_UnitCube = AssetLoader::LoadPrimitive(PrimitiveMeshType::Cube);
 
-		for (Mesh::Vertex& vertex : m_CubePrimitive->m_Vertices)
+		for (Mesh::Vertex& vertex : m_CubeNDC->m_Vertices)
 		{
 			vertex.Position *= 2.0f;
 			vertex.Color = glm::vec3(1.0f);
 		}
-		m_CubePrimitive->Init();
+		m_CubeNDC->Init();
 		//m_SpherePrimitive = AssetLoader::LoadPrimitive(PrimitiveMeshType::Sphere);
 
 	}
@@ -31,11 +34,19 @@ namespace Pixie
 		// get scene registry for lighting and renderables
 		entt::registry& registry = sceneToRender->GetRegistry();
 
+		DrawFrustums(registry);
+		DrawCubeColliders(registry);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		m_Shader->EndUse();
+	}
+
+	void WireframePass::DrawFrustums(entt::registry& registry)
+	{
 		auto group = registry.group<CameraComponent>(entt::get<TransformComponent>);
 
 		m_Shader->SetUniformBool("BIsDrawingFrustum", true);
-		glm::vec4 frustumColor = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
-		m_Shader->SetUniformVec4("BaseColor", frustumColor);
+		m_Shader->SetUniformVec4("BaseColor", m_FrustumColor);
 
 
 		for (auto entity : group)
@@ -48,19 +59,37 @@ namespace Pixie
 			glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
 			m_Shader->SetUniformMat4("Transform", frustMatrix);
 
-			std::vector<glm::vec4> tempVerts;
-			for (Mesh::Vertex& vertex : m_CubePrimitive->m_Vertices)
-			{
-				glm::vec4 newVert = glm::vec4(vertex.Position, 1.0f);
-				newVert = frustMatrix * newVert;
-				newVert = newVert / newVert.w;
-				tempVerts.push_back(newVert);
-			}
-			m_CubePrimitive->Render(*m_Shader);
+			m_CubeNDC->Render(*m_Shader);
 		}
+	}
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		m_Shader->EndUse();
+	void WireframePass::DrawCubeColliders(entt::registry& registry)
+	{
+		auto view = registry.view<CubeCollider>();
+		if (view.empty()) return;
+
+		glm::vec4 baseColor = PIXIE_COLOR_COLLIDER;
+		glm::vec4 collidingColor = PIXIE_COLOR_COLLIDER_HIT;
+		m_Shader->SetUniformBool("BIsDrawingFrustum", false);
+		m_Shader->SetUniformVec4("BaseColor", baseColor);
+
+		bool previousColliderWasColliding = false;
+		for (auto&& [entity, collider, transform] : registry.view<CubeCollider, TransformComponent>().each())
+		{
+			m_Shader->SetUniformMat4("Transform", transform.GetModelMatrix());
+			if (collider.Colliding && !previousColliderWasColliding)
+			{
+				m_Shader->SetUniformVec4("BaseColor", collidingColor);
+				previousColliderWasColliding = true;
+			}
+			else if (!collider.Colliding && previousColliderWasColliding)
+			{
+				m_Shader->SetUniformVec4("BaseColor", baseColor);
+				previousColliderWasColliding = false;
+			}
+
+			m_UnitCube->Render(*m_Shader);
+		}
 	}
 	
 }

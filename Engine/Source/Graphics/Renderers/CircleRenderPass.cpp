@@ -1,5 +1,6 @@
 #include "BsPrecompileHeader.h"
 #include "CircleRenderPass.h"
+#include "Core.h"   
 #include "Graphics/Primitives/CircleMesh.h"
 #include "Scene/Components/Collider.h"
 #include "Scene/GameObject.h"
@@ -77,8 +78,8 @@ namespace Pixie
         if (view.empty()) return;
 
         CircleRendererComponent colliderCircle = CircleRendererComponent();
-        glm::vec4 baseColor = glm::vec4(0.1f, 0.9f, 0.1f, 1.0f);
-        glm::vec4 collidingColor = glm::vec4(1.0f, 0.5f, 0.5f, 1.0f);
+        glm::vec4 baseColor = PIXIE_COLOR_COLLIDER;
+        glm::vec4 collidingColor = PIXIE_COLOR_COLLIDER_HIT;
         colliderCircle.Color = baseColor;
         glm::mat4 rotationXY = glm::mat4(1.0f);
         glm::mat4 rotationXZ = glm::rotate(rotationXY, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));

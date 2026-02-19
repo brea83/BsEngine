@@ -359,7 +359,7 @@ namespace Pixie
 				auto resourcePtr = std::dynamic_pointer_cast<Mesh>(s_Resources.at("PrimitiveMesh_Cube"));
 				if (resourcePtr) return resourcePtr;
 			}
-			std::shared_ptr<Mesh> mesh = LoadMesh("../Assets/Meshes/Cube.obj");//std::make_shared<Cube>();
+			std::shared_ptr<Mesh> mesh = LoadMesh("../Assets/Meshes/Cube.obj");
 				
 			s_Resources.emplace("PrimitiveMesh_Cube", mesh);
 			return mesh;
@@ -549,6 +549,7 @@ namespace Pixie
 						Mesh::Vertex vertex;
 
 						vertex.Position = positions[point[j]->Position];
+						vertex.Color = glm::vec3(1.0f);
 						vertex.Normal = (point[j]->Normal != 0 && normals.size() > 0) ? normals[point[j]->Normal] : faceNormal;
 						if (uvs.size() > 0) vertex.UV1 = uvs[point[j]->Uv];
 

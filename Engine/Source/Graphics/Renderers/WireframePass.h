@@ -26,7 +26,14 @@ namespace Pixie
 	private:
 		std::shared_ptr<Shader> m_Shader{nullptr};
 		MaterialInstance m_FallbackMaterial{};
-		std::shared_ptr<Mesh> m_CubePrimitive{ nullptr };
+		std::shared_ptr<Mesh> m_CubeNDC{ nullptr };
+		std::shared_ptr<Mesh> m_UnitCube{ nullptr };
+
+		glm::vec4 m_FrustumColor{ 0.5f, 0.5f, 1.0f, 1.0f };
+		
 		//std::shared_ptr<Mesh> m_SpherePrimitive{ nullptr };
+
+		void DrawFrustums(entt::registry& registry);
+		void DrawCubeColliders(entt::registry& registry);
 	};
 }

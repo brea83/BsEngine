@@ -10,7 +10,7 @@ namespace Pixie
 	{
 		None = 0,
 		WindowClosed, WindowResized, WindowLostFocus, WindowGainedFocus, WindowMoved,
-		SceneChanged,
+		SceneChanged, RequestGameStateChange, GameStateEntered, GameStateExited,
 		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};

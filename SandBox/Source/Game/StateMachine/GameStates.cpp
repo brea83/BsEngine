@@ -13,8 +13,11 @@ namespace Pixie
 	{
 		std::shared_ptr<Scene> scene = EngineContext::GetEngine()->GetScene();
 
-		if (scene == nullptr) return;
-			scene->Pause();
+		if (scene == nullptr) 
+			return;
+		
+		scene->Pause();
+		m_PauseMenu.SetCurrentScene(scene);
 		
 	}
 
@@ -24,6 +27,9 @@ namespace Pixie
 	void PauseState::UpdateState(float deltaTime)
 	{
 		//ToDo might want to add an updates on pause component
+		// TODO DRAWING THE PAUSE MENU NEEDS TO HAPPEN IN THE IMGUI RENDER PHASE NOT THE UPDATE PHASE
+		// SO THIS NEEDS TO BE MOVED
+		//m_PauseMenu.Draw();
 	}
 
 	//==========================

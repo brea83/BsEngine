@@ -1,5 +1,6 @@
 #pragma once
 #include "Source/GameState.h"
+#include "../UI/PauseMenu.h"
 
 namespace Pixie
 {
@@ -17,6 +18,7 @@ namespace Pixie
 
 	private:
 		static const std::string m_Type;
+		PauseMenu m_PauseMenu;
 	};
 	
 	class PlayingState : public GameState

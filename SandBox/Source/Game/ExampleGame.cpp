@@ -103,6 +103,19 @@ namespace Pixie
 		return false;
 	}
 
+	bool ExampleGame::OnGameStateRequest(GameStateChangeRequestEvent& event)
+	{
+		//Todo some kind of state change requestor validation
+		if (event.GetState() == PlayingState::Type())
+			UnPause();
+		else if (event.GetState() == PauseState::Type())
+			Pause();
+		else
+			SetState(event.GetState());
+
+		return true;
+	}
+
 	void ExampleGame::Pause()
 	{
 		m_GameStateMachine.SwitchState(PauseState::Type());

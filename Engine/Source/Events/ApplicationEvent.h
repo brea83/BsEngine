@@ -56,4 +56,67 @@ namespace Pixie
 		std::shared_ptr<Scene> m_NewScene;
 		bool m_BIsPlaymodeSwap{ false };
 	};
+
+	class GameStateEvent : public Event
+	{
+	public:
+		GameStateEvent() = default;
+		EVENT_CLASS_CATEGORY(EventCategoryApplication)
+	};
+
+	class GameStateChangeRequestEvent : public GameStateEvent
+	{
+	public:
+		GameStateChangeRequestEvent(const std::string_view newState, std::string requestingSource)
+			: m_State(newState) { }
+
+		const std::string_view GetState() const { return m_State; }
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Event: Request Game State Change sent by: " << m_Source << ". Desired new state: " << m_State << ")";
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(RequestGameStateChange)
+	protected:
+		const std::string_view m_State;
+		std::string m_Source; // this is mostly for debug should be able to remove this later
+	};
+
+
+
+	class GameStateEnteredEvent : public GameStateEvent
+	{
+	public:
+		GameStateEnteredEvent(const std::string_view oldState, const std::string_view newState)
+			: m_OldState(oldState), m_NewState(newState)
+		{}
+
+		const std::string_view EnteredState() const { return m_NewState; }
+		const std::string_view PreviousState() const { return m_OldState; }
+
+		EVENT_CLASS_TYPE(GameStateEntered)
+	protected:
+		const std::string_view m_NewState;
+		const std::string_view m_OldState;
+	};
+
+	class GameStateExitedEvent : public GameStateEvent
+	{
+	public:
+		GameStateExitedEvent(const std::string_view oldState, const std::string_view newState)
+			: m_OldState(oldState), m_NewState(newState)
+		{}
+
+		const std::string_view NextState() const { return m_NewState; }
+		const std::string_view ExitingState() const { return m_OldState; }
+
+		EVENT_CLASS_TYPE(GameStateExited)
+	protected:
+		const std::string_view m_NewState;
+		const std::string_view m_OldState;
+	};
+
 }

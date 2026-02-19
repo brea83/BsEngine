@@ -26,5 +26,6 @@ namespace Pixie
 	private:
 		PlayerInputSystem* m_InputSystem{ nullptr };
 		bool OnSceneChangedEvent(SceneChangedEvent& event);
+		bool OnGameStateRequest(GameStateChangeRequestEvent& event);
 	};
 }

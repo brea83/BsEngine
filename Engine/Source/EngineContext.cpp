@@ -216,6 +216,21 @@ namespace Pixie
 		{
 			EnqueEvent<MouseMovedEvent>(static_cast<MouseMovedEvent&>(event));
 		}
+
+		if (event.GetEventType() == GameStateChangeRequestEvent::GetStaticType())
+		{
+			EnqueEvent<GameStateChangeRequestEvent>(static_cast<GameStateChangeRequestEvent&>(event));
+		}
+
+		if (event.GetEventType() == GameStateEnteredEvent::GetStaticType())
+		{
+			EnqueEvent<GameStateEnteredEvent>(static_cast<GameStateEnteredEvent&>(event));
+		}
+
+		if (event.GetEventType() == GameStateExitedEvent::GetStaticType())
+		{
+			EnqueEvent<GameStateExitedEvent>(static_cast<GameStateExitedEvent&>(event));
+		}
 	}
 
 	void EngineContext::DispatchEvents()

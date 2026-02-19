@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\UI\PauseMenu.cpp" />
     <ClCompile Include="Source\Game\ExampleGame.cpp" />
     <ClCompile Include="Source\Game\StateMachine\GameStates.cpp" />
     <ClCompile Include="Source\Editor\Panels\RenderInspectorPanel.cpp" />
@@ -107,6 +108,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\UI\PauseMenu.h" />
     <ClInclude Include="Source\Game\ExampleGame.h" />
     <ClInclude Include="Source\Game\Player.h" />
     <ClInclude Include="Source\Game\SplineBehavior\SplineFollower.h" />

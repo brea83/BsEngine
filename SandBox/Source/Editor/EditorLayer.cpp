@@ -19,6 +19,7 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "Panels/DetailsViewPanel.h"
 #include "Panels/RenderInspectorPanel.h"
+#include "Panels/GameDetailsEditor.h"
 
 #include "ImGui/imgui_sink.h"
 
@@ -318,6 +319,9 @@ namespace Pixie
 
 		if (m_ShowRenderInspector) m_RenderInspecorPanel->Draw();
 
+		if(m_DrawGameDetailEditor)
+			GameDetailsEditor::Draw(m_Game, &m_DrawGameDetailEditor);
+
 		m_Game->OnImGuiRender();
 	}
 
@@ -395,12 +399,17 @@ namespace Pixie
 
 			if (ImGui::BeginMenu("Windows"))
 			{
-				if (ImGui::MenuItem("Show ImGui Metrics")) ImGui::ShowMetricsWindow();
+				if (ImGui::MenuItem("Game Details Editor..."))
+				{
+					m_DrawGameDetailEditor = true;
+				}
 
-				if (ImGui::MenuItem("Show Render Inspector") )
+				if (ImGui::MenuItem("Frame Buffer Inspector...") )
 				{
 					m_ShowRenderInspector = true;
 				}
+
+				if (ImGui::MenuItem("ImGui Metrics...")) ImGui::ShowMetricsWindow();
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();

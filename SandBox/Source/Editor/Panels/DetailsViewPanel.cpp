@@ -34,7 +34,7 @@ namespace Pixie
 			static std::string editingName = nameComp.Name;
 
 
-			DrawStringProperty("Name", nameComp.Name, editingName);
+			ImGuiPanel::DrawStringProperty("Name", nameComp.Name, editingName);
 
 			if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
 			{
@@ -117,8 +117,8 @@ namespace Pixie
 			std::string enttID = std::to_string((uint32_t)selected->GetEnttHandle());
 
 			ImGui::BeginDisabled();
-			DrawStringProperty("Player GUID", guid, guid);
-			DrawStringProperty("Player Entt ID", enttID, enttID);
+			ImGuiPanel::DrawStringProperty("Player GUID", guid, guid);
+			ImGuiPanel::DrawStringProperty("Player Entt ID", enttID, enttID);
 			ImGui::EndDisabled();
 
 			ImGui::SeparatorText("Componenets");
@@ -127,239 +127,6 @@ namespace Pixie
 		}
 		ImGui::End();
 		return true;
-	}
-
-
-	bool DetailsViewPanel::DrawVec3Control(const std::string& label, glm::vec3& values, SliderParams params, float columnWidth)
-	{
-		bool bValueChanged = false;
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
-		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-			ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/);
-			ImGui::TableNextRow();
-			// the label
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text(label.c_str());
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);// fontSize * 4.0f);
-
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.25f, 0.25f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.0f, 0.2f, 0.2f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
-			if (ImGui::Button("X"))
-			{
-				values.x = params.ResetValue;
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatX", &values.x, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine();
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.3f, 0.55f, 0.3f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.9f, 0.2f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.6f, 0.05f, 1.0f });
-			if (ImGui::Button("Y"))
-			{
-				values.y = params.ResetValue;
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatY", &values.y, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine();
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.25f, 0.25f, 0.7f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.2f, 1.0f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.0f, 0.6f, 1.0f });
-			if (ImGui::Button("Z"))
-			{
-				values.z = params.ResetValue;
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatZ", &values.z, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			ImGui::PopItemWidth();
-
-			ImGui::EndTable();
-		}
-
-		return bValueChanged;
-	}
-
-	bool DetailsViewPanel::DrawVec2Control(const std::string& label, glm::vec2& values, SliderParams params, float columnWidth)
-	{
-		bool bValueChanged = false;
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
-		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, columnWidth);
-			ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/);
-			ImGui::TableNextRow();
-			// the label
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text(label.c_str());
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);// fontSize * 4.0f);
-
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.25f, 0.25f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.0f, 0.2f, 0.2f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
-			if (ImGui::Button("X"))
-			{
-				values.x = params.ResetValue;
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatX", &values.x, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine();
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.3f, 0.55f, 0.3f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.9f, 0.2f, 1.0f });
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.0f, 0.6f, 0.05f, 1.0f });
-			if (ImGui::Button("Y"))
-			{
-				values.y = params.ResetValue;
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::DragFloat("##floatY", &values.y, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::PopStyleColor(3);
-			ImGui::PopStyleVar();
-
-			ImGui::PopItemWidth();
-
-			ImGui::EndTable();
-		}
-
-		return bValueChanged;
-	}
-
-	bool DetailsViewPanel::DrawFloatControl(const std::string& label, float& value, SliderParams params, float columnWidth)
-	{
-		bool bValueChanged = false;
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
-		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-			ImGui::TableSetupColumn("Values"/*, ImGuiTableColumnFlags_WidthFixed,*/);
-			ImGui::TableNextRow();
-			// the label
-			ImGui::TableSetColumnIndex(0);
-			ImGui::Text(label.c_str());
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.25f);
-
-			ImGui::PushStyleVarX(ImGuiStyleVar_ItemSpacing, 0.0f);
-			if (ImGui::DragFloat("##float", &value, params.Speed, params.Min, params.Max, params.Format.c_str(), params.Flags))
-			{
-				bValueChanged = true;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Reset"))
-			{
-				value = params.ResetValue;
-				bValueChanged = true;
-			}
-
-			ImGui::PopStyleVar();
-
-			
-			ImGui::PopItemWidth();
-
-			ImGui::EndTable();
-		}
-
-		return bValueChanged;
-	}
-
-
-	bool DetailsViewPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth)
-	{
-		bool bValueSubmitted = false;
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
-		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-			ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
-
-			ImGui::TableNextRow();
-			// the label
-			ImGui::TableSetColumnIndex(0);
-			ImGui::PushItemWidth(fontSize * columnWidth);
-			ImGui::Text(label.c_str());
-			ImGui::PopItemWidth();
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-			//ImGui::PushItemWidth(fontSize * value.size());
-			// do stuff
-
-			ImGui::InputTextWithHint("##EditableString", value.c_str(), &editingValue);
-			if (ImGui::IsItemDeactivatedAfterEdit())
-			{
-				Logger::Core(LOG_DEBUG, "DetailsViewPanel::DrawSTringProperty() pressed enter on text input");
-				if (value != editingValue)
-				{
-					if (editingValue != "" && editingValue != " ")
-					{
-						value = editingValue;
-						bValueSubmitted = true;
-					}
-				}
-
-			}
-
-			if (!ImGui::IsItemActivated())
-			{
-				editingValue = value;
-			}
-
-			//ImGui::PopItemWidth();
-
-			ImGui::EndTable();
-		}
-
-		return bValueSubmitted;
 	}
 
 	bool DetailsViewPanel::ItterateThroughComponents(std::shared_ptr<Scene> scene, GameObject& selected)
@@ -400,22 +167,22 @@ namespace Pixie
 
 			TransformComponent& transform = selected.GetTransform();
 			
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.Speed = 0.01f;
-			if (DrawVec3Control("Position", transform.m_Position, params))
+			if (ImGuiPanel::DrawVec3Control("Position", transform.m_Position, params))
 			{
 				transform.m_PositionDirty = true;
 			}
 
 			//translate rotation from radians to degrees
 			glm::vec3 eulerDegrees = transform.GetRotationEuler();
-			if (DrawVec3Control("Rotation", eulerDegrees, params))
+			if (ImGuiPanel::DrawVec3Control("Rotation", eulerDegrees, params))
 			{
 				transform.SetRotationEuler(eulerDegrees);
 			}
 
 			params.ResetValue = 1.0f;
-			if (DrawVec3Control("Scale", transform.m_Scale, params))
+			if (ImGuiPanel::DrawVec3Control("Scale", transform.m_Scale, params))
 			{
 				transform.m_ScaleDirty = true;
 			}
@@ -458,12 +225,12 @@ namespace Pixie
 
 			float previewTime = component.PreviewTime;
 			float maxTime = component.GetNumSegments() + 1.0f;
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.Min = 0.0f;
 			params.Max = maxTime;
 			params.Speed = 0.01f;
 
-			DrawFloatControl("Preview T", component.PreviewTime, params);
+			ImGuiPanel::DrawFloatControl("Preview T", component.PreviewTime, params);
 
 			ImGui::Text("Debug Color");
 			ImGui::SameLine();
@@ -512,8 +279,8 @@ namespace Pixie
 			std::string enttID = std::to_string((uint32_t)component.PlayerEnttID);
 
 			ImGui::BeginDisabled();
-			DrawStringProperty("Player GUID", guid, guid);
-			DrawStringProperty("Player Entt ID", enttID, enttID);
+			ImGuiPanel::DrawStringProperty("Player GUID", guid, guid);
+			ImGuiPanel::DrawStringProperty("Player Entt ID", enttID, enttID);
 			ImGui::EndDisabled();
 
 			ImGui::PopID();
@@ -543,15 +310,15 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.ResetValue = 1.0f;
 			params.Speed = 0.01f;
 
-			DrawFloatControl("Speed", component.Speed, params);
+			ImGuiPanel::DrawFloatControl("Speed", component.Speed, params);
 
 			ImGui::BeginDisabled();
 			glm::vec3 direction = component.Direction;
-			DrawVec3Control("Direction", direction, params);
+			ImGuiPanel::DrawVec3Control("Direction", direction, params);
 			ImGui::EndDisabled();
 
 			ImGui::PopID();
@@ -600,13 +367,13 @@ namespace Pixie
 				}
 			}
 
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.ResetValue = 1.0f;
 			params.Speed = 0.01f;
 			if (!component.BUseCamFrustum)
 			{
-				DrawVec3Control("Minimum Position", component.MinPosition, params);
-				DrawVec3Control("Maximum Position", component.MaxPosition, params);
+				ImGuiPanel::DrawVec3Control("Minimum Position", component.MinPosition, params);
+				ImGuiPanel::DrawVec3Control("Maximum Position", component.MaxPosition, params);
 			}			
 			else
 			{
@@ -620,7 +387,7 @@ namespace Pixie
 				std::string targetString = target ? target.GetName() : " ";
 				ImGui::SeparatorText("Camera to use");
 				ImGui::BeginDisabled();
-				DrawStringProperty("##Target", targetString, targetString);
+				ImGuiPanel::DrawStringProperty("##Target", targetString, targetString);
 				// maybe renable selecting which cam to constrain to later
 				// for now auto constraining to the active/default cam seems best for player constraint
 				/*if (ImGui::BeginDragDropTarget())
@@ -675,18 +442,18 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.Speed = 0.001f;
 			params.ResetValue = 0.0f;
-			DrawVec3Control("Offset", component.Offset, params);
-			DrawFloatControl("Rounding Error", component.FollowThreshold, params);
+			ImGuiPanel::DrawVec3Control("Offset", component.Offset, params);
+			ImGuiPanel::DrawFloatControl("Rounding Error", component.FollowThreshold, params);
 
 			GameObject target = scene->FindGameObjectByGUID(component.EntityToFollow);
 			std::string targetString = target ? target.GetName() : "";
 
 			ImGui::SeparatorText("Target to Follow");
 			ImGui::BeginDisabled();
-			DrawStringProperty("##Target", targetString, targetString);
+			ImGuiPanel::DrawStringProperty("##Target", targetString, targetString);
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
@@ -747,10 +514,10 @@ namespace Pixie
 
 			ImGui::Separator();
 
-			SliderParams params;
+			ImGuiPanel::SliderParams params;
 			params.Speed = 0.001f;
 			params.ResetValue = 0.0f;
-			DrawVec3Control("Orbital Center", component.Origin, params);
+			ImGuiPanel::DrawVec3Control("Orbital Center", component.Origin, params);
 			if (!selected.HasCompoenent<FollowComponent>() && ImGui::BeginDragDropTarget())
 			{
 				//seems handy to drag and drop origins based on other objects even when not explicitly following those objects
@@ -763,7 +530,7 @@ namespace Pixie
 				}
 				ImGui::EndDragDropTarget();
 			}
-			DrawFloatControl("Radius", component.Radius, params);
+			ImGuiPanel::DrawFloatControl("Radius", component.Radius, params);
 
 			ImGui::PopID();
 
@@ -798,7 +565,7 @@ namespace Pixie
 			std::string previousMeshPath = component.m_FilePath;
 
 
-			if (FileProperty("Mesh File", component.m_FilePath, "All Formats (*.fbx, *.obj)\0*.fbx;*.obj\0FBX Model (*.fbx)\0*.fbx\0OBJ Mesh(*.obj)\0*.obj\0"))
+			if (ImGuiPanel::FileProperty("Mesh File", component.m_FilePath, "All Formats (*.fbx, *.obj)\0*.fbx;*.obj\0FBX Model (*.fbx)\0*.fbx\0OBJ Mesh(*.obj)\0*.obj\0"))
 			{
 				if (!AssetLoader::LoadMesh(selected, component, component.m_FilePath))
 				{
@@ -813,7 +580,7 @@ namespace Pixie
 
 			std::string previousBasePath = material.BaseMapPath;
 
-			if (FileProperty("Base Texture", material.BaseMapPath,
+			if (ImGuiPanel::FileProperty("Base Texture", material.BaseMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.BaseMapPath);
@@ -839,7 +606,7 @@ namespace Pixie
 
 			std::string previousNormalPath = material.NormalMapPath;
 
-			if (FileProperty("Normal Map", material.NormalMapPath,
+			if (ImGuiPanel::FileProperty("Normal Map", material.NormalMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, TextureType::Normal);
@@ -866,7 +633,7 @@ namespace Pixie
 			std::string previousMetalPath = material.MetallicMapPath;
 
 
-			if (FileProperty("Metallic Map", material.MetallicMapPath,
+			if (ImGuiPanel::FileProperty("Metallic Map", material.MetallicMapPath,
 				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
 			{
 				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, TextureType::GltfMetalicRoughness);
@@ -890,19 +657,19 @@ namespace Pixie
 			}
 			ImGui::PopID();
 
-			SliderParams smoothnessParams;
+			ImGuiPanel::SliderParams smoothnessParams;
 			smoothnessParams.Min = 0.0f;
 			smoothnessParams.Max = 1.0f;
 			smoothnessParams.Speed = 0.001f;
 			smoothnessParams.ResetValue = 0.3f;
-			DrawFloatControl("Smoothness", material.Smoothness, smoothnessParams);
+			ImGuiPanel::DrawFloatControl("Smoothness", material.Smoothness, smoothnessParams);
 
-			SliderParams specParams;
+			ImGuiPanel::SliderParams specParams;
 			specParams.Min = 1.0f;
 			specParams.Max = 200.0f;
 			specParams.Speed = 0.1f;
 			specParams.ResetValue = 32.0f;
-			DrawFloatControl("Specular Power", material.SpecularPower, specParams);
+			ImGuiPanel::DrawFloatControl("Specular Power", material.SpecularPower, specParams);
 
 			if (removeComponent)
 			{
@@ -976,23 +743,23 @@ namespace Pixie
 			if (selected.HasCompoenent<SphereCollider>())
 			{
 				SphereCollider& collider = selected.GetComponent<SphereCollider>();
-				SliderParams params;
+				ImGuiPanel::SliderParams params;
 				params.ResetValue = 0.5f;
 				params.Speed = 0.001;
 				params.Min = 0.0f;
 
-				DrawFloatControl("Radius", collider.Radius, params);
+				ImGuiPanel::DrawFloatControl("Radius", collider.Radius, params);
 			}
 
 			if (selected.HasCompoenent<CubeCollider>())
 			{
 				CubeCollider& collider = selected.GetComponent<CubeCollider>();
-				SliderParams params;
+				ImGuiPanel::SliderParams params;
 				params.ResetValue = 0.5f;
 				params.Speed = 0.001;
 				params.Min = 0.0f;
 
-				DrawVec3Control("Extents", collider.Extents, params);
+				ImGuiPanel::DrawVec3Control("Extents", collider.Extents, params);
 				ImGui::SetItemTooltip("Extents are the HALF width/height/depth values");
 			}
 
@@ -1190,33 +957,33 @@ namespace Pixie
 
 			}*/
 			
-			SliderParams attenuationParams;
+			ImGuiPanel::SliderParams attenuationParams;
 			attenuationParams.Speed = 0.001f;
 			attenuationParams.Format = "%.4f";
 			if (light.Type == LightType::Point)
 			{
-				DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
+				ImGuiPanel::DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
 
 			}
 
 			if (light.Type == LightType::Spot)
 			{
 				//DrawVec3Control("Direction", light.Direction, 0.5f);
-				DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
+				ImGuiPanel::DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
 
-				SliderParams params;
+				ImGuiPanel::SliderParams params;
 				params.Min = 1.0f;
 				params.Max = 180.0f;
 				params.ResetValue = 12.5f;
 				params.Speed = 0.01f;
-				DrawFloatControl("Inner Radius", light.InnerRadius, params);
+				ImGuiPanel::DrawFloatControl("Inner Radius", light.InnerRadius, params);
 
-				SliderParams paramsOuter;
+				ImGuiPanel::SliderParams paramsOuter;
 				paramsOuter.Min = 1.0f;
 				paramsOuter.Max = 180.0f;
 				paramsOuter.ResetValue = 15.0f;
 				paramsOuter.Speed = 0.01f;
-				DrawFloatControl("Outer Radius", light.OuterRadius, paramsOuter);
+				ImGuiPanel::DrawFloatControl("Outer Radius", light.OuterRadius, paramsOuter);
 			}
 
 			if (removeComponent)
@@ -1251,11 +1018,11 @@ namespace Pixie
 		if (!camera.m_LockAspectRatio)
 			ImGui::BeginDisabled();
 
-		SliderParams viewportParams;
+		ImGuiPanel::SliderParams viewportParams;
 		viewportParams.Speed = 0.01f;
 		viewportParams.Min = 0.01f;
 		viewportParams.ResetValue = 1.0f;
-		if (DrawVec2Control("Aspect Ratio", size, viewportParams, labelWidth))
+		if (ImGuiPanel::DrawVec2Control("Aspect Ratio", size, viewportParams, labelWidth))
 		{
 			camera.m_ManualRatio = size.x / size.y;
 		}
@@ -1324,68 +1091,5 @@ namespace Pixie
 		}
 	}
 
-	bool DetailsViewPanel::FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth)
-	{
-		std::filesystem::path fileName = value;
-		if (!value.empty() && fileName.has_filename())
-		{
-			fileName = fileName.filename();
-		}
-
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
-		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-			ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
-			//ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
-
-			ImGui::TableNextRow();
-			// the label
-			ImGui::TableSetColumnIndex(0);
-
-			ImGui::PushItemWidth(fontSize * columnWidth);
-			ImGui::Text(label.c_str());
-			ImGui::PopItemWidth();
-
-			// the values
-			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(fontSize * value.size());
-			// do stuff
-
-			ImGui::Text((fileName.string().c_str()));
-			
-			ImGui::PopItemWidth();
-
-			// the button to turn  the value field into an edit field
-			
-			ImGui::EndTable();
-
-			ImGui::SameLine();
-			std::string buttonText = "...";
-			std::string deleteText = "X";
-			float deleteWidth = ImGui::CalcTextSize(deleteText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - ( buttonWidth + deleteWidth));
-
-			ImGui::PushID(label.c_str());
-			if (ImGui::Button(buttonText.c_str()))
-			{
-				//bValueChanged = (value != editingValue);
-				std::string filePath = FileDialogs::OpenFile(filter);
-
-				if (!filePath.empty())
-				{
-					value = filePath;
-					ImGui::PopID();
-					return true;
-				}
-					
-			}
-			ImGui::PopID();
-			//ImGui::PopItemWidth();
-		}
-
-		return false;
-	}
+	
 }

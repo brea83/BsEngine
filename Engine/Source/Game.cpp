@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "Game.h"
 #include "EngineContext.h"
+#include "Resources/FileStream.h"
 
 namespace Pixie
 {
@@ -46,20 +47,76 @@ namespace Pixie
 		Logger::Core(LOG_WARNING, "Tried to add player (guid: {}), but they had already been added", std::to_string(guid));
 	}
 
-	void Game::AddScenePath(const std::string& label, std::filesystem::path path)
+	void Game::AddScenePath( std::filesystem::path path)
 	{
-		if (m_ScenePaths.find(label) != m_ScenePaths.end())
-		{
-			Logger::Core(LOG_WARNING, "tried to add a path to label {}, but that label already exists. Either create a new label or use ReplaceScenePath()", label);
-			return;
-		}
-
-		m_ScenePaths.at(label) = path;
+		m_ScenePaths.push_back(path);
 	}
 
-	void Game::ReplaceScenePath(const std::string& label, std::filesystem::path path)
+	void Game::ReplaceScenePath(int index, std::filesystem::path path)
 	{
-		m_ScenePaths.at(label) = path;
+		if (index < 0 || index >= m_ScenePaths.size())
+			return;
+		m_ScenePaths.at(index) = path;
+	}
+
+	void Game::RemoveScene(int index)
+	{
+		if (index < 0 || index >= m_ScenePaths.size())
+			return;
+
+		if (index != m_ScenePaths.size() - 1)
+		{
+			for (int i = index; i < m_ScenePaths.size() - 1; i++)
+			{
+				m_ScenePaths.at(i) = m_ScenePaths.at(i+1);
+			}
+		}
+		
+		m_ScenePaths.pop_back();
+	}
+
+	void Game::SaveSettings(std::filesystem::path filePath)
+	{
+		if (m_SettingsPath == "")
+		{
+			m_SettingsPath = filePath;
+		}
+
+		FileStreamWriter fileStream(filePath, false);
+
+		fileStream.WriteString(m_Title);
+		
+		fileStream.WriteRaw<size_t>(m_ScenePaths.size());
+		for (auto path : m_ScenePaths)
+		{
+			fileStream.WriteString(path.string());
+		}
+	}
+
+	void Game::LoadSettings(std::filesystem::path filePath)
+	{
+		if (m_SettingsPath == "")
+		{
+			m_SettingsPath = filePath;
+		}
+
+		FileStreamReader fileStream(filePath, false);
+
+		fileStream.ReadString(m_Title);
+
+		if (!m_ScenePaths.empty())
+			m_ScenePaths.clear();
+
+		size_t arraySize = 0;
+		fileStream.ReadRaw<size_t>(arraySize);
+
+		m_ScenePaths.reserve(arraySize);
+		for (int i = 0; i < arraySize; i++)
+		{
+			std::string path = "";
+			fileStream.ReadString(path);
+			m_ScenePaths.push_back(path);
+		}
 	}
 
 	//==========================

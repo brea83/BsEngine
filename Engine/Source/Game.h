@@ -36,6 +36,7 @@ namespace Pixie
 		Game() = default;
 		virtual ~Game() { }
 
+
 		//returns -1 if index does not exist in player array
 		virtual uint64_t GetPlayerID(size_t playerIndex);
 		// will return a entt::null scene == nullptr game object if player guid not found
@@ -63,18 +64,25 @@ namespace Pixie
 		virtual GameState* GetCurrentState() { return m_GameStateMachine.GetCurrentState(); }
 		virtual GameState* GetPreviousState() { return m_GameStateMachine.GetPreviousState(); }
 
-		virtual const std::unordered_map<std::string, std::filesystem::path>& GetScenePaths() const { return m_ScenePaths; }
-		virtual void AddScenePath(const std::string& label, std::filesystem::path path);
-		virtual void ReplaceScenePath(const std::string& label, std::filesystem::path path);
+		virtual const std::vector<std::filesystem::path>& GetScenePaths() const { return m_ScenePaths; }
+		virtual std::vector<std::filesystem::path>& GetScenePathsEditable() { return m_ScenePaths; }
+		virtual void AddScenePath( std::filesystem::path path);
+		virtual void ReplaceScenePath(int index, std::filesystem::path path);
+		virtual void RemoveScene(int index);
+
+		virtual void SaveSettings(std::filesystem::path filePath);
+		virtual void LoadSettings(std::filesystem::path filePath);
 
 	protected:
+		std::string m_Title{ "DefaultTitle" };
+		std::filesystem::path m_SettingsPath{ "" };
 		GameStateMachine m_GameStateMachine;
 		std::vector<uint64_t> m_Players;
 
 		std::shared_ptr<Scene> m_CurrentScene{ nullptr };
 
 		// maybe replace this with a scene manager?
-		std::unordered_map<std::string, std::filesystem::path> m_ScenePaths;
-
+		/*std::unordered_map<std::string, std::filesystem::path>*/std::vector<std::filesystem::path> m_ScenePaths;
+		friend class GameDetailsEditor;
 	};
 }

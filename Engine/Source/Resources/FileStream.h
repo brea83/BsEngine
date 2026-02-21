@@ -12,7 +12,7 @@ namespace Pixie
 	class FileStreamWriter : public StreamWriter
 	{
 	public:
-		FileStreamWriter(const std::filesystem::path& path);
+		FileStreamWriter(const std::filesystem::path& path, bool writeInBinary = true);
 		FileStreamWriter(const FileStreamWriter&) = delete;
 		virtual ~FileStreamWriter();
 
@@ -33,7 +33,7 @@ namespace Pixie
 	class FileStreamReader : public StreamReader
 	{
 	public:
-		FileStreamReader(const std::filesystem::path& path);
+		FileStreamReader(const std::filesystem::path& path, bool writeInBinary = true);
 		FileStreamReader(const FileStreamReader&) = delete;
 		~FileStreamReader();
 

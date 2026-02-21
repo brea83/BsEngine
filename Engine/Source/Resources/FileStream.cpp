@@ -5,10 +5,13 @@ namespace Pixie
 {
     //---------------------------------------------------
     // FileStreamWriter
-    FileStreamWriter::FileStreamWriter(const std::filesystem::path& path)
+    FileStreamWriter::FileStreamWriter(const std::filesystem::path& path, bool writeInBinary)
         : m_Path(path)
     {
-        m_Stream = std::ofstream(path, std::ifstream::out | std::ifstream::binary);
+        if(writeInBinary)
+            m_Stream = std::ofstream(path, std::ifstream::out | std::ifstream::binary);
+        else
+            m_Stream = std::ofstream(path, std::ifstream::out);
     }
     
     FileStreamWriter::~FileStreamWriter()
@@ -25,10 +28,13 @@ namespace Pixie
     //---------------------------------------------------
     // FileStreamReader
 
-    FileStreamReader::FileStreamReader(const std::filesystem::path& path)
+    FileStreamReader::FileStreamReader(const std::filesystem::path& path, bool writeInBinary)
         : m_Path(path)
     {
-        m_Stream = std::ifstream(path, std::ifstream::in | std::ifstream::binary);
+        if(writeInBinary)
+            m_Stream = std::ifstream(path, std::ifstream::in | std::ifstream::binary);
+        else
+            m_Stream = std::ifstream(path, std::ifstream::in);
     }
 
     FileStreamReader::~FileStreamReader()

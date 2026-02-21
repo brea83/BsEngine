@@ -7,7 +7,7 @@ namespace Pixie
 	class Scene;
 }
 
-class PauseMenu : public ImGuiPanel
+class PauseMenu : public Pixie::ImGuiPanel
 {
 public:
 	PauseMenu() = default;

@@ -53,6 +53,7 @@ namespace Pixie
 		std::shared_ptr<Scene> m_CurrentScene{ nullptr };
 		std::string m_CurrentScenePath{ "" };
 
+		bool m_DrawGameDetailEditor{ false };
 
 		std::shared_ptr<ExampleGame> m_Game;
 

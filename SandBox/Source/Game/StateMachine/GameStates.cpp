@@ -27,9 +27,11 @@ namespace Pixie
 	void PauseState::UpdateState(float deltaTime)
 	{
 		//ToDo might want to add an updates on pause component
-		// TODO DRAWING THE PAUSE MENU NEEDS TO HAPPEN IN THE IMGUI RENDER PHASE NOT THE UPDATE PHASE
-		// SO THIS NEEDS TO BE MOVED
-		//m_PauseMenu.Draw();
+	}
+
+	void PauseState::OnImGuiRender()
+	{
+		m_PauseMenu.Draw();
 	}
 
 	//==========================

@@ -89,5 +89,6 @@ namespace Pixie
 		void DrawGizmo(TransformComponent& transform, Camera* camera, glm::mat4& viewMatrix);
 
 		bool OnKeyPressed(KeyPressedEvent& event);
+		bool OnGameStateEntered(GameStateEnteredEvent& event);
 	};
 }

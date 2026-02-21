@@ -72,4 +72,41 @@ namespace Pixie
 		m_CurrentState->UpdateState(deltaTime);
 	}
 
+	void GameStateMachine::OnImGuiRender()
+	{
+		if (m_CurrentState == nullptr) return;
+		m_CurrentState->OnImGuiRender();
+	}
+
+	void GameStateMachine::SwitchState(const std::string_view& stateType)
+	{
+		if (m_States.find(stateType) != m_States.end())
+		{
+			EngineContext* engine = EngineContext::GetEngine();
+			//found state
+			std::string_view oldStateType = "";
+			GameState* nextState = m_States.at(stateType);
+			if (m_CurrentState != nullptr)
+			{
+				oldStateType = m_CurrentState->GetType();
+				
+				// TODO send event about state change state exit
+				m_CurrentState->ExitState(nextState);
+				GameStateExitedEvent exit = GameStateExitedEvent(oldStateType, stateType);
+				engine->OnEvent(exit);
+			}
+
+			m_PreviousState = m_CurrentState;
+
+			m_CurrentState = nextState;
+			// this is where a state change state enter event would be sent
+			m_CurrentState->EnterState(m_PreviousState);
+			GameStateEnteredEvent entered = GameStateEnteredEvent(oldStateType, stateType);
+			engine->OnEvent(entered);
+			return;
+		}
+
+		Logger::Core(LOG_WARNING, "State ({}) does not exist in state machine.", stateType);
+	}
+
 }

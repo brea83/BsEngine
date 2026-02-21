@@ -20,8 +20,8 @@ namespace Pixie
 		void Pause() override;
 		void UnPause() override;
 		void SetState(const std::string_view& stateType) override;
-		GameState* GetCurrentState() override;
-		GameState* GetPreviousState() override;
+		//GameState* GetCurrentState() override;
+		//GameState* GetPreviousState() override;
 
 	private:
 		PlayerInputSystem* m_InputSystem{ nullptr };

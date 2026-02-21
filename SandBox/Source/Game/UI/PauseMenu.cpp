@@ -44,7 +44,11 @@ bool PauseMenu::Draw()
         if (ImGui::Button("Resume", ImVec2(120, 0))) { OnResumeButtonPressed(); }
         ImGui::SetItemDefaultFocus();
 
-        if (ImGui::Button("Exit", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+        if (ImGui::Button("Exit", ImVec2(120, 0))) 
+        { 
+            OnExitButtonPressed();
+            ImGui::CloseCurrentPopup(); 
+        }
         ImGui::EndPopup();
     }
 

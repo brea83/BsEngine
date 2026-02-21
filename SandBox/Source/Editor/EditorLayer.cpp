@@ -126,6 +126,8 @@ namespace Pixie
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<SceneChangedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnSceneChangedEvent));
+		dispatcher.Dispatch<GameStateEnteredEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnGameStateEntered));
+
 
 	}
 
@@ -153,7 +155,6 @@ namespace Pixie
 		EngineContext::GetEngine()->ChangeScene(runtimeCopy, true);
 
 		m_EditorState = SceneState::Play;
-		m_PlayPauseText = "Pause";
 
 		if (m_Game)
 			m_Game->SetState(PlayingState::Type());
@@ -162,8 +163,6 @@ namespace Pixie
 	void EditorLayer::OnScenePause()
 	{
 		m_EditorState = SceneState::Pause;
-		//m_CurrentScene->Pause();
-		m_PlayPauseText = "Play";
 
 		if (m_Game)
 			m_Game->SetState(PauseState::Type());
@@ -318,6 +317,8 @@ namespace Pixie
 		m_ConsoleWindow->Draw();
 
 		if (m_ShowRenderInspector) m_RenderInspecorPanel->Draw();
+
+		m_Game->OnImGuiRender();
 	}
 
 
@@ -616,7 +617,6 @@ namespace Pixie
 			buttonSize.x += ImGui::CalcTextSize("PAUSE").x;
 
 			ImGui::SetCursorPosX(offset - buttonSize.x);
-
 			bool bEditorModeBeforeButtonPresses = m_EditorState == SceneState::Edit;
 
 			if (ImGui::Button(m_PlayPauseText.c_str(), buttonSize))
@@ -875,4 +875,26 @@ namespace Pixie
 
 		return false;
 	}
+
+	bool EditorLayer::OnGameStateEntered(GameStateEnteredEvent& event)
+	{
+		if (event.EnteredState() == PauseState::Type())
+		{
+			m_PlayPauseText = "Play";
+			m_EditorState = SceneState::Pause;
+		}
+		else if (event.EnteredState() == PlayingState::Type())
+		{
+			m_PlayPauseText = "Pause";
+			m_EditorState = SceneState::Play;
+		}
+
+		else if (event.EnteredState() == EditState::Type())
+		{
+			m_PlayPauseText = "Play";
+			m_EditorState = SceneState::Edit;
+		}
+		return false; // do not consume the event
+	}
+	
 }

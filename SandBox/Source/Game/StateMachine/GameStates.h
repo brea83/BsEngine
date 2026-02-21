@@ -15,6 +15,7 @@ namespace Pixie
 		void EnterState(GameState* previousState) override;
 		void ExitState(GameState* nextState) override;
 		void UpdateState(float deltaTime) override;
+		void OnImGuiRender() override;
 
 	private:
 		static const std::string m_Type;
@@ -33,6 +34,8 @@ namespace Pixie
 		void ExitState(GameState* nextState) override;
 		void UpdateState(float deltaTime) override;
 
+		void OnImGuiRender() override { }
+
 	private:
 		static const std::string m_Type;
 	};
@@ -48,6 +51,8 @@ namespace Pixie
 		void EnterState(GameState* previousState) override;
 		void ExitState(GameState* nextState) override;
 		void UpdateState(float deltaTime) override;
+
+		void OnImGuiRender() override { }
 
 	private:
 		static const std::string m_Type;

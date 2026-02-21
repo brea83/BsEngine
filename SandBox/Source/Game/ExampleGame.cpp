@@ -60,6 +60,7 @@ namespace Pixie
 	{
 		EventDispatcher dispatcher{ event };
 		dispatcher.Dispatch<SceneChangedEvent>(BIND_EVENT_FUNCTION(ExampleGame::OnSceneChangedEvent));
+		dispatcher.Dispatch<GameStateChangeRequestEvent>(BIND_EVENT_FUNCTION(ExampleGame::OnGameStateRequest));
 
 		if (m_CurrentScene == nullptr)
 			return false;
@@ -128,12 +129,5 @@ namespace Pixie
 	{
 		m_GameStateMachine.SwitchState(stateType);
 	}
-	GameState* ExampleGame::GetCurrentState()
-	{
-		return m_GameStateMachine.GetCurrentState();
-	}
-	GameState* ExampleGame::GetPreviousState()
-	{
-		return m_GameStateMachine.GetPreviousState();
-	}
+	
 }

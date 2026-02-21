@@ -13,30 +13,11 @@ namespace Pixie
 		GameStateMachine(std::unordered_map<std::string_view, GameState*> states)
 			: m_States(states) { }
 
-		void SwitchState(const std::string_view& stateType)
-		{
-			if (m_States.find(stateType) != m_States.end())
-			{
-				//found state
-				GameState* nextState = m_States.at(stateType);
-				if (m_CurrentState != nullptr)
-				{
-					// TODO send event about state change state exit
-					m_CurrentState->ExitState(nextState);
-				}
-
-				m_PreviousState = m_CurrentState;
-				
-				m_CurrentState = nextState;
-				// this is where a state change state enter event would be sent
-				m_CurrentState->EnterState(m_PreviousState);
-				return;
-			}
-
-			Logger::Core(LOG_WARNING, "State ({}) does not exist in state machine.", stateType);
-		}
+		void SwitchState(const std::string_view& stateType);
+		
 
 		void UpdateState(float deltaTime);
+		void OnImGuiRender();
 
 		GameState* GetCurrentState() { return m_CurrentState; }
 		GameState* GetPreviousState() { return m_CurrentState; }
@@ -72,13 +53,15 @@ namespace Pixie
 
 		virtual bool OnEvent(Event& event) { return false; }
 
+		virtual void OnImGuiRender() { m_GameStateMachine.OnImGuiRender(); }
+
 		virtual void Pause() {};
 		virtual void UnPause() {};
 
 		virtual void SetState(const std::string_view& stateType) {};
 
-		virtual GameState* GetCurrentState() { return nullptr; }
-		virtual GameState* GetPreviousState() { return nullptr; }
+		virtual GameState* GetCurrentState() { return m_GameStateMachine.GetCurrentState(); }
+		virtual GameState* GetPreviousState() { return m_GameStateMachine.GetPreviousState(); }
 
 		virtual const std::unordered_map<std::string, std::filesystem::path>& GetScenePaths() const { return m_ScenePaths; }
 		virtual void AddScenePath(const std::string& label, std::filesystem::path path);

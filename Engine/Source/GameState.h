@@ -11,6 +11,8 @@ namespace Pixie
 		virtual void EnterState(GameState* previousState) = 0;
 		virtual void ExitState(GameState* nextState) = 0;
 		virtual void UpdateState(float deltaTime) = 0;
+
+		virtual void OnImGuiRender() = 0;
 	};
 
 	

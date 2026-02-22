@@ -326,6 +326,21 @@ namespace Pixie
         }
     };
 
+    struct CollisionEvent;
+    struct NativeScriptComponent
+    {
+        NativeScriptComponent() = default;
+        NativeScriptComponent(const NativeScriptComponent&) = default;
+
+        std::unordered_map<std::string, std::function<void(GameObject&, float)>> OnUpdateFunctions;
+        std::unordered_map<std::string, std::function<void(GameObject&, CollisionEvent&)>> OnCollisionFunctions;
+
+        void DrawComponent(GameObject& selected);
+
+        static void Serialize(StreamWriter* stream, const NativeScriptComponent& component);
+        static bool Deserialize(StreamReader* stream, NativeScriptComponent& component);
+    };
+
     // empty components to use for organizing views and groups only
     struct EditorOnly
     { 

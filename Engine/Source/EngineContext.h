@@ -1,5 +1,6 @@
 #pragma once
 #include "Core.h"
+#include "ScriptManager.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
@@ -70,6 +71,8 @@ namespace Pixie
 
 		static EngineContext* m_Engine;
 		std::deque<std::shared_ptr<Event>> m_EventQueue;
+
+		ScriptManager* m_ScriptManagerSingleton{ nullptr };
 
 		// properties
 		bool m_IsRunning{ true };

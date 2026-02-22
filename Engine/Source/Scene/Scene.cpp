@@ -165,6 +165,7 @@ namespace Pixie
 		 TryCopyEntityComponent<SplineComponent>(destination, source);
 		 TryCopyEntityComponent<FollowComponent>(destination, source);
 		 TryCopyEntityComponent<OrbitComponent>(destination, source);
+		 TryCopyEntityComponent<NativeScriptComponent>(destination, source);
 
 		 if (source.HasCompoenent<PlayerInputComponent>())
 		 {
@@ -246,6 +247,7 @@ namespace Pixie
 		CopyRegistryComponents<FollowComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<OrbitComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<MovementConstraintsComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
+		CopyRegistryComponents<NativeScriptComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 
 		return newScene;
 	}
@@ -294,6 +296,16 @@ namespace Pixie
 		{
 			GameObject gameObject(entity, shared_from_this());
 			gameObject.OnUpdate(deltaTime);
+		}
+
+		for (auto&& [entity, scriptComponent] : m_Registry.view<NativeScriptComponent>().each())
+		{
+			GameObject caller = GameObject(entity, shared_from_this());
+
+			for (auto pair : scriptComponent.OnUpdateFunctions)
+			{
+				pair.second(caller, deltaTime);
+			}
 		}
 
 	}

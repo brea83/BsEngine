@@ -545,7 +545,7 @@ namespace Pixie
 
 		//if (ImGui::BeginMenuBar())
 		//{
-			ImGui::PushFont(nullptr, style.FontSizeBase * 1.2 * global_scale);
+			ImGui::PushFont(nullptr, style.FontSizeBase * 1.2f * global_scale);
 			ImGui::Text("Active Camera: ");
 			ImGui::SameLine();
 			ImGui::Text(activeCam.GetComponent<NameComponent>().Name.c_str());
@@ -665,7 +665,7 @@ namespace Pixie
 		if (m_ViewportPanelSize.x != currentSize.x || m_ViewportPanelSize.y != currentSize.y)
 		{
 			m_ViewportPanelSize = glm::vec2(currentSize.x, currentSize.y);
-			frameBuffer->Resize(currentSize.x, currentSize.y);
+			frameBuffer->Resize((uint32_t)currentSize.x, (uint32_t)currentSize.y);
 
 			m_CurrentScene->ForwardAspectRatio(m_ViewportPanelSize.x, m_ViewportPanelSize.y);
 			//if (camera) camera->SetAspectRatio((float)currentSize.x / (float)currentSize.y);

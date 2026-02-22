@@ -6,6 +6,7 @@
 #include "ImGui/ImGuiPanel.h"
 #include "Resources/AssetLoader.h"
 #include "PlatformUtils.h"
+#include "Source/ScriptManager.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -38,6 +39,13 @@ namespace Pixie
 
 			if (ImGui::BeginPopupContextItem("AddComponentPopUp"))
 			{
+				if (ImGui::Selectable("Script Component"))
+				{
+					selected->AddComponent<NativeScriptComponent>();
+				}
+
+				ImGui::Separator();
+
 				if (ImGui::Selectable("Mesh Component"))
 				{
 					selected->AddComponent<MeshComponent>();
@@ -540,6 +548,36 @@ namespace Pixie
 			}
 		}
 
+		if (selected.HasCompoenent<NativeScriptComponent>())
+		{
+			ImGui::PushID("NativeScriptComponent");
+			ImGui::Separator();
+			NativeScriptComponent& component = selected.GetComponent<NativeScriptComponent>();
+			ImGui::Text("Script Component");
+			
+			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+
+			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+			bool removeComponent{ false };
+			if (ImGui::Button("X", buttonSize))
+			{
+				removeComponent = true;
+			}
+
+			ImGui::Separator();
+
+			component.DrawComponent(selected);
+
+			ImGui::PopID();
+
+			if (removeComponent)
+			{
+				selected.RemoveComponent<NativeScriptComponent>();
+			}
+		}
+
 		if (selected.HasCompoenent<MeshComponent>())
 		{
 			ImGui::PushID("MeshComponent");
@@ -745,7 +783,7 @@ namespace Pixie
 				SphereCollider& collider = selected.GetComponent<SphereCollider>();
 				ImGuiPanel::SliderParams params;
 				params.ResetValue = 0.5f;
-				params.Speed = 0.001;
+				params.Speed = 0.001f;
 				params.Min = 0.0f;
 
 				ImGuiPanel::DrawFloatControl("Radius", collider.Radius, params);
@@ -756,7 +794,7 @@ namespace Pixie
 				CubeCollider& collider = selected.GetComponent<CubeCollider>();
 				ImGuiPanel::SliderParams params;
 				params.ResetValue = 0.5f;
-				params.Speed = 0.001;
+				params.Speed = 0.001f;
 				params.Min = 0.0f;
 
 				ImGuiPanel::DrawVec3Control("Extents", collider.Extents, params);

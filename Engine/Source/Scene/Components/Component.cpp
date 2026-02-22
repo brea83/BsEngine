@@ -3,6 +3,10 @@
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "Scene/GameObject.h"
+#include "ImGui/ImGuiPanel.h"
+#include "ScriptManager.h"
+
+#include <unordered_map>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext/matrix_relational.hpp>
 
@@ -349,5 +353,112 @@ namespace Pixie
             registry.emplace<HasUpdateableComponents>(entt);
 
     }
+
+    // Native Scripting Component
     
+    void NativeScriptComponent::DrawComponent(GameObject& selected)
+    {
+        ScriptManager* scripts = ScriptManager::GetInstance();
+        ImGui::Text("Type");
+        ImGui::SameLine();
+        std::vector<std::string> onUpdateFuncs = scripts->GetOnUpdateFuncNames();
+
+        static int currentUpdateFunc = 0;
+        const char* combo_preview_value = onUpdateFuncs[currentUpdateFunc].c_str();
+        if (ImGui::BeginCombo("combo 1", combo_preview_value))
+        {
+            for (int i = 0; i < onUpdateFuncs.size(); i++)
+            {
+                const bool is_selected = (currentUpdateFunc == i);
+                if (ImGui::Selectable(onUpdateFuncs[i].c_str(), is_selected))
+                    currentUpdateFunc = i;
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        if (currentUpdateFunc == 0)
+            ImGui::BeginDisabled();
+        if (ImGui::Button("ADD"))
+        {
+            std::string name = onUpdateFuncs[currentUpdateFunc];
+            OnUpdateFunctions[name] = scripts->FindOnUpdateFunction(name);
+        }
+        if (currentUpdateFunc == 0)
+            ImGui::EndDisabled();
+        std::vector<std::string> funcsToRemove;
+
+        ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+
+        for (auto pair :OnUpdateFunctions)
+        {
+            ImGui::PushID(pair.first.c_str());
+
+            if (ImGui::CollapsingHeader(pair.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                if (ImGui::Button("Remove Script", buttonSize))
+                {
+                    funcsToRemove.push_back(pair.first);
+                }
+
+                scripts->FindDrawComponentFunction(pair.first)(selected);
+            }
+            
+            ImGui::PopID();
+        }
+
+        for (auto key : funcsToRemove)
+        {
+            OnUpdateFunctions.erase(key);
+        }
+    }
+
+    void NativeScriptComponent::Serialize(StreamWriter * stream, const NativeScriptComponent & component)
+    {
+        std::vector<std::string> onUpdateNames;
+        for (auto pair : component.OnUpdateFunctions)
+        {
+            onUpdateNames.push_back(pair.first);
+        }
+
+        std::vector<std::string> onCollisionNames;
+        for (auto pair : component.OnCollisionFunctions)
+        {
+            onUpdateNames.push_back(pair.first);
+        }
+
+        stream->WriteArray<std::string>(onUpdateNames);
+        stream->WriteArray<std::string>(onCollisionNames);
+
+    }
+
+    bool NativeScriptComponent::Deserialize(StreamReader * stream, NativeScriptComponent& component)
+    {
+        std::vector<std::string> onUpdateNames;
+        std::vector<std::string> onCollisionNames;
+        
+        stream->ReadArray<std::string>(onUpdateNames);
+        stream->ReadArray<std::string>(onCollisionNames);
+        if (onUpdateNames.empty() && onCollisionNames.empty())
+            return true;
+
+        ScriptManager* scripts = ScriptManager::GetInstance();
+        for (int i = 0; i < onUpdateNames.size(); i++)
+        {
+            std::string name = onUpdateNames[i];
+            component.OnUpdateFunctions[name] = scripts->FindOnUpdateFunction(name);
+        }
+
+        for (int i = 0; i < onCollisionNames.size(); i++)
+        {
+            std::string name = onCollisionNames[i];
+            component.OnCollisionFunctions[name] = scripts->FindOnCollisionFunction(name);
+        }
+
+        return true;
+    }
+
 }

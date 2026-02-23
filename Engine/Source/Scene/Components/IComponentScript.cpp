@@ -7,10 +7,10 @@ const std::string Pixie::TestComponentScript::m_Name = "Test Component Script";
 
 void Pixie::TestComponentScript::RegisterToScriptManager() const
 {
-	ScriptManager* scripts = ScriptManager::GetInstance();
+	//ScriptManager* scripts = ScriptManager::GetInstance();
 
-	using std::placeholders::_1;
-	scripts->TryAddCombinedScriptAdd(m_Name, std::bind(&TestComponentScript::AddMyComponentToGameObject, _1));
+	//using std::placeholders::_1;
+	//scripts->TryAddCombinedScriptAdd(m_Name, std::bind(&TestComponentScript::AddMyComponentToGameObject, _1));
 	//using std::placeholders::_2;
 	//scripts->TryAddOnUpdateFunction(m_Name, std::bind(&TestComponentScript::OnUpdate, std::placeholders::_2))
 }

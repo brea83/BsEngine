@@ -30,7 +30,7 @@ namespace Pixie
 		// Inherited via IComponentScript
 		void RegisterToScriptManager() const ;
 		static void AddMyComponentToGameObject(GameObject& hostObject);
-		static std::string_view GetName() const { return m_Name; }
+		static std::string_view GetName() { return m_Name; }
 
 		static void OnUpdate(GameObject& caller, float deltaTime) ;
 		static void OnCollisionStart(GameObject& caller, CollisionEvent& collision) ;
@@ -39,7 +39,7 @@ namespace Pixie
 
 		
 	private:
-		static  const std::string m_Name;
+		static const std::string m_Name;
 
 		int m_UpdateCount{ 0 };
 		int m_MaxUpdates{ 10 };

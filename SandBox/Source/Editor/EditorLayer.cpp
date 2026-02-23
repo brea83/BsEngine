@@ -23,6 +23,8 @@
 
 #include "ImGui/imgui_sink.h"
 
+#include "../Game/CollisionBehavior/TriggerNextScene.h"
+
 namespace Pixie
 {
 	EditorLayer::EditorLayer() : ImGuiLayer()
@@ -115,6 +117,8 @@ namespace Pixie
 		//Pixie::Logger::Core(LOG_WARNING, "warning with formatting Support for floats {:03.2f}", 1.23456);
 		//Pixie::Logger::Core(LOG_ERROR, "error with formatting {:04d}", 12);
 		//Pixie::Logger::Core(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
+
+		TriggerNextScene::RegisterToScriptManager();
 	}
 
 	void EditorLayer::OnDetach()

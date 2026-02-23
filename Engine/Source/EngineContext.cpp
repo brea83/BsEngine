@@ -238,6 +238,11 @@ namespace Pixie
 		}
 	}
 
+	void EngineContext::RequestSceneChange(std::filesystem::path filePath)
+	{
+		Logger::Game(LOG_DEBUG, "requesting change scene to: {}", filePath.string());
+	}
+
 	void EngineContext::DispatchEvents()
 	{
 		//if(!m_EventQueue.empty()) Logger::Core(LogLevel::Trace, "----------------------------------");

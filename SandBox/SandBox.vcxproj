@@ -105,6 +105,7 @@
     <ClCompile Include="Source\Editor\Panels\DetailsViewPanel.cpp" />
     <ClCompile Include="Source\Editor\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="Source\SandboxApp.cpp" />
+    <ClCompile Include="Source\Game\CollisionBehavior\TriggerNextScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
@@ -123,6 +124,7 @@
     <ClInclude Include="Source\Editor\Panels\AssetViewerPanel.h" />
     <ClInclude Include="Source\Editor\Panels\DetailsViewPanel.h" />
     <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="Source\Game\CollisionBehavior\TriggerNextScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

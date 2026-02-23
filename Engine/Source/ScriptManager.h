@@ -19,13 +19,19 @@ namespace Pixie
 		std::unordered_map<std::string, std::function<void(GameObject&, float)>>& GetOnUpdateFunctions() { return m_OnUpdateLookup; }
 		std::unordered_map<std::string, std::function<void(GameObject&, CollisionEvent&)>>& GetOnCollisionFunctions() { return m_OnCollisionLookup; }
 		
-		std::function<void(GameObject&, float)>& FindOnUpdateFunction(const std::string& name);
-		std::function<void(GameObject&, CollisionEvent&)>& FindOnCollisionFunction(const std::string& name);
-		std::function<void(GameObject&)>& FindDrawComponentFunction(const std::string& name);
+		bool TryAttachScriptComponent(GameObject& caller, const std::string& name);
+		bool FindOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)>& function);
+		bool FindOnCollisionFunction(const std::string& name, std::function<void(GameObject&, CollisionEvent&)>& function);
+		bool FindDrawComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
+		bool FindAttachComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
+		bool FindRemoveComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
 
+		std::vector< std::string> GetScriptNames();
 		std::vector< std::string> GetOnUpdateFuncNames();
 		std::vector< std::string> GetOnCollisionFuncNames();
 
+		bool TryAddAttatchComponentFunction(const std::string& name, std::function<void(GameObject&)> attachFunction);
+		bool TryAddRemoveComponentFunction(const std::string& name, std::function<void(GameObject&)> removeFunction);
 		bool TryAddOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)> function);
 		bool TryAddOnCollisionFunction(const std::string& name, std::function<void(GameObject&, CollisionEvent&)> function);
 		bool TryAddDrawComponentFunction(const std::string& name, std::function<void(GameObject&)> drawFunction);
@@ -48,6 +54,8 @@ namespace Pixie
 
 		std::unordered_map<std::string, std::function<void(GameObject&)>> m_DrawComponentLookup;
 
+		std::unordered_map<std::string, std::function<void(GameObject&)>> m_AttachComponentLookup;
+		std::unordered_map<std::string, std::function<void(GameObject&)>> m_RemoveComponentLookup;
 
 		std::function<void(GameObject&, float)> m_OnUpdateFuncNotFound;
 		std::function<void(GameObject&, CollisionEvent&)> m_OnCollisionFuncNotFound;

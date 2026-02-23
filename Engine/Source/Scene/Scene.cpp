@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 #include "Graphics/Primitives/Cube.h"
+#include "Physics/PhysicsEngine.h"
 
 #include "EngineContext.h"
 #include "Entity.h"
@@ -249,6 +250,15 @@ namespace Pixie
 		CopyRegistryComponents<MovementConstraintsComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<NativeScriptComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 
+		for (auto&& [entity, scriptComponent] : destinationRegistry.view<NativeScriptComponent>().each())
+		{
+			GameObject object = GameObject(entity, newScene);
+			for (auto pair : scriptComponent.AttachComponentFunctions)
+			{
+				pair.second(object);
+			}
+		}
+
 		return newScene;
 	}
 
@@ -291,6 +301,33 @@ namespace Pixie
 		if (m_SceneState != SceneState::Play) return;
 
 		m_CameraManager.OnPlayUpdate(deltaTime);
+
+		auto collisionList = EngineContext::GetPhysics()->GetNewCollisions();
+
+		for (auto collision : collisionList)
+		{
+			if (collision.A.HasCompoenent<NativeScriptComponent>())
+			{
+				NativeScriptComponent& script = collision.A.GetComponent<NativeScriptComponent>();
+				GameObject caller = GameObject(collision.A.GetEnttHandle(), shared_from_this());
+
+				for (auto pair : script.OnCollisionFunctions)
+				{
+					pair.second(caller, collision);
+				}
+			}
+
+			if (collision.B.HasCompoenent<NativeScriptComponent>())
+			{
+				NativeScriptComponent& script = collision.B.GetComponent<NativeScriptComponent>();
+				GameObject caller = GameObject(collision.B.GetEnttHandle(), shared_from_this());
+
+				for (auto pair : script.OnCollisionFunctions)
+				{
+					pair.second(caller, collision);
+				}
+			}
+		}
 
 		for (auto&& [entity, component] : m_Registry.view<HasUpdateableComponents>().each())
 		{

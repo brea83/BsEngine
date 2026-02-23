@@ -359,19 +359,19 @@ namespace Pixie
     void NativeScriptComponent::DrawComponent(GameObject& selected)
     {
         ScriptManager* scripts = ScriptManager::GetInstance();
-        ImGui::Text("Type");
+        ImGui::Text("ScriptComponents");
         ImGui::SameLine();
-        std::vector<std::string> onUpdateFuncs = scripts->GetOnUpdateFuncNames();
+        std::vector<std::string> componentScripts = scripts->GetScriptNames();
 
-        static int currentUpdateFunc = 0;
-        const char* combo_preview_value = onUpdateFuncs[currentUpdateFunc].c_str();
+        static int currentScriptIndex = 0;
+        const char* combo_preview_value = componentScripts[currentScriptIndex].c_str();
         if (ImGui::BeginCombo("combo 1", combo_preview_value))
         {
-            for (int i = 0; i < onUpdateFuncs.size(); i++)
+            for (int i = 0; i < componentScripts.size(); i++)
             {
-                const bool is_selected = (currentUpdateFunc == i);
-                if (ImGui::Selectable(onUpdateFuncs[i].c_str(), is_selected))
-                    currentUpdateFunc = i;
+                const bool is_selected = (currentScriptIndex == i);
+                if (ImGui::Selectable(componentScripts[i].c_str(), is_selected))
+                    currentScriptIndex = i;
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
                 if (is_selected)
@@ -380,31 +380,56 @@ namespace Pixie
             ImGui::EndCombo();
         }
 
-        if (currentUpdateFunc == 0)
+        if (currentScriptIndex == 0)
             ImGui::BeginDisabled();
         if (ImGui::Button("ADD"))
         {
-            std::string name = onUpdateFuncs[currentUpdateFunc];
-            OnUpdateFunctions[name] = scripts->FindOnUpdateFunction(name);
+            std::string name = componentScripts[currentScriptIndex];
+
+            std::function<void(GameObject&)> attachFunction;
+            if (scripts->FindAttachComponentFunction(name, attachFunction))
+                AttachComponentFunctions[name] = attachFunction;
+
+            attachFunction(selected);
+
+            std::function<void(GameObject&, float)> updateFunction;
+            if (scripts->FindOnUpdateFunction(name, updateFunction))
+                OnUpdateFunctions[name] = updateFunction;
+
+            std::function<void(GameObject&, CollisionEvent&)> collisionFunction;
+            if (scripts->FindOnCollisionFunction(name, collisionFunction))
+                OnCollisionFunctions[name] = collisionFunction;
+             
+            std::function<void(GameObject&)> drawFunction;
+            if (scripts->FindDrawComponentFunction(name, drawFunction))
+                DrawScriptFunctions[name] = drawFunction;
+
+            std::function<void(GameObject&)> removeComponentFunc;
+            if (scripts->FindRemoveComponentFunction(name, removeComponentFunc))
+                RemoveComponentFunctions[name] = removeComponentFunc;
+
+            if (std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), name) == AttachedScriptNames.end())
+                AttachedScriptNames.push_back(name);
         }
-        if (currentUpdateFunc == 0)
+        if (currentScriptIndex == 0)
             ImGui::EndDisabled();
         std::vector<std::string> funcsToRemove;
 
         ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 
-        for (auto pair :OnUpdateFunctions)
+        for (auto name : AttachedScriptNames)
         {
-            ImGui::PushID(pair.first.c_str());
+            ImGui::PushID(name.c_str());
 
-            if (ImGui::CollapsingHeader(pair.first.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
             {
                 if (ImGui::Button("Remove Script", buttonSize))
                 {
-                    funcsToRemove.push_back(pair.first);
+                    funcsToRemove.push_back(name);
                 }
 
-                scripts->FindDrawComponentFunction(pair.first)(selected);
+                if(DrawScriptFunctions.find(name) != DrawScriptFunctions.end())
+                    DrawScriptFunctions[name](selected);
             }
             
             ImGui::PopID();
@@ -412,7 +437,27 @@ namespace Pixie
 
         for (auto key : funcsToRemove)
         {
-            OnUpdateFunctions.erase(key);
+            auto attachedScriptName = std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), key);
+            if (attachedScriptName != AttachedScriptNames.end())
+                AttachedScriptNames.erase(attachedScriptName);
+
+            if (AttachComponentFunctions.find(key) != AttachComponentFunctions.end())
+                AttachComponentFunctions.erase(key);
+
+            if (OnUpdateFunctions.find(key) != OnUpdateFunctions.end())
+                OnUpdateFunctions.erase(key);
+
+            if (DrawScriptFunctions.find(key) != DrawScriptFunctions.end())
+                DrawScriptFunctions.erase(key);
+
+            if (OnCollisionFunctions.find(key) != OnCollisionFunctions.end())
+                OnCollisionFunctions.erase(key);
+
+            if (RemoveComponentFunctions.find(key) != RemoveComponentFunctions.end())
+            {
+                RemoveComponentFunctions[key](selected);
+                RemoveComponentFunctions.erase(key);
+            }
         }
     }
 
@@ -449,13 +494,18 @@ namespace Pixie
         for (int i = 0; i < onUpdateNames.size(); i++)
         {
             std::string name = onUpdateNames[i];
-            component.OnUpdateFunctions[name] = scripts->FindOnUpdateFunction(name);
+            std::function<void(GameObject&, float)> function;
+            if (scripts->FindOnUpdateFunction(name, function))
+                component.OnUpdateFunctions[name] = function;
         }
 
         for (int i = 0; i < onCollisionNames.size(); i++)
         {
             std::string name = onCollisionNames[i];
-            component.OnCollisionFunctions[name] = scripts->FindOnCollisionFunction(name);
+
+            std::function<void(GameObject&, CollisionEvent&)> function;
+            if (scripts->FindOnCollisionFunction(name, function))
+                component.OnCollisionFunctions[name] = function;
         }
 
         return true;

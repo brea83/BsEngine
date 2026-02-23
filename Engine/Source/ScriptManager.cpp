@@ -43,37 +43,89 @@ namespace Pixie
 		return m_Instance;
 	}
 
-	std::function<void(GameObject&, float)>& ScriptManager::FindOnUpdateFunction(const std::string& name)
+	bool ScriptManager::TryAttachScriptComponent(GameObject& caller, const std::string& name)
 	{
-		if (m_OnUpdateLookup.find(name) != m_OnUpdateLookup.end())
+		if (m_AttachComponentLookup.find(name) != m_AttachComponentLookup.end())
 		{
-			return m_OnUpdateLookup[name];
+			m_AttachComponentLookup[name](caller);
+			return true;
 		}
 		Logger::Core(LOG_WARNING, "Could not find OnUpdate function named {}", name);
 
-		return m_OnUpdateFuncNotFound;
+		return false;
 	}
 
-	std::function<void(GameObject&, CollisionEvent&)>& ScriptManager::FindOnCollisionFunction(const std::string& name)
+	 bool ScriptManager::FindOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)>& function)
+	{
+		if (m_OnUpdateLookup.find(name) != m_OnUpdateLookup.end())
+		{
+			function = m_OnUpdateLookup[name];
+			return true;
+		}
+		Logger::Core(LOG_WARNING, "Could not find OnUpdate function named {}", name);
+
+		return false;
+	}
+
+	bool ScriptManager::FindOnCollisionFunction(const std::string& name, std::function<void(GameObject&, CollisionEvent&)>& function)
 	{
 		if (m_OnCollisionLookup.find(name) != m_OnCollisionLookup.end())
 		{
-			return m_OnCollisionLookup[name];
+			function = m_OnCollisionLookup[name];
+			return true;
 		}
 		Logger::Core(LOG_WARNING, "Could not find OnCollision function named {}", name);
 
-		return m_OnCollisionFuncNotFound;
+		return false;
 	}
 
-	std::function<void(GameObject&)>& ScriptManager::FindDrawComponentFunction(const std::string& name)
+	bool ScriptManager::FindDrawComponentFunction(const std::string& name, std::function<void(GameObject&)>& function)
 	{
 		if (m_DrawComponentLookup.find(name) != m_DrawComponentLookup.end())
 		{
-			return m_DrawComponentLookup[name];
+			function = m_DrawComponentLookup[name];
+			return true;
 		}
 		Logger::Core(LOG_WARNING, "Could not find Draw Component function named {}", name);
 
-		return m_DrawComponentFuncNotFound;
+		return false;
+	}
+
+	bool ScriptManager::FindRemoveComponentFunction(const std::string& name, std::function<void(GameObject&)>& function)
+	{
+		if (m_RemoveComponentLookup.find(name) != m_RemoveComponentLookup.end())
+		{
+			function = m_RemoveComponentLookup[name];
+			return true;
+		}
+		Logger::Core(LOG_WARNING, "Could not find Remove Component function named {}", name);
+
+		return false;
+	}
+
+	bool ScriptManager::FindAttachComponentFunction(const std::string& name, std::function<void(GameObject&)>& function)
+	{
+		if (m_AttachComponentLookup.find(name) != m_AttachComponentLookup.end())
+		{
+			function = m_AttachComponentLookup[name];
+			return true;
+		}
+		Logger::Core(LOG_WARNING, "Could not find Remove Component function named {}", name);
+
+		return false;
+	}
+
+	std::vector< std::string> ScriptManager::GetScriptNames()
+	{
+		std::vector< std::string> names;
+		names.push_back("None");
+
+		for (auto pair : m_AttachComponentLookup)
+		{
+			names.push_back(pair.first);
+		}
+
+		return names;
 	}
 
 	std::vector< std::string> ScriptManager::GetOnUpdateFuncNames()
@@ -100,6 +152,28 @@ namespace Pixie
 		}
 
 		return names;
+	}
+
+	bool ScriptManager::TryAddAttatchComponentFunction(const std::string& name, std::function<void(GameObject&)> attachFunction)
+	{
+		if (m_AttachComponentLookup.find(name) != m_AttachComponentLookup.end())
+		{
+			Logger::Core(LOG_WARNING, "ScriptManager is already storing an attach script component function named {}", name);
+			return false;
+		}
+		m_AttachComponentLookup[name] = attachFunction;
+		return true;
+	}
+
+	bool ScriptManager::TryAddRemoveComponentFunction(const std::string& name, std::function<void(GameObject&)> removeFunction)
+	{
+		if (m_RemoveComponentLookup.find(name) != m_RemoveComponentLookup.end())
+		{
+			Logger::Core(LOG_WARNING, "ScriptManager is already storing an remove script component function named {}", name);
+			return false;
+		}
+		m_RemoveComponentLookup[name] = removeFunction;
+		return true;
 	}
 
 	bool ScriptManager::TryAddOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)> function)

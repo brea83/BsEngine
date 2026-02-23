@@ -6,6 +6,7 @@
 #include "Events/MouseEvents.h"
 #include <deque>
 #include <glm/glm.hpp>
+#include <filesystem>
 
 // ToDo: playmode and simulated playmode in editor
 
@@ -61,6 +62,8 @@ namespace Pixie
 		// callback sent to GLFW window system that collects events each frame 
 		// to be processed at the top of next frame in DispatchEvents
 		virtual void OnEvent(Event& event);
+
+		virtual void RequestSceneChange(std::filesystem::path filePath);
 
 		virtual bool OnFrameBufferSize(WindowResizedEvent& event);
 		virtual bool OnWindowClosed(WindowClosedEvent& event);

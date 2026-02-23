@@ -127,7 +127,10 @@ namespace Pixie
 			WarnSceneNull(m_EntityHandle, "get a component");
 			assert(m_Scene != nullptr);
 		}
-		if (!HasCompoenent<Type>()) Logger::Core(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
+		if (!HasCompoenent<Type>())
+		{
+			Logger::Core(LOG_ERROR, "COULD NOT FIND COMPONENT, use TryGetComponent, or GetOrAddComponent if it is okay for entity to be missing this component type");
+		}
 		return m_Scene->GetRegistry().get<Type>(m_EntityHandle);
 	}
 

@@ -44,6 +44,11 @@ namespace Pixie
 					selected->AddComponent<NativeScriptComponent>();
 				}
 
+				if (ImGui::Selectable("Tag Component"))
+				{
+					selected->AddComponent<TagComponent>();
+				}
+
 				ImGui::Separator();
 
 				if (ImGui::Selectable("Mesh Component"))
@@ -197,6 +202,29 @@ namespace Pixie
 
 			ImGui::TextWrapped("There is a known issue with ImGuizmo's Rotation gizmo:");
 			ImGui::TextWrapped("If the camera forward vector is paralel to one of the gizmo circle planes those handles will not behave.");
+		}
+
+		if (selected.HasCompoenent<TagComponent>())
+		{
+			if (ImGui::CollapsingHeader("Tag Component", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				bool removeTag = false;
+				ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+				if (ImGui::Button("Remove Tag", buttonSize))
+				{
+					removeTag = true;
+				}
+				TagComponent& component = selected.GetComponent<TagComponent>();
+				static std::string editingName = component.Tag;
+
+
+				ImGuiPanel::DrawStringProperty("Tag", component.Tag, editingName);
+
+				if (removeTag)
+				{
+					selected.RemoveComponent<TagComponent>();
+				}
+			}
 		}
 
 		if (selected.HasCompoenent<SplineComponent>())

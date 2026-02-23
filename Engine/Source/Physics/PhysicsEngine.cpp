@@ -42,7 +42,7 @@ namespace Pixie
 
 			//add to list to turn into kd Tree
 			entityList.emplace_back(entity);
-			positions.emplace_back(transform.GetPosition());
+			positions.emplace_back(transform.GetModelMatrix()[3]);
 
 			SphereCollider* sphere = registry.try_get<SphereCollider>(entity);
 			if (sphere)
@@ -69,7 +69,7 @@ namespace Pixie
 		for (auto&& [entity, sphere, transform] : registry.view<SphereCollider, TransformComponent>().each())
 		{
 			// use largest radius to make search range of kdTree
-			std::vector<KDNode*> nodesInRange = kdTree.FindNodesInRange(transform.GetPosition(), sphere.Radius + largestRadius);
+			std::vector<KDNode*> nodesInRange = kdTree.FindNodesInRange(transform.GetModelMatrix()[3], sphere.Radius + largestRadius);
 
 			for (KDNode* node : nodesInRange)
 			{
@@ -91,7 +91,7 @@ namespace Pixie
 		{
 			// use largest radius to make search range of kdTree
 			float radius = glm::length(cube.Extents);
-			std::vector<KDNode*> nodesInRange = kdTree.FindNodesInRange(transform.GetPosition(), radius + largestRadius);
+			std::vector<KDNode*> nodesInRange = kdTree.FindNodesInRange(transform.GetModelMatrix()[3], radius + largestRadius);
 
 			for (KDNode* node : nodesInRange)
 			{
@@ -191,8 +191,8 @@ namespace Pixie
 		// need to check effective radius if the parent object has undergone a transform that should scale the collider too
 		// this bit of math on the transform is extracting the scale of the X vector. and because we want spheres to stay uniform, we want to ignore the other axis scale
 		float radiusA = sphereA->Radius * sphereA->Transform->GetLargestScaleComponent();
-		glm::vec3 positionA = sphereA->Transform->GetPosition();
-		glm::vec3 positionB = colliderB->Transform->GetPosition();
+		glm::vec3 positionA = sphereA->Transform->GetModelMatrix()[3];
+		glm::vec3 positionB = colliderB->Transform->GetModelMatrix()[3];
 
 		switch (typeB)
 		{
@@ -201,7 +201,7 @@ namespace Pixie
 				auto* sphereB = static_cast<SphereCollider*>(colliderB);
 				if (sphereB)
 				{
-					float radiusB = sphereB->Radius *sphereB->Transform->GetLargestScaleComponent();
+					float radiusB = sphereB->Radius;// *sphereB->Transform->GetLargestScaleComponent();
 					float r = radiusA + radiusB;
 
 					// is the square distance between A and B < r squared? if so they intersect

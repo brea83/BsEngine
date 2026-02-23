@@ -21,7 +21,7 @@ namespace Pixie
 		{
 			Logger::Core(LOG_WARNING, "No Draw Component found for one of selected, {}'s, native script component functions", caller.GetName());
 		};
-
+		/*
 		TryAddOnUpdateFunction("Test OnUpdate Lambda", [](GameObject& caller, float deltatime)
 		{
 			Logger::Core(LOG_DEBUG, "This is a test of storing a lambda in the function look up.");
@@ -29,7 +29,7 @@ namespace Pixie
 		});
 
 		using std::placeholders::_1;
-		TryAddDrawComponentFunction("Test OnUpdate Lambda", std::bind(&ScriptManager::DrawComponentTest, this, _1));
+		TryAddDrawComponentFunction("Test OnUpdate Lambda", std::bind(&ScriptManager::DrawComponentTest, this, _1));*/
 
 	}
 

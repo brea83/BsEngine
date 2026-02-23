@@ -91,8 +91,8 @@ namespace Pixie
         for (auto&& [entity, collider] : view.each())
         {
             glm::mat4 identity = glm::mat4(1.0f);
-            glm::mat4 scale = glm::scale(identity, glm::vec3(collider.Radius * collider.Transform->GetLargestScaleComponent()));
-            glm::mat4 translation = glm::translate(identity, collider.Transform->GetPosition());
+            glm::mat4 scale = glm::scale(identity, glm::vec3(collider.Radius));// *collider.Transform->GetLargestScaleComponent()));
+            glm::mat4 translation = glm::translate(identity, glm::vec3(collider.Transform->GetWorld()[3]));
 
 
 

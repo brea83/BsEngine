@@ -337,6 +337,7 @@ namespace Pixie
         std::unordered_map<std::string, std::function<void(GameObject&)>> DrawScriptFunctions;
         std::unordered_map<std::string, std::function<void(GameObject&)>> AttachComponentFunctions;
         std::unordered_map<std::string, std::function<void(GameObject&)>> RemoveComponentFunctions;
+        std::unordered_map<std::string, std::function<void(GameObject&, GameObject&)>>CopyComponentFunctions;
 
         std::vector<std::string> AttachedScriptNames;
 

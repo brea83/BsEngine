@@ -15,6 +15,7 @@ namespace Pixie
 		using std::placeholders::_2;
 		scripts->TryAddAttatchComponentFunction(m_Name, std::bind(&TriggerNextScene::AddMyComponentToGameObject, _1));
 		scripts->TryAddRemoveComponentFunction(m_Name, std::bind(&TriggerNextScene::RemoveMyComponent, _1));
+		scripts->TryAddCopyComponentFunction(m_Name, std::bind(&TriggerNextScene::CopyComponent, _1, _2));
 
 		scripts->TryAddOnUpdateFunction(m_Name, std::bind(&TriggerNextScene::OnUpdate, _1, _2));
 		scripts->TryAddOnCollisionFunction(m_Name, std::bind(&TriggerNextScene::OnCollisionStart, _1, _2));
@@ -40,6 +41,16 @@ namespace Pixie
 			hostObject.RemoveComponent<TriggerNextScene>();
 			return;
 		}
+	}
+
+	void TriggerNextScene::CopyComponent(GameObject& sourceObject, GameObject& destinationObject)
+	{
+		if (!sourceObject.HasCompoenent<TriggerNextScene>())
+			return;
+		TriggerNextScene& source = sourceObject.GetComponent<TriggerNextScene>();
+
+		destinationObject.AddOrReplaceComponent<TriggerNextScene>(source);
+
 	}
 
 	void TriggerNextScene::OnUpdate(GameObject & caller, float deltaTime)
@@ -83,7 +94,7 @@ namespace Pixie
 			return;
 		TriggerNextScene& trigger = selected.GetComponent<TriggerNextScene>();
 		
-		if (ImGuiPanel::FileProperty("Next Scene", trigger.m_NextSceneName, "Pixie Game Settings (*.pixieIni)\0*.pixieIni\0"))
+		if (ImGuiPanel::FileProperty("Next Scene", trigger.m_NextSceneName, "Pixie Game Settings (*.pixie)\0*.pixie\0"))
 		{
 			//std::filesystem::path path = trigger.m_NextSceneName;
 		}

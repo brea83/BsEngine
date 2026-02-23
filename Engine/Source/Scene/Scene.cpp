@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Graphics/Primitives/Cube.h"
 #include "Physics/PhysicsEngine.h"
+#include "SceneSerializer.h"
 
 #include "EngineContext.h"
 #include "Entity.h"
@@ -15,6 +16,20 @@ namespace Pixie
 		std::shared_ptr<Scene> newScene = std::make_shared<Scene>(Private());
 		newScene->InitializeEnttMeta();
 		return newScene;
+	}
+
+	std::shared_ptr<Scene> Scene::RuntimeLoadScene(std::filesystem::path filePath)
+	{
+		if (!filePath.empty())
+		{
+			std::shared_ptr<Scene> loadedScene = Scene::Create();
+			//EngineContext::GetEngine()->SetScene(loadedScene);
+			SceneSerializer serializer(loadedScene);
+			serializer.Deserialize(filePath, false);
+			
+			return loadedScene;
+		}
+		return nullptr;
 	}
 
 	void Pixie::Scene::InitializeEnttMeta()
@@ -68,6 +83,12 @@ namespace Pixie
 			
 			InitializeSplineComponent(spline);
 			
+		}
+
+		for (auto&& [entity, meshComponent] : m_Registry.view<MeshComponent>().each())
+		{
+			meshComponent.Reload();
+			meshComponent.GetMaterialInstance().Reload();
 		}
 	}
 
@@ -250,12 +271,25 @@ namespace Pixie
 		CopyRegistryComponents<MovementConstraintsComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 		CopyRegistryComponents<NativeScriptComponent>(destinationRegistry, sourceRegistry, guidToDestinationEntt);
 
-		for (auto&& [entity, scriptComponent] : destinationRegistry.view<NativeScriptComponent>().each())
+		for (auto&& [entity, sourceIdComponent, sourceComponent] : sourceRegistry.view<IDComponent, NativeScriptComponent>().each())
 		{
-			GameObject object = GameObject(entity, newScene);
-			for (auto pair : scriptComponent.AttachComponentFunctions)
+			GUID guid = sourceIdComponent.ID;
+			entt::entity newEnttID = entt::null;
+
+			if (guidToDestinationEntt.find(guid) != guidToDestinationEntt.end())
 			{
-				pair.second(object);
+				newEnttID = guidToDestinationEntt.at(guid);
+			}
+
+			GameObject sourceObject = GameObject(entity, sourceScene);
+			GameObject destinationObject = GameObject(newEnttID, newScene);
+
+			if (!destinationObject)
+				continue;
+
+			for (auto pair : sourceComponent.CopyComponentFunctions)
+			{
+				pair.second(sourceObject, destinationObject);
 			}
 		}
 

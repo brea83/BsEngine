@@ -39,7 +39,7 @@ namespace Pixie
 	}
 
 
-	bool SceneSerializer::Deserialize(std::filesystem::path filePath)
+	bool SceneSerializer::Deserialize(std::filesystem::path filePath, bool initializeHere)
 	{
 		FileStreamReader fileStream(filePath);
 		fileStream.ReadString(m_Scene->m_Name);
@@ -55,7 +55,8 @@ namespace Pixie
 
 			fileStream.ReadObject<GameObject>(object);
 		}
-		m_Scene->Initialize();
+		if(initializeHere)
+			m_Scene->Initialize();
 
 		m_Scene->m_Filepath = filePath;
 		return true;

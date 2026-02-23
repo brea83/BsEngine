@@ -7,6 +7,7 @@
 #include "Events/Event.h"
 #include "Scene/Components/Component.h"
 #include "Components/CameraController.h"
+#include <filesystem>
 
 namespace Pixie
 {
@@ -31,6 +32,7 @@ namespace Pixie
 	public:
 		Scene(Private){}
 		static std::shared_ptr<Scene> Create();
+		static std::shared_ptr<Scene> RuntimeLoadScene(std::filesystem::path filePath);
 		std::shared_ptr<Scene> GetPtr() { return shared_from_this(); }
 		~Scene();
 

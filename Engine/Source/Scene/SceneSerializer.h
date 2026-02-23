@@ -13,7 +13,7 @@ namespace Pixie
 		void Serialize(std::filesystem::path filePath);
 
 		//includes call to scene.Initialize at the end
-		bool Deserialize(std::filesystem::path filePath);
+		bool Deserialize(std::filesystem::path filePath, bool initializeHere = true);
 
 	private:
 		std::shared_ptr<Scene> m_Scene;

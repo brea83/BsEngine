@@ -392,6 +392,10 @@ namespace Pixie
 
             attachFunction(selected);
 
+            std::function<void(GameObject&, GameObject&)> copyFunction;
+            if (scripts->FindCopyComponentFunction(name, copyFunction))
+                CopyComponentFunctions[name] = copyFunction;
+
             std::function<void(GameObject&, float)> updateFunction;
             if (scripts->FindOnUpdateFunction(name, updateFunction))
                 OnUpdateFunctions[name] = updateFunction;

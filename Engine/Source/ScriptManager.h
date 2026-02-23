@@ -25,6 +25,7 @@ namespace Pixie
 		bool FindDrawComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
 		bool FindAttachComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
 		bool FindRemoveComponentFunction(const std::string& name, std::function<void(GameObject&)>& function);
+		bool FindCopyComponentFunction(const std::string& name, std::function<void(GameObject&, GameObject&)>& function);
 
 		std::vector< std::string> GetScriptNames();
 		std::vector< std::string> GetOnUpdateFuncNames();
@@ -35,7 +36,7 @@ namespace Pixie
 		bool TryAddOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)> function);
 		bool TryAddOnCollisionFunction(const std::string& name, std::function<void(GameObject&, CollisionEvent&)> function);
 		bool TryAddDrawComponentFunction(const std::string& name, std::function<void(GameObject&)> drawFunction);
-
+		bool TryAddCopyComponentFunction(const std::string& name, std::function<void(GameObject&, GameObject&)> function);
 		void DrawComponentTest(GameObject& selected);
 
 	protected:
@@ -56,6 +57,7 @@ namespace Pixie
 
 		std::unordered_map<std::string, std::function<void(GameObject&)>> m_AttachComponentLookup;
 		std::unordered_map<std::string, std::function<void(GameObject&)>> m_RemoveComponentLookup;
+		std::unordered_map<std::string, std::function<void(GameObject&, GameObject&)>> m_CopyComponentLookup;
 
 		std::function<void(GameObject&, float)> m_OnUpdateFuncNotFound;
 		std::function<void(GameObject&, CollisionEvent&)> m_OnCollisionFuncNotFound;

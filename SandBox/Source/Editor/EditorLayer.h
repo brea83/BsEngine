@@ -38,6 +38,8 @@ namespace Pixie
 		void SaveSceneAs();
 		void OpenScene();
 
+		virtual std::shared_ptr<Game> GetGame() override;
+
 		bool TryDuplicateSelected();
 
 		bool FocusOnSelected();

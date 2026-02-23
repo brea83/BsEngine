@@ -18,6 +18,7 @@ namespace Pixie
 	class Renderer;
 	class ImGuiLayer;
 	class PhysicsEngine;
+	class Game;
 
 	class EngineContext
 	{
@@ -34,12 +35,14 @@ namespace Pixie
 
 		glm::vec2 GetWindowSize() const;
 
+		virtual void RequestSceneChange(std::filesystem::path filePath);
 		static void ChangeScene(std::shared_ptr<Scene> newScene, bool isRuntimeOrPlaymodeSwap);
 		void SetScene(std::shared_ptr<Scene> newScene, bool bAndInitialize = false);
 		std::shared_ptr<Scene> GetScene() { return m_ActiveScene; }
 
 		Renderer* GetRenderer() { return m_Renderer; }
 
+		static std::shared_ptr<Game> GetGame();
 		static PhysicsEngine* GetPhysics() { if (m_Engine != nullptr) { return m_Engine->m_Physics; } else { return nullptr; } }
 
 		void SetImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }
@@ -63,7 +66,6 @@ namespace Pixie
 		// to be processed at the top of next frame in DispatchEvents
 		virtual void OnEvent(Event& event);
 
-		virtual void RequestSceneChange(std::filesystem::path filePath);
 
 		virtual bool OnFrameBufferSize(WindowResizedEvent& event);
 		virtual bool OnWindowClosed(WindowClosedEvent& event);

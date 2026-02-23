@@ -15,6 +15,7 @@ namespace Pixie
 		static void RegisterToScriptManager();
 		static void AddMyComponentToGameObject(GameObject& hostObject);
 		static void RemoveMyComponent(GameObject& hostObject);
+		static void CopyComponent(GameObject& sourceObject, GameObject& destinationObject);
 		static std::string_view GetName() { return m_Name; }
 
 		static void OnUpdate(GameObject& caller, float deltaTime);

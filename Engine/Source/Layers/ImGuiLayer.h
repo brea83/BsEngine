@@ -7,6 +7,8 @@
 namespace Pixie
 {
 	//may need key, mouse, and application events
+	class Game;
+
 	class ImGuiLayer : public Layer
 	{
 	public:
@@ -20,6 +22,8 @@ namespace Pixie
 
 		void Begin();
 		void End();
+
+		virtual std::shared_ptr<Game> GetGame() { return nullptr; }
 
 		glm::vec2 GetViewportSize() const { return m_ViewportPanelSize; }
 	protected:

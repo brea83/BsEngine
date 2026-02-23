@@ -109,6 +109,15 @@ namespace Pixie
 		return { glm::vec2(m_MainWindow->WindowWidth(), m_MainWindow->WindowHeight()) };
 	}
 
+
+	void EngineContext::RequestSceneChange(std::filesystem::path filePath)
+	{
+		Logger::Game(LOG_DEBUG, "requesting change scene to: {}", filePath.string());
+
+		std::shared_ptr<Scene> loadedScene = Scene::RuntimeLoadScene(filePath);
+		ChangeScene(loadedScene, true);
+	}
+
 	void EngineContext::ChangeScene(std::shared_ptr<Scene> newScene, bool isRuntimeOrPlaymodeSwap)
 	{
 		if (!m_Engine || !newScene) return;
@@ -132,6 +141,15 @@ namespace Pixie
 		{
 			m_ActiveScene->Initialize();
 		}
+	}
+
+	std::shared_ptr<Game> EngineContext::GetGame()
+	{
+		if (m_Engine != nullptr) 
+		{
+			return m_Engine->m_ImGuiLayer->GetGame();
+		}
+		else { return nullptr; }
 	}
 
 	void EngineContext::Update()
@@ -235,10 +253,6 @@ namespace Pixie
 		}
 	}
 
-	void EngineContext::RequestSceneChange(std::filesystem::path filePath)
-	{
-		Logger::Game(LOG_DEBUG, "requesting change scene to: {}", filePath.string());
-	}
 
 	void EngineContext::DispatchEvents()
 	{

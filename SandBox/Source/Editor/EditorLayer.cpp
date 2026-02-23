@@ -270,6 +270,11 @@ namespace Pixie
 
 	}
 
+	std::shared_ptr<Game> EditorLayer::GetGame()
+	{
+		return std::dynamic_pointer_cast<Game>(m_Game);
+	}
+
 	bool EditorLayer::TryDuplicateSelected()
 	{
 		if (m_EditorState != SceneState::Edit) return false;

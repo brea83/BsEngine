@@ -103,6 +103,18 @@ namespace Pixie
 		return false;
 	}
 
+	bool ScriptManager::FindCopyComponentFunction(const std::string& name, std::function<void(GameObject&, GameObject&)>& function)
+	{
+		if (m_CopyComponentLookup.find(name) != m_CopyComponentLookup.end())
+		{
+			function = m_CopyComponentLookup[name];
+			return true;
+		}
+		Logger::Core(LOG_WARNING, "Could not find Remove Component function named {}", name);
+
+		return false;
+	}
+
 	bool ScriptManager::FindAttachComponentFunction(const std::string& name, std::function<void(GameObject&)>& function)
 	{
 		if (m_AttachComponentLookup.find(name) != m_AttachComponentLookup.end())
@@ -206,6 +218,17 @@ namespace Pixie
 			return false;
 		}
 		m_DrawComponentLookup[name] = drawFunction;
+		return true;
+	}
+
+	bool ScriptManager::TryAddCopyComponentFunction(const std::string& name, std::function<void(GameObject&, GameObject&)> function)
+	{
+		if (m_CopyComponentLookup.find(name) != m_CopyComponentLookup.end())
+		{
+			Logger::Core(LOG_WARNING, "ScriptManager is already storing a DrawComponent function named {}", name);
+			return false;
+		}
+		m_CopyComponentLookup[name] = function;
 		return true;
 	}
 

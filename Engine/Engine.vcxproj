@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Scene\Components\IComponentScript.cpp" />
     <ClCompile Include="Source\ScriptManager.cpp" />
     <ClCompile Include="Source\Graphics\Frustum.cpp" />
     <ClCompile Include="Source\Graphics\Primitives\FrustumMesh.cpp" />
@@ -217,6 +218,7 @@
     <ClCompile Include="Source\Scene\Components\SplineComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Scene\Components\IComponentScript.h" />
     <ClInclude Include="Source\ScriptManager.h" />
     <ClInclude Include="Source\Graphics\Frustum.h" />
     <ClInclude Include="Source\Graphics\Primitives\FrustumMesh.h" />

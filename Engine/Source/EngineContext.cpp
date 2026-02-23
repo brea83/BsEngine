@@ -48,6 +48,9 @@ namespace Pixie
 
 		m_ScriptManagerSingleton = ScriptManager::GetInstance();
 
+		TestComponentScript testScript;
+		testScript.RegisterToScriptManager();
+
 		if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 		m_Renderer->Init();
 

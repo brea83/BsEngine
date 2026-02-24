@@ -1,12 +1,12 @@
 #pragma once
-#include "Core.h"
+//#include "Core.h"
 #include "Log.h"
 #include "Scene.h"
-#include <EnTT/entt.hpp>
-#include "Scene/Components/CameraComponent.h"
-#include "Components/Transform.h"
-#include "Components/CameraController.h"
-#include "Scene/Components/MeshComponent.h"
+//#include <EnTT/entt.hpp>
+//#include "Scene/Components/Component.h"
+//#include "Components/Transform.h"
+//#include "Components/CameraController.h"
+//#include "Scene/Components/MeshComponent.h"
 
 
 namespace Pixie

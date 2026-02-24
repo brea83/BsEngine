@@ -1,13 +1,14 @@
 #pragma once
-#include "Core.h"
-#include <glm/glm.hpp>
-#include <EnTT/entt.hpp>
-#include "GUID.h"
+//#include "Core.h"
+//#include "GUID.h"
 #include "CameraManager.h"
 #include "Events/Event.h"
 #include "Scene/Components/Component.h"
-#include "Components/CameraController.h"
+//#include "Components/CameraController.h"
+
 #include <filesystem>
+#include <glm/glm.hpp>
+#include <EnTT/entt.hpp>
 
 namespace Pixie
 {

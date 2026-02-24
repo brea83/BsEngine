@@ -1,11 +1,12 @@
 #pragma once
 //#include <glm/mat4x4.hpp>
+#include "Resources/FileStream.h"
+#include "GUID.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <EnTT/entt.hpp>
-#include "Resources/FileStream.h"
-#include "GUID.h"
 
 namespace Pixie
 {

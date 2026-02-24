@@ -9,6 +9,8 @@
 #include "Components/CameraController.h"
 #include "Components/CollisionComponent.h"
 
+#include <glm/glm.hpp>
+
 namespace Pixie
 {
 	static int s_NumGameObjects = 1;

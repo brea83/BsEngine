@@ -1,10 +1,9 @@
 #pragma once
-#include "Core.h"
+//#include "Core.h"
 #include "BsPrecompileHeader.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/Component.h"
-#include <glm/glm.hpp>
-#include "Resources/FileStream.h"
+//#include "Resources/FileStream.h"
 
 namespace Pixie
 {

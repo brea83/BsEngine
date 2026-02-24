@@ -46,7 +46,8 @@ namespace Pixie
 		}
 		m_Physics = new PhysicsEngine();
 
-		m_ScriptManagerSingleton = ScriptManager::GetInstance();
+		if(m_ScriptManagerSingleton == nullptr)
+			m_ScriptManagerSingleton = ScriptManager::GetInstance();
 
 		if (m_Renderer == nullptr) m_Renderer = new ForwardRenderer();
 		m_Renderer->Init();

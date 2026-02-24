@@ -46,7 +46,7 @@ namespace Pixie
 
 		GameObject CreateEmptyGameObject(const std::string& name);
 		GameObject CreateGameObjectWithGUID(GUID guid, const std::string& name = "");
-		void RemoveGameObject(GameObject objectToRemove);
+		void RemoveGameObject(GameObject objectToRemove, bool bRemoveChildrenToo = false);
 		//void RemoveEntity(entt::entity entityHandle);
 		bool IsEntityValid(entt::entity entity) const { return m_Registry.valid(entity); }
 		
@@ -70,6 +70,7 @@ namespace Pixie
 		void Pause() { m_SceneState = SceneState::Pause; }
 		void UnPause() { m_SceneState = SceneState::Play; }
 
+		void CullDestroyedObjects();
 		void OnUpdate(float deltaTime);
 		void OnEditorUpdate(float deltaTime);
 

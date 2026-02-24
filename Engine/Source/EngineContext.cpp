@@ -169,6 +169,7 @@ namespace Pixie
 				//m_ActiveScene->OnUpdate(m_DeltaTime);
 			}
 
+			m_ActiveScene->CullDestroyedObjects();
 			// right now physics is only testing collisions, and I want to test it in editor mode so there is not yet a separate runtime or editor update. 
 			m_Physics->OnUpdate(m_ActiveScene, m_DeltaTime);
 		}

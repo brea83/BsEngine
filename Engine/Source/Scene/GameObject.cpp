@@ -50,6 +50,12 @@ namespace Pixie
 		Move(deltaTime);
 	}
 
+	void GameObject::TryDestroy()
+	{ 
+		if (!HasCompoenent<NeedsToBeDestroyed>())
+			AddComponent<NeedsToBeDestroyed>();
+	}
+
 	InterpolatedTransform GameObject::HandleMovementComponents(float deltaTime)
 	{
 		InterpolatedTransform result = InterpolatedTransform();

@@ -365,6 +365,11 @@ namespace Pixie
     {
         HasUpdateableComponents() = default;
         HasUpdateableComponents(HasUpdateableComponents&) = default;
-        bool temp{ true };
+        bool Temp{ true };
+    };
+
+    struct NeedsToBeDestroyed
+    {
+        bool Value{ true };
     };
 }

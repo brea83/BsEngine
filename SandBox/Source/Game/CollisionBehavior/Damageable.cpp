@@ -1,5 +1,6 @@
 #include "Damageable.h"
 #include "ScriptManager.h"
+#include "ImGui/ImGuiPanel.h"
 
 namespace Pixie
 {
@@ -44,6 +45,12 @@ namespace Pixie
 		destinationObject.AddOrReplaceComponent<Damageable>(source);
 	}
 
+	void Damageable::OnBeginPlay(GameObject& caller)
+	{
+		if (caller.HasCompoenent<Damageable>())
+			caller.GetComponent<Damageable>().Reset();
+	}
+
 	void Damageable::OnUpdate(GameObject & caller, float deltaTime)
 	{
 		Damageable& component = caller.GetComponent<Damageable>();
@@ -54,7 +61,8 @@ namespace Pixie
 	{
 		if (m_CurrentHealth <= 0)
 		{
-			caller.OnDestroy();
+			//TODO: this is where I would check for object pool and set that stuff off.
+			caller.TryDestroy();
 			m_DamageSourcesThisFrame.clear();
 			return;
 		}
@@ -69,14 +77,15 @@ namespace Pixie
 				m_IsInvulnerable = false;
 			}
 		}
-		else
+		else if(!m_DamageSourcesThisFrame.empty())
 		{
 			TakeDamage();
-			if (m_IFrames > 0 && !m_DamageSourcesThisFrame.empty())
+			if (m_IFrames > 0)
 				m_IsInvulnerable = true;
 		}
 
-		m_DamageSourcesThisFrame.clear();
+		if(!m_DamageSourcesThisFrame.empty())
+			m_DamageSourcesThisFrame.clear();
 	}
 
 	void Damageable::OnCollisionStart(GameObject & caller, CollisionEvent & collision)
@@ -94,23 +103,93 @@ namespace Pixie
 
 	void Damageable::OnCollisionOngoing(GameObject & caller, CollisionEvent & collision, float deltaTime)
 	{
-		Damageable& component = caller.GetComponent<Damageable>();
+		//Damageable& component = caller.GetComponent<Damageable>();
 	}
 
 	void Damageable::Draw(GameObject & selected)
 	{
+		if (!selected.HasCompoenent<Damageable>())
+			return;
 		Damageable& component = selected.GetComponent<Damageable>();
+
+		ImGui::Text("Max Health");
+		ImGui::SameLine();
+		ImGui::DragInt("##maxHealth", &component.m_MaxHealth, 1.0f, 0);
+		
+		ImGui::Text("Invulnerability Frames");
+		ImGui::SameLine();
+		ImGui::DragInt("##maxIFrames", &component.m_IFrames, 1.0f, 0);
+
+		ImGui::SeparatorText("Tags");
+		
+		if (ImGui::Button("Add Tag"))
+		{
+			component.m_TagsThatDamageThis.push_back("");
+		}
+		std::string labelBase = "Tag ";
+		
+		std::vector<size_t> indexesToRemove;
+		for (size_t i = 0; i < component.m_TagsThatDamageThis.size(); i++)
+		{
+			ImGui::PushID(i);
+			std::string tag = component.m_TagsThatDamageThis[i];
+			ImGuiPanel::DrawStringProperty(labelBase + std::to_string(i), component.m_TagsThatDamageThis[i], tag);
+			ImGui::SameLine();
+			if (ImGui::Button("RemoveTag"))
+			{
+				indexesToRemove.push_back(i);
+			}
+			ImGui::PopID();
+		}
+
+		for (size_t index : indexesToRemove)
+		{
+			if (index < 0 || index >= component.m_TagsThatDamageThis.size())
+				continue;
+
+			if (index != component.m_TagsThatDamageThis.size() - 1)
+			{
+				for (size_t i = index; i < component.m_TagsThatDamageThis.size() - 1; i++)
+				{
+					component.m_TagsThatDamageThis.at(i) = component.m_TagsThatDamageThis.at(i + 1);
+				}
+			}
+
+			component.m_TagsThatDamageThis.pop_back();
+		}
 	}
 
 	void Damageable::Serialize(StreamWriter * stream, const GameObject & sourceObject)
 	{
 		Damageable& component = sourceObject.GetComponent<Damageable>();
+		stream->WriteString(m_Name);
+		stream->WriteArray<std::string>(component.m_TagsThatDamageThis);
+		stream->WriteRaw(component.m_MaxHealth);
+		stream->WriteRaw(component.m_IFrames);
 	}
 
 	bool Damageable::Deserialize(StreamReader * stream, GameObject & destinationObject)
 	{
 		Damageable& component = destinationObject.GetComponent<Damageable>();
-		return false;
+		std::string name;
+		stream->ReadString(name);
+		if (name != m_Name)
+			return false;
+
+		stream->ReadArray<std::string>(component.m_TagsThatDamageThis);
+		stream->ReadRaw(component.m_MaxHealth);
+		stream->ReadRaw(component.m_IFrames);
+		return true;
+	}
+	void Damageable::Reset()
+	{
+		m_CurrentHealth = m_MaxHealth;
+
+		m_AccumulatedIFrames = 0;
+		m_IsInvulnerable = false;
+
+		if (!m_DamageSourcesThisFrame.empty())
+			m_DamageSourcesThisFrame.clear();
 	}
 	GameObject Damageable::ExtractOtherObject(GameObject thisObject, CollisionEvent& collision)
 	{

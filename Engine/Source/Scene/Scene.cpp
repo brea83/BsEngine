@@ -32,7 +32,7 @@ namespace Pixie
 		return nullptr;
 	}
 
-	void Pixie::Scene::InitializeEnttMeta()
+	void Scene::InitializeEnttMeta()
 	{
 		Logger::Core(LOG_INFO, "Testing entt meta reflection for scene {}.", m_Name);
 		
@@ -330,6 +330,14 @@ namespace Pixie
 		m_CameraManager.OnBeginEditMode();
 	}
 
+	void Scene::CullDestroyedObjects()
+	{
+		for (auto&& [entity, destroyed] : m_Registry.view<NeedsToBeDestroyed>().each())
+		{
+			RemoveGameObject({ entity, shared_from_this() }, true);
+		}
+	}
+
 	void Scene::OnUpdate(float deltaTime)
 	{
 		if (m_SceneState != SceneState::Play) return;
@@ -429,7 +437,7 @@ namespace Pixie
 		return gameObject;
 	}
 
-	void Scene::RemoveGameObject(GameObject objectToRemove)
+	void Scene::RemoveGameObject(GameObject objectToRemove, bool bRemoveChildrenToo)
 	{
 		if (!m_Registry.valid(objectToRemove))
 		{
@@ -446,20 +454,32 @@ namespace Pixie
 		}
 
 		//check if need to unparent
-		GameObject parent = objectToRemove.GetParent();
-		//HeirarchyComponent* family = m_Registry.try_get<HeirarchyComponent>(objectToRemove);
-		if (parent)
+		if (bRemoveChildrenToo)
 		{
-			parent.RemoveChild(objectToRemove);
+			std::vector<GameObject> children = objectToRemove.GetChildren();
+			for (GameObject child : children)
+			{
+				RemoveGameObject(child, bRemoveChildrenToo);
+			}
 		}
-
-		std::vector<GameObject> children = objectToRemove.GetChildren();
-		for (GameObject child : children)
+		else
 		{
+			GameObject parent = objectToRemove.GetParent();
+			//HeirarchyComponent* family = m_Registry.try_get<HeirarchyComponent>(objectToRemove);
 			if (parent)
-				child.SetParent(parent);
-			else
-				child.SetParentNone();
+			{
+				parent.RemoveChild(objectToRemove);
+			}
+
+			std::vector<GameObject> children = objectToRemove.GetChildren();
+			for (GameObject child : children)
+			{
+				if (parent)
+					child.SetParent(parent);
+				else
+					child.SetParentNone();
+			}
+
 		}
 
 		m_Registry.destroy(objectToRemove);

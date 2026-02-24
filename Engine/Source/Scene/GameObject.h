@@ -39,6 +39,8 @@ namespace Pixie
 		virtual void OnUpdate(float deltaTime);
 		virtual void OnDestroy(){ }
 
+		virtual void TryDestroy();
+
 		// Serialized as:
 		// entt ID (to do replace with uid)
 		// list of serializable component IDs

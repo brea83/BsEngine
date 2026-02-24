@@ -12,7 +12,12 @@ namespace Pixie
 
 	struct Attack
 	{
-		int Damage;
+		int Damage{ 1 };
+	};
+
+	struct ScoresPoints
+	{
+		int Value{ 1 };
 	};
 
 	class Damageable
@@ -24,6 +29,7 @@ namespace Pixie
 		static void CopyComponent(GameObject& sourceObject, GameObject& destinationObject);
 		static std::string_view GetName() { return m_Name; }
 
+		static void OnBeginPlay(GameObject& caller);
 		static void OnUpdate(GameObject& caller, float deltaTime);
 		static void OnCollisionStart(GameObject& caller, CollisionEvent& collision);
 		static void OnCollisionOngoing(GameObject& caller, CollisionEvent& collision, float deltaTime);
@@ -35,25 +41,25 @@ namespace Pixie
 	private:
 		static const std::string m_Name;
 
-		std::vector<std::string> m_TagsThatDamageThis;
-		int m_MaxHealth;
-		int m_CurrentHealth;
+		std::vector<std::string> m_TagsThatDamageThis{ "Player" };
+		int m_MaxHealth{ 2 };
+		int m_CurrentHealth{ 2 };
 
-		int m_IFrames;
-		int m_AccumulatedIFrames;
+		int m_IFrames{ 0 };
+		int m_AccumulatedIFrames{ 0 };
 
 		std::unordered_map<GUID, int> m_DamageSourcesThisFrame;
 
-		bool m_IsInvulnerable;
+		bool m_IsInvulnerable{ false };
+
+		void Reset();
 
 		static GameObject ExtractOtherObject(GameObject thisObject, CollisionEvent& collision);
 		bool TestCollisionValid(GameObject& thisObject, GameObject& other);
-
 		// occurs durring collision evaluation
 		void CollectDamage(GameObject& thisObject, GameObject& other);
 
 		void Update(GameObject& thisObject, float deltaTime);
-
 		// occures durring update
 		void TakeDamage();
 

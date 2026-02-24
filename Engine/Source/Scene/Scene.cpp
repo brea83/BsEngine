@@ -195,6 +195,7 @@ namespace Pixie
 			 PlayerInputComponent& destinationComp = destination.AddComponent<PlayerInputComponent>();
 			 destinationComp.BIsActive = sourceComp.BIsActive;
 		 }
+
 	 }
 	 static void TryCopyAllComponents(GameObject destination, GameObject source)
 	 {
@@ -588,6 +589,19 @@ namespace Pixie
 			MeshCollider* mesh = TryCopyEntityComponent<MeshCollider>(duplicate, sourceObject);
 			if (mesh)
 				mesh->Transform = &duplicate.GetTransform();
+		}
+
+
+		if (sourceObject.HasCompoenent<NativeScriptComponent>())
+		{
+			NativeScriptComponent& sourceComponent = sourceObject.GetComponent<NativeScriptComponent>();
+			if (!duplicate.HasCompoenent<NativeScriptComponent>())
+				duplicate.AddComponent<NativeScriptComponent>(sourceComponent);
+
+			for (auto pair : sourceComponent.AttachedScripts)
+			{
+				pair.second.CopyComponent(sourceObject, duplicate);
+			}
 		}
 		return duplicate;
 	}

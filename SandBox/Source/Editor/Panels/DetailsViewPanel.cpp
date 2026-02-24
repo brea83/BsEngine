@@ -14,6 +14,38 @@
 
 namespace Pixie
 {
+	template <typename T>
+	void DrawComponent(Pixie::GameObject& selected)
+	{
+		T* componentPointer = selected.TryGetComponent<T>();
+		ComponentStruct* downCastStruct = dynamic_cast<ComponentStruct*>(componentPointer);
+		ComponentClass* downCastClass = dynamic_cast<ComponentClass*>(componentPointer);
+		if ( downCastStruct == nullptr && downCastClass == nullptr)
+			return;
+		T& component = selected.GetComponent<T>();
+
+		std::string name = component.GetName();
+		ImGui::PushID(name.c_str());
+
+		if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			bool needsRemove = false;
+			if (ImGui::Button("Remove"))
+			{
+				needsRemove = true;
+				//indexesToRemove.push_back(i);
+			}
+
+			component.Draw(selected);
+
+			if (needsRemove)
+				component.Remove(selected);
+		}
+
+		ImGui::PopID();
+
+	}
+
 	bool DetailsViewPanel::Draw(std::shared_ptr<Scene> scene, std::shared_ptr<GameObject> selected)
 	{
 
@@ -206,7 +238,8 @@ namespace Pixie
 
 		if (selected.HasCompoenent<TagComponent>())
 		{
-			if (ImGui::CollapsingHeader("Tag Component", ImGuiTreeNodeFlags_DefaultOpen))
+			DrawComponent<TagComponent>(selected);
+			/*if (ImGui::CollapsingHeader("Tag Component", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				bool removeTag = false;
 				ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
@@ -224,7 +257,7 @@ namespace Pixie
 				{
 					selected.RemoveComponent<TagComponent>();
 				}
-			}
+			}*/
 		}
 
 		if (selected.HasCompoenent<SplineComponent>())

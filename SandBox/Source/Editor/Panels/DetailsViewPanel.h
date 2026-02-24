@@ -5,6 +5,9 @@
 
 namespace Pixie
 {
+    template <typename T>
+    void DrawComponent(Pixie::GameObject& selected);
+
     class Scene;
     class DetailsViewPanel
     {

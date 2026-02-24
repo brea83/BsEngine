@@ -513,4 +513,17 @@ namespace Pixie
         return true;
     }
 
+    // Tag Component ------------------
+    void TagComponent::Draw(GameObject& selected)
+    {
+        static std::string editingName = Tag;
+
+        ImGuiPanel::DrawStringProperty("Tag", Tag, editingName);
+    }
+
+    void TagComponent::Remove(GameObject & selected)
+    {
+        selected.RemoveComponent<TagComponent>();
+    }
+
 }

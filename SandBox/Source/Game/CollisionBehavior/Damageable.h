@@ -1,5 +1,6 @@
 #pragma once
 #include "GUID.h"
+#include "../CombatComponents.h"
 #include <string>
 #include <vector>
 namespace Pixie
@@ -10,16 +11,7 @@ namespace Pixie
 	class StreamWriter;
 	class StreamReader;
 
-	struct Attack
-	{
-		int Damage{ 1 };
-	};
-
-	struct ScoresPoints
-	{
-		int Value{ 1 };
-	};
-
+	
 	class Damageable
 	{
 	public:

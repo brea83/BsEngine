@@ -42,7 +42,24 @@ namespace Pixie
         NativeScriptComponent,
     };
 
-    struct IDComponent
+    // Component bases for easier heirarchy drawing
+    struct ComponentStruct
+    {
+        virtual std::string GetName() = 0;
+        virtual void Draw(GameObject& selected) = 0;
+        virtual void Remove(GameObject& selected) = 0;
+    };
+
+    class ComponentClass
+    {
+    public:
+        virtual std::string GetName() = 0;
+        virtual void Draw(GameObject& selected) = 0;
+        virtual void Remove(GameObject& selected) = 0;
+    };
+
+    // actual components
+    struct IDComponent 
     {
         GUID ID;
 
@@ -50,11 +67,15 @@ namespace Pixie
         IDComponent(const IDComponent&) = default;
     };
 
-    struct TagComponent
+    struct TagComponent : ComponentStruct
     {
         TagComponent() = default;
         TagComponent(const TagComponent&) = default;
         TagComponent(const std::string& tag) : Tag(tag) { }
+
+        virtual std::string GetName() override { return "Tag Component"; }
+        virtual void Draw(GameObject& selected) override;
+        virtual void Remove(GameObject& selected) override;
 
         static constexpr SerializableComponentID ID{ SerializableComponentID::TagComponent };
         std::string Tag{"Default Tag"};

@@ -15,35 +15,57 @@
 namespace Pixie
 {
 	template <typename T>
-	void DrawComponent(Pixie::GameObject& selected)
+	void DrawComponent(Pixie::GameObject& selected, bool removeable)
 	{
 		T* componentPointer = selected.TryGetComponent<T>();
-		ComponentStruct* downCastStruct = dynamic_cast<ComponentStruct*>(componentPointer);
-		ComponentClass* downCastClass = dynamic_cast<ComponentClass*>(componentPointer);
+		IComponentStruct* downCastStruct = dynamic_cast<IComponentStruct*>(componentPointer);
+		IComponentClass* downCastClass = dynamic_cast<IComponentClass*>(componentPointer);
 		if ( downCastStruct == nullptr && downCastClass == nullptr)
 			return;
+
 		T& component = selected.GetComponent<T>();
 
 		std::string name = component.GetName();
 		ImGui::PushID(name.c_str());
 
-		if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+		if (removeable)
 		{
-			bool needsRemove = false;
-			if (ImGui::Button("Remove"))
+			bool bDontDeleteHeader = true;
+			ImGuiChildFlags flags = ImGuiChildFlags_AlwaysUseWindowPadding | ImGuiChildFlags_ResizeY;
+			if (ImGui::CollapsingHeader(name.c_str(), &bDontDeleteHeader, ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				needsRemove = true;
-				//indexesToRemove.push_back(i);
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(20, 0, 20, 100));
+				ImGui::SetCursorPosX(ImGui::GetTreeNodeToLabelSpacing());
+				ImGui::BeginChild((name + "child").c_str(), ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8), flags, ImGuiWindowFlags_None);
+				ImGui::PopStyleColor();
+
+				component.Draw(selected);
+
+				ImGui::EndChild();
 			}
 
-			component.Draw(selected);
-
-			if (needsRemove)
-				component.Remove(selected);
+			if (!bDontDeleteHeader)
+			{
+				selected.RemoveComponent<T>();
+			}
 		}
+		else
+		{
+			ImGuiChildFlags flags = ImGuiChildFlags_ResizeY;
+			if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(20, 0, 20, 100));
+				ImGui::SetCursorPosX(ImGui::GetTreeNodeToLabelSpacing());
+				ImGui::BeginChild((name + "child").c_str(), ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 8), flags, ImGuiWindowFlags_None);
+				ImGui::PopStyleColor();
 
+				component.Draw(selected);
+
+				ImGui::EndChild();
+			}
+		}
+		
 		ImGui::PopID();
-
 	}
 
 	bool DetailsViewPanel::Draw(std::shared_ptr<Scene> scene, std::shared_ptr<GameObject> selected)
@@ -208,578 +230,58 @@ namespace Pixie
 		entt::registry& registry = scene->GetRegistry();
 		if (selected.HasCompoenent<TransformComponent>())
 		{
-			ImGui::SeparatorText("Transform");
-
-			TransformComponent& transform = selected.GetTransform();
-			
-			ImGuiPanel::SliderParams params;
-			params.Speed = 0.01f;
-			if (ImGuiPanel::DrawVec3Control("Position", transform.m_Position, params))
-			{
-				transform.m_PositionDirty = true;
-			}
-
-			//translate rotation from radians to degrees
-			glm::vec3 eulerDegrees = transform.GetRotationEuler();
-			if (ImGuiPanel::DrawVec3Control("Rotation", eulerDegrees, params))
-			{
-				transform.SetRotationEuler(eulerDegrees);
-			}
-
-			params.ResetValue = 1.0f;
-			if (ImGuiPanel::DrawVec3Control("Scale", transform.m_Scale, params))
-			{
-				transform.m_ScaleDirty = true;
-			}
-
-			ImGui::TextWrapped("There is a known issue with ImGuizmo's Rotation gizmo:");
-			ImGui::TextWrapped("If the camera forward vector is paralel to one of the gizmo circle planes those handles will not behave.");
+			DrawComponent<TransformComponent>(selected, false);
 		}
 
 		if (selected.HasCompoenent<TagComponent>())
 		{
-			DrawComponent<TagComponent>(selected);
-			/*if (ImGui::CollapsingHeader("Tag Component", ImGuiTreeNodeFlags_DefaultOpen))
-			{
-				bool removeTag = false;
-				ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-				if (ImGui::Button("Remove Tag", buttonSize))
-				{
-					removeTag = true;
-				}
-				TagComponent& component = selected.GetComponent<TagComponent>();
-				static std::string editingName = component.Tag;
-
-
-				ImGuiPanel::DrawStringProperty("Tag", component.Tag, editingName);
-
-				if (removeTag)
-				{
-					selected.RemoveComponent<TagComponent>();
-				}
-			}*/
+			DrawComponent<TagComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<SplineComponent>())
 		{
-			ImGui::PushID("Spline");
-			ImGui::Separator();
-			SplineComponent& component = selected.GetComponent<SplineComponent>();
-			ImGui::Text("Slpine Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			ImGui::Text("Type");
-			ImGui::SameLine();
-			int currentType = static_cast<int>(component.GetType());
-			if (ImGui::Combo("##ColliderType", &currentType, SplineComponent::TypeNames, IM_ARRAYSIZE(SplineComponent::TypeNames)))
-			{
-				component.SetType( static_cast<SplineType>(currentType));
-			}
-
-			/*ImGui::Text("Is Loop ");
-			ImGui::SameLine();
-			ImGui::Checkbox("##isLoop", &component.IsLoop);*/
-
-
-			float previewTime = component.PreviewTime;
-			float maxTime = component.GetNumSegments() + 1.0f;
-			ImGuiPanel::SliderParams params;
-			params.Min = 0.0f;
-			params.Max = maxTime;
-			params.Speed = 0.01f;
-
-			ImGuiPanel::DrawFloatControl("Preview T", component.PreviewTime, params);
-
-			ImGui::Text("Debug Color");
-			ImGui::SameLine();
-			ImGui::ColorEdit3("##Color", glm::value_ptr(component.DebugColor));
-
-			ImGui::Text("Segments ");
-			ImGui::SameLine();
-			int oldSegmentCount = component.GetNumSegments();
-			int newSegmentCount = oldSegmentCount;
-			if (ImGui::InputInt("##segmentCount", &newSegmentCount))
-			{
-				if (newSegmentCount > oldSegmentCount)
-					component.AddSegment(selected);
-				if (newSegmentCount < oldSegmentCount)
-					component.RemoveSegment(selected);
-			}
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<SplineComponent>();
-			}
+			DrawComponent<SplineComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<PlayerInputComponent>())
 		{
-			ImGui::PushID("PlayerInput");
-			ImGui::Separator();
-			PlayerInputComponent& component = selected.GetComponent<PlayerInputComponent>();
-			ImGui::Text("Input Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			std::string guid = std::to_string(component.PlayerGUID);
-			std::string enttID = std::to_string((uint32_t)component.PlayerEnttID);
-
-			ImGui::BeginDisabled();
-			ImGuiPanel::DrawStringProperty("Player GUID", guid, guid);
-			ImGuiPanel::DrawStringProperty("Player Entt ID", enttID, enttID);
-			ImGui::EndDisabled();
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<PlayerInputComponent>();
-			}
+			DrawComponent<PlayerInputComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<MovementComponent>())
 		{
-			ImGui::PushID("MoveComponent");
-			ImGui::Separator();
-			MovementComponent& component = selected.GetComponent<MovementComponent>();
-			ImGui::Text("Movement Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			ImGuiPanel::SliderParams params;
-			params.ResetValue = 1.0f;
-			params.Speed = 0.01f;
-
-			ImGuiPanel::DrawFloatControl("Speed", component.Speed, params);
-
-			ImGui::BeginDisabled();
-			glm::vec3 direction = component.Direction;
-			ImGuiPanel::DrawVec3Control("Direction", direction, params);
-			ImGui::EndDisabled();
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<MovementComponent>();
-			}
+			DrawComponent<MovementComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<MovementConstraintsComponent>())
 		{
-			ImGui::PushID("MoveConstraints");
-			ImGui::Separator();
-			MovementConstraintsComponent& component = selected.GetComponent<MovementConstraintsComponent>();
-			ImGui::Text("Movement Constraints");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			ImGui::Text("Use Camera Frustum as Bounds");
-			ImGui::SameLine();
-			ImGui::Checkbox("##isFrustum", &component.BUseCamFrustum);
-
-			if (component.BUseCamFrustum)
-			{
-				component.BConstraintOnGlobalPosition = true;
-			}
-			else
-			{
-				ImGui::Text("Constrain on Global Position");
-				ImGui::SameLine();
-				ImGui::Checkbox("##isGlobal", &component.BConstraintOnGlobalPosition);
-				if (ImGui::IsItemHovered())
-				{
-					ImGui::SetTooltip("false == only constrained on local position");
-				}
-			}
-
-			ImGuiPanel::SliderParams params;
-			params.ResetValue = 1.0f;
-			params.Speed = 0.01f;
-			if (!component.BUseCamFrustum)
-			{
-				ImGuiPanel::DrawVec3Control("Minimum Position", component.MinPosition, params);
-				ImGuiPanel::DrawVec3Control("Maximum Position", component.MaxPosition, params);
-			}			
-			else
-			{
-				if (component.CameraID == 0)
-				{
-					GameObject defaultCam = scene->GetCameraManager().GetDefaultCamera();
-					if (defaultCam)
-						component.CameraID = defaultCam.GetGUID();
-				}
-				GameObject target = scene->FindGameObjectByGUID(component.CameraID);
-				std::string targetString = target ? target.GetName() : " ";
-				ImGui::SeparatorText("Camera to use");
-				ImGui::BeginDisabled();
-				ImGuiPanel::DrawStringProperty("##Target", targetString, targetString);
-				// maybe renable selecting which cam to constrain to later
-				// for now auto constraining to the active/default cam seems best for player constraint
-				/*if (ImGui::BeginDragDropTarget())
-				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
-					{
-						IM_ASSERT(payload->DataSize == sizeof(GameObject));
-						GameObject droppedObject = *(const GameObject*)payload->Data;
-						CameraComponent* cam = droppedObject.TryGetComponent<CameraComponent>();
-
-						if (cam)
-						{
-							glm::mat4 projection = cam->Cam.ProjectionMatrix();
-							glm::mat4 view = glm::inverse(droppedObject.GetTransform().GetObjectToWorldMatrix());
-							component.CameraID = droppedObject.GetGUID();
-							component.FrustumMatrix =Frustum::CalcFrustumMatrix(projection, view);
-						}
-					}
-					ImGui::EndDragDropTarget();
-				}*/
-				ImGui::EndDisabled();
-				if (ImGui::IsItemHovered())
-				{
-					ImGui::SetTooltip("will automatically constrain to active cam at runtime, or default cam at edit time");
-				}
-			}
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<MovementConstraintsComponent>();
-			}
+			DrawComponent<MovementConstraintsComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<FollowComponent>())
 		{
-			ImGui::PushID("FollowerComponent");
-			ImGui::Separator();
-			FollowComponent& component = selected.GetComponent<FollowComponent>();
-			ImGui::Text("Follower Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			ImGuiPanel::SliderParams params;
-			params.Speed = 0.001f;
-			params.ResetValue = 0.0f;
-			ImGuiPanel::DrawVec3Control("Offset", component.Offset, params);
-			ImGuiPanel::DrawFloatControl("Rounding Error", component.FollowThreshold, params);
-
-			GameObject target = scene->FindGameObjectByGUID(component.EntityToFollow);
-			std::string targetString = target ? target.GetName() : "";
-
-			ImGui::SeparatorText("Target to Follow");
-			ImGui::BeginDisabled();
-			ImGuiPanel::DrawStringProperty("##Target", targetString, targetString);
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
-				{
-					IM_ASSERT(payload->DataSize == sizeof(GameObject));
-					GameObject droppedObject = *(const GameObject*)payload->Data;
-
-					component.EntityToFollow = droppedObject.GetGUID();
-				}
-				ImGui::EndDragDropTarget();
-			}
-			ImGui::EndDisabled();
-			ImGui::Separator();
-
-			ImGui::Checkbox("Follow Spline if Available", &component.FollowSplineIfAvailable);
-
-			if (component.FollowSplineIfAvailable)
-			{
-				ImGui::Text("End Of Spline Behavior");
-				ImGui::SameLine();
-				int currentType = static_cast<int>(component.FollowType);
-
-				if (ImGui::Combo("##ColliderType", &currentType, FollowComponent::TypeNames, IM_ARRAYSIZE(FollowComponent::TypeNames)))
-				{
-					component.FollowType = static_cast<SplineEndBehavior>(currentType);
-				}
-			}
-
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<FollowComponent>();
-			}
+			DrawComponent<FollowComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<OrbitComponent>())
 		{
-			ImGui::PushID("OrbitComponent");
-			ImGui::Separator();
-			OrbitComponent& component = selected.GetComponent<OrbitComponent>();
-			ImGui::Text("Orbit Component");
-			if (ImGui::IsItemHovered())
-			{
-				ImGui::SetTooltip("Currently only stores data about an orbit, move component is used to move along an orbit");
-			}
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			ImGuiPanel::SliderParams params;
-			params.Speed = 0.001f;
-			params.ResetValue = 0.0f;
-			ImGuiPanel::DrawVec3Control("Orbital Center", component.Origin, params);
-			if (!selected.HasCompoenent<FollowComponent>() && ImGui::BeginDragDropTarget())
-			{
-				//seems handy to drag and drop origins based on other objects even when not explicitly following those objects
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
-				{
-					IM_ASSERT(payload->DataSize == sizeof(GameObject));
-					GameObject droppedObject = *(const GameObject*)payload->Data;
-
-					component.Origin = droppedObject.GetTransform().GetPosition();
-				}
-				ImGui::EndDragDropTarget();
-			}
-			ImGuiPanel::DrawFloatControl("Radius", component.Radius, params);
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<OrbitComponent>();
-			}
+			DrawComponent<OrbitComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<NativeScriptComponent>())
 		{
-			ImGui::PushID("NativeScriptComponent");
-			ImGui::Separator();
-			NativeScriptComponent& component = selected.GetComponent<NativeScriptComponent>();
-			ImGui::Text("Script Component");
-			
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			component.DrawComponent(selected);
-
-			ImGui::PopID();
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<NativeScriptComponent>();
-			}
+			DrawComponent<NativeScriptComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<MeshComponent>())
 		{
-			ImGui::PushID("MeshComponent");
-			ImGui::Separator();
-			MeshComponent& component = selected.GetComponent<MeshComponent>();
-			char buffer[256];
-			memset(buffer, 0, sizeof(buffer));
-			strcpy_s(buffer, sizeof(buffer), component.Name().c_str());
-			ImGui::Text(buffer);
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-
-			std::string previousMeshPath = component.m_FilePath;
-
-
-			if (ImGuiPanel::FileProperty("Mesh File", component.m_FilePath, "All Formats (*.fbx, *.obj)\0*.fbx;*.obj\0FBX Model (*.fbx)\0*.fbx\0OBJ Mesh(*.obj)\0*.obj\0"))
-			{
-				if (!AssetLoader::LoadMesh(selected, component, component.m_FilePath))
-				{
-					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() MESH FILE There was an error loading mesh file, reverting to old mesh path");
-					component.m_FilePath = previousMeshPath;
-					component.Reload();
-				}
-			}
-
-			ImGui::SeparatorText("Material Instance");
-			MaterialInstance& material = component.m_MaterialInstance;
-
-			std::string previousBasePath = material.BaseMapPath;
-
-			if (ImGuiPanel::FileProperty("Base Texture", material.BaseMapPath,
-				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
-			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.BaseMapPath);
-				if (newTexture == nullptr)
-				{
-					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() BASE TEXTURE There was an error loading Texture file, reverting to old Texture path");
-					material.BaseMapPath = previousBasePath;
-				}
-				else
-				{
-					component.m_MaterialInstance.BaseMap = newTexture;
-				}
-			}
-
-			ImGui::SameLine();
-			ImGui::PushID("RemoveColorTexture");
-			if (ImGui::Button("X"))
-			{
-				material.BaseMap = nullptr;
-				material.BaseMapPath = "";
-			}
-			ImGui::PopID();
-
-			std::string previousNormalPath = material.NormalMapPath;
-
-			if (ImGuiPanel::FileProperty("Normal Map", material.NormalMapPath,
-				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
-			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.NormalMapPath, TextureType::Normal);
-				if (newTexture == nullptr)
-				{
-					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() NORMAL TEXTURE There was an error loading Texture file, reverting to old Texture path");
-					material.NormalMapPath = previousBasePath;
-				}
-				else
-				{
-					component.m_MaterialInstance.NormalMap = newTexture;
-				}
-			}
-
-			ImGui::SameLine();
-			ImGui::PushID("RemoveNormalMap");
-			if (ImGui::Button("X"))
-			{
-				material.NormalMap = nullptr;
-				material.NormalMapPath = "";
-			}
-			ImGui::PopID();
-
-			std::string previousMetalPath = material.MetallicMapPath;
-
-
-			if (ImGuiPanel::FileProperty("Metallic Map", material.MetallicMapPath,
-				"All Formats (*.png, *.jpeg, *.jpg)\0*.png;*.jpeg;*.jpg\0png (*.png)\0*.png\0Jpeg (*.jpeg)\0*.jpeg\0Jpg (*.jpg)\0*.jpg\0"))
-			{
-				std::shared_ptr<Texture> newTexture = AssetLoader::LoadTexture(material.MetallicMapPath, TextureType::GltfMetalicRoughness);
-				if (newTexture == nullptr)
-				{
-					Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() METALLIC TEXTURE There was an error loading Texture file, reverting to old Texture path");
-					material.MetallicMapPath = previousMetalPath;
-				}
-				else
-				{
-					component.m_MaterialInstance.MetallicMap = newTexture;
-				}
-			}
-
-			ImGui::SameLine();
-			ImGui::PushID("RemoveMetalMap");
-			if (ImGui::Button("X"))
-			{
-				material.MetallicMap = nullptr;
-				material.MetallicMapPath = "";
-			}
-			ImGui::PopID();
-
-			ImGuiPanel::SliderParams smoothnessParams;
-			smoothnessParams.Min = 0.0f;
-			smoothnessParams.Max = 1.0f;
-			smoothnessParams.Speed = 0.001f;
-			smoothnessParams.ResetValue = 0.3f;
-			ImGuiPanel::DrawFloatControl("Smoothness", material.Smoothness, smoothnessParams);
-
-			ImGuiPanel::SliderParams specParams;
-			specParams.Min = 1.0f;
-			specParams.Max = 200.0f;
-			specParams.Speed = 0.1f;
-			specParams.ResetValue = 32.0f;
-			ImGuiPanel::DrawFloatControl("Specular Power", material.SpecularPower, specParams);
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<MeshComponent>();
-			}
-			ImGui::PopID();
+			DrawComponent<MeshComponent>(selected, true);
 		}
 
 		if (selected.HasCompoenent<CircleRendererComponent>())
 		{
-			ImGui::PushID("CircleRenderer");
+			DrawComponent<CircleRendererComponent>(selected, true);
+			/*ImGui::PushID("CircleRenderer");
 			CircleRendererComponent& component = selected.GetComponent<CircleRendererComponent>();
 			ImGui::Text("Circle Renderer Component");
 			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
@@ -799,75 +301,76 @@ namespace Pixie
 			ImGui::DragFloat("Line Width", &component.LineWidth, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
 
-			ImGui::PopID();
+			ImGui::PopID();*/
 		}
 
 		if (selected.HasCompoenent<CollisionComponent>())
 		{
-			ImGui::PushID("CollisionComponent");
-			ImGui::Separator();
-			CollisionComponent& component = selected.GetComponent<CollisionComponent>();
-			ImGui::Text("Collision Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
+			DrawComponent<CollisionComponent>(selected, true);
+			//ImGui::PushID("CollisionComponent");
+			//ImGui::Separator();
+			//CollisionComponent& component = selected.GetComponent<CollisionComponent>();
+			//ImGui::Text("Collision Component");
+			//ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
 
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
+			//ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			//ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
+			//bool removeComponent{ false };
+			//if (ImGui::Button("X", buttonSize))
+			//{
+			//	removeComponent = true;
+			//}
 
-			ImGui::Separator();
+			//ImGui::Separator();
 
-			ImGui::Text("Collider Type");
-			ImGui::SameLine();
-			int currentType = static_cast<int>(component.Type);
-			if (ImGui::Combo("##ColliderType", &currentType, CollisionComponent::TypeNames, IM_ARRAYSIZE(CollisionComponent::TypeNames)))
-			{
-				ColliderType newType = static_cast<ColliderType>(currentType);
+			//ImGui::Text("Collider Type");
+			//ImGui::SameLine();
+			//int currentType = static_cast<int>(component.Type);
+			//if (ImGui::Combo("##ColliderType", &currentType, CollisionComponent::TypeNames, IM_ARRAYSIZE(CollisionComponent::TypeNames)))
+			//{
+			//	ColliderType newType = static_cast<ColliderType>(currentType);
 
-				if (newType != component.Type)
-				{
-					component.Type = newType;
-					scene->GetRegistry().patch<CollisionComponent>(selected.GetEnttHandle());
-				}
-			}
-			ImGui::Checkbox("Active", &component.BIsActive);
+			//	if (newType != component.Type)
+			//	{
+			//		component.Type = newType;
+			//		scene->GetRegistry().patch<CollisionComponent>(selected.GetEnttHandle());
+			//	}
+			//}
+			//ImGui::Checkbox("Active", &component.BIsActive);
 
 
-			// specific colliders
+			//// specific colliders
 
-			if (selected.HasCompoenent<SphereCollider>())
-			{
-				SphereCollider& collider = selected.GetComponent<SphereCollider>();
-				ImGuiPanel::SliderParams params;
-				params.ResetValue = 0.5f;
-				params.Speed = 0.001f;
-				params.Min = 0.0f;
+			//if (selected.HasCompoenent<SphereCollider>())
+			//{
+			//	SphereCollider& collider = selected.GetComponent<SphereCollider>();
+			//	ImGuiPanel::SliderParams params;
+			//	params.ResetValue = 0.5f;
+			//	params.Speed = 0.001f;
+			//	params.Min = 0.0f;
 
-				ImGuiPanel::DrawFloatControl("Radius", collider.Radius, params);
-			}
+			//	ImGuiPanel::DrawFloatControl("Radius", collider.Radius, params);
+			//}
 
-			if (selected.HasCompoenent<CubeCollider>())
-			{
-				CubeCollider& collider = selected.GetComponent<CubeCollider>();
-				ImGuiPanel::SliderParams params;
-				params.ResetValue = 0.5f;
-				params.Speed = 0.001f;
-				params.Min = 0.0f;
+			//if (selected.HasCompoenent<CubeCollider>())
+			//{
+			//	CubeCollider& collider = selected.GetComponent<CubeCollider>();
+			//	ImGuiPanel::SliderParams params;
+			//	params.ResetValue = 0.5f;
+			//	params.Speed = 0.001f;
+			//	params.Min = 0.0f;
 
-				ImGuiPanel::DrawVec3Control("Extents", collider.Extents, params);
-				ImGui::SetItemTooltip("Extents are the HALF width/height/depth values");
-			}
+			//	ImGuiPanel::DrawVec3Control("Extents", collider.Extents, params);
+			//	ImGui::SetItemTooltip("Extents are the HALF width/height/depth values");
+			//}
 
-			if (removeComponent)
-			{
-				selected.RemoveComponent<CollisionComponent>();
-			}
+			//if (removeComponent)
+			//{
+			//	selected.RemoveComponent<CollisionComponent>();
+			//}
 
-			ImGui::PopID();
+			//ImGui::PopID();
 		}
 
 		if (selected.HasCompoenent<CameraComponent>())
@@ -1021,76 +524,7 @@ namespace Pixie
 
 		if (selected.HasCompoenent<LightComponent>())
 		{
-			LightComponent& light = selected.GetComponent<LightComponent>();
-			ImGui::PushID("LightComponent");
-			ImGui::Separator();
-
-			ImGui::Text("Light Component");
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 25.0f);
-
-			ImVec2 buttonSize{ ImGui::CalcTextSize("X").x + (ImGui::GetStyle().FramePadding.x * 2.0f),
-			ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-			bool removeComponent{ false };
-			if (ImGui::Button("X", buttonSize))
-			{
-				removeComponent = true;
-			}
-
-			ImGui::Separator();
-			ImGui::Text("Light Type");
-			ImGui::SameLine();
-			int currentType = static_cast<int>(light.Type);
-			if (ImGui::Combo("##Light Type", &currentType, LightComponent::LightTypeNames, IM_ARRAYSIZE(LightComponent::LightTypeNames)))
-			{
-				light.Type = static_cast<LightType>(currentType);
-			}
-
-			ImGui::Text("Light Color");
-			ImGui::SameLine();
-			ImGui::ColorEdit3("##Color", glm::value_ptr(light.Color));
-
-			/*if (light.Type == LightType::Directional)
-			{
-				DrawVec3Control("Direction", light.Direction, 0.5f);
-
-			}*/
-			
-			ImGuiPanel::SliderParams attenuationParams;
-			attenuationParams.Speed = 0.001f;
-			attenuationParams.Format = "%.4f";
-			if (light.Type == LightType::Point)
-			{
-				ImGuiPanel::DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
-
-			}
-
-			if (light.Type == LightType::Spot)
-			{
-				//DrawVec3Control("Direction", light.Direction, 0.5f);
-				ImGuiPanel::DrawVec3Control("Attenuations", light.Attenuation, attenuationParams);
-
-				ImGuiPanel::SliderParams params;
-				params.Min = 1.0f;
-				params.Max = 180.0f;
-				params.ResetValue = 12.5f;
-				params.Speed = 0.01f;
-				ImGuiPanel::DrawFloatControl("Inner Radius", light.InnerRadius, params);
-
-				ImGuiPanel::SliderParams paramsOuter;
-				paramsOuter.Min = 1.0f;
-				paramsOuter.Max = 180.0f;
-				paramsOuter.ResetValue = 15.0f;
-				paramsOuter.Speed = 0.01f;
-				ImGuiPanel::DrawFloatControl("Outer Radius", light.OuterRadius, paramsOuter);
-			}
-
-			if (removeComponent)
-			{
-				selected.RemoveComponent<LightComponent>();
-			}
-			ImGui::PopID();
-
+			DrawComponent<LightComponent>(selected, true);
 		}
 	}
 

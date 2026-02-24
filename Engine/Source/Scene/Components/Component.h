@@ -5,6 +5,7 @@
 #include "GUID.h"
 #include "Resources/FileStream.h"
 
+#include "IComponent.h"
 #include "Transform.h"
 #include "CameraComponent.h"
 #include "CameraController.h"
@@ -42,22 +43,6 @@ namespace Pixie
         NativeScriptComponent,
     };
 
-    // Component bases for easier heirarchy drawing
-    struct ComponentStruct
-    {
-        virtual std::string GetName() = 0;
-        virtual void Draw(GameObject& selected) = 0;
-        virtual void Remove(GameObject& selected) = 0;
-    };
-
-    class ComponentClass
-    {
-    public:
-        virtual std::string GetName() = 0;
-        virtual void Draw(GameObject& selected) = 0;
-        virtual void Remove(GameObject& selected) = 0;
-    };
-
     // actual components
     struct IDComponent 
     {
@@ -67,7 +52,7 @@ namespace Pixie
         IDComponent(const IDComponent&) = default;
     };
 
-    struct TagComponent : ComponentStruct
+    struct TagComponent : IComponentStruct
     {
         TagComponent() = default;
         TagComponent(const TagComponent&) = default;
@@ -75,7 +60,7 @@ namespace Pixie
 
         virtual std::string GetName() override { return "Tag Component"; }
         virtual void Draw(GameObject& selected) override;
-        virtual void Remove(GameObject& selected) override;
+        //virtual void Remove(GameObject& selected) override;
 
         static constexpr SerializableComponentID ID{ SerializableComponentID::TagComponent };
         std::string Tag{"Default Tag"};
@@ -163,10 +148,13 @@ namespace Pixie
         {LightType::Spot, "Spot Light"},
     };
 
-    struct LightComponent
+    struct LightComponent : public IComponentStruct
     {   
         LightComponent() = default;
         LightComponent(const LightComponent&) = default;
+        virtual std::string GetName() override { return "Light Component"; }
+        //virtual void Remove(GameObject& selected) override;
+        virtual void Draw(GameObject& selected) override;
         
         static constexpr SerializableComponentID ID{ SerializableComponentID::LightComponent };
         bool Enabled{ true };
@@ -183,19 +171,34 @@ namespace Pixie
 
         static void Serialize(StreamWriter* stream, const LightComponent& component)
         {
-            stream->WriteRaw<SerializableComponentID>(component.ID);
+            stream->WriteRaw<bool>(component.Enabled);
+            stream->WriteRaw<int>((int)component.Type);
 
+            stream->WriteRaw<glm::vec3>(component.Direction);
+            stream->WriteRaw<glm::vec3>(component.Color);
+            stream->WriteRaw<glm::vec3>(component.Attenuation);
+
+            stream->WriteRaw<float>(component.InnerRadius);
+            stream->WriteRaw<float>(component.OuterRadius);
         }
         static bool Deserialize(StreamReader* stream, LightComponent& component)
         {
-            SerializableComponentID readID;
-            stream->ReadRaw<SerializableComponentID>(readID);
-            if (readID != component.ID) return false;
+            stream->ReadRaw<bool>(component.Enabled);
+            int typeAsInt = 0;
+            stream->ReadRaw<int>(typeAsInt);
+            component.Type = static_cast<LightType>(typeAsInt);
+
+            stream->ReadRaw<glm::vec3>(component.Direction);
+            stream->ReadRaw<glm::vec3>(component.Color);
+            stream->ReadRaw<glm::vec3>(component.Attenuation);
+
+            stream->ReadRaw<float>(component.InnerRadius);
+            stream->ReadRaw<float>(component.OuterRadius);
             return true;
         }
     };
 
-    struct PlayerInputComponent
+    struct PlayerInputComponent : public IComponentStruct
     {
         PlayerInputComponent() = default;
         PlayerInputComponent(entt::entity entt, GUID guid, bool isActive)
@@ -203,6 +206,9 @@ namespace Pixie
 
         PlayerInputComponent(PlayerInputComponent&) = default;
 
+        virtual std::string GetName() override { return "Player Input Component"; }
+        //virtual void Remove(GameObject& selected) override;
+        virtual void Draw(GameObject& selected) override;
 
         entt::entity PlayerEnttID{ entt::null };
         GUID PlayerGUID;
@@ -219,10 +225,14 @@ namespace Pixie
         }
     };
 
-    struct MovementConstraintsComponent
+    struct MovementConstraintsComponent : public IComponentStruct
     {
         MovementConstraintsComponent() = default;
         MovementConstraintsComponent(const MovementConstraintsComponent&) = default;
+
+        virtual std::string GetName() override { return "Movement Constraints"; }
+        //virtual void Remove(GameObject& selected) override;
+        virtual void Draw(GameObject& selected) override;
 
         // if false constraint is on local position
         bool BConstraintOnGlobalPosition{ true }; 
@@ -236,16 +246,38 @@ namespace Pixie
 
         glm::vec3 ConstrainMoveAmount(GameObject& object, TransformComponent& transform, glm::vec3& moveAmount);
 
+        static void Serialize(StreamWriter* stream, const MovementConstraintsComponent& component)
+        {
+            stream->WriteRaw<bool>(component.BConstraintOnGlobalPosition);
+            stream->WriteRaw<bool>(component.BUseCamFrustum);
+
+            stream->WriteRaw<glm::vec3>(component.MinPosition);
+            stream->WriteRaw<glm::vec3>(component.MaxPosition);
+
+        }
+        static bool Deserialize(StreamReader* stream, MovementConstraintsComponent& component)
+        {
+            stream->ReadRaw<bool>(component.BConstraintOnGlobalPosition);
+            stream->ReadRaw<bool>(component.BUseCamFrustum);
+
+            stream->ReadRaw<glm::vec3>(component.MinPosition);
+            stream->ReadRaw<glm::vec3>(component.MaxPosition);
+            return true;
+        }
+
     private:
         glm::vec3 ConstrainOnFrustum(GameObject& object, glm::vec3 currentWorldPos, glm::vec3& moveAmount);
         friend class Scene;
 
     };
 
-    struct MovementComponent
+    struct MovementComponent : public IComponentStruct
     {
         MovementComponent() = default;
         MovementComponent(const MovementComponent&) = default;
+
+        virtual std::string GetName() override { return "Movement Component"; }
+        virtual void Draw(GameObject& selected) override;
 
         float Speed{ 1.0f };
         glm::vec3 Direction{ 0.0f };
@@ -281,10 +313,14 @@ namespace Pixie
         glm::quat Orientation{ 0.0f, 0.0f, 0.0f, 1.0f };
         glm::vec3 EulerAngles{ 0.0f };
     };
-    struct FollowComponent
+    struct FollowComponent : public IComponentStruct
     {
         FollowComponent() = default;
         FollowComponent(const FollowComponent&) = default;
+
+        virtual std::string GetName() override { return "Follow Component"; }
+        //virtual void Remove(GameObject& selected) override;
+        virtual void Draw(GameObject& selected) override;
 
         glm::vec3 Offset{ 0.5f, 1.0f, 5.0f };
         float MinDistFromTarget{ 0.01f };
@@ -325,10 +361,13 @@ namespace Pixie
     };
 
 
-    struct OrbitComponent
+    struct OrbitComponent : public IComponentStruct
     {
         OrbitComponent() = default;
         OrbitComponent(const OrbitComponent&) = default;
+
+        virtual std::string GetName() override { return "Orbit Component"; }
+        virtual void Draw(GameObject& selected) override;
 
         glm::vec3 Origin{ 0.0f };
         float Radius{ 1.0f };
@@ -351,17 +390,20 @@ namespace Pixie
     };
 
     struct CollisionEvent;
-    struct NativeScriptComponent
+    struct NativeScriptComponent : public IComponentStruct
     {
         NativeScriptComponent() = default;
         NativeScriptComponent(const NativeScriptComponent&) = default;
+
+        virtual std::string GetName() override { return "Native Script Component"; }
+        //virtual void Remove(GameObject& selected) override;
 
         std::unordered_map < std::string, StoredScript > AttachedScripts;
 
         std::vector<std::string> AttachedScriptNames;
 
         void AttachScript(const std::string& name, GameObject& destinationObject);
-        void DrawComponent(GameObject& selected);
+        void Draw(GameObject& selected) override;
 
         static void Serialize(StreamWriter* stream, const GameObject& sourceObject, const NativeScriptComponent& component);
         static bool Deserialize(StreamReader* stream, GameObject& destinationObject, NativeScriptComponent& component);

@@ -2,6 +2,7 @@
 //#include <glm/mat4x4.hpp>
 #include "Resources/FileStream.h"
 #include "GUID.h"
+#include "IComponent.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -19,7 +20,7 @@ namespace Pixie
 		Radians
 	};
 
-	class TransformComponent
+	class TransformComponent : public IComponentClass
 	{
 
 	public:
@@ -28,6 +29,10 @@ namespace Pixie
 		TransformComponent() = default;
 		TransformComponent(glm::vec3 position, glm::vec3 rotation , glm::vec3 scale);
 		TransformComponent(const TransformComponent&) = default;
+
+		virtual std::string GetName() override { return "Transform Component"; }
+		virtual void Draw(GameObject& selected) override;
+
 		// properties
 		//static constexpr SerializableComponentID ID{ SerializableComponentID::TransformComponent };
 

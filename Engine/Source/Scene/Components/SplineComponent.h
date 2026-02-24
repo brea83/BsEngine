@@ -1,4 +1,5 @@
 #pragma once
+#include "IComponent.h"
 #include "Transform.h"
 namespace Pixie
 {
@@ -13,13 +14,13 @@ namespace Pixie
         END
     };
 
-    struct SplinePointComponent
-    {
-        SplinePointComponent() = default;
-        SplinePointComponent(SplinePointComponent&) = default;
+    //struct SplinePointComponent
+    //{
+    //    SplinePointComponent() = default;
+    //    SplinePointComponent(SplinePointComponent&) = default;
 
-        uint64_t SplineParentGUID{ 0 };
-    };
+    //    uint64_t SplineParentGUID{ 0 };
+    //};
 
     struct SegmentRelativeT
     {
@@ -29,11 +30,14 @@ namespace Pixie
 
     class GameObject;
 
-    class SplineComponent
+    class SplineComponent : public IComponentClass
     {
     public:
         SplineComponent() = default;
         SplineComponent(SplineComponent&) = default;
+
+        virtual std::string GetName() override { return "Spline Component"; }
+        virtual void Draw(GameObject& selected) override;
 
         SplineType GetType() const { return m_Type; }
         void SetType(SplineType type);

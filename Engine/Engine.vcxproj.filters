@@ -82,6 +82,7 @@
     <ClCompile Include="Source\Graphics\Primitives\FrustumMesh.cpp" />
     <ClCompile Include="Source\ScriptManager.cpp" />
     <ClCompile Include="Source\Scene\Components\IComponentScript.cpp" />
+    <ClCompile Include="Source\ImGui\DrawCoreComponents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Source\Graphics\Primitives\FrustumMesh.h" />
     <ClInclude Include="Source\ScriptManager.h" />
     <ClInclude Include="Source\Scene\Components\IComponentScript.h" />
+    <ClInclude Include="Source\Scene\Components\IComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

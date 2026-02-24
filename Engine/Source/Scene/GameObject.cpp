@@ -252,13 +252,13 @@ namespace Pixie
 				fileWriter->WriteObject(object.GetComponent<HeirarchyComponent>());
 
 			if (id == SerializableComponentID::TransformComponent)
-				fileWriter->WriteRaw<TransformComponent>(object.GetComponent<TransformComponent>());
+				fileWriter->WriteObject<TransformComponent>(object.GetComponent<TransformComponent>());
 
 			if (id == SerializableComponentID::MeshComponent)
 				fileWriter->WriteObject(object.GetComponent<MeshComponent>());
 
 			if (id == SerializableComponentID::LightComponent)
-				fileWriter->WriteRaw<LightComponent>(object.GetComponent<LightComponent>());
+				fileWriter->WriteObject<LightComponent>(object.GetComponent<LightComponent>());
 
 			if (id == SerializableComponentID::CameraComponent)
 				fileWriter->WriteRaw(object.GetComponent<CameraComponent>());
@@ -320,7 +320,7 @@ namespace Pixie
 				fileWriter->WriteObject(object.GetComponent<OrbitComponent>());
 
 			if (id == SerializableComponentID::MovementConstraints)
-				fileWriter->WriteRaw(object.GetComponent<MovementConstraintsComponent>());
+				fileWriter->WriteObject(object.GetComponent<MovementConstraintsComponent>());
 
 			if (id == SerializableComponentID::NativeScriptComponent)
 			{
@@ -363,7 +363,7 @@ namespace Pixie
 
 			if (id == SerializableComponentID::TransformComponent)
 			{
-				fileReader->ReadRaw<TransformComponent>(object.GetOrAddComponent<TransformComponent>());
+				fileReader->ReadObject<TransformComponent>(object.GetOrAddComponent<TransformComponent>());
 				continue;
 			}
 
@@ -375,7 +375,7 @@ namespace Pixie
 
 			if (id == SerializableComponentID::LightComponent)
 			{
-				fileReader->ReadRaw<LightComponent>(object.GetOrAddComponent<LightComponent>());
+				fileReader->ReadObject<LightComponent>(object.GetOrAddComponent<LightComponent>());
 				continue;
 			}
 
@@ -484,7 +484,7 @@ namespace Pixie
 			{
 				MovementConstraintsComponent& component = object.GetOrAddComponent<MovementConstraintsComponent>();
 
-				fileReader->ReadRaw(component);
+				fileReader->ReadObject<MovementConstraintsComponent>(component);
 				continue;
 			}
 

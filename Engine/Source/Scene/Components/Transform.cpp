@@ -300,16 +300,29 @@ namespace Pixie
 
     void TransformComponent::Serialize(StreamWriter* stream, const TransformComponent& component)
     {
-        // current scene and game object serialization uses WriteRaw for TransformComponent
-        // so this function should never be called.
-        stream->WriteRaw<GUID>(component.m_ParentGuid);
-        stream->WriteRaw<GUID>(component.m_Guid);
+        stream->WriteObject<GUID>(component.m_ParentGuid);
+        stream->WriteObject<GUID>(component.m_Guid);
+
+
+
+        stream->WriteRaw<glm::vec3>(component.m_Position);
+        stream->WriteRaw<glm::vec3>(component.m_EulerRotation);
+        stream->WriteRaw<glm::vec3>(component.m_Scale);
 
     }
 
     bool TransformComponent::Deserialize(StreamReader * stream, TransformComponent & component)
     {
-        return false;
+        stream->ReadObject<GUID>(component.m_ParentGuid);
+        stream->ReadObject<GUID>(component.m_Guid);
+
+        stream->ReadRaw<glm::vec3>(component.m_Position);
+        stream->ReadRaw<glm::vec3>(component.m_EulerRotation);
+        stream->ReadRaw<glm::vec3>(component.m_Scale);
+
+        component.SetRotationEuler(component.m_EulerRotation, AngleType::Radians);
+        component.RecalculateModelMatrix();
+        return true;
     }
 
     glm::mat4 TransformComponent::CalculateUnscaledLocalMatrix()

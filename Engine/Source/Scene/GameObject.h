@@ -64,4 +64,21 @@ namespace Pixie
 	private:
 		friend class Scene;
 	};
+
+
+	template <>
+	inline void Entity::RemoveComponent<NativeScriptComponent>()
+	{
+		if (!HasCompoenent<NativeScriptComponent>()) return;
+
+		NativeScriptComponent& scriptComponent = GetComponent<NativeScriptComponent>();
+		GameObject object { m_EntityHandle, m_Scene };
+		for (auto pair : scriptComponent.AttachedScripts)
+		{
+			pair.second.RemoveComponent(object);
+		}
+
+		m_Scene->GetRegistry().remove<NativeScriptComponent>(m_EntityHandle);
+
+	}
 }

@@ -1,15 +1,19 @@
 #pragma once
 #include "Collider.h"
+#include "Scene/Components/IComponent.h"
 #include "Resources/FileStream.h"
 #include <EnTT/entt.hpp>
 namespace Pixie
 {
 
 
-	struct CollisionComponent
+	struct CollisionComponent: public IComponentStruct
 	{
 		CollisionComponent() = default;
 		CollisionComponent(const CollisionComponent&) = default;
+
+		virtual std::string GetName() override { return "Collision Component"; }
+		virtual void Draw(GameObject& selected) override;
 
 		ColliderType Type{ ColliderType::END };
 		bool BIsActive{ true };

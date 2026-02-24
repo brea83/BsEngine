@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "BsPrecompileHeader.h"
 //#include "Scene/Components/Component.h"
+#include "Scene/Components/IComponent.h"
 #include "Resources/FileStream.h"
 #include "MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
@@ -16,7 +17,7 @@ namespace Pixie
 {
 	class GameObject;
 
-	class MeshComponent
+	class MeshComponent : public IComponentClass
 	{
 	public:
 		using StdPath = std::filesystem::path;
@@ -25,12 +26,15 @@ namespace Pixie
 		MeshComponent(const std::string& modelFilePath, const std::string& textureFilePath = "");
 		~MeshComponent();
 
+		//virtual std::string GetName() over;
+		virtual void Draw(GameObject& selected) override;
+
 		//static constexpr SerializableComponentID ID{ SerializableComponentID::MeshComponent };
 		bool Reload();
 
 		void SetMesh(std::shared_ptr<Mesh>& mesh) { m_Mesh = mesh; }
 
-		const std::string& Name() const { return m_Name; }
+		virtual std::string GetName() override { return m_Name; }
 		void SetName(const std::string& name)  { m_Name = name; }
 
 		void SetFilePath(const std::string& path) { m_FilePath = path; }
@@ -99,10 +103,13 @@ namespace Pixie
 		friend class DetailsViewPanel;
 	};
 
-	struct CircleRendererComponent
+	struct CircleRendererComponent : public IComponentStruct
 	{
 		CircleRendererComponent();
 		CircleRendererComponent(const glm::vec4& color);
+
+		virtual std::string GetName() override { return "Circle Renderer"; }
+		virtual void Draw(GameObject& selected) override;
 
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 		float Radius{ 0.5f };

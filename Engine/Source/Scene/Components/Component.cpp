@@ -360,16 +360,6 @@ namespace Pixie
     {
         ScriptManager* scripts = ScriptManager::GetInstance();
         StoredScript newScript;
-        /*if (scripts->FindAttachComponentFunction(name, newScript.AttachComponent))
-            newScript.AttachComponent(destinationObject);
-
-        scripts->FindRemoveComponentFunction(name, newScript.RemoveComponent);
-        scripts->FindCopyComponentFunction(name, newScript.CopyComponent);
-
-        scripts->FindOnUpdateFunction(name, newScript.OnUpdate);
-        scripts->FindOnCollisionFunction(name, newScript.OnCollision);
-
-        scripts->FindDrawComponentFunction(name, newScript.Draw);*/
 
         if (scripts->FindStoredScript(name, newScript))
         {
@@ -378,111 +368,6 @@ namespace Pixie
             AttachedScripts[name].AttachComponent(destinationObject);
         }
 
-    }
-
-    void NativeScriptComponent::DrawComponent(GameObject& selected)
-    {
-        ScriptManager* scripts = ScriptManager::GetInstance();
-        ImGui::Text("ScriptComponents");
-        ImGui::SameLine();
-        std::vector<std::string> componentScripts = scripts->GetScriptNames();
-
-        static int currentScriptIndex = 0;
-        const char* combo_preview_value = componentScripts[currentScriptIndex].c_str();
-        if (ImGui::BeginCombo("combo 1", combo_preview_value))
-        {
-            for (int i = 0; i < componentScripts.size(); i++)
-            {
-                const bool is_selected = (currentScriptIndex == i);
-                if (ImGui::Selectable(componentScripts[i].c_str(), is_selected))
-                    currentScriptIndex = i;
-
-                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-
-        if (currentScriptIndex == 0)
-            ImGui::BeginDisabled();
-        if (ImGui::Button("ADD"))
-        {
-            std::string name = componentScripts[currentScriptIndex];
-
-            if (AttachedScripts.find(name) != AttachedScripts.end())
-            {
-                Logger::Core(LOG_DEBUG, "script named {} is already attached to {}", name, selected.GetName());
-            }
-            else
-            {
-                AttachScript(name, selected);
-
-                //std::function<void(GameObject&)> attachFunction;
-                //if (scripts->FindAttachComponentFunction(name, attachFunction))
-                //    AttachComponentFunctions[name] = attachFunction;
-
-                //attachFunction(selected);
-
-                //std::function<void(GameObject&, GameObject&)> copyFunction;
-                //if (scripts->FindCopyComponentFunction(name, copyFunction))
-                //    CopyComponentFunctions[name] = copyFunction;
-
-                //std::function<void(GameObject&, float)> updateFunction;
-                //if (scripts->FindOnUpdateFunction(name, updateFunction))
-                //    OnUpdateFunctions[name] = updateFunction;
-
-                //std::function<void(GameObject&, CollisionEvent&)> collisionFunction;
-                //if (scripts->FindOnCollisionFunction(name, collisionFunction))
-                //    OnCollisionFunctions[name] = collisionFunction;
-             
-                //std::function<void(GameObject&)> drawFunction;
-                //if (scripts->FindDrawComponentFunction(name, drawFunction))
-                //    DrawScriptFunctions[name] = drawFunction;
-
-                //std::function<void(GameObject&)> removeComponentFunc;
-                //if (scripts->FindRemoveComponentFunction(name, removeComponentFunc))
-                //    RemoveComponentFunctions[name] = removeComponentFunc;
-
-                //if (std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), name) == AttachedScriptNames.end())
-                //    AttachedScriptNames.push_back(name);
-
-            }
-        }
-        if (currentScriptIndex == 0)
-            ImGui::EndDisabled();
-        std::vector<std::string> funcsToRemove;
-
-        ImVec2 buttonSize{ ImGui::GetContentRegionAvail().x, ImGui::CalcTextSize("X").y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
-
-        for (auto name : AttachedScriptNames)
-        {
-            ImGui::PushID(name.c_str());
-
-            if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
-            {
-                if (ImGui::Button("Remove Script", buttonSize))
-                {
-                    funcsToRemove.push_back(name);
-                }
-
-                //if(DrawScriptFunctions.find(name) != DrawScriptFunctions.end())
-                if (AttachedScripts.find(name) != AttachedScripts.end())
-                    AttachedScripts[name].Draw(selected);
-            }
-            
-            ImGui::PopID();
-        }
-
-        for (auto key : funcsToRemove)
-        {
-            auto attachedScriptName = std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), key);
-            if (attachedScriptName != AttachedScriptNames.end())
-                AttachedScriptNames.erase(attachedScriptName);
-
-            if (AttachedScripts.find(key) != AttachedScripts.end())
-                AttachedScripts.erase(key);
-        }
     }
 
     void NativeScriptComponent::Serialize(StreamWriter * stream, const GameObject& sourceObject, const NativeScriptComponent & component)
@@ -511,19 +396,6 @@ namespace Pixie
         }
 
         return true;
-    }
-
-    // Tag Component ------------------
-    void TagComponent::Draw(GameObject& selected)
-    {
-        static std::string editingName = Tag;
-
-        ImGuiPanel::DrawStringProperty("Tag", Tag, editingName);
-    }
-
-    void TagComponent::Remove(GameObject & selected)
-    {
-        selected.RemoveComponent<TagComponent>();
     }
 
 }

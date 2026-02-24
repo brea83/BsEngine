@@ -9,15 +9,17 @@ namespace Pixie
 
 	struct StoredScript
 	{
-		std::function<void(GameObject&) > AttachComponent;
-		std::function<void(GameObject&) > RemoveComponent;
-		std::function<void(GameObject&, GameObject&) > CopyComponent;
+		std::function<void(GameObject&)> AttachComponent;
+		std::function<void(GameObject&)> RemoveComponent;
+		std::function<void(GameObject&, GameObject&)> CopyComponent;
 		std::function<void(StreamWriter*, const GameObject&)> Serialize;
 		std::function<bool(StreamReader*, GameObject&)> Deserialize;
 
+		std::function<void(GameObject&)> OnBeginPlay;
+		std::function<void(GameObject&)> OnDestroy;
 		std::function<void(GameObject&, float)> OnUpdate;
-		std::function<void(GameObject&, CollisionEvent&) > OnCollision;
-		std::function<void(GameObject&, CollisionEvent&) > OnCollisionOngoing;
+		std::function<void(GameObject&, CollisionEvent&)> OnCollision;
+		std::function<void(GameObject&, CollisionEvent&, float)> OnCollisionOngoing;
 
 		std::function<void(GameObject&) > Draw;
 	};
@@ -39,7 +41,7 @@ namespace Pixie
 	//	static void Draw(GameObject& selected);
 	//
 	//	static void Serialize(StreamWriter* stream, const GameObject& sourceObject);
-	//	static bool Deserialize(StreamReader* stream, GameObject& sourceObject);
+	//	static bool Deserialize(StreamReader* stream, GameObject& destinationObject);
 
 	//private:
 	//	static const std::string m_Name;

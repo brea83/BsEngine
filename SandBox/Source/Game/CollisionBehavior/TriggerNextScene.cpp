@@ -22,7 +22,7 @@ namespace Pixie
 		newScript.Draw = std::bind(&TriggerNextScene::Draw, _1);
 		newScript.OnUpdate = std::bind(&TriggerNextScene::OnUpdate, _1, _2);
 		newScript.OnCollision = std::bind(&TriggerNextScene::OnCollisionStart, _1, _2);
-		newScript.OnCollisionOngoing = [](GameObject& object, CollisionEvent& event) {};
+		newScript.OnCollisionOngoing = [](GameObject& object, CollisionEvent& event, float time) {};
 
 		scripts->TryStoreScript(m_Name, newScript);
 
@@ -112,9 +112,9 @@ namespace Pixie
 		stream->WriteString(component.m_NextSceneName);
 		stream->WriteString(component.m_TagThatActivatesTrigger);
 	}
-	bool TriggerNextScene::Deserialize(StreamReader * stream, GameObject& sourceObject)
+	bool TriggerNextScene::Deserialize(StreamReader * stream, GameObject& destinationObject)
 	{
-		TriggerNextScene& component = sourceObject.GetComponent<TriggerNextScene>();
+		TriggerNextScene& component = destinationObject.GetComponent<TriggerNextScene>();
 
 		std::string name;
 		stream->ReadString(name);

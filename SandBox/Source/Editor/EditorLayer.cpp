@@ -24,6 +24,7 @@
 #include "ImGui/imgui_sink.h"
 
 #include "../Game/CollisionBehavior/TriggerNextScene.h"
+#include "../Game/CollisionBehavior/Damageable.h"
 
 namespace Pixie
 {
@@ -119,6 +120,7 @@ namespace Pixie
 		//Pixie::Logger::Core(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
 
 		TriggerNextScene::RegisterToScriptManager();
+		Damageable::RegisterToScriptManager();
 	}
 
 	void EditorLayer::OnDetach()

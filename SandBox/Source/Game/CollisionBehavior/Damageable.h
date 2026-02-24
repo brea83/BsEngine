@@ -1,19 +1,23 @@
 #pragma once
+#include "GUID.h"
 #include <string>
-#include "Resources/FileStream.h"
-
+#include <vector>
 namespace Pixie
 {
 	class GameObject;
 	struct CollisionEvent;
 
-	class TriggerNextScene
+	class StreamWriter;
+	class StreamReader;
+
+	struct Attack
+	{
+		int Damage;
+	};
+
+	class Damageable
 	{
 	public:
-		TriggerNextScene() = default;
-		TriggerNextScene(const TriggerNextScene&) = default;
-		~TriggerNextScene() { }
-
 		static void RegisterToScriptManager();
 		static void AddMyComponentToGameObject(GameObject& hostObject);
 		static void RemoveMyComponent(GameObject& hostObject);
@@ -31,9 +35,28 @@ namespace Pixie
 	private:
 		static const std::string m_Name;
 
-		bool triggered{ false };
-		std::string m_NextSceneName{ "MovementTesting" };
-		std::string m_TagThatActivatesTrigger{ "Player" };
+		std::vector<std::string> m_TagsThatDamageThis;
+		int m_MaxHealth;
+		int m_CurrentHealth;
+
+		int m_IFrames;
+		int m_AccumulatedIFrames;
+
+		std::unordered_map<GUID, int> m_DamageSourcesThisFrame;
+
+		bool m_IsInvulnerable;
+
+		static GameObject ExtractOtherObject(GameObject thisObject, CollisionEvent& collision);
+		bool TestCollisionValid(GameObject& thisObject, GameObject& other);
+
+		// occurs durring collision evaluation
+		void CollectDamage(GameObject& thisObject, GameObject& other);
+
+		void Update(GameObject& thisObject, float deltaTime);
+
+		// occures durring update
+		void TakeDamage();
+
 	};
 
 }

@@ -95,6 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\CollisionBehavior\Damageable.cpp" />
     <ClCompile Include="Source\Editor\Panels\GameDetailsEditor.cpp" />
     <ClCompile Include="Source\Game\UI\PauseMenu.cpp" />
     <ClCompile Include="Source\Game\ExampleGame.cpp" />
@@ -113,6 +114,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\CollisionBehavior\Damageable.h" />
     <ClInclude Include="Source\Editor\Panels\GameDetailsEditor.h" />
     <ClInclude Include="Source\Game\UI\PauseMenu.h" />
     <ClInclude Include="Source\Game\ExampleGame.h" />

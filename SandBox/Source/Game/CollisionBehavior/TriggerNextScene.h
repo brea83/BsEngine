@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include "Resources/FileStream.h"
+
 namespace Pixie
 {
 	class GameObject;
@@ -22,6 +24,9 @@ namespace Pixie
 		static void OnCollisionStart(GameObject& caller, CollisionEvent& collision);
 		static void OnCollisionOngoing(GameObject& caller, CollisionEvent& collision, float deltaTime);
 		static void Draw(GameObject& selected);
+
+		static void Serialize(StreamWriter* stream, const GameObject& sourceObject);
+		static bool Deserialize(StreamReader* stream, GameObject& sourceObject);
 
 	private:
 		static const std::string m_Name;

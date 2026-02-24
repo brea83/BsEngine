@@ -128,6 +128,7 @@ namespace Pixie
 
 	bool EngineContext::OnSceneChangedEvent(SceneChangedEvent & event)
 	{
+		// TODO :: collect player info that needs to go between scenes 
 		m_ActiveScene = event.GetScene();
 		if (m_ActiveScene->GetSceneState() == SceneState::UnInitialized)
 			m_ActiveScene->Initialize();

@@ -356,6 +356,30 @@ namespace Pixie
 
     // Native Scripting Component
     
+    void NativeScriptComponent::AttachScript(const std::string& name, GameObject& destinationObject)
+    {
+        ScriptManager* scripts = ScriptManager::GetInstance();
+        StoredScript newScript;
+        /*if (scripts->FindAttachComponentFunction(name, newScript.AttachComponent))
+            newScript.AttachComponent(destinationObject);
+
+        scripts->FindRemoveComponentFunction(name, newScript.RemoveComponent);
+        scripts->FindCopyComponentFunction(name, newScript.CopyComponent);
+
+        scripts->FindOnUpdateFunction(name, newScript.OnUpdate);
+        scripts->FindOnCollisionFunction(name, newScript.OnCollision);
+
+        scripts->FindDrawComponentFunction(name, newScript.Draw);*/
+
+        if (scripts->FindStoredScript(name, newScript))
+        {
+            AttachedScriptNames.push_back(name);
+            AttachedScripts[AttachedScriptNames.back()] = newScript;
+            AttachedScripts[name].AttachComponent(destinationObject);
+        }
+
+    }
+
     void NativeScriptComponent::DrawComponent(GameObject& selected)
     {
         ScriptManager* scripts = ScriptManager::GetInstance();
@@ -386,34 +410,44 @@ namespace Pixie
         {
             std::string name = componentScripts[currentScriptIndex];
 
-            std::function<void(GameObject&)> attachFunction;
-            if (scripts->FindAttachComponentFunction(name, attachFunction))
-                AttachComponentFunctions[name] = attachFunction;
+            if (AttachedScripts.find(name) != AttachedScripts.end())
+            {
+                Logger::Core(LOG_DEBUG, "script named {} is already attached to {}", name, selected.GetName());
+            }
+            else
+            {
+                AttachScript(name, selected);
 
-            attachFunction(selected);
+                //std::function<void(GameObject&)> attachFunction;
+                //if (scripts->FindAttachComponentFunction(name, attachFunction))
+                //    AttachComponentFunctions[name] = attachFunction;
 
-            std::function<void(GameObject&, GameObject&)> copyFunction;
-            if (scripts->FindCopyComponentFunction(name, copyFunction))
-                CopyComponentFunctions[name] = copyFunction;
+                //attachFunction(selected);
 
-            std::function<void(GameObject&, float)> updateFunction;
-            if (scripts->FindOnUpdateFunction(name, updateFunction))
-                OnUpdateFunctions[name] = updateFunction;
+                //std::function<void(GameObject&, GameObject&)> copyFunction;
+                //if (scripts->FindCopyComponentFunction(name, copyFunction))
+                //    CopyComponentFunctions[name] = copyFunction;
 
-            std::function<void(GameObject&, CollisionEvent&)> collisionFunction;
-            if (scripts->FindOnCollisionFunction(name, collisionFunction))
-                OnCollisionFunctions[name] = collisionFunction;
+                //std::function<void(GameObject&, float)> updateFunction;
+                //if (scripts->FindOnUpdateFunction(name, updateFunction))
+                //    OnUpdateFunctions[name] = updateFunction;
+
+                //std::function<void(GameObject&, CollisionEvent&)> collisionFunction;
+                //if (scripts->FindOnCollisionFunction(name, collisionFunction))
+                //    OnCollisionFunctions[name] = collisionFunction;
              
-            std::function<void(GameObject&)> drawFunction;
-            if (scripts->FindDrawComponentFunction(name, drawFunction))
-                DrawScriptFunctions[name] = drawFunction;
+                //std::function<void(GameObject&)> drawFunction;
+                //if (scripts->FindDrawComponentFunction(name, drawFunction))
+                //    DrawScriptFunctions[name] = drawFunction;
 
-            std::function<void(GameObject&)> removeComponentFunc;
-            if (scripts->FindRemoveComponentFunction(name, removeComponentFunc))
-                RemoveComponentFunctions[name] = removeComponentFunc;
+                //std::function<void(GameObject&)> removeComponentFunc;
+                //if (scripts->FindRemoveComponentFunction(name, removeComponentFunc))
+                //    RemoveComponentFunctions[name] = removeComponentFunc;
 
-            if (std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), name) == AttachedScriptNames.end())
-                AttachedScriptNames.push_back(name);
+                //if (std::find(AttachedScriptNames.begin(), AttachedScriptNames.end(), name) == AttachedScriptNames.end())
+                //    AttachedScriptNames.push_back(name);
+
+            }
         }
         if (currentScriptIndex == 0)
             ImGui::EndDisabled();
@@ -432,8 +466,9 @@ namespace Pixie
                     funcsToRemove.push_back(name);
                 }
 
-                if(DrawScriptFunctions.find(name) != DrawScriptFunctions.end())
-                    DrawScriptFunctions[name](selected);
+                //if(DrawScriptFunctions.find(name) != DrawScriptFunctions.end())
+                if (AttachedScripts.find(name) != AttachedScripts.end())
+                    AttachedScripts[name].Draw(selected);
             }
             
             ImGui::PopID();
@@ -445,71 +480,34 @@ namespace Pixie
             if (attachedScriptName != AttachedScriptNames.end())
                 AttachedScriptNames.erase(attachedScriptName);
 
-            if (AttachComponentFunctions.find(key) != AttachComponentFunctions.end())
-                AttachComponentFunctions.erase(key);
-
-            if (OnUpdateFunctions.find(key) != OnUpdateFunctions.end())
-                OnUpdateFunctions.erase(key);
-
-            if (DrawScriptFunctions.find(key) != DrawScriptFunctions.end())
-                DrawScriptFunctions.erase(key);
-
-            if (OnCollisionFunctions.find(key) != OnCollisionFunctions.end())
-                OnCollisionFunctions.erase(key);
-
-            if (RemoveComponentFunctions.find(key) != RemoveComponentFunctions.end())
-            {
-                RemoveComponentFunctions[key](selected);
-                RemoveComponentFunctions.erase(key);
-            }
+            if (AttachedScripts.find(key) != AttachedScripts.end())
+                AttachedScripts.erase(key);
         }
     }
 
-    void NativeScriptComponent::Serialize(StreamWriter * stream, const NativeScriptComponent & component)
+    void NativeScriptComponent::Serialize(StreamWriter * stream, const GameObject& sourceObject, const NativeScriptComponent & component)
     {
-        std::vector<std::string> onUpdateNames;
-        for (auto pair : component.OnUpdateFunctions)
-        {
-            onUpdateNames.push_back(pair.first);
-        }
+        stream->WriteArray<std::string>(component.AttachedScriptNames);
 
-        std::vector<std::string> onCollisionNames;
-        for (auto pair : component.OnCollisionFunctions)
+        for (int i = 0; i < component.AttachedScriptNames.size(); i++)
         {
-            onUpdateNames.push_back(pair.first);
+            std::string name = component.AttachedScriptNames[i];
+            component.AttachedScripts.at(name).Serialize(stream, sourceObject);
         }
-
-        stream->WriteArray<std::string>(onUpdateNames);
-        stream->WriteArray<std::string>(onCollisionNames);
 
     }
 
-    bool NativeScriptComponent::Deserialize(StreamReader * stream, NativeScriptComponent& component)
+    bool NativeScriptComponent::Deserialize(StreamReader * stream, GameObject& destinationObject, NativeScriptComponent& component)
     {
-        std::vector<std::string> onUpdateNames;
-        std::vector<std::string> onCollisionNames;
-        
-        stream->ReadArray<std::string>(onUpdateNames);
-        stream->ReadArray<std::string>(onCollisionNames);
-        if (onUpdateNames.empty() && onCollisionNames.empty())
-            return true;
+        component.AttachedScriptNames.clear();
+        std::vector<std::string> names;
+        stream->ReadArray<std::string>(names);
 
-        ScriptManager* scripts = ScriptManager::GetInstance();
-        for (int i = 0; i < onUpdateNames.size(); i++)
+        for (auto name : names)
         {
-            std::string name = onUpdateNames[i];
-            std::function<void(GameObject&, float)> function;
-            if (scripts->FindOnUpdateFunction(name, function))
-                component.OnUpdateFunctions[name] = function;
-        }
+            component.AttachScript(name, destinationObject);
 
-        for (int i = 0; i < onCollisionNames.size(); i++)
-        {
-            std::string name = onCollisionNames[i];
-
-            std::function<void(GameObject&, CollisionEvent&)> function;
-            if (scripts->FindOnCollisionFunction(name, function))
-                component.OnCollisionFunctions[name] = function;
+            component.AttachedScripts[name].Deserialize(stream, destinationObject);
         }
 
         return true;

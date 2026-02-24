@@ -13,14 +13,19 @@ namespace Pixie
 
 		using std::placeholders::_1;
 		using std::placeholders::_2;
-		scripts->TryAddAttatchComponentFunction(m_Name, std::bind(&TriggerNextScene::AddMyComponentToGameObject, _1));
-		scripts->TryAddRemoveComponentFunction(m_Name, std::bind(&TriggerNextScene::RemoveMyComponent, _1));
-		scripts->TryAddCopyComponentFunction(m_Name, std::bind(&TriggerNextScene::CopyComponent, _1, _2));
+		StoredScript newScript;
+		newScript.AttachComponent = std::bind(&TriggerNextScene::AddMyComponentToGameObject, _1);
+		newScript.CopyComponent = std::bind(&TriggerNextScene::CopyComponent, _1, _2);
+		newScript.RemoveComponent = std::bind(&TriggerNextScene::RemoveMyComponent, _1);
+		newScript.Serialize = std::bind(&TriggerNextScene::Serialize, _1, _2);
+		newScript.Deserialize = std::bind(&TriggerNextScene::Deserialize, _1, _2);
+		newScript.Draw = std::bind(&TriggerNextScene::Draw, _1);
+		newScript.OnUpdate = std::bind(&TriggerNextScene::OnUpdate, _1, _2);
+		newScript.OnCollision = std::bind(&TriggerNextScene::OnCollisionStart, _1, _2);
+		newScript.OnCollisionOngoing = [](GameObject& object, CollisionEvent& event) {};
 
-		scripts->TryAddOnUpdateFunction(m_Name, std::bind(&TriggerNextScene::OnUpdate, _1, _2));
-		scripts->TryAddOnCollisionFunction(m_Name, std::bind(&TriggerNextScene::OnCollisionStart, _1, _2));
+		scripts->TryStoreScript(m_Name, newScript);
 
-		scripts->TryAddDrawComponentFunction(m_Name, std::bind(&TriggerNextScene::Draw, _1));
 	}
 
 	void TriggerNextScene::AddMyComponentToGameObject(GameObject & hostObject)
@@ -77,8 +82,8 @@ namespace Pixie
 		if (other.GetComponent<TagComponent>().Tag != trigger.m_TagThatActivatesTrigger)
 			return;
 
-		Logger::Core(LOG_DEBUG, "Trigger next scene trigger on object {}, collided with player tag on object {}", caller.GetName(), other.GetName());
-		Logger::Core(LOG_DEBUG, "Trigger needs to search for and trigger load for scene named: {}", trigger.m_NextSceneName);
+		//Logger::Core(LOG_DEBUG, "Trigger next scene trigger on object {}, collided with player tag on object {}", caller.GetName(), other.GetName());
+		//Logger::Core(LOG_DEBUG, "Trigger needs to search for and trigger load for scene named: {}", trigger.m_NextSceneName);
 
 		EngineContext::GetEngine()->RequestSceneChange(trigger.m_NextSceneName);
 
@@ -98,5 +103,26 @@ namespace Pixie
 		{
 			//std::filesystem::path path = trigger.m_NextSceneName;
 		}
+	}
+	void TriggerNextScene::Serialize(StreamWriter* stream, const GameObject& sourceObject)
+	{
+		TriggerNextScene& component = sourceObject.GetComponent<TriggerNextScene>();
+
+		stream->WriteString(m_Name);
+		stream->WriteString(component.m_NextSceneName);
+		stream->WriteString(component.m_TagThatActivatesTrigger);
+	}
+	bool TriggerNextScene::Deserialize(StreamReader * stream, GameObject& sourceObject)
+	{
+		TriggerNextScene& component = sourceObject.GetComponent<TriggerNextScene>();
+
+		std::string name;
+		stream->ReadString(name);
+		if (name != m_Name)
+			return false;
+
+		stream->ReadString(component.m_NextSceneName);
+		stream->ReadString(component.m_TagThatActivatesTrigger);
+		return true;
 	}
 }

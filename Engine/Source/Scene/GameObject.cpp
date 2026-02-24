@@ -209,6 +209,7 @@ namespace Pixie
 		FollowComponent* follow = object.TryGetComponent<FollowComponent>();
 		OrbitComponent* orbit = object.TryGetComponent<OrbitComponent>();
 		MovementConstraintsComponent* moveConstraints = object.TryGetComponent<MovementConstraintsComponent>();
+		NativeScriptComponent* scripts = object.TryGetComponent<NativeScriptComponent>();
 
 		std::vector<SerializableComponentID> components;
 		if (tag) components.push_back(SerializableComponentID::TagComponent);
@@ -227,6 +228,7 @@ namespace Pixie
 		if (follow) components.push_back(SerializableComponentID::FollowComponent);
 		if (orbit) components.push_back(SerializableComponentID::OrbitComponent);
 		if (moveConstraints) components.push_back(SerializableComponentID::MovementConstraints);
+		if (scripts) components.push_back(SerializableComponentID::NativeScriptComponent);
 
 		fileWriter->WriteArray<SerializableComponentID>(components);
 
@@ -312,6 +314,11 @@ namespace Pixie
 			if (id == SerializableComponentID::MovementConstraints)
 				fileWriter->WriteRaw(object.GetComponent<MovementConstraintsComponent>());
 
+			if (id == SerializableComponentID::NativeScriptComponent)
+			{
+				NativeScriptComponent& component = object.GetComponent<NativeScriptComponent>();
+				NativeScriptComponent::Serialize(fileWriter, object, component);
+			}
 		}
 
 	}
@@ -470,6 +477,13 @@ namespace Pixie
 				MovementConstraintsComponent& component = object.GetOrAddComponent<MovementConstraintsComponent>();
 
 				fileReader->ReadRaw(component);
+				continue;
+			}
+
+			if (id == SerializableComponentID::NativeScriptComponent)
+			{
+				NativeScriptComponent& component = object.GetOrAddComponent<NativeScriptComponent>();
+				NativeScriptComponent::Deserialize(fileReader, object, component);
 				continue;
 			}
 		}

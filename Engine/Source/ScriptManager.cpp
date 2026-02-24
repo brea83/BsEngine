@@ -43,7 +43,7 @@ namespace Pixie
 		return m_Instance;
 	}
 
-	bool ScriptManager::TryAttachScriptComponent(GameObject& caller, const std::string& name)
+	/*bool ScriptManager::TryAttachScriptComponent(GameObject& caller, const std::string& name)
 	{
 		if (m_AttachComponentLookup.find(name) != m_AttachComponentLookup.end())
 		{
@@ -53,9 +53,21 @@ namespace Pixie
 		Logger::Core(LOG_WARNING, "Could not find OnUpdate function named {}", name);
 
 		return false;
+	}*/
+
+	bool ScriptManager::FindStoredScript(const std::string& name, StoredScript& outFunctions)
+	{
+		if (m_StoredScripts.find(name) != m_StoredScripts.end())
+		{
+			outFunctions = m_StoredScripts[name];
+			return true;
+		}
+		Logger::Core(LOG_WARNING, "Could not find stored script named {}", name);
+
+		return false;
 	}
 
-	 bool ScriptManager::FindOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)>& function)
+	bool ScriptManager::FindOnUpdateFunction(const std::string& name, std::function<void(GameObject&, float)>& function)
 	{
 		if (m_OnUpdateLookup.find(name) != m_OnUpdateLookup.end())
 		{
@@ -132,7 +144,7 @@ namespace Pixie
 		std::vector< std::string> names;
 		names.push_back("None");
 
-		for (auto pair : m_AttachComponentLookup)
+		for (auto pair : m_StoredScripts)
 		{
 			names.push_back(pair.first);
 		}
@@ -229,6 +241,17 @@ namespace Pixie
 			return false;
 		}
 		m_CopyComponentLookup[name] = function;
+		return true;
+	}
+
+	bool ScriptManager::TryStoreScript(const std::string& name, StoredScript scriptFunctions)
+	{
+		if (m_StoredScripts.find(name) != m_StoredScripts.end())
+		{
+			Logger::Core(LOG_WARNING, "ScriptManager is already storing a script named {}", name);
+			return false;
+		}
+		m_StoredScripts[name] = scriptFunctions;
 		return true;
 	}
 

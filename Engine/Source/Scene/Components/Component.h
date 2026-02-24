@@ -12,6 +12,7 @@
 #include "MeshComponent.h"
 #include "CollisionComponent.h"
 #include "SplineComponent.h"
+#include "IComponentScript.h"
 
 
 namespace Pixie
@@ -37,6 +38,7 @@ namespace Pixie
         FollowComponent,
         OrbitComponent,
         MovementConstraints,
+        NativeScriptComponent,
     };
 
     struct IDComponent
@@ -332,19 +334,15 @@ namespace Pixie
         NativeScriptComponent() = default;
         NativeScriptComponent(const NativeScriptComponent&) = default;
 
-        std::unordered_map<std::string, std::function<void(GameObject&, float)>> OnUpdateFunctions;
-        std::unordered_map<std::string, std::function<void(GameObject&, CollisionEvent&)>> OnCollisionFunctions;
-        std::unordered_map<std::string, std::function<void(GameObject&)>> DrawScriptFunctions;
-        std::unordered_map<std::string, std::function<void(GameObject&)>> AttachComponentFunctions;
-        std::unordered_map<std::string, std::function<void(GameObject&)>> RemoveComponentFunctions;
-        std::unordered_map<std::string, std::function<void(GameObject&, GameObject&)>>CopyComponentFunctions;
+        std::unordered_map < std::string, StoredScript > AttachedScripts;
 
         std::vector<std::string> AttachedScriptNames;
 
+        void AttachScript(const std::string& name, GameObject& destinationObject);
         void DrawComponent(GameObject& selected);
 
-        static void Serialize(StreamWriter* stream, const NativeScriptComponent& component);
-        static bool Deserialize(StreamReader* stream, NativeScriptComponent& component);
+        static void Serialize(StreamWriter* stream, const GameObject& sourceObject, const NativeScriptComponent& component);
+        static bool Deserialize(StreamReader* stream, GameObject& destinationObject, NativeScriptComponent& component);
     };
 
     // empty components to use for organizing views and groups only

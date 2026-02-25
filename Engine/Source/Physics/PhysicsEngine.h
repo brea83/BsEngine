@@ -22,6 +22,8 @@ namespace Pixie
 		{
 			return !(*this == other);
 		}
+
+		Entity ExtractOtherObject(Entity caller);
 	};
 
 	class Collider;

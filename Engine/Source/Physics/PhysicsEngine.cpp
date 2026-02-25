@@ -4,6 +4,7 @@
 #include "Scene/Components/CollisionComponent.h"
 #include "Scene/Components/Transform.h"
 #include "DataStructures/KDTree.h"
+#include "Scene/Components/Component.h"
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -13,6 +14,18 @@
 
 namespace Pixie
 {
+	Entity CollisionEvent::ExtractOtherObject(Entity caller)
+	{
+		GUID callerId = caller.GetComponent<IDComponent>().ID;
+		Entity other = Entity();
+		if (A.GetComponent<IDComponent>().ID == callerId)
+			other = B;
+		else
+			other = A;
+
+		return Entity(other.GetEnttHandle(), other.GetScene());
+	}
+
 	using KDTreeVec3 = Data::KDTreeVec3;
 	using KDNode = Data::KDNode;
 
@@ -55,7 +68,8 @@ namespace Pixie
 			if (cube)
 			{
 				cube->Colliding = false;
-				largestRadius = glm::max(largestRadius, glm::length(cube->Extents));
+				glm::vec3 scaledExtents = cube->Transform->GetScale() * cube->Extents;
+				largestRadius = glm::max(largestRadius, glm::length(scaledExtents));
 			}
 		}
 
@@ -230,7 +244,8 @@ namespace Pixie
 				// CS = cube's local space
 				glm::vec3 spherePosCS = glm::inverse(cube->Transform->GetModelMatrix()) * glm::vec4(positionA, 1.0f);
 
-				glm::vec3 closestPoint = glm::clamp(spherePosCS, -cube->Extents, cube->Extents);
+				glm::vec3 scaledExtents = cube->Extents * cube->Transform->GetScale();
+				glm::vec3 closestPoint = glm::clamp(spherePosCS, -scaledExtents, scaledExtents);
 				float squareDistance = glm::length2(spherePosCS - closestPoint);
 				return squareDistance < sphereA->Radius * sphereA->Radius;
 			}
@@ -309,7 +324,12 @@ namespace Pixie
 
 	AxisProjection PhysicsEngine::ProjectCubeOnAxis(CubeCollider* cube, const glm::vec3& axis)
 	{
-		glm::mat4 cubeTransform = cube->Transform->GetModelMatrix();
+		TransformComponent* transform = cube->Transform;
+		glm::vec3 scaledExtents = cube->Extents * transform->GetScale();
+		glm::mat4 newScale = glm::scale(glm::mat4(1.0f), scaledExtents);
+		glm::mat4 unscaledTransform = transform->GetUnscaledModelMatrix();
+
+		glm::mat4 cubeTransform = unscaledTransform * newScale;
 		float centerProjection = glm::dot(glm::vec3(cubeTransform[3]), axis);
 		glm::vec3 right = glm::normalize(cubeTransform[0]);
 		glm::vec3 up = glm::normalize(cubeTransform[1]);

@@ -76,7 +76,12 @@ namespace Pixie
 		bool previousColliderWasColliding = false;
 		for (auto&& [entity, collider, transform] : registry.view<CubeCollider, TransformComponent>().each())
 		{
-			m_Shader->SetUniformMat4("Transform", transform.GetModelMatrix());
+			glm::vec3 scaledExtents = collider.Extents * transform.GetScale();
+			glm::mat4 newScale = glm::scale(glm::mat4(1.0f), scaledExtents);
+			glm::mat4 unscaledTransform = transform.GetUnscaledModelMatrix();
+
+			glm::mat4 newTransform = unscaledTransform * newScale;
+			m_Shader->SetUniformMat4("Transform", newTransform);
 			if (collider.Colliding && !previousColliderWasColliding)
 			{
 				m_Shader->SetUniformVec4("BaseColor", collidingColor);
@@ -88,7 +93,7 @@ namespace Pixie
 				previousColliderWasColliding = false;
 			}
 
-			m_UnitCube->Render(*m_Shader);
+			m_CubeNDC->Render(*m_Shader);
 		}
 	}
 	

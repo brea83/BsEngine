@@ -3,6 +3,8 @@
 #include "BsPrecompileHeader.h"
 #include "Scene/Entity.h"
 #include "Scene/Components/Component.h"
+
+#include <functional>
 //#include "Resources/FileStream.h"
 
 namespace Pixie
@@ -33,6 +35,15 @@ namespace Pixie
 		void AddChild(GameObject& child, bool bSentFromSetParent = false);
 		void RemoveChild(GameObject& child);
 		std::vector< GameObject> GetChildren();
+
+		template <typename T>
+		std::vector<GameObject> FindObjectsByComponent(const std::string tag = "");
+
+		template <typename T>
+		T* GetComponentInParent();
+
+		template<typename T>
+		std::vector<GameObject> GetChildrenWithComponent(bool andInSelf = true);
 
 		virtual void OnCreate(){ }
 		virtual void OnBeginPlay();
@@ -75,10 +86,72 @@ namespace Pixie
 		GameObject object { m_EntityHandle, m_Scene };
 		for (auto pair : scriptComponent.AttachedScripts)
 		{
-			pair.second.RemoveComponent(object);
+			if(pair.second.RemoveComponent)
+				pair.second.RemoveComponent(object);
 		}
 
 		m_Scene->GetRegistry().remove<NativeScriptComponent>(m_EntityHandle);
 
 	}
+
+	template <typename T>
+	inline std::vector<GameObject> GameObject::FindObjectsByComponent(const std::string tag)
+	{
+		entt::registry& registry = m_Scene->GetRegistry();
+
+		std::vector<GameObject> results;
+
+		if (tag.empty())
+		{
+			// search only by component type
+			auto view = registry.view<T>();
+			for (auto entity : view)
+			{
+				results.emplace_back(entity, m_Scene);
+			}
+		}
+		else
+		{
+			for (auto&& [entity, component, tagComponent] : registry.view<T, TagComponent>().each())
+			{
+				if (tagComponent.Tag == tag)
+				{
+					results.emplace_back(entity, m_Scene);
+				}
+			}
+		}
+
+		return results;
+	}
+
+	template<typename T>
+	inline T* Pixie::GameObject::GetComponentInParent()
+	{
+		GameObject parent = GetParent();
+		if (!parent)
+			return nullptr;
+
+		return parent.TryGetComponent<T>();
+	}
+
+	template<typename T>
+	inline std::vector<GameObject> Pixie::GameObject::GetChildrenWithComponent(bool andInSelf)
+	{
+		std::vector<GameObject> results;
+
+		if (andInSelf && this->HasCompoenent<T>())
+		{
+			results.push_back(*this);
+		}
+
+		std::vector<GameObject> children = GetChildren();
+
+		for (GameObject& child : children)
+		{
+			if (child.HasCompoenent<T>())
+				results.push_back(child);
+		}
+		return results;
+	}
+
 }

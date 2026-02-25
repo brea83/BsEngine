@@ -25,6 +25,7 @@
 
 #include "../Game/CollisionBehavior/TriggerNextScene.h"
 #include "../Game/CollisionBehavior/Damageable.h"
+#include "../Game/CombatComponents.h"
 
 namespace Pixie
 {
@@ -121,6 +122,9 @@ namespace Pixie
 
 		TriggerNextScene::RegisterToScriptManager();
 		Damageable::RegisterToScriptManager();
+		Attack::RegisterToScriptManager();
+		ScoresPoints::RegisterToScriptManager();
+		
 	}
 
 	void EditorLayer::OnDetach()

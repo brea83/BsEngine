@@ -1,6 +1,7 @@
 #include "Damageable.h"
 #include "ScriptManager.h"
 #include "ImGui/ImGuiPanel.h"
+#include "../Player.h"
 
 namespace Pixie
 {
@@ -61,9 +62,7 @@ namespace Pixie
 	{
 		if (m_CurrentHealth <= 0)
 		{
-			//TODO: this is where I would check for object pool and set that stuff off.
-			caller.TryDestroy();
-			m_DamageSourcesThisFrame.clear();
+			OnDeath(caller, m_LastDamageSource);
 			return;
 		}
 
@@ -94,7 +93,7 @@ namespace Pixie
 		if (component.m_IsInvulnerable)
 			return;
 
-		GameObject other = ExtractOtherObject(caller, collision);
+		GameObject other = GameObject(collision.ExtractOtherObject((Entity)caller).GetEnttHandle(), caller.GetScene());
 		if (component.TestCollisionValid(caller, other))
 		{
 			component.CollectDamage(caller, other);
@@ -181,6 +180,19 @@ namespace Pixie
 		stream->ReadRaw(component.m_IFrames);
 		return true;
 	}
+	void Damageable::AddOnDeathCallback(const std::string& name, std::function<void(GUID)> callback)
+	{
+		m_OnDeathCallbacks[name] = callback;
+	}
+	void Damageable::RemoveOnDeathCallback(const std::string& name, std::function<void(GUID)> callback)
+	{
+		if (m_OnDeathCallbacks.find(name) != m_OnDeathCallbacks.end())
+			m_OnDeathCallbacks.erase(name);
+	}
+	void Damageable::ClearAllCallbacks()
+	{
+		m_OnDeathCallbacks.clear();
+	}
 	void Damageable::Reset()
 	{
 		m_CurrentHealth = m_MaxHealth;
@@ -190,18 +202,10 @@ namespace Pixie
 
 		if (!m_DamageSourcesThisFrame.empty())
 			m_DamageSourcesThisFrame.clear();
-	}
-	GameObject Damageable::ExtractOtherObject(GameObject thisObject, CollisionEvent& collision)
-	{
-		GUID myId = thisObject.GetGUID();
-		Entity other = Entity();
-		if (collision.A.GetComponent<IDComponent>().ID == myId)
-			other = collision.B;
-		else
-			other = collision.A;
 
-		return GameObject(other.GetEnttHandle(), other.GetScene());
+		m_LastDamageSource = 0;
 	}
+
 	bool Damageable::TestCollisionValid(GameObject& thisObject, GameObject& other)
 	{
 		
@@ -242,8 +246,41 @@ namespace Pixie
 	{
 		for (auto pair : m_DamageSourcesThisFrame)
 		{
+			if (m_CurrentHealth > 0)
+				m_LastDamageSource = pair.first;
 			m_CurrentHealth -= pair.second;
 		}
 
+	}
+	void Damageable::OnDeath(GameObject& thisObject, GUID killerId)
+	{
+		std::shared_ptr<Scene> scene = thisObject.GetScene();
+
+		Pixie::GameObject killerObject = scene->FindGameObjectByGUID(killerId);
+
+		if (!killerObject.HasCompoenent<Pixie::TagComponent>())
+			return;
+
+		Pixie::TagComponent& tag = killerObject.GetComponent<Pixie::TagComponent>();
+		if (tag.Tag != "Player" && tag.Tag != "player" && tag.Tag != "PLAYER")
+			return;
+
+		entt::registry& registry = scene->GetRegistry();
+
+		for (auto&& [entity, player] : registry.view<Player>().each())
+		{
+			// only supporting single player right now only act on first player found
+			player.IncrementKills();
+		}
+
+		// now do the other death callbacks
+		for (auto callback : m_OnDeathCallbacks)
+		{
+			callback.second(m_LastDamageSource);
+		}
+
+		m_DamageSourcesThisFrame.clear();
+		m_OnDeathCallbacks.clear();
+		thisObject.TryDestroy();
 	}
 }

@@ -169,9 +169,20 @@ namespace Pixie
 			}
 			else
 			{
-				//it didn't intersect so try the branch that should be closest
-				FindNodesInRange(data.NextBranch, value, squaredRange, data.NextDimension, nodesInRange);
+				if (node == Root)
+				{
+					// do I need to check both branches regardless of whether the root node was in range?
+					FindNodesInRange(data.NextBranch, value, squaredRange, data.NextDimension, nodesInRange);
+					FindNodesInRange(data.OtherBranch, value, squaredRange, data.NextDimension, nodesInRange);
+				}
+				else
+				{
+					//it didn't intersect so try the branch that should be closest
+					FindNodesInRange(data.NextBranch, value, squaredRange, data.NextDimension, nodesInRange);
+				}
 			}
+
+			
 		}
 	}
 }

@@ -365,7 +365,8 @@ namespace Pixie
         {
             AttachedScriptNames.push_back(name);
             AttachedScripts[AttachedScriptNames.back()] = newScript;
-            AttachedScripts[name].AttachComponent(destinationObject);
+            if(AttachedScripts[name].AttachComponent)
+                AttachedScripts[name].AttachComponent(destinationObject);
         }
 
     }
@@ -377,7 +378,8 @@ namespace Pixie
         for (int i = 0; i < component.AttachedScriptNames.size(); i++)
         {
             std::string name = component.AttachedScriptNames[i];
-            component.AttachedScripts.at(name).Serialize(stream, sourceObject);
+            if(component.AttachedScripts.at(name).Serialize)
+                component.AttachedScripts.at(name).Serialize(stream, sourceObject);
         }
 
     }
@@ -392,6 +394,7 @@ namespace Pixie
         {
             component.AttachScript(name, destinationObject);
 
+            if(component.AttachedScripts[name].Deserialize)
             component.AttachedScripts[name].Deserialize(stream, destinationObject);
         }
 

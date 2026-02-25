@@ -30,6 +30,9 @@ namespace Pixie
 		static void Serialize(StreamWriter* stream, const GameObject& sourceObject);
 		static bool Deserialize(StreamReader* stream, GameObject& destinationObject);
 
+		void AddOnDeathCallback(const std::string& name, std::function<void(GUID)> callback);
+		void RemoveOnDeathCallback(const std::string& name, std::function<void(GUID)> callback);
+		void ClearAllCallbacks();
 	private:
 		static const std::string m_Name;
 
@@ -41,12 +44,14 @@ namespace Pixie
 		int m_AccumulatedIFrames{ 0 };
 
 		std::unordered_map<GUID, int> m_DamageSourcesThisFrame;
+		GUID m_LastDamageSource{ 0 };
+		std::unordered_map< std::string, std::function<void(GUID)>> m_OnDeathCallbacks;
 
 		bool m_IsInvulnerable{ false };
 
 		void Reset();
 
-		static GameObject ExtractOtherObject(GameObject thisObject, CollisionEvent& collision);
+		
 		bool TestCollisionValid(GameObject& thisObject, GameObject& other);
 		// occurs durring collision evaluation
 		void CollectDamage(GameObject& thisObject, GameObject& other);
@@ -54,6 +59,7 @@ namespace Pixie
 		void Update(GameObject& thisObject, float deltaTime);
 		// occures durring update
 		void TakeDamage();
+		void OnDeath(GameObject& thisObject, GUID killerId);
 
 	};
 

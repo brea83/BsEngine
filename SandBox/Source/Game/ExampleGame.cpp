@@ -3,6 +3,8 @@
 #include "../Game/StateMachine/GameStates.h"
 #include "EngineContext.h"
 #include "Scene/Components/Component.h"
+#include "Player.h"
+#include "CollisionBehavior/PointCollector.h"
 
 namespace Pixie
 {
@@ -36,6 +38,9 @@ namespace Pixie
 			m_GameStateMachine.SwitchState(PauseState::Type());
 
 		m_InputSystem = new PlayerInputSystem();
+
+		Player::RegisterToScriptManager();
+		PointCollector::RegisterToScriptManager();
 	}
 
 	void ExampleGame::OnBeginPlay(std::shared_ptr<Scene> scene)

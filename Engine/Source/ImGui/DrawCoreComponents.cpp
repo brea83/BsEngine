@@ -544,7 +544,7 @@ namespace Pixie
                 ImGui::PopStyleColor();
 
                 //if(DrawScriptFunctions.find(name) != DrawScriptFunctions.end())
-                if (AttachedScripts.find(name) != AttachedScripts.end())
+                if (AttachedScripts.find(name) != AttachedScripts.end() && AttachedScripts[name].Draw)
                     AttachedScripts[name].Draw(selected);
 
                 ImGui::EndChild();

@@ -95,6 +95,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\CollisionBehavior\PointCollector.cpp" />
+    <ClCompile Include="Source\Game\Player.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\Damageable.cpp" />
     <ClCompile Include="Source\Editor\Panels\GameDetailsEditor.cpp" />
     <ClCompile Include="Source\Game\CombatComponents.cpp" />
@@ -115,12 +117,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\CollisionBehavior\PointCollector.h" />
+    <ClInclude Include="Source\Game\Player.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\Damageable.h" />
     <ClInclude Include="Source\Editor\Panels\GameDetailsEditor.h" />
     <ClInclude Include="Source\Game\CombatComponents.h" />
     <ClInclude Include="Source\Game\UI\PauseMenu.h" />
     <ClInclude Include="Source\Game\ExampleGame.h" />
-    <ClInclude Include="Source\Game\Player.h" />
     <ClInclude Include="Source\Game\SplineBehavior\SplineFollower.h" />
     <ClInclude Include="Source\Game\StateMachine\GameStates.h" />
     <ClInclude Include="Source\Editor\Panels\RenderInspectorPanel.h" />

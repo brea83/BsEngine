@@ -290,7 +290,8 @@ namespace Pixie
 
 			for (auto pair : sourceComponent.AttachedScripts)
 			{
-				pair.second.CopyComponent(sourceObject, destinationObject);
+				if(pair.second.CopyComponent)
+					pair.second.CopyComponent(sourceObject, destinationObject);
 			}
 		}
 
@@ -316,6 +317,16 @@ namespace Pixie
 		{
 			GameObject gameObject(entity, shared_from_this());
 			gameObject.OnBeginPlay();
+		}
+
+		for (auto&& [entity, scriptComponent] : m_Registry.view<NativeScriptComponent>().each())
+		{
+			GameObject caller = GameObject{ entity, shared_from_this() };
+			for (auto& pair : scriptComponent.AttachedScripts)
+			{
+				if (pair.second.OnBeginPlay)
+					pair.second.OnBeginPlay(caller);
+			}
 		}
 	}
 
@@ -356,6 +367,7 @@ namespace Pixie
 
 				for (auto pair : script.AttachedScripts)
 				{
+					if (pair.second.OnCollision)
 					pair.second.OnCollision(caller, collision);
 				}
 			}
@@ -367,6 +379,7 @@ namespace Pixie
 
 				for (auto pair : script.AttachedScripts)
 				{
+					if (pair.second.OnCollision)
 					pair.second.OnCollision(caller, collision);
 				}
 			}
@@ -384,7 +397,8 @@ namespace Pixie
 
 			for (auto pair : scriptComponent.AttachedScripts)
 			{
-				pair.second.OnUpdate(caller, deltaTime);
+				if(pair.second.OnUpdate)
+					pair.second.OnUpdate(caller, deltaTime);
 			}
 		}
 

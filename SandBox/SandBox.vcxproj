@@ -58,7 +58,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PIXIE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\spdlog\include;C:\assimp\include;$(SolutionDir)Engine\Source;$(SolutionDir)Engine;C:\glm;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Dependencies\spdlog;$(SolutionDir)Engine\Dependencies\assimp;$(SolutionDir)Engine\Source;$(SolutionDir)Engine;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -83,7 +83,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>PIXIE_PLATFORM_WINDOWS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\spdlog\include;C:\assimp\include;$(SolutionDir)Engine\Source;$(SolutionDir)Engine;C:\glm;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\Dependencies\spdlog;$(SolutionDir)Engine\Dependencies\assimp;$(SolutionDir)Engine\Source;$(SolutionDir)Engine;$(SolutionDir)Engine\Dependencies\imgui;$(SolutionDir)Engine\Dependencies</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>

@@ -2,9 +2,12 @@
 #include "Source/GameState.h"
 #include "../UI/PauseMenu.h"
 #include "../UI/EndMenu.h"
+#include "../UI/StartMenu.h"
 
 namespace Pixie
 {
+	class ExampleGame;
+
 	class EndLevelState : public GameState
 	{
 	public:
@@ -24,23 +27,26 @@ namespace Pixie
 		EndMenu m_EndLevelMenu{};
 	};
 
-	//class TitleState : public GameState
-	//{
-	//public:
-	//	TitleState() = default;
+	// title state is a special playing state on title menu level
+	class TitleState : public GameState
+	{
+	public:
+		TitleState() = default;
 
-	//	static const std::string_view Type() { return m_Type; }
-	//	// Inherited via GameState
-	//	const std::string_view GetType() const override { return m_Type; }
-	//	void EnterState(GameState* previousState) override;
-	//	void ExitState(GameState* nextState) override;
-	//	void UpdateState(float deltaTime) override;
-	//	void OnImGuiRender() override;
+		static const std::string_view Type() { return m_Type; }
+		// Inherited via GameState
+		const std::string_view GetType() const override { return m_Type; }
+		void EnterState(GameState* previousState) override;
+		void ExitState(GameState* nextState) override;
+		void UpdateState(float deltaTime) override;
+		void OnImGuiRender() override;
 
-	//private:
-	//	static const std::string m_Type;
-	//	PauseMenu m_TitleMenu;
-	//};
+		void InitTitleMenu();
+	private:
+		static const std::string m_Type;
+		StartMenu m_TitleMenu;
+		std::shared_ptr<ExampleGame> m_Game;
+	};
 
 	class PauseState : public GameState
 	{

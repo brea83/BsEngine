@@ -1,6 +1,7 @@
 #include "GameStates.h"
 #include "EngineContext.h"
 #include "Scene/Scene.h"
+#include "../ExampleGame.h"
 
 namespace Pixie
 {
@@ -101,7 +102,9 @@ namespace Pixie
 		scene->OnEditorUpdate(deltaTime);
 	}
 
-	// END LEVEL STATE ------------------------
+	//=========================================
+	// END LEVEL STATE
+	//=========================================
 	const std::string EndLevelState::m_Type = "EndLevel";
 
 	void EndLevelState::EnterState(GameState* previousState)
@@ -124,5 +127,37 @@ namespace Pixie
 	void EndLevelState::InitEndMenu(const std::string & nextLevelPath)
 	{
 		m_EndLevelMenu.Init(nextLevelPath);
+	}
+
+	//=========================================
+	// TITLE MENU STATE
+	//=========================================
+	const std::string TitleState::m_Type = "TitleState";
+
+	void TitleState::EnterState(GameState* previousState)
+	{
+		if (m_Game)
+			m_Game->RequestLevelChange(0);
+	}
+
+	void TitleState::ExitState(GameState * nextState)
+	{ }
+
+	void TitleState::UpdateState(float deltaTime)
+	{
+		std::shared_ptr<Scene> scene = EngineContext::GetEngine()->GetScene();
+
+		if (scene == nullptr) return;
+		scene->OnUpdate(deltaTime);
+	}
+
+	void TitleState::OnImGuiRender()
+	{
+		m_TitleMenu.Draw();
+	}
+
+	void TitleState::InitTitleMenu()
+	{
+		m_TitleMenu.Init();
 	}
 }

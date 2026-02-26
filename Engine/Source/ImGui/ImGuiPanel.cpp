@@ -308,4 +308,13 @@ namespace Pixie
 		return ImVec2 { ImGui::CalcTextSize(label.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f),
 			ImGui::CalcTextSize(label.c_str()).y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 	}
+
+	void ImGuiPanel::CenteredText(const std::string& text)
+	{
+		auto windowWidth = ImGui::GetWindowSize().x;
+		auto textWidth = ImGui::CalcTextSize(text.c_str()).x;
+
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		ImGui::Text(text.c_str());
+	}
 }

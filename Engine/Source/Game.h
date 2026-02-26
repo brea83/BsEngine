@@ -38,6 +38,7 @@ namespace Pixie
 		Game() = default;
 		virtual ~Game() { }
 
+		virtual std::string GetTitle() { return m_Title; }
 
 		//returns -1 if index does not exist in player array
 		virtual uint64_t GetPlayerID(size_t playerIndex);

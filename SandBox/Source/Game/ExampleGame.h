@@ -2,6 +2,7 @@
 #include "Source/Game.h"
 #include "Scene/Player/PlayerInput.h"
 #include "Player.h"
+#include "Resources/FileStream.h"
 
 namespace Pixie
 {
@@ -16,7 +17,18 @@ namespace Pixie
 		{
 			int FilePathIndex{ -1 }; // lookup in m_ScenePaths
 			PlayerData Scores {};
-			bool IsFinalLevel{ false };
+
+			static void Serialize(StreamWriter* stream, const Level& level)
+			{
+				stream->WriteRaw<int>(level.FilePathIndex);
+				stream->WriteObject<PlayerData>(level.Scores);
+			}
+			static bool Deserialize(StreamReader* stream, Level& level)
+			{
+				stream->ReadRaw<int>(level.FilePathIndex);
+				stream->ReadObject<PlayerData>(level.Scores);
+				return true;
+			}
 		};
 		
 		// Inherited via Game
@@ -43,10 +55,15 @@ namespace Pixie
 		PlayerData GetCurrentPlayerData();
 		int GetCurrentLevel() { return m_CurrentLevel; }
 		
+		void RequestLevelChange(int levelIndex);
+		void RequestStateChange(std::string_view stateType);
 		std::unordered_map<int, Level>& GetAllLevelData() { return m_LevelData; }
 
 		// only use durring the drawImGui phase. needs the imgui frame start and end before and after it
 		virtual void DrawEditor() override;
+
+		virtual void SaveSettings(std::filesystem::path filePath) override;
+		virtual void LoadSettings(std::filesystem::path filePath) override;
 	private:
 
 		int m_CurrentLevel{ 0 };

@@ -45,7 +45,7 @@ namespace Pixie
         ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
         if (ImGui::BeginPopupModal("End Screen", NULL, ImGuiWindowFlags_NoDocking))
         {
-            ImGui::PushFont(NULL, 32.0f);
+            ImGui::PushFont(NULL, 62.0f);
             ImGui::Text(windowTitle.c_str());
             ImGui::PopFont();
             ImGui::Separator();
@@ -53,9 +53,16 @@ namespace Pixie
             if (m_Game)
                 DrawScore();
 
+            ImGui::InvisibleButton("##Spacer1", ImVec2(120.0f, 25.0f));
             ImGui::Separator();
+            ImGui::InvisibleButton("##Spacer2", ImVec2(120.0f, 25.0f));
+            float buttonOffset1 = 120.0f + ImGui::GetStyle().ItemSpacing.x;
+            //buttonOffset1 *= 0.5f;
 
-            if (ImGui::Button("Try Again"))
+            float center = ImGui::GetContentRegionAvail().x * 0.5f;
+
+            ImGui::SetCursorPosX(center - buttonOffset1);
+            if (ImGui::Button("Try Again", ImVec2(120.0f, 50.0f)))
             {
                 OnRestartButtonPressed();
                 ImGui::CloseCurrentPopup();
@@ -63,16 +70,22 @@ namespace Pixie
 
             if (!m_PlayerDied && m_TempLevelPathStorage != "")
             {
-                if (ImGui::Button("Next Level", ImVec2(120, 0))) 
+                ImGui::SameLine();
+                if (ImGui::Button("Next Level", ImVec2(120.0f, 50.0f))) 
                 { 
                     OnContinueButtonPressed(); 
                     ImGui::CloseCurrentPopup();
                 }
+                ImGui::SetCursorPosX(center - 60.0f);
+            }
+            else
+            {
+                ImGui::SameLine();
             }
 
             ImGui::SetItemDefaultFocus();
 
-            if (ImGui::Button("Exit", ImVec2(120, 0)))
+            if (ImGui::Button("Exit", ImVec2(120.0f, 50.0f)))
             {
                 OnQuitButtonPressed();
                 ImGui::CloseCurrentPopup();
@@ -97,10 +110,16 @@ namespace Pixie
 
         // have enter gamestate set up level indexes
         //int levelIndex = m_Game->GetCurrentLevel();
+        std::string levelLabel = "Level " + std::to_string(m_CurrentLevel);
 
-        ImGui::PushFont(NULL, 28.0f);
-        ImGui::Text(("Level " + std::to_string(m_CurrentLevel)).c_str());
+        ImGui::InvisibleButton("##Spacer3", ImVec2(120.0f, 10.0f));
+        ImGui::PushFont(NULL, 32.0f);
+        ImGuiPanel::CenteredText(levelLabel);
         ImGui::PopFont();
+
+        ImGui::InvisibleButton("##Spacer4", ImVec2(120.0f, 25.0f));
+
+        ImGui::SetCursorPosX(125.0f );
 
         if (ImGui::BeginTable("Scores", 2))
         {
@@ -109,7 +128,7 @@ namespace Pixie
 
             // ROW 1 --------------------------------------
             ImGui::TableNextRow();
-            ImGui::PushFont(NULL, 20.0f);
+            ImGui::PushFont(NULL, 28.0f);
             // the label
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("Total Score");
@@ -124,7 +143,7 @@ namespace Pixie
             ImGui::PushFont(NULL, 18.0f);
             // the label
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Points Collected");
+            ImGui::Text("  Points Collected");
 
             // the values
             ImGui::TableSetColumnIndex(1);
@@ -134,7 +153,7 @@ namespace Pixie
             ImGui::TableNextRow();
             // the label
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("Enemies Destroyed");
+            ImGui::Text("  Enemies Destroyed");
 
             // the values
             ImGui::TableSetColumnIndex(1);

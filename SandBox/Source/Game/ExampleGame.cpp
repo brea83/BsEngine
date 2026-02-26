@@ -22,6 +22,7 @@ namespace Pixie
 		states.emplace(PauseState::Type(), new PauseState());
 		states.emplace(PlayingState::Type(), new PlayingState());
 		states.emplace(EndLevelState::Type(), new EndLevelState());
+		states.emplace(TitleState::Type(), new TitleState());
 
 		EngineContext* engine = EngineContext::GetEngine();
 		bool bIsEditorEnabled = engine->IsEditorEnabled();
@@ -111,17 +112,21 @@ namespace Pixie
 		GameState* currentState = GetCurrentState();
 		if (currentState == nullptr)
 			return false;
+		
+		std::string_view stateType = currentState->GetType();
 
-		if (currentState->GetType() == PlayingState::Type())
+		if (stateType == PlayingState::Type() || stateType == TitleState::Type())
 		{
 			OnBeginPlay(m_CurrentScene);
 		}
-
-		if (currentState->GetType() == EditState::Type())
+		else if (stateType == EditState::Type())
+		{
 			m_CurrentScene->EditMode();
-
-		if (currentState->GetType() == PauseState::Type())
+		}
+		else if (stateType == PauseState::Type() || stateType == EndLevelState::Type())
+		{
 			m_CurrentScene->Pause();
+		}
 
 		return false;
 	}
@@ -133,6 +138,13 @@ namespace Pixie
 			UnPause();
 		else if (event.GetState() == PauseState::Type())
 			Pause();
+		else if (event.GetState() == TitleState::Type())
+		{
+			TitleState* title = dynamic_cast<TitleState*>(m_GameStateMachine.GetStateByType(TitleState::Type()));
+			if (title)
+				title->InitTitleMenu();
+			SetState(event.GetState());
+		}
 		else
 			SetState(event.GetState());
 
@@ -184,6 +196,72 @@ namespace Pixie
 			return m_LevelData[m_CurrentLevel].Scores;
 		else
 			return PlayerData();
+	}
+
+	void ExampleGame::RequestLevelChange(int levelIndex)
+	{
+		EngineContext* engine = Pixie::EngineContext::GetEngine();
+
+		int sceneIndex = m_LevelData[levelIndex].FilePathIndex;
+		std::filesystem::path scenePath = m_ScenePaths[sceneIndex];
+
+		engine->RequestSceneChange(scenePath);
+	}
+
+	void ExampleGame::RequestStateChange(std::string_view stateType)
+	{
+		EngineContext* engine = Pixie::EngineContext::GetEngine();
+		Pixie::GameStateChangeRequestEvent event{ stateType, "ExampleGame, Request state change" };
+		engine->OnEvent(event);
+	}
+
+	void ExampleGame::SaveSettings(std::filesystem::path filePath)
+	{
+		if (m_SettingsPath == "")
+		{
+			m_SettingsPath = filePath;
+		}
+
+		FileStreamWriter fileStream(filePath, false);
+
+		fileStream.WriteString(m_Title);
+
+		fileStream.WriteRaw<size_t>(m_ScenePaths.size());
+		for (auto path : m_ScenePaths)
+		{
+			fileStream.WriteString(path.string());
+		}
+
+		fileStream.WriteMap<int, Level>(m_LevelData);
+	}
+
+	void ExampleGame::LoadSettings(std::filesystem::path filePath)
+	{
+		if (m_SettingsPath == "")
+		{
+			m_SettingsPath = filePath;
+		}
+
+		FileStreamReader fileStream(filePath, false);
+
+		fileStream.ReadString(m_Title);
+
+		if (!m_ScenePaths.empty())
+			m_ScenePaths.clear();
+
+		size_t arraySize = 0;
+		fileStream.ReadRaw<size_t>(arraySize);
+
+		m_ScenePaths.reserve(arraySize);
+		for (int i = 0; i < arraySize; i++)
+		{
+			std::string path = "";
+			fileStream.ReadString(path);
+			m_ScenePaths.push_back(path);
+		}
+
+		fileStream.ReadMap <int, Level>(m_LevelData);
+
 	}
 	
 }

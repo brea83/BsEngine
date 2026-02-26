@@ -37,22 +37,45 @@ bool PauseMenu::Draw()
 
     if (ImGui::BeginPopupModal("Paused!", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
+        ImGui::PushFont(NULL, 62.0f);
         ImGui::Text("The Game Is Paused!");
+        ImGui::PopFont();
+
         ImGui::Separator();
+        ImGui::InvisibleButton("##Spacer1", ImVec2(120.0f, 25.0f));
 
+        ImGui::PushFont(NULL, 20.0f);
+        float buttonOffset = 120.0f + ImGui::GetStyle().ItemSpacing.x;
+        float center = ImGui::GetContentRegionAvail().x * 0.5f;
 
-        if (ImGui::Button("Resume", ImVec2(120, 0))) 
+        ImGui::SetCursorPosX(center - buttonOffset);
+        if (ImGui::Button("Resume", ImVec2(240 + ImGui::GetStyle().ItemSpacing.x, 50)))
         { 
             OnResumeButtonPressed();
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
 
-        if (ImGui::Button("Exit", ImVec2(120, 0))) 
+
+        ImGui::SetCursorPosX(center - buttonOffset);
+        if (ImGui::Button("Title Menu", ImVec2(120, 40)))
+        {
+            Pixie::GameStateChangeRequestEvent event{ Pixie::TitleState::Type(), "Pause Menu, Title Menu Button" };
+            Pixie::EngineContext::GetEngine()->OnEvent(event);
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0.8f, 0.25f, 0.25f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 1.0f, 0.2f, 0.2f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.7f, 0.0f, 0.05f, 1.0f });
+        if (ImGui::Button("Exit", ImVec2(120, 40))) 
         { 
             OnExitButtonPressed();
             ImGui::CloseCurrentPopup(); 
         }
+        ImGui::PopStyleColor(3);
+        ImGui::PopFont(); // end larger font started before buttons
         ImGui::EndPopup();
     }
 

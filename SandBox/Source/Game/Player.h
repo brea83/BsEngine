@@ -12,6 +12,20 @@ namespace Pixie
 		int Score{ -1 };
 		int PointsCollected{ 0 };
 		int EnemiesDestroyed{ 0 };
+
+		static void Serialize(StreamWriter* stream, const PlayerData& data)
+		{
+			stream->WriteRaw<int>(data.Score);
+			stream->WriteRaw<int>(data.PointsCollected);
+			stream->WriteRaw<int>(data.EnemiesDestroyed);
+		}
+		static bool Deserialize(StreamReader* stream, PlayerData& data)
+		{
+			stream->ReadRaw<int>(data.Score);
+			stream->ReadRaw<int>(data.PointsCollected);
+			stream->ReadRaw<int>(data.EnemiesDestroyed);
+			return true;
+		}
 	};
 
 	class Player

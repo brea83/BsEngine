@@ -33,5 +33,7 @@ namespace Pixie
 		static bool FileProperty(const std::string& label, std::string& value, const char* filter, std::string deleteButtonText = "X", float propertyWidth = 0.0f);
 
 		static ImVec2 GetTextSizePadded(const std::string& label = "X");
+
+		static void CenteredText(const std::string& text);
 	};
 }

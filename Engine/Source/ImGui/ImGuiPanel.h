@@ -28,8 +28,10 @@ namespace Pixie
 		static bool DrawVec2Control(const std::string& label, glm::vec2& values, SliderParams params, float columnWidth = 5.0f);
 		static bool DrawFloatControl(const std::string& label, float& value, SliderParams params, float columnWidth = 5.0f);
 
-		static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth = 10.0f);
+		static bool DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float propertyWidth = 10.0f);
 
-		static bool FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth = 10.0f);
+		static bool FileProperty(const std::string& label, std::string& value, const char* filter, std::string deleteButtonText = "X", float propertyWidth = 0.0f);
+
+		static ImVec2 GetTextSizePadded(const std::string& label = "X");
 	};
 }

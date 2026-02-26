@@ -138,6 +138,7 @@ namespace Pixie
 		return true;
 	}
 
+
 	void ExampleGame::Pause()
 	{
 		m_GameStateMachine.SwitchState(PauseState::Type());

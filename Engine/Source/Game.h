@@ -75,6 +75,8 @@ namespace Pixie
 
 		virtual GUID GetPlayerID(int index = 0) { return GUID(0); };
 
+		// only use durring the drawImGui phase. needs the imgui frame start and end before and after it
+		virtual void DrawEditor();
 	protected:
 		std::string m_Title{ "DefaultTitle" };
 		std::filesystem::path m_SettingsPath{ "" };
@@ -83,8 +85,8 @@ namespace Pixie
 
 		std::shared_ptr<Scene> m_CurrentScene{ nullptr };
 
+
 		// maybe replace this with a scene manager?
 		/*std::unordered_map<std::string, std::filesystem::path>*/std::vector<std::filesystem::path> m_ScenePaths;
-		friend class GameDetailsEditor;
 	};
 }

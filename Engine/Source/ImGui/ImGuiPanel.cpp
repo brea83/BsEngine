@@ -191,6 +191,8 @@ namespace Pixie
 	bool ImGuiPanel::DrawStringProperty(const std::string& label, std::string& value, std::string& editingValue, float columnWidth)
 	{
 		bool bValueSubmitted = false;
+		ImGui::PushID((label + value).c_str());
+		ImGui::BeginGroup();
 
 		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
 		{
@@ -235,52 +237,48 @@ namespace Pixie
 			ImGui::EndTable();
 		}
 
+		ImGui::EndGroup(); // end of overal encapsulating group for the whole property
+		ImGui::PopID();
 		return bValueSubmitted;
 	}
 
-	bool ImGuiPanel::FileProperty(const std::string& label, std::string& value, const char* filter, float columnWidth)
+	bool ImGuiPanel::FileProperty(const std::string& label, std::string& value, const char* filter, std::string deleteButtonText, float propertyWidth)
 	{
+		ImGui::PushID((label + value).c_str());
+		ImGui::BeginGroup();
+
 		std::filesystem::path fileName = value;
 		if (!value.empty() && fileName.has_filename())
 		{
 			fileName = fileName.filename();
 		}
-
-
-		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable/* | ImGuiTableFlags_RowBg*/))
+		
+		std::string buttonText = "...";
+		float deleteWidth = deleteButtonText.empty() ? 0.0f : GetTextSizePadded(deleteButtonText.c_str()).x + ImGui::GetStyle().ItemSpacing.x;
+		float buttonWidth = GetTextSizePadded(buttonText.c_str()).x + ImGui::GetStyle().ItemSpacing.x;
+		float tableWidth = propertyWidth == 0.0f ? ImGui::GetContentRegionAvail().x - (buttonWidth + deleteWidth) : propertyWidth - (buttonWidth + deleteWidth);
+		float columnWidth = tableWidth * 0.25;
+		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable, ImVec2(tableWidth, 0.0f)))
 		{
-			float fontSize = ImGui::GetFontSize();
-			ImGui::TableSetupColumn("Labels", ImGuiTableColumnFlags_WidthFixed, fontSize * columnWidth);
-			ImGui::TableSetupColumn("Values", ImGuiTableColumnFlags_WidthStretch);
+			//float fontSize = ImGui::GetFontSize();
+			ImGui::TableSetupColumn("Labels" , ImGuiTableColumnFlags_WidthFixed, columnWidth);
+			ImGui::TableSetupColumn("Values");// , ImGuiTableColumnFlags_WidthStretch);
 			//ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch/*, -FLT_MIN*/);
 
 			ImGui::TableNextRow();
 			// the label
 			ImGui::TableSetColumnIndex(0);
-
-			ImGui::PushItemWidth(fontSize * columnWidth);
 			ImGui::Text(label.c_str());
-			ImGui::PopItemWidth();
 
 			// the values
 			ImGui::TableSetColumnIndex(1);
-			ImGui::PushItemWidth(fontSize * value.size());
-			// do stuff
-
 			ImGui::Text((fileName.string().c_str()));
-
-			ImGui::PopItemWidth();
-
-			// the button to turn  the value field into an edit field
 
 			ImGui::EndTable();
 
+			// the button to turn  the value field into an edit field
 			ImGui::SameLine();
-			std::string buttonText = "...";
-			std::string deleteText = "X";
-			float deleteWidth = ImGui::CalcTextSize(deleteText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			float buttonWidth = ImGui::CalcTextSize(buttonText.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.f);
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - (buttonWidth + deleteWidth));
+			//ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - (buttonWidth + deleteWidth));
 
 			ImGui::PushID(label.c_str());
 			if (ImGui::Button(buttonText.c_str()))
@@ -292,14 +290,22 @@ namespace Pixie
 				{
 					value = filePath;
 					ImGui::PopID();
+					ImGui::EndGroup();// outermost group for whole file property drawer thingy
 					return true;
 				}
-
 			}
 			ImGui::PopID();
 			//ImGui::PopItemWidth();
 		}
 
+		ImGui::EndGroup();// outermost group for whole file property drawer thingy
+		ImGui::PopID();
+
 		return false;
+	}
+	ImVec2 ImGuiPanel::GetTextSizePadded(const std::string& label)
+	{
+		return ImVec2 { ImGui::CalcTextSize(label.c_str()).x + (ImGui::GetStyle().FramePadding.x * 2.0f),
+			ImGui::CalcTextSize(label.c_str()).y + (ImGui::GetStyle().FramePadding.y * 2.0f) };
 	}
 }

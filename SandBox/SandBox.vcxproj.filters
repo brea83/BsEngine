@@ -60,6 +60,9 @@
     <ClCompile Include="Source\Game\CollisionBehavior\PointCollector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\Panels\DrawExampleGameEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Editor\EditorLayer.h">

@@ -44,6 +44,8 @@ namespace Pixie
 		
 		std::unordered_map<int, Level>& GetAllLevelData() { return m_LevelData; }
 
+		// only use durring the drawImGui phase. needs the imgui frame start and end before and after it
+		virtual void DrawEditor() override;
 	private:
 
 		int m_CurrentLevel{ 0 };
@@ -57,5 +59,12 @@ namespace Pixie
 
 		bool OnSceneChangedEvent(SceneChangedEvent& event);
 		bool OnGameStateRequest(GameStateChangeRequestEvent& event);
+
+		// ui stuff
+
+		std::string m_DragDropScene{ "SCENE PATH" };
+		void DrawSceneList();
+
+		void DrawLevelList();
 	};
 }

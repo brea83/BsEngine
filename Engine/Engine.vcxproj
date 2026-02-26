@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\ImGui\DrawCoreComponents.cpp" />
+    <ClCompile Include="Source\ImGui\GameDrawEditor.cpp" />
     <ClCompile Include="Source\Scene\Components\IComponentScript.cpp" />
     <ClCompile Include="Source\ScriptManager.cpp" />
     <ClCompile Include="Source\Graphics\Frustum.cpp" />

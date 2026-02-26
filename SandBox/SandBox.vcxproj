@@ -95,6 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Editor\Panels\DrawExampleGameEditor.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\PointCollector.cpp" />
     <ClCompile Include="Source\Game\Player.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\Damageable.cpp" />

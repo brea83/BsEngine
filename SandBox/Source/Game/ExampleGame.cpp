@@ -21,6 +21,7 @@ namespace Pixie
 		std::unordered_map<std::string_view, GameState*> states;
 		states.emplace(PauseState::Type(), new PauseState());
 		states.emplace(PlayingState::Type(), new PlayingState());
+		states.emplace(EndLevelState::Type(), new EndLevelState());
 
 		EngineContext* engine = EngineContext::GetEngine();
 		bool bIsEditorEnabled = engine->IsEditorEnabled();
@@ -152,20 +153,21 @@ namespace Pixie
 		m_GameStateMachine.SwitchState(stateType);
 	}
 
-	void ExampleGame::OnLevelEnd(const PlayerData& data, std::filesystem::path nextLevelPath)
+	void ExampleGame::OnPlayerReachedEnd(const PlayerData& data, std::filesystem::path nextLevelPath)
 	{
 		m_LevelData[m_CurrentLevel].Scores = data;
 
 		if (nextLevelPath == "")
 		{
 			Logger::Game(LOG_DEBUG, "PLAYER DIED");
-			GameStateChangeRequestEvent event{ Pixie::PauseState::Type(), "Game, Player Death" };
-			EngineContext::GetEngine()->OnEvent(event);
 		}
-		else
-		{
-			EngineContext::GetEngine()->RequestSceneChange(nextLevelPath);
-		}
+
+		EndLevelState* endState = dynamic_cast<EndLevelState*>(m_GameStateMachine.GetStateByType(EndLevelState::Type()));
+		if (endState)
+			endState->InitEndMenu(nextLevelPath.string());
+
+		GameStateChangeRequestEvent event{ Pixie::EndLevelState::Type(), "Example Game, Player reached an end" };
+		EngineContext::GetEngine()->OnEvent(event);
 	}
 
 	GUID ExampleGame::GetPlayerID(int index)

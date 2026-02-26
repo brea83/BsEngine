@@ -166,4 +166,12 @@ namespace Pixie
 		Logger::Core(LOG_WARNING, "State ({}) does not exist in state machine.", stateType);
 	}
 
+	GameState* GameStateMachine::GetStateByType(const std::string_view& stateType)
+	{
+		if (m_States.find(stateType) != m_States.end())
+			return m_States[stateType];
+		else
+			return nullptr;
+	}
+
 }

@@ -35,12 +35,13 @@ namespace Pixie
 
 		// collects player data from player on level end. 
 		// if player dies dont send next level path
-		void OnLevelEnd(const PlayerData& data, std::filesystem::path nextLevelPath = "");
+		void OnPlayerReachedEnd(const PlayerData& data, std::filesystem::path nextLevelPath = "");
 
 		// returns id == 0 if none found
 		virtual GUID GetPlayerID(int index = 0) override;
 		// check Score for -1 to see if struct is unitiialized
 		PlayerData GetCurrentPlayerData();
+		int GetCurrentLevel() { return m_CurrentLevel; }
 		
 		std::unordered_map<int, Level>& GetAllLevelData() { return m_LevelData; }
 

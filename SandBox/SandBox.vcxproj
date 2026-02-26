@@ -95,6 +95,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\UI\EndMenu.cpp" />
     <ClCompile Include="Source\Editor\Panels\DrawExampleGameEditor.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\PointCollector.cpp" />
     <ClCompile Include="Source\Game\Player.cpp" />
@@ -118,6 +119,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\UI\EndMenu.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\PointCollector.h" />
     <ClInclude Include="Source\Game\Player.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\Damageable.h" />

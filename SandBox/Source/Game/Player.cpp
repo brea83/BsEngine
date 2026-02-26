@@ -284,7 +284,7 @@ namespace Pixie
 			return;
 		}
 
-		game->OnLevelEnd(m_Data, nextLevelPath);
+		game->OnPlayerReachedEnd(m_Data, nextLevelPath);
 	}
 
 	void Player::OnDeath(GUID killerID)
@@ -296,7 +296,7 @@ namespace Pixie
 			return;
 		}
 
-		game->OnLevelEnd(m_Data);
+		game->OnPlayerReachedEnd(m_Data);
 	}
 
 }

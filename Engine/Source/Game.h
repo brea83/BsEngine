@@ -21,6 +21,8 @@ namespace Pixie
 
 		GameState* GetCurrentState() { return m_CurrentState; }
 		GameState* GetPreviousState() { return m_CurrentState; }
+
+		GameState* GetStateByType(const std::string_view& stateType);
 	private:
 		std::unordered_map<std::string_view, GameState*> m_States;
 		GameState* m_CurrentState{ nullptr };

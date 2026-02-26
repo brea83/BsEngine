@@ -100,4 +100,29 @@ namespace Pixie
 
 		scene->OnEditorUpdate(deltaTime);
 	}
+
+	// END LEVEL STATE ------------------------
+	const std::string EndLevelState::m_Type = "EndLevel";
+
+	void EndLevelState::EnterState(GameState* previousState)
+	{
+		std::shared_ptr<Scene> scene = EngineContext::GetEngine()->GetScene();
+
+		if (scene == nullptr)
+			return;
+
+		scene->Pause();
+	}
+	void EndLevelState::ExitState(GameState * nextState)
+	{}
+	void EndLevelState::UpdateState(float deltaTime)
+	{}
+	void EndLevelState::OnImGuiRender()
+	{
+		m_EndLevelMenu.Draw();
+	}
+	void EndLevelState::InitEndMenu(const std::string & nextLevelPath)
+	{
+		m_EndLevelMenu.Init(nextLevelPath);
+	}
 }

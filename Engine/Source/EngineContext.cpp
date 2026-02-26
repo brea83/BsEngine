@@ -12,6 +12,7 @@
 #include "Scene/Components/CameraController.h"
 #include "Scene/Components/CameraComponent.h"
 #include "Scene/Components/Transform.h"
+#include "Game.h"
 
 
 namespace Pixie
@@ -147,11 +148,24 @@ namespace Pixie
 
 	std::shared_ptr<Game> EngineContext::GetGame()
 	{
-		if (m_Engine != nullptr) 
+		if (m_Engine == nullptr || m_Engine->m_ImGuiLayer == nullptr) 
 		{
-			return m_Engine->m_ImGuiLayer->GetGame();
+			return nullptr;
 		}
-		else { return nullptr; }
+		
+		return m_Engine->m_ImGuiLayer->GetGame();
+	}
+
+	uint64_t EngineContext::GetPlayerID(int index)
+	{
+		if (m_Engine == nullptr)
+			return 0;
+
+		std::shared_ptr<Game> game = GetGame();
+		if (GetGame == nullptr)
+			return 0;
+
+		return (uint64_t)game->GetPlayerID(index);
 	}
 
 	void EngineContext::Update()

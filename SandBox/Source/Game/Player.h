@@ -9,7 +9,7 @@ namespace Pixie
 		PlayerData() = default;
 		PlayerData(const PlayerData&) = default;
 
-		int Score{ 0 };
+		int Score{ -1 };
 		int PointsCollected{ 0 };
 		int EnemiesDestroyed{ 0 };
 	};
@@ -46,18 +46,27 @@ namespace Pixie
 
 		void CollectPoints(int value) { m_Data.PointsCollected += value; m_Data.Score += value; }
 
+		void OnLevelTrigger(std::filesystem::path nextLevelPath);
+
 	private:
 		static const std::string m_Name;
 		
 		PlayerData m_Data{};
 
+		// point collector component
 		GUID m_PointCollectorID{0};
 		GameObject m_ObjectWithPointCollector{};
+		void BindPointsCallback(std::shared_ptr<Scene> scene, GameObject& hostObject);
 
-		// point collector component
-		// attack component
 		// damageable component
-		// OnDeath()
+		GUID m_DamageableID{ 0 };
+		GameObject m_ObjectWithDamageable{};
+
+		void BindDeathCallback(std::shared_ptr<Scene> scene, GameObject& hostObject);
+		void OnDeath(GUID killerID);
+
+		// attack component
+		GUID m_AttackID{ 0 };
 	};
 
 }

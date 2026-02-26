@@ -119,8 +119,19 @@ namespace Pixie
 		ImGui::SameLine();
 		ImGui::DragInt("##maxIFrames", &component.m_IFrames, 1.0f, 0);
 
-		ImGui::SeparatorText("Tags");
-		
+		// Tags TO HIT -----------------------------
+		ImGui::SeparatorText("Tags to Hit");
+
+		ImGui::Text("If Tags Empty Collide With Any/All");
+		ImGui::SameLine();
+		ImGui::Checkbox("##collideAny", &component.m_IfTagsEmptyCollideWithAny);
+		if (component.m_IfTagsEmptyCollideWithAny)
+		{
+			ImGui::Text("Can collide with own tag");
+			ImGui::SameLine();
+			ImGui::Checkbox("##collideSelf", &component.m_CollideWithOwnTag);
+		}
+
 		if (ImGui::Button("Add Tag"))
 		{
 			component.m_TagsThatDamageThis.push_back("");
@@ -156,6 +167,7 @@ namespace Pixie
 
 			component.m_TagsThatDamageThis.pop_back();
 		}
+
 	}
 
 	void Damageable::Serialize(StreamWriter * stream, const GameObject & sourceObject)
@@ -163,6 +175,8 @@ namespace Pixie
 		Damageable& component = sourceObject.GetComponent<Damageable>();
 		stream->WriteString(m_Name);
 		stream->WriteArray<std::string>(component.m_TagsThatDamageThis);
+		stream->WriteRaw<bool>(component.m_IfTagsEmptyCollideWithAny);
+		stream->WriteRaw<bool>(component.m_CollideWithOwnTag);
 		stream->WriteRaw(component.m_MaxHealth);
 		stream->WriteRaw(component.m_IFrames);
 	}
@@ -174,8 +188,9 @@ namespace Pixie
 		stream->ReadString(name);
 		if (name != m_Name)
 			return false;
-
 		stream->ReadArray<std::string>(component.m_TagsThatDamageThis);
+		stream->ReadRaw<bool>(component.m_IfTagsEmptyCollideWithAny);
+		stream->ReadRaw<bool>(component.m_CollideWithOwnTag);
 		stream->ReadRaw(component.m_MaxHealth);
 		stream->ReadRaw(component.m_IFrames);
 		return true;
@@ -214,6 +229,24 @@ namespace Pixie
 			return false;
 
 		std::string othersTag = other.GetComponent<TagComponent>().Tag;
+
+		if (m_TagsThatDamageThis.empty() && m_IfTagsEmptyCollideWithAny)
+		{
+			if (m_CollideWithOwnTag)
+			{
+				return true;
+			}
+			{
+				TagComponent* myTag = thisObject.TryGetComponent<TagComponent>();
+				if (myTag == nullptr)
+					return true;
+
+				if (myTag->Tag == othersTag)
+					return false;
+				else
+					return true;
+			}
+		}
 
 		if (std::find(m_TagsThatDamageThis.begin(), m_TagsThatDamageThis.end(), othersTag) != m_TagsThatDamageThis.end())
 		{
@@ -262,16 +295,10 @@ namespace Pixie
 			return;
 
 		Pixie::TagComponent& tag = killerObject.GetComponent<Pixie::TagComponent>();
-		if (tag.Tag != "Player" && tag.Tag != "player" && tag.Tag != "PLAYER")
-			return;
+		if (tag.Tag == "Player" || tag.Tag == "player" || tag.Tag == "PLAYER")
+			KilledByPlayer(scene);
 
-		entt::registry& registry = scene->GetRegistry();
-
-		for (auto&& [entity, player] : registry.view<Player>().each())
-		{
-			// only supporting single player right now only act on first player found
-			player.IncrementKills();
-		}
+		
 
 		// now do the other death callbacks
 		for (auto callback : m_OnDeathCallbacks)
@@ -282,5 +309,15 @@ namespace Pixie
 		m_DamageSourcesThisFrame.clear();
 		m_OnDeathCallbacks.clear();
 		thisObject.TryDestroy();
+	}
+	void Damageable::KilledByPlayer(std::shared_ptr<Scene> scene)
+	{
+		entt::registry& registry = scene->GetRegistry();
+
+		for (auto&& [entity, player] : registry.view<Player>().each())
+		{
+			// only supporting single player right now only act on first player found
+			player.IncrementKills();
+		}
 	}
 }

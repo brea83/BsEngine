@@ -43,6 +43,10 @@ namespace Pixie
 		Renderer* GetRenderer() { return m_Renderer; }
 
 		static std::shared_ptr<Game> GetGame();
+
+		// returns 0 if player not found
+		static uint64_t GetPlayerID(int index = 0);
+
 		static PhysicsEngine* GetPhysics() { if (m_Engine != nullptr) { return m_Engine->m_Physics; } else { return nullptr; } }
 
 		void SetImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }

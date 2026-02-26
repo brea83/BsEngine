@@ -138,7 +138,7 @@ namespace Pixie
 		dispatcher.Dispatch<KeyPressedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<SceneChangedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnSceneChangedEvent));
 		dispatcher.Dispatch<GameStateEnteredEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnGameStateEntered));
-
+		dispatcher.Dispatch<GameStateExitedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnGameStateExited));
 
 	}
 
@@ -919,6 +919,16 @@ namespace Pixie
 			m_EditorState = SceneState::Edit;
 		}
 		return false; // do not consume the event
+	}
+
+	bool EditorLayer::OnGameStateExited(GameStateExitedEvent& event)
+	{
+		if (event.ExitingState() == PlayingState::Type() || event.ExitingState() == PauseState::Type())
+		{
+			if (event.NextState() == EditState::Type())
+				OnSceneStop();
+		}
+		return false;
 	}
 	
 }

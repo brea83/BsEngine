@@ -93,5 +93,6 @@ namespace Pixie
 
 		bool OnKeyPressed(KeyPressedEvent& event);
 		bool OnGameStateEntered(GameStateEnteredEvent& event);
+		bool OnGameStateExited(GameStateExitedEvent& event);
 	};
 }

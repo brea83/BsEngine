@@ -1,9 +1,9 @@
 #include "ExampleGame.h"
 #include "BsPrecompileHeader.h"
-#include "../Game/StateMachine/GameStates.h"
 #include "EngineContext.h"
 #include "Scene/Components/Component.h"
-#include "Player.h"
+
+#include "../Game/StateMachine/GameStates.h"
 #include "CollisionBehavior/PointCollector.h"
 
 namespace Pixie
@@ -46,6 +46,7 @@ namespace Pixie
 	void ExampleGame::OnBeginPlay(std::shared_ptr<Scene> scene)
 	{
 		m_CurrentScene = scene;
+		FindAllPlayers();
 		m_CurrentScene->BeginPlayMode();
 	}
 
@@ -85,6 +86,21 @@ namespace Pixie
 		}
 
 		return event.Handled;
+	}
+
+	void ExampleGame::FindAllPlayers()
+	{
+		if (m_CurrentScene == nullptr)
+			return;
+		m_Players.clear();
+
+		entt::registry& registry = m_CurrentScene->GetRegistry();
+
+		for (auto&& [entity, player, id] : registry.view<Player, IDComponent>().each())
+		{
+			m_Players.push_back(id.ID);
+		}
+
 	}
 
 	bool ExampleGame::OnSceneChangedEvent(SceneChangedEvent& event)
@@ -133,6 +149,38 @@ namespace Pixie
 	void ExampleGame::SetState(const std::string_view& stateType)
 	{
 		m_GameStateMachine.SwitchState(stateType);
+	}
+
+	void ExampleGame::OnLevelEnd(const PlayerData& data, std::filesystem::path nextLevelPath)
+	{
+		m_LevelData[m_CurrentLevel].Scores = data;
+
+		if (nextLevelPath == "")
+		{
+			Logger::Game(LOG_DEBUG, "PLAYER DIED");
+			GameStateChangeRequestEvent event{ Pixie::PauseState::Type(), "Game, Player Death" };
+			EngineContext::GetEngine()->OnEvent(event);
+		}
+		else
+		{
+			EngineContext::GetEngine()->RequestSceneChange(nextLevelPath);
+		}
+	}
+
+	GUID ExampleGame::GetPlayerID(int index)
+	{
+		if (m_Players.empty() || m_CurrentScene == nullptr || index < 0 || index >= m_Players.size())
+			return 0;
+		else
+			return m_Players[index];
+	}
+
+	PlayerData ExampleGame::GetCurrentPlayerData()
+	{
+		if (m_LevelData.find(m_CurrentLevel) != m_LevelData.end() && m_LevelData[m_CurrentLevel].FilePathIndex != -1)
+			return m_LevelData[m_CurrentLevel].Scores;
+		else
+			return PlayerData();
 	}
 	
 }

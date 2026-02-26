@@ -2,7 +2,10 @@
 #include "ScriptManager.h"
 #include "Scene/GameObject.h"
 #include "ImGui/ImGuiPanel.h"
-#include "EngineContext.h"
+//#include "EngineContext.h"
+
+#include "../Player.h"
+
 namespace Pixie
 {
 	const std::string TriggerNextScene::m_Name = "Next Scene Trigger Volume";
@@ -85,7 +88,21 @@ namespace Pixie
 		//Logger::Core(LOG_DEBUG, "Trigger next scene trigger on object {}, collided with player tag on object {}", caller.GetName(), other.GetName());
 		//Logger::Core(LOG_DEBUG, "Trigger needs to search for and trigger load for scene named: {}", trigger.m_NextSceneName);
 
-		EngineContext::GetEngine()->RequestSceneChange(trigger.m_NextSceneName);
+		//GUID playerID = GUID(EngineContext::GetPlayerID());
+
+		/*GameObject playerObject = caller.GetScene()->FindGameObjectByGUID(playerID);
+		if (!playerObject)
+			return;
+
+		Player& player = playerObject.GetComponent<Player>();*/
+		entt::registry& registry = caller.GetScene()->GetRegistry();
+
+		for (auto&& [entity, player] : registry.view<Player>().each())
+		{
+			// only supporting single player right now only act on first player found
+			player.OnLevelTrigger(trigger.m_NextSceneName);
+			break;
+		}
 
 		trigger.triggered = true;
 	}

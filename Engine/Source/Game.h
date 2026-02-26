@@ -73,11 +73,13 @@ namespace Pixie
 		virtual void SaveSettings(std::filesystem::path filePath);
 		virtual void LoadSettings(std::filesystem::path filePath);
 
+		virtual GUID GetPlayerID(int index = 0) { return GUID(0); };
+
 	protected:
 		std::string m_Title{ "DefaultTitle" };
 		std::filesystem::path m_SettingsPath{ "" };
 		GameStateMachine m_GameStateMachine;
-		std::vector<uint64_t> m_Players;
+		std::vector<GUID> m_Players;
 
 		std::shared_ptr<Scene> m_CurrentScene{ nullptr };
 

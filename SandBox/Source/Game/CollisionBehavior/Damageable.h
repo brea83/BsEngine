@@ -37,6 +37,8 @@ namespace Pixie
 		static const std::string m_Name;
 
 		std::vector<std::string> m_TagsThatDamageThis{ "Player" };
+		bool m_IfTagsEmptyCollideWithAny{ false };
+		bool m_CollideWithOwnTag{ false };
 		int m_MaxHealth{ 2 };
 		int m_CurrentHealth{ 2 };
 
@@ -60,6 +62,7 @@ namespace Pixie
 		// occures durring update
 		void TakeDamage();
 		void OnDeath(GameObject& thisObject, GUID killerId);
+		void KilledByPlayer(std::shared_ptr<Scene> scene);
 
 	};
 

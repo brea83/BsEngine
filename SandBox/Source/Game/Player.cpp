@@ -3,9 +3,12 @@
 #include "Physics/PhysicsEngine.h"
 #include "ScriptManager.h"
 #include "ImGui/ImGuiPanel.h"
+#include "EngineContext.h"
 
+#include "ExampleGame.h"
 #include "CombatComponents.h"
 #include "CollisionBehavior/PointCollector.h"
+#include "CollisionBehavior/Damageable.h"
 
 namespace Pixie
 {
@@ -53,14 +56,24 @@ namespace Pixie
 		Player& player = hostObject.GetComponent<Player>();
 		std::shared_ptr<Scene> scene = hostObject.GetScene();
 
-		if (player.m_PointCollectorID != 0)
+		player.m_Data.Score = 0;
+		player.BindPointsCallback(scene, hostObject);
+		player.BindDeathCallback(scene, hostObject);
+		
+
+	}
+
+
+	void Player::BindPointsCallback(std::shared_ptr<Scene> scene, GameObject& hostObject)
+	{
+		if (m_PointCollectorID != 0)
 		{
-			player.m_ObjectWithPointCollector = scene->FindGameObjectByGUID(player.m_PointCollectorID);
-			if (player.m_ObjectWithPointCollector)
+			m_ObjectWithPointCollector = scene->FindGameObjectByGUID(m_PointCollectorID);
+			if (m_ObjectWithPointCollector)
 			{
-				PointCollector& collector = player.m_ObjectWithPointCollector.GetComponent<PointCollector>();
+				PointCollector& collector = m_ObjectWithPointCollector.GetComponent<PointCollector>();
 				using std::placeholders::_1;
-				collector.SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, &player, _1));
+				collector.SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, this, _1));
 			}
 		}
 		else
@@ -69,10 +82,10 @@ namespace Pixie
 			PointCollector* inParent = hostObject.GetComponentInParent<PointCollector>();
 			if (inParent)
 			{
-				player.m_ObjectWithPointCollector = scene->FindGameObjectByGUID(inParent->ID);
-				player.m_PointCollectorID = inParent->ID;
+				m_ObjectWithPointCollector = hostObject.GetParent();
+				m_PointCollectorID = m_ObjectWithPointCollector.GetGUID();
 				using std::placeholders::_1;
-				inParent->SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, &player, _1));
+				inParent->SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, this, _1));
 			}
 			else
 			{
@@ -82,16 +95,59 @@ namespace Pixie
 				{
 					GameObject child = inChildren.front();
 					PointCollector& collector = child.GetComponent<PointCollector>();
-					player.m_ObjectWithPointCollector = child;
+					m_ObjectWithPointCollector = child;
 
-					player.m_PointCollectorID = child.GetGUID();
+					m_PointCollectorID = child.GetGUID();
 
 					using std::placeholders::_1;
-					collector.SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, &player, _1));
+					collector.SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, this, _1));
 				}
 			}
 		}
+	}
 
+	void Player::BindDeathCallback(std::shared_ptr<Scene> scene, GameObject& hostObject)
+	{
+		std::string callbackName = m_Name + std::to_string(hostObject.GetGUID());
+		if (m_DamageableID != 0)
+		{
+			m_ObjectWithDamageable = scene->FindGameObjectByGUID(m_DamageableID);
+			if (m_ObjectWithDamageable)
+			{
+				Damageable& damageable = m_ObjectWithDamageable.GetComponent<Damageable>();
+				using std::placeholders::_1;
+
+				damageable.AddOnDeathCallback(callbackName, std::bind(&Player::OnDeath, this, _1));
+			}
+		}
+		else
+		{
+			// try to find a point collector in children or parent;
+			Damageable* inParent = hostObject.GetComponentInParent<Damageable>();
+			if (inParent)
+			{
+				m_ObjectWithDamageable = hostObject.GetParent();
+				m_DamageableID = m_ObjectWithDamageable.GetGUID();
+				using std::placeholders::_1;
+				inParent->AddOnDeathCallback(callbackName, std::bind(&Player::OnDeath, this, _1));
+			}
+			else
+			{
+				std::vector<GameObject> inChildren = hostObject.GetChildrenWithComponent<PointCollector>();
+
+				if (!inChildren.empty())
+				{
+					GameObject child = inChildren.front();
+					Damageable& damageable = child.GetComponent<Damageable>();
+					m_ObjectWithDamageable = child;
+
+					m_DamageableID = child.GetGUID();
+
+					using std::placeholders::_1;
+					damageable.AddOnDeathCallback(callbackName, std::bind(&Player::OnDeath, this, _1));
+				}
+			}
+		}
 	}
 
 	void Player::OnUpdate(GameObject& caller, float deltaTime)
@@ -125,6 +181,7 @@ namespace Pixie
 		ImGui::DragInt("##points", &player.m_Data.PointsCollected);
 
 		ImGui::Separator();
+		// point collector property ---------------------//
 		std::string name = "";
 		if (player.m_ObjectWithPointCollector)
 			name = player.m_ObjectWithPointCollector.GetName();
@@ -155,6 +212,49 @@ namespace Pixie
 			}
 			ImGui::EndDragDropTarget();
 		}
+		if (ImGui::BeginItemTooltip())
+		{
+			ImGui::Text("Drag object with a Damageable Component from Heirarchy here to connect");
+			ImGui::EndTooltip();
+		}
+
+		// Damageable property ---------------------//
+
+		std::string damagableName = "";
+		if (player.m_ObjectWithDamageable)
+			damagableName = player.m_ObjectWithDamageable.GetName();
+		else if (player.m_DamageableID != 0)
+		{
+			std::shared_ptr<Scene> scene = selected.GetScene();
+			GameObject damageableObject = scene->FindGameObjectByGUID(player.m_DamageableID);
+			if (damageableObject)
+			{
+				player.m_ObjectWithDamageable = damageableObject;
+				damagableName = player.m_ObjectWithDamageable.GetName();
+			}
+		}
+
+		ImGuiPanel::DrawStringProperty("Damageable", damagableName, damagableName);
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HEIRARCHY_ITEM"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(GameObject));
+				GameObject droppedObject = *(const GameObject*)payload->Data;
+
+				if (droppedObject.HasCompoenent<Damageable>())
+				{
+					player.m_ObjectWithDamageable = droppedObject;
+					player.m_DamageableID = droppedObject.GetGUID();
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+		if (ImGui::BeginItemTooltip())
+		{
+			ImGui::Text("Drag object with a Damageable Component from Heirarchy here to connect");
+			ImGui::EndTooltip();
+		}
 
 		ImGui::EndDisabled();
 	}
@@ -163,12 +263,40 @@ namespace Pixie
 	{
 		Player& player = sourceObject.GetComponent<Player>();
 		stream->WriteObject<GUID>(player.m_PointCollectorID);
+		stream->WriteObject<GUID>(player.m_DamageableID);
+		stream->WriteObject<GUID>(player.m_AttackID);
 	}
 	bool Player::Deserialize(StreamReader* stream, GameObject& destinationObject)
 	{
 		Player& player = destinationObject.GetOrAddComponent<Player>();
 		stream->ReadObject<GUID>(player.m_PointCollectorID);
+		stream->ReadObject<GUID>(player.m_DamageableID);
+		stream->ReadObject<GUID>(player.m_AttackID);
 		return false;
+	}
+
+	void Player::OnLevelTrigger(std::filesystem::path nextLevelPath)
+	{
+		std::shared_ptr<ExampleGame> game = std::dynamic_pointer_cast<ExampleGame>( EngineContext::GetGame());
+		if (game == nullptr)
+		{
+			Logger::Game(LOG_ERROR, "Aparently I cant cast example game down to its base game type and back up this way");
+			return;
+		}
+
+		game->OnLevelEnd(m_Data, nextLevelPath);
+	}
+
+	void Player::OnDeath(GUID killerID)
+	{
+		std::shared_ptr<ExampleGame> game = std::dynamic_pointer_cast<ExampleGame>(EngineContext::GetGame());
+		if (game == nullptr)
+		{
+			Logger::Game(LOG_ERROR, "Aparently I cant cast example game down to its base game type and back up this way");
+			return;
+		}
+
+		game->OnLevelEnd(m_Data);
 	}
 
 }

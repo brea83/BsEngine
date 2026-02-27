@@ -85,6 +85,7 @@
     <ClCompile Include="Source\ImGui\DrawCoreComponents.cpp" />
     <ClCompile Include="Source\ImGui\GameDrawEditor.cpp" />
     <ClCompile Include="Source\ImGui\CustomStyle.cpp" />
+    <ClCompile Include="Source\ImGui\StartUpWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\EnTT\entt.hpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Source\Scene\Components\IComponentScript.h" />
     <ClInclude Include="Source\Scene\Components\IComponent.h" />
     <ClInclude Include="Source\ImGui\CustomStyle.h" />
+    <ClInclude Include="Source\ImGui\StartUpWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\assimp\assimp-vc143-mtd.lib" />

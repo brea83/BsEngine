@@ -174,4 +174,19 @@ namespace Pixie
 			return nullptr;
 	}
 
+	std::vector<std::string> GameStateMachine::GetLoadedStateTypes()
+	{
+		if (m_States.empty())
+			return std::vector<std::string>();
+
+		std::vector<std::string> results;
+
+		for (auto& pair : m_States)
+		{
+			results.push_back(pair.first.data());
+		}
+
+		return results;
+	}
+
 }

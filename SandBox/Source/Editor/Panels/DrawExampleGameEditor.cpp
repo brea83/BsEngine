@@ -227,4 +227,90 @@ namespace Pixie
 		}
 		ImGui::EndChild(); // scenes list window
 	}
+
+	void ExampleGame::DrawPreviewData()
+	{
+		ImGui::PushFont(NULL, 42.0f);
+		ImGuiPanel::CenteredText(m_Title);
+		ImGui::PopFont();
+
+		auto windowWidth = ImGui::GetWindowSize().x;
+
+		ImGui::BeginChild("Scene List", ImVec2(windowWidth * 0.3f, 100.0f), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
+		if (m_ScenePaths.size() > 0)
+		{
+			if (ImGui::BeginTable("ScenesList", 1, ImGuiTableFlags_RowBg))
+			{
+				ImGui::TableSetupColumn("Scenes");
+				ImGui::TableHeadersRow();
+
+				for (auto scene : m_ScenePaths)
+				{
+					std::string name = scene.filename().string();
+
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text(name.c_str());
+				}
+				ImGui::EndTable();
+			}
+		}
+		ImGui::EndChild(); // end scene list --------------------------
+
+		ImGui::SameLine();
+
+		ImGui::BeginChild("Level List", ImVec2(windowWidth * 0.3f, 100.0f), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
+		if (m_LevelData.size() > 0)
+		{
+			std::string levelBase = "Level ";
+
+			if (ImGui::BeginTable("Levels", 2, ImGuiTableFlags_RowBg ))
+			{
+
+				ImGui::TableSetupColumn("Level");
+				ImGui::TableSetupColumn("Scene");
+				ImGui::TableHeadersRow();
+
+				for (auto& pair : m_LevelData)
+				{
+
+					int sceneIndex = pair.second.FilePathIndex;
+					std::string scene = m_ScenePaths[sceneIndex].filename().string();
+
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+					ImGui::Text((levelBase + std::to_string(pair.first)).c_str());
+					ImGui::TableSetColumnIndex(1);
+					ImGui::Text(scene.c_str());
+				}
+				ImGui::EndTable();
+			}
+
+		}
+		ImGui::EndChild(); // end Level list --------------------------
+		
+		ImGui::SameLine();
+		// start states list --------------------------
+		std::vector<std::string> states = m_GameStateMachine.GetLoadedStateTypes();
+		if (states.empty())
+			return;
+		
+		ImGui::BeginChild("States List", ImVec2(windowWidth * 0.3f, 100.0f), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
+
+		if (ImGui::BeginTable("StatesList", 1, ImGuiTableFlags_RowBg))
+		{
+			ImGui::TableSetupColumn("Game States");
+			ImGui::TableHeadersRow();
+
+			for (auto& name : states)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);
+				ImGui::Text(name.c_str());
+			}
+			ImGui::EndTable();
+		}
+
+		ImGui::EndChild(); // end states list --------------------------
+	}
 }

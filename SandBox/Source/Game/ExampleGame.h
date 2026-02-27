@@ -61,6 +61,7 @@ namespace Pixie
 
 		// only use durring the drawImGui phase. needs the imgui frame start and end before and after it
 		virtual void DrawEditor() override;
+		virtual void DrawPreviewData() override;
 
 		virtual void SaveSettings(std::filesystem::path filePath) override;
 		virtual void LoadSettings(std::filesystem::path filePath) override;

@@ -219,6 +219,7 @@
     <ClCompile Include="Source\Graphics\UniformBuffer.cpp" />
     <ClCompile Include="Source\DataStructures\Trees.cpp" />
     <ClCompile Include="Source\Scene\Components\SplineComponent.cpp" />
+    <ClCompile Include="Source\ImGui\StartUpWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\ImGui\CustomStyle.h" />
@@ -317,6 +318,7 @@
     <ClInclude Include="Source\Graphics\UniformBuffer.h" />
     <ClInclude Include="Source\DataStructures\Trees.h" />
     <ClInclude Include="Source\Scene\Components\SplineComponent.h" />
+    <ClInclude Include="Source\ImGui\StartUpWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Assets\Shaders\CircleFragment.glsl" />

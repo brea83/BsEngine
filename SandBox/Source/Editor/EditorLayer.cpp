@@ -7,6 +7,7 @@
 #include "../Game/StateMachine/GameStates.h"
 
 #include "ImGui/ImGuiPanel.h"
+#include "ImGui/StartUpWindow.h"
 #include <imgui_internal.h>
 
 #include <ImGuizmo/ImGuizmo.h>
@@ -113,6 +114,7 @@ namespace Pixie
 		Logger::GetSandboxLogger()->sinks().push_back(imguiSink);
 
 		m_ViewportPanelSize = engine->GetWindowSize();
+
 		m_Game = std::make_shared<ExampleGame>();
 		//Pixie::Logger::Core(LOG_TRACE, "trace with formatting {}", 12);
 		//Pixie::Logger::Core(LOG_INFO, "info with formatting int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
@@ -305,6 +307,11 @@ namespace Pixie
 	{
 		EngineContext& engine = *EngineContext::GetEngine();
 		static bool show = true;
+
+		if (!m_GameSelected)
+		{
+			m_GameSelected = StartUpWindow::DrawGameStartupWindow(std::dynamic_pointer_cast<Game>(m_Game));;
+		}
 
 		ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport()/*, ImGuiDockNodeFlags_PassthruCentralNode*/);
 		DrawMainMenu(&engine);

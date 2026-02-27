@@ -23,6 +23,8 @@ namespace Pixie
 		GameState* GetPreviousState() { return m_CurrentState; }
 
 		GameState* GetStateByType(const std::string_view& stateType);
+
+		std::vector<std::string> GetLoadedStateTypes();
 	private:
 		std::unordered_map<std::string_view, GameState*> m_States;
 		GameState* m_CurrentState{ nullptr };
@@ -39,7 +41,7 @@ namespace Pixie
 		virtual ~Game() { }
 
 		virtual std::string GetTitle() { return m_Title; }
-
+		virtual void SetTitle(const std::string& title) { m_Title = title; }
 		//returns -1 if index does not exist in player array
 		virtual uint64_t GetPlayerID(size_t playerIndex);
 		// will return a entt::null scene == nullptr game object if player guid not found
@@ -80,6 +82,7 @@ namespace Pixie
 
 		// only use durring the drawImGui phase. needs the imgui frame start and end before and after it
 		virtual void DrawEditor();
+		virtual void DrawPreviewData() {};
 	protected:
 		std::string m_Title{ "DefaultTitle" };
 		std::filesystem::path m_SettingsPath{ "" };

@@ -3,6 +3,7 @@
 #include "Layer.h"
 #include <glm/glm.hpp>
 #include "Events/Event.h"
+#include "ImGui/CustomStyle.h"
 
 namespace Pixie
 {

@@ -1,7 +1,9 @@
 #include "BsPrecompileHeader.h"
 #include "ImGuiLayer.h"
 #include "EngineContext.h"
+
 #include "ImGui/ImGuiPanel.h"
+
 #include <ImGuizmo/ImGuizmo.h>
 
 #include <glm/matrix.hpp>
@@ -24,7 +26,8 @@ namespace Pixie
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		//style set up
-		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsDark();
+		StyleColorsPixie();
 
 		// when viewports enabled tweak the window rounding/windowBg so platform windows can look identical
 		ImGuiStyle& style = ImGui::GetStyle();

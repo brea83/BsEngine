@@ -20,12 +20,13 @@ namespace Pixie
 	EngineContext* EngineContext::m_Engine = nullptr;
 	//EngineContext* EngineContext::NextUID = 0;
 
-	EngineContext::EngineContext(Window* startingWindow, Scene* startingScene, Renderer* startingRenderer, ImGuiLayer* startingImGuiLayer)
-		: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer), m_ImGuiLayer(startingImGuiLayer)
+	EngineContext::EngineContext(bool bEditorMode)//Window* startingWindow, Scene* startingScene, Renderer* startingRenderer, ImGuiLayer* startingImGuiLayer)
+		//: m_MainWindow(startingWindow), m_ActiveScene(startingScene), m_Renderer(startingRenderer), m_ImGuiLayer(startingImGuiLayer)
 	{
 		if (m_Engine == NULL/* || m_Engine == nullptr*/)
 		{
 			m_Engine = this;
+			m_Engine->m_EditorEnabled = bEditorMode;
 			return;
 		}
 		Logger::Core(LogLevel::Error, "Error: more than one Engine contexts has been created, only the first is saved as a singleton");// << std::endl;

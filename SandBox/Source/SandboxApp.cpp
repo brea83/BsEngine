@@ -8,7 +8,7 @@ using namespace Pixie;
 class SandboxApp : public Pixie::EngineContext
 {
 public:
-	SandboxApp() : EngineContext()
+	SandboxApp(bool bEditorMode) : EngineContext(bEditorMode)
 	{
 		SetImGuiLayer(new Pixie::EditorLayer());
 	}
@@ -18,8 +18,8 @@ protected:
 	
 };
 
-Pixie::EngineContext* Pixie::CreateApplication()
+Pixie::EngineContext* Pixie::CreateApplication(bool bEditorMode)
 {
 
-	return new SandboxApp();
+	return new SandboxApp(bEditorMode);
 }

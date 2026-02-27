@@ -82,7 +82,8 @@ namespace Pixie
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		//style set up
-		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsDark();
+		StyleColorsPixie();
 
 		// when viewports enabled tweak the window rounding/windowBg so platform windows can look identical
 		ImGuiStyle& style = ImGui::GetStyle();

@@ -76,7 +76,7 @@ namespace Pixie
 
 	protected:
 		// constructors, properties, getters and setters
-		EngineContext(Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr, ImGuiLayer* startingImGuiLayer = nullptr);
+		EngineContext(bool bEditorMode = true);//Window* startingWindow = nullptr, Scene* startingScene = nullptr, Renderer* startingRenderer = nullptr, ImGuiLayer* startingImGuiLayer = nullptr);
 
 		static EngineContext* m_Engine;
 		std::deque<std::shared_ptr<Event>> m_EventQueue;
@@ -115,5 +115,5 @@ namespace Pixie
 
 	};
 	// To be defined in Client (ie SandBox)
-	EngineContext* CreateApplication();
+	EngineContext* CreateApplication(bool bEditorMode = true);
 }

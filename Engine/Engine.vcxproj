@@ -114,6 +114,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\ImGui\CustomStyle.cpp" />
     <ClCompile Include="Source\ImGui\DrawCoreComponents.cpp" />
     <ClCompile Include="Source\ImGui\GameDrawEditor.cpp" />
     <ClCompile Include="Source\Scene\Components\IComponentScript.cpp" />
@@ -220,6 +221,7 @@
     <ClCompile Include="Source\Scene\Components\SplineComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\ImGui\CustomStyle.h" />
     <ClInclude Include="Source\Scene\Components\IComponent.h" />
     <ClInclude Include="Source\Scene\Components\IComponentScript.h" />
     <ClInclude Include="Source\ScriptManager.h" />

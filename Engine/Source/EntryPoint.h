@@ -4,12 +4,27 @@
 
 #ifdef  PIXIE_PLATFORM_WINDOWS
 
-extern Pixie::EngineContext* Pixie::CreateApplication();
+extern Pixie::EngineContext* Pixie::CreateApplication(bool bEditorMode);
 
 int main(int argc, char** argv)
 {
+	//TODO change default to false to require manual enabling of the editor mode
+	bool startInEditMode = true;
+	int i = 0;
+	while (i < argc)
+	{
+		if (argv[i] == "Editor")
+		{
+			startInEditMode = true;
+		}
 
-	auto engine = Pixie::CreateApplication();
+		std::cout << "Argument " << i + 1
+			<< ": " << argv[i]
+			<< std::endl;
+		i++;
+	}
+
+	auto engine = Pixie::CreateApplication(startInEditMode);
 	if (!engine->Init())
 	{
 		return -1;

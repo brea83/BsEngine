@@ -1,6 +1,7 @@
 #include "BsPrecompileHeader.h"
 #include "SceneSerializer.h"
 #include "Scene/GameObject.h"
+#include "PlatformUtils.h"
 
 
 namespace Pixie
@@ -41,7 +42,9 @@ namespace Pixie
 
 	bool SceneSerializer::Deserialize(std::filesystem::path filePath, bool initializeHere)
 	{
-		FileStreamReader fileStream(filePath);
+		std::filesystem::path relativePath;
+		PathParsing::IsPathProjectRelative(filePath, relativePath);
+		FileStreamReader fileStream(relativePath);
 		fileStream.ReadString(m_Scene->m_Name);
 
 		int entityCount;

@@ -10,6 +10,47 @@
 
 namespace Pixie
 {
+	bool PathParsing::IsPathProjectRelative(const std::filesystem::path& inPath, std::filesystem::path& outPath)
+	{
+		bool bIsInAssetsFolderPath{ false };
+		outPath = "../";
+
+		if (inPath.string().substr(0, 9) != "../Assets")
+		{
+			for (auto part : inPath)
+			{
+				if (part == "Assets")
+				{
+					bIsInAssetsFolderPath = true;
+				}
+
+				if (bIsInAssetsFolderPath)
+				{
+					outPath += part.string();
+
+					if (part.has_extension())
+						continue;
+
+					outPath += "/";
+				}
+				//Logger::Core(LOG_DEBUG, "{}", part.string());
+			}
+
+			//outPath = "../Assets" + inPath.substr(inPath.find("Assets"));
+			if (outPath == "../")
+			{
+				Logger::Core(LOG_WARNING, "{}, is outside project assets folder, you will need to manually reset these files if you want to run your game on another machine", inPath.string());
+				outPath = inPath;
+				return false;
+			}
+			return true;
+		}
+
+
+		outPath = inPath;
+		return false;
+	}
+
 	// reminder the filter is which files are valid in the file dialog
 	std::string FileDialogs::OpenFile(const char* filter)
 	{

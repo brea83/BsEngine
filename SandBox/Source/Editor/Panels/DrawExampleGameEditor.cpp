@@ -31,7 +31,9 @@ namespace Pixie
 			float buttonWidth = ImGuiPanel::GetTextSizePadded().x;
 			if (ImGuiPanel::FileProperty(label, pathString, "Scene Files (*.pixie)\0*.pixie\0", "X", availableWidth - buttonWidth))
 			{
-				m_ScenePaths[i] = pathString;
+				std::filesystem::path relativePath;
+				PathParsing::IsPathProjectRelative(pathString, relativePath);
+				m_ScenePaths[i] = relativePath;
 			}
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 			{
@@ -59,8 +61,8 @@ namespace Pixie
 			{
 				scenesToRemove.push_back(i);
 			}
-			ImGui::PopID();
-			ImGui::PopID();
+			ImGui::PopID();// remove scene button id
+			ImGui::PopID(); // itterator id
 		}
 
 		for (auto index : scenesToRemove)
@@ -83,7 +85,7 @@ namespace Pixie
 			ImGui::PushID(i);
 			std::string label = "Level " + std::to_string(i);
 			int filePathIndex = m_LevelData[i].FilePathIndex;
-			std::string pathString = filePathIndex == -1 ? "" : m_ScenePaths[filePathIndex].filename().string();
+			std::string pathString = filePathIndex < 0 || filePathIndex >= m_ScenePaths.size() ? "" : m_ScenePaths[filePathIndex].filename().string();
 			
 			ImGui::BeginGroup();// drag and drop group
 
@@ -127,8 +129,8 @@ namespace Pixie
 				levelToRemove.push_back(i);
 				m_LevelData[i].FilePathIndex = -1;
 			}
-			ImGui::PopID();
-			ImGui::PopID();
+			ImGui::PopID(); // remove level
+			ImGui::PopID(); // itterator id
 		}
 
 		if (!levelToRemove.empty())

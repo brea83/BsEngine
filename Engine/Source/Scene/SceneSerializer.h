@@ -15,6 +15,8 @@ namespace Pixie
 		//includes call to scene.Initialize at the end
 		bool Deserialize(std::filesystem::path filePath, bool initializeHere = true);
 
+		//void MakePathRelative(const std::string& inPath, std::string& outPath);
+
 	private:
 		std::shared_ptr<Scene> m_Scene;
 	};

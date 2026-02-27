@@ -291,6 +291,7 @@ namespace Pixie
 					value = filePath;
 					ImGui::PopID();
 					ImGui::EndGroup();// outermost group for whole file property drawer thingy
+					ImGui::PopID();
 					return true;
 				}
 			}

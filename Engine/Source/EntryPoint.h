@@ -8,12 +8,13 @@ extern Pixie::EngineContext* Pixie::CreateApplication(bool bEditorMode);
 
 int main(int argc, char** argv)
 {
-	//TODO change default to false to require manual enabling of the editor mode
-	bool startInEditMode = true;
+	//Note my visual studio is set up to send the arg Editor on debug
+	bool startInEditMode = false;
 	int i = 0;
 	while (i < argc)
 	{
-		if (argv[i] == "Editor")
+		std::string argString = argv[i];
+		if (argString == "Editor")
 		{
 			startInEditMode = true;
 		}

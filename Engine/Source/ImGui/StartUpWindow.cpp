@@ -11,14 +11,14 @@ namespace Pixie
     {
         static bool gameLoaded = false;
 
-        ImGui::OpenPopup("Select Game Ini");
+        ImGui::OpenPopup("Select Game");
         
         // Always center this window when appearing
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowPos(center, ImGuiCond_None, ImVec2(0.5f, 0.5f));
 
-        //ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
-        if (ImGui::BeginPopupModal("Select Game Ini", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize))
+        ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
+        if (ImGui::BeginPopupModal("Select Game", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize))
         {
             ImGui::PushFont(NULL, 42.0f);
             ImGuiPanel::CenteredText("Select Game File");

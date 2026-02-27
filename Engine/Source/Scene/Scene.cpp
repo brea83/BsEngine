@@ -71,7 +71,7 @@ namespace Pixie
 		}
 		else
 		{
-			m_SceneState = SceneState::Play;
+			m_SceneState = SceneState::WaitingToStart;
 		}
 		m_CameraManager.Init();
 

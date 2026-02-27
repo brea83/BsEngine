@@ -24,7 +24,7 @@ namespace Pixie
 		Edit = 0,
 		Play = 1,
 		Pause = 2,
-		SimulatePhysics = 3
+		WaitingToStart = 3
 	};
 
 	class Scene : public std::enable_shared_from_this<Scene>

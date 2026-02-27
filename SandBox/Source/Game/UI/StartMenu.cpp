@@ -88,8 +88,8 @@ namespace Pixie
 	{
 		if (!m_Game)
 			return;
-		m_Game->RequestStateChange(PlayingState::Type());
 		m_Game->RequestLevelChange(levelIndex);
+		m_Game->RequestStateChange(PlayingState::Type());
 	}
 
 	void StartMenu::OnQuitButtonPressed()

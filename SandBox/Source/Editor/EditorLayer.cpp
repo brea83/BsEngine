@@ -24,9 +24,7 @@
 
 #include "ImGui/imgui_sink.h"
 
-#include "../Game/CollisionBehavior/TriggerNextScene.h"
-#include "../Game/CollisionBehavior/Damageable.h"
-#include "../Game/CombatComponents.h"
+
 
 namespace Pixie
 {
@@ -123,10 +121,10 @@ namespace Pixie
 		//Pixie::Logger::Core(LOG_ERROR, "error with formatting {:04d}", 12);
 		//Pixie::Logger::Core(LOG_CRITICAL, "CRITICAL MSG with formatting {:02d}", 12);
 
-		TriggerNextScene::RegisterToScriptManager();
-		Damageable::RegisterToScriptManager();
-		Attack::RegisterToScriptManager();
-		ScoresPoints::RegisterToScriptManager();
+		//TriggerNextScene::RegisterToScriptManager();
+		//Damageable::RegisterToScriptManager();
+		//Attack::RegisterToScriptManager();
+		//ScoresPoints::RegisterToScriptManager();
 		
 	}
 
@@ -144,9 +142,6 @@ namespace Pixie
 		dispatcher.Dispatch<GameStateExitedEvent>(BIND_EVENT_FUNCTION(EditorLayer::OnGameStateExited));
 
 	}
-
-	void EditorLayer::OnPlayFromTitleButton()
-	{}
 
 	void EditorLayer::OnScenePlay()
 	{

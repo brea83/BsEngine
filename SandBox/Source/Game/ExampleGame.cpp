@@ -5,6 +5,9 @@
 
 #include "../Game/StateMachine/GameStates.h"
 #include "CollisionBehavior/PointCollector.h"
+#include "../Game/CollisionBehavior/TriggerNextScene.h"
+#include "../Game/CollisionBehavior/Damageable.h"
+#include "../Game/CombatComponents.h"
 
 namespace Pixie
 {
@@ -25,24 +28,28 @@ namespace Pixie
 		states.emplace(TitleState::Type(), new TitleState());
 
 		EngineContext* engine = EngineContext::GetEngine();
-		bool bIsEditorEnabled = engine->IsEditorEnabled();
-		if (bIsEditorEnabled)
-		{
+		//bool bIsEditorEnabled = engine->IsEditorEnabled();
+		//if (bIsEditorEnabled)
+		//{
 			states.emplace(EditState::Type(), new EditState());
 			m_CurrentScene = engine->GetScene();
-		}
+		//}
 
 		m_GameStateMachine = GameStateMachine(states);
 
-		if (bIsEditorEnabled)
+		//if (bIsEditorEnabled)
 			m_GameStateMachine.SwitchState(EditState::Type());
-		else
-			m_GameStateMachine.SwitchState(PauseState::Type());
+		//else
+			//m_GameStateMachine.SwitchState(PauseState::Type());
 
 		m_InputSystem = new PlayerInputSystem();
 
 		Player::RegisterToScriptManager();
 		PointCollector::RegisterToScriptManager();
+		TriggerNextScene::RegisterToScriptManager();
+		Damageable::RegisterToScriptManager();
+		Attack::RegisterToScriptManager();
+		ScoresPoints::RegisterToScriptManager();
 	}
 
 	void ExampleGame::OnBeginPlay(std::shared_ptr<Scene> scene)
@@ -115,7 +122,7 @@ namespace Pixie
 		
 		std::string_view stateType = currentState->GetType();
 
-		if (stateType == PlayingState::Type() || stateType == TitleState::Type())
+		if (stateType == PlayingState::Type() )
 		{
 			OnBeginPlay(m_CurrentScene);
 		}
@@ -126,6 +133,10 @@ namespace Pixie
 		else if (stateType == PauseState::Type() || stateType == EndLevelState::Type())
 		{
 			m_CurrentScene->Pause();
+		}
+		else if (stateType == TitleState::Type())
+		{
+			m_CurrentScene->SetSceneState(SceneState::WaitingToStart);
 		}
 
 		return false;

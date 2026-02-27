@@ -1,6 +1,7 @@
 #include <Pixie.h>
 #include <Source/EntryPoint.h>
 #include "Editor/EditorLayer.h"
+#include "Game/RuntimeLayer.h"
 #include "Events/KeyboardEvents.h"
 #include "Events/MouseEvents.h"
 
@@ -10,7 +11,14 @@ class SandboxApp : public Pixie::EngineContext
 public:
 	SandboxApp(bool bEditorMode) : EngineContext(bEditorMode)
 	{
-		SetImGuiLayer(new Pixie::EditorLayer());
+		if (bEditorMode)
+		{
+			SetImGuiLayer(new Pixie::EditorLayer());
+		}
+		else
+		{
+			SetImGuiLayer(new Pixie::RuntimeLayer());
+		}
 	}
 	~SandboxApp() {}
 

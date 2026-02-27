@@ -145,6 +145,9 @@ namespace Pixie
 
 	}
 
+	void EditorLayer::OnPlayFromTitleButton()
+	{}
+
 	void EditorLayer::OnScenePlay()
 	{
 		std::shared_ptr<Scene> runtimeCopy = Scene::Copy(m_EditorScene);
@@ -644,12 +647,18 @@ namespace Pixie
 
 		if (ImGui::BeginMenuBar())
 		{
-			float offset = ImGui::GetContentRegionAvail().x * 0.5f - (ImGui::GetStyle().ItemSpacing.x * 0.5f);
 			ImVec2 buttonSize = ImVec2(ImGui::GetStyle().FramePadding.x * 4.0f, ImGui::GetFrameHeight());
 			buttonSize.x += ImGui::CalcTextSize("PAUSE").x;
-
-			ImGui::SetCursorPosX(offset - buttonSize.x);
+			
+			auto center = ImGui::GetWindowSize().x * 0.5f;
+			
+			ImGui::SetCursorPosX(center - (ImGui::CalcTextSize("Start From Title").x + buttonSize.x));
 			bool bEditorModeBeforeButtonPresses = m_EditorState == SceneState::Edit;
+
+			if (ImGui::Button("Start From Title"))
+			{
+				m_Game->RequestStateChange(TitleState::Type());
+			}
 
 			if (ImGui::Button(m_PlayPauseText.c_str(), buttonSize))
 			{

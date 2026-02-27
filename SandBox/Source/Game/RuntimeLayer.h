@@ -7,7 +7,11 @@ namespace Pixie
 {
 	class RuntimeLayer : public ImGuiLayer
 	{
+	/*	RuntimeLayer();
+		~RuntimeLayer();
 
+		virtual void OnAttach() override;
+		virtual void OnEvent(Event& event) override;*/
 	};
 
 }

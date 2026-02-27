@@ -28,6 +28,7 @@ namespace Pixie
 		virtual void OnDetach() override;
 		virtual void OnEvent(Event& event) override;
 
+		void OnPlayFromTitleButton();
 		void OnScenePlay();
 		void OnScenePause();
 		void OnSceneStop();

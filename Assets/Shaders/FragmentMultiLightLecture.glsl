@@ -57,7 +57,7 @@ in VS_OUT
    mat3 TBN;
 } IN;
 
-uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
+//uniform vec4 baseColor = vec4 (1.0, 1.0, 1.0, 1.0);
 
 uniform MaterialData Material;
 
@@ -178,7 +178,7 @@ void main()
 {
 	screenSpacePos = gl_FragCoord.xyz;
 	FragColor = vec4(0, 0, 0, 1);
-	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb;
+	vec3 textureColor = texture(Material.ColorTexture, IN.UV).rgb * Material.BaseColor;
 	//textureColor = pow(textureColor, vec3(Gamma));
 
 	//FragColor.xyz += ambientLight.xyz ; // mult in Material ambience when I have it

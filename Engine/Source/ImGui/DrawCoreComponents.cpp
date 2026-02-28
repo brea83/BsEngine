@@ -87,6 +87,10 @@ namespace Pixie
         }
         ImGui::PopID();
 
+        ImGui::Text("Base Color");
+        ImGui::SameLine();
+        ImGui::ColorEdit3("##Color", glm::value_ptr(material.BaseColor));
+
         std::string previousNormalPath = material.NormalMapPath;
 
         if (ImGuiPanel::FileProperty("Normal Map", material.NormalMapPath,

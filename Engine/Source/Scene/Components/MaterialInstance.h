@@ -13,6 +13,7 @@ namespace Pixie
         //static constexpr SerializableComponentID ID{ SerializableComponentID::MaterialInstance };
         std::string BaseMapPath{ "" };
         std::shared_ptr<Texture> BaseMap{ nullptr };
+        glm::vec3 BaseColor{ 1.0f };
 
         std::string NormalMapPath{ "" };
         std::shared_ptr<Texture> NormalMap{ nullptr };
@@ -31,6 +32,7 @@ namespace Pixie
             //stream->WriteRaw<SerializableComponentID>(component.ID);
 
             stream->WriteString(component.BaseMapPath);
+            stream->WriteRaw<glm::vec3>(component.BaseColor);
             stream->WriteString(component.NormalMapPath);
             stream->WriteString(component.MetallicMapPath);
             stream->WriteString(component.SpecularMapPath);
@@ -46,6 +48,7 @@ namespace Pixie
             if (readID != component.ID) return false;*/
 
             stream->ReadString(component.BaseMapPath);
+            stream->ReadRaw<glm::vec3>(component.BaseColor);
             stream->ReadString(component.NormalMapPath);
             stream->ReadString(component.MetallicMapPath);
             stream->ReadString(component.SpecularMapPath);

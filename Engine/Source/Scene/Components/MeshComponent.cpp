@@ -104,6 +104,8 @@ namespace Pixie
 			currentShader.SetUniformInt("Material.ColorTexture", 0);
 		}
 
+		currentShader.SetUniformVec3("Material.BaseColor", m_MaterialInstance.BaseColor);
+
 		if (m_MaterialInstance.NormalMap != nullptr)
 		{
 			m_MaterialInstance.NormalMap->Bind(1);

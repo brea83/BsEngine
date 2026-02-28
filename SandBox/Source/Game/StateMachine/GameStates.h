@@ -21,7 +21,7 @@ namespace Pixie
 		void UpdateState(float deltaTime) override;
 		void OnImGuiRender() override;
 
-		void InitEndMenu(const std::string& nextLevelPath);
+		void InitEndMenu(int levelIndex);//const std::string& nextLevelPath);
 	private:
 		static const std::string m_Type;
 		EndMenu m_EndLevelMenu{};

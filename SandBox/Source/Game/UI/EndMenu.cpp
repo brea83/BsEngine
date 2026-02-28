@@ -5,7 +5,7 @@
 
 namespace Pixie
 {
-    void EndMenu::Init(const std::string& nextLevelPath)
+    void EndMenu::Init(int levelIndex)//const std::string& nextLevelPath)
     {
         m_Game = std::dynamic_pointer_cast<ExampleGame>(EngineContext::GetGame());
 
@@ -14,12 +14,12 @@ namespace Pixie
 
         m_CurrentLevel = m_Game->GetCurrentLevel();
 
-        if (nextLevelPath == "")
+        if (levelIndex == -1)//nextLevelPath == "")
         {
             m_PlayerDied = true;
             m_IsEndOfGame = false;
         }
-        else if (nextLevelPath == "END")
+        else if (levelIndex >= m_Game->GetAllLevelData().size())//nextLevelPath == "END")
         {
             m_PlayerDied = false;
             m_IsEndOfGame = true;
@@ -29,8 +29,9 @@ namespace Pixie
         {
             m_PlayerDied = false;
             m_IsEndOfGame = false;
-            m_TempLevelPathStorage = nextLevelPath;
+            //m_TempLevelPathStorage = nextLevelPath;
         }
+        m_NextLevelIndex = levelIndex;
     }
 
     bool EndMenu::Draw()
@@ -68,7 +69,7 @@ namespace Pixie
                 ImGui::CloseCurrentPopup();
             }
 
-            if (!m_PlayerDied && m_TempLevelPathStorage != "")
+            if (!m_PlayerDied && !m_IsEndOfGame)
             {
                 ImGui::SameLine();
                 if (ImGui::Button("Next Level", ImVec2(120.0f, 50.0f))) 
@@ -180,7 +181,8 @@ namespace Pixie
     {
         EngineContext* engine = Pixie::EngineContext::GetEngine();
         
-        engine->RequestSceneChange(m_TempLevelPathStorage);
+        m_Game->RequestLevelChange(m_NextLevelIndex);
+        //engine->RequestSceneChange(m_TempLevelPathStorage);
         
         // comented out the index method since that's not hooked up to the end level triggers yet
         // TODO part of the refactor to use game's map of levels and set next level via look up indices

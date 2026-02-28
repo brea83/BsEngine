@@ -4,6 +4,7 @@
 
 namespace Pixie
 {
+	class ExampleGame;
 	class GameObject;
 	struct CollisionEvent;
 
@@ -30,10 +31,16 @@ namespace Pixie
 
 	private:
 		static const std::string m_Name;
+		std::shared_ptr<ExampleGame> m_Game;
 
 		bool triggered{ false };
 		std::string m_NextSceneName{ "MovementTesting" };
 		std::string m_TagThatActivatesTrigger{ "Player" };
+
+		int m_NextLevelIndex{ 0 };
+
+
+		void DrawLevelSelect(GameObject& selected);
 	};
 
 }

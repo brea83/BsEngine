@@ -1,8 +1,9 @@
 #include "TriggerNextScene.h"
 #include "ScriptManager.h"
-#include "Scene/GameObject.h"
+#include "Pixie.h"
 #include "ImGui/ImGuiPanel.h"
 //#include "EngineContext.h"
+#include "../ExampleGame.h"
 
 #include "../Player.h"
 
@@ -39,7 +40,8 @@ namespace Pixie
 		if (!hostObject.HasCompoenent<CollisionComponent>())
 			hostObject.AddComponent<CollisionComponent>();
 
-		hostObject.AddComponent<TriggerNextScene>();
+		TriggerNextScene& trigger = hostObject.AddComponent<TriggerNextScene>();
+		trigger.m_Game = std::dynamic_pointer_cast<ExampleGame>(EngineContext::GetGame());
 	}
 
 	void TriggerNextScene::RemoveMyComponent(GameObject& hostObject)
@@ -85,22 +87,12 @@ namespace Pixie
 		if (other.GetComponent<TagComponent>().Tag != trigger.m_TagThatActivatesTrigger)
 			return;
 
-		//Logger::Core(LOG_DEBUG, "Trigger next scene trigger on object {}, collided with player tag on object {}", caller.GetName(), other.GetName());
-		//Logger::Core(LOG_DEBUG, "Trigger needs to search for and trigger load for scene named: {}", trigger.m_NextSceneName);
-
-		//GUID playerID = GUID(EngineContext::GetPlayerID());
-
-		/*GameObject playerObject = caller.GetScene()->FindGameObjectByGUID(playerID);
-		if (!playerObject)
-			return;
-
-		Player& player = playerObject.GetComponent<Player>();*/
 		entt::registry& registry = caller.GetScene()->GetRegistry();
 
 		for (auto&& [entity, player] : registry.view<Player>().each())
 		{
 			// only supporting single player right now only act on first player found
-			player.OnLevelTrigger(trigger.m_NextSceneName);
+			player.OnLevelTrigger(trigger.m_NextLevelIndex);
 			break;
 		}
 
@@ -116,17 +108,110 @@ namespace Pixie
 			return;
 		TriggerNextScene& trigger = selected.GetComponent<TriggerNextScene>();
 		
-		if (ImGuiPanel::FileProperty("Next Scene", trigger.m_NextSceneName, "Pixie Game Settings (*.pixie)\0*.pixie\0"))
-		{
-			//std::filesystem::path path = trigger.m_NextSceneName;
-		}
+		//
+		//if (ImGuiPanel::FileProperty("Next Scene", trigger.m_NextSceneName, "Pixie Game Settings (*.pixie)\0*.pixie\0"))
+		//{
+		//	//std::filesystem::path path = trigger.m_NextSceneName;
+		//}
+
+		//---------- new method
+		trigger.DrawLevelSelect(selected);
 	}
+
+	void Pixie::TriggerNextScene::DrawLevelSelect(GameObject& selected)
+	{
+		if (m_Game == nullptr)
+			return;
+
+		auto& levels = m_Game->GetAllLevelData();
+
+		auto& scenes = m_Game->GetScenePaths();
+
+		std::vector<std::string> levelNames;
+
+		for (auto& pair : levels)
+		{
+			if (pair.first == 0)
+			{
+				levelNames.push_back("Select Level");
+				continue;
+			}
+			int sceneIndex = pair.second.FilePathIndex;
+			bool bSceneValid = sceneIndex < scenes.size() && sceneIndex >= 0;
+
+			if (bSceneValid)
+			{
+				levelNames.push_back("Level " + std::to_string(pair.first) + ": " + scenes[sceneIndex].filename().string());
+			}
+			else
+			{
+				levelNames.push_back("Level " + std::to_string(pair.first) + ": scene invalid");
+			}
+		}
+
+		levelNames.push_back("END GAME");
+
+		static int selectedLevel = 0;
+		std::string previewValue;
+		if (selectedLevel < 1)
+			previewValue = "select level";
+		else if (selectedLevel == levels.size())
+		{
+			previewValue = "END GAME: NO LEVEL";
+		}
+		else
+		{
+			previewValue = levelNames[selectedLevel];
+		}
+		
+
+		if (ImGui::BeginCombo("##levelPicker", previewValue.c_str()))
+		{
+			for (int i = 0; i < levelNames.size(); i++)
+			{
+				const bool is_selected = (selectedLevel == i);
+				if (ImGui::Selectable(levelNames[i].c_str(), is_selected))
+				{
+					selectedLevel = i;
+
+					if (selectedLevel < levels.size() && selectedLevel > 0)
+					{
+						m_NextLevelIndex = selectedLevel;
+					}
+					else
+					{
+						m_NextLevelIndex = levels.size();
+					}
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		if (selectedLevel != 0)
+		{
+			std::string feedback = "Selected " + levelNames[selectedLevel];
+			ImGui::TextWrapped(feedback.c_str());
+		}
+		else
+		{
+			ImGui::TextWrapped("No Level selected, trigger will act as an END GAME trigger");
+		}
+		
+		
+		
+	}
+
 	void TriggerNextScene::Serialize(StreamWriter* stream, const GameObject& sourceObject)
 	{
 		TriggerNextScene& component = sourceObject.GetComponent<TriggerNextScene>();
 
 		stream->WriteString(m_Name);
-		stream->WriteString(component.m_NextSceneName);
+		//stream->WriteString(component.m_NextSceneName);
+		stream->WriteRaw<int>(component.m_NextLevelIndex);
 		stream->WriteString(component.m_TagThatActivatesTrigger);
 	}
 	bool TriggerNextScene::Deserialize(StreamReader * stream, GameObject& destinationObject)
@@ -138,7 +223,8 @@ namespace Pixie
 		if (name != m_Name)
 			return false;
 
-		stream->ReadString(component.m_NextSceneName);
+		//stream->ReadString(component.m_NextSceneName);
+		stream->ReadRaw<int>(component.m_NextLevelIndex);
 		stream->ReadString(component.m_TagThatActivatesTrigger);
 		return true;
 	}

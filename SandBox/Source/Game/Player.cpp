@@ -275,7 +275,7 @@ namespace Pixie
 		return false;
 	}
 
-	void Player::OnLevelTrigger(std::filesystem::path nextLevelPath)
+	void Player::OnLevelTrigger(int levelIndex)//std::filesystem::path nextLevelPath)
 	{
 		std::shared_ptr<ExampleGame> game = std::dynamic_pointer_cast<ExampleGame>( EngineContext::GetGame());
 		if (game == nullptr)
@@ -284,7 +284,7 @@ namespace Pixie
 			return;
 		}
 
-		game->OnPlayerReachedEnd(m_Data, nextLevelPath);
+		game->OnPlayerReachedEnd(m_Data, levelIndex);// nextLevelPath);
 	}
 
 	void Player::OnDeath(GUID killerID)

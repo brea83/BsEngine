@@ -139,6 +139,10 @@ namespace Pixie
 			m_CurrentScene->SetSceneState(SceneState::WaitingToStart);
 		}
 
+		bool bNewSceneMatchesRequested = m_CurrentScene->GetFilepath() == m_ScenePaths[m_LevelData[m_RequestedLevel].FilePathIndex];
+		if (m_CurrentLevel != m_RequestedLevel && bNewSceneMatchesRequested)
+			m_CurrentLevel = m_RequestedLevel;
+
 		return false;
 	}
 
@@ -176,18 +180,18 @@ namespace Pixie
 		m_GameStateMachine.SwitchState(stateType);
 	}
 
-	void ExampleGame::OnPlayerReachedEnd(const PlayerData& data, std::filesystem::path nextLevelPath)
+	void ExampleGame::OnPlayerReachedEnd(const PlayerData& data, int levelIndex)//std::filesystem::path nextLevelPath)
 	{
 		m_LevelData[m_CurrentLevel].Scores = data;
 
-		if (nextLevelPath == "")
+		if (levelIndex == -1)//nextLevelPath == "")
 		{
 			Logger::Game(LOG_DEBUG, "PLAYER DIED");
 		}
 
 		EndLevelState* endState = dynamic_cast<EndLevelState*>(m_GameStateMachine.GetStateByType(EndLevelState::Type()));
 		if (endState)
-			endState->InitEndMenu(nextLevelPath.string());
+			endState->InitEndMenu(levelIndex);// nextLevelPath.string());
 
 		GameStateChangeRequestEvent event{ Pixie::EndLevelState::Type(), "Example Game, Player reached an end" };
 		EngineContext::GetEngine()->OnEvent(event);
@@ -216,6 +220,7 @@ namespace Pixie
 		int sceneIndex = m_LevelData[levelIndex].FilePathIndex;
 		std::filesystem::path scenePath = m_ScenePaths[sceneIndex];
 
+		m_RequestedLevel = levelIndex;
 		engine->RequestSceneChange(scenePath);
 	}
 

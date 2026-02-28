@@ -12,7 +12,7 @@ namespace Pixie
 		EndMenu() = default;
 
 		// Inherited via ImGuiPanel
-		void Init(const std::string& nextLevelPath);
+		void Init(int levelIndex);//const std::string& nextLevelPath);
 		bool Draw() override;
 		int DrawReturnsInt() override;
 

@@ -46,8 +46,8 @@ namespace Pixie
 		//GameState* GetPreviousState() override;
 
 		// collects player data from player on level end. 
-		// if player dies dont send next level path
-		void OnPlayerReachedEnd(const PlayerData& data, std::filesystem::path nextLevelPath = "");
+		// if player dies levelIndex = -1
+		void OnPlayerReachedEnd(const PlayerData& data, int levelIndex = -1);//std::filesystem::path nextLevelPath = "");
 
 		// returns id == 0 if none found
 		virtual GUID GetPlayerID(int index = 0) override;
@@ -68,6 +68,7 @@ namespace Pixie
 	private:
 
 		int m_CurrentLevel{ 0 };
+		int m_RequestedLevel{ 0 };
 
 		PlayerInputSystem* m_InputSystem{ nullptr };
 

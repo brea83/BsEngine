@@ -124,9 +124,9 @@ namespace Pixie
 	{
 		m_EndLevelMenu.Draw();
 	}
-	void EndLevelState::InitEndMenu(const std::string & nextLevelPath)
+	void EndLevelState::InitEndMenu(int levelIndex)//const std::string & nextLevelPath)
 	{
-		m_EndLevelMenu.Init(nextLevelPath);
+		m_EndLevelMenu.Init(levelIndex);//nextLevelPath);
 	}
 
 	//=========================================

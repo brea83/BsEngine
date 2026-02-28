@@ -60,7 +60,7 @@ namespace Pixie
 
 		void CollectPoints(int value) { m_Data.PointsCollected += value; m_Data.Score += value; }
 
-		void OnLevelTrigger(std::filesystem::path nextLevelPath);
+		void OnLevelTrigger(int levelIndex);//std::filesystem::path nextLevelPath);
 
 	private:
 		static const std::string m_Name;

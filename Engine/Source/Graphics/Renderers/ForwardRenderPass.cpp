@@ -18,7 +18,7 @@ namespace Pixie
 {
 	ForwardRenderPass::ForwardRenderPass()
 	{
-		m_FallbackMaterial.BaseMapPath = "../Assets/Textures/teal.png";
+		m_FallbackMaterial.BaseMapPath = "../Assets/Textures/white.png";
 		m_FallbackMaterial.BaseMap = AssetLoader::LoadTexture(m_FallbackMaterial.BaseMapPath);
 
 		m_Shader = AssetLoader::LoadShader("../Assets/Shaders/VertexShader.glsl", "../Assets/Shaders/FragmentMultiLightLecture.glsl");

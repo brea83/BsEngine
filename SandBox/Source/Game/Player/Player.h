@@ -62,6 +62,11 @@ namespace Pixie
 
 		void OnLevelTrigger(int levelIndex);//std::filesystem::path nextLevelPath);
 
+		void StartBoosting();
+		void StopBoosting();
+		void StartBreaking();
+		void StopBreaking();
+
 	private:
 		static const std::string m_Name;
 		
@@ -79,8 +84,50 @@ namespace Pixie
 		void BindDeathCallback(std::shared_ptr<Scene> scene, GameObject& hostObject);
 		void OnDeath(GUID killerID);
 
-		// attack component
-		GUID m_AttackID{ 0 };
+		// attack component I think can be on the same component as the player script
+
+		// movement Component unused in editor just now, going to find these in children on begin play
+		GUID m_ReticleObjectID{ 0 };
+		GameObject m_Reticle{};
+
+		void BindReticle(std::shared_ptr<Scene> scene, GameObject& hostObject);
+
+		// reticle follower component unused in editor  just now, going to find these in children on begin play
+		GUID m_ReticleFollowerID{ 0 };
+		GameObject m_ReticleFollower{};
+
+		std::string m_TrackFollowerTag = "TrackFollower";
+		GUID m_TrackFollowerID{ 0 };
+		GameObject m_TrackFollower{};
+
+		void BindFollowers(std::shared_ptr<Scene> scene, GameObject& hostObject);
+
+		float m_BaseTrackSpeed{ 1.0f };
+		float m_BaseReticleSpeed{ 1.0f };
+		float m_BaseReticleFollowerSpeed{ 1.0f };
+		float m_BaseFollowZ{ -1.0f };
+
+		bool m_IsBoosting{ false };
+		bool m_IsBoostDecaying{ false };
+		float m_BoostMultiplier{ 2.0f };
+		float m_BoostDecayTime{ 1.0f };
+		float m_BoostedFollowZ{ -0.5f };
+
+		float m_AccumulatedBoostDecay{ 0.0f };
+		
+		bool m_IsBreaking{ false };
+		bool m_IsBreakDecaying{ false };
+		float m_BreakSpeedMultiplier{ 0.25f };
+		float m_BreakDecayTime{ 2.0f };
+		float m_BreakingFollowZ{ -1.5f };
+
+		float m_AccumulatedBreakDecay{ 0.0f };
+
+		void Update(GameObject& hostObject, float deltaTime);
+
+		void SetNewSpeeds(float speedMult);
+
+		friend class SplinePlayerInput;
 	};
 
 }

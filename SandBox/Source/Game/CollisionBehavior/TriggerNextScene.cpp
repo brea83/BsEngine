@@ -5,7 +5,7 @@
 //#include "EngineContext.h"
 #include "../ExampleGame.h"
 
-#include "../Player.h"
+#include "../Player/Player.h"
 
 namespace Pixie
 {

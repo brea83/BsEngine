@@ -5,10 +5,10 @@
 #include "ImGui/ImGuiPanel.h"
 #include "EngineContext.h"
 
-#include "ExampleGame.h"
-#include "CombatComponents.h"
-#include "CollisionBehavior/PointCollector.h"
-#include "CollisionBehavior/Damageable.h"
+#include "../ExampleGame.h"
+#include "../CombatComponents.h"
+#include "../CollisionBehavior/PointCollector.h"
+#include "../CollisionBehavior/Damageable.h"
 
 namespace Pixie
 {
@@ -60,7 +60,10 @@ namespace Pixie
 		player.BindPointsCallback(scene, hostObject);
 		player.BindDeathCallback(scene, hostObject);
 		
-
+		// try to find a movement component in children or parent;
+		// this is specific to this spline game set up where there is only one move component and it's on the reticle
+		player.BindReticle(scene, hostObject);
+		player.BindFollowers(scene, hostObject);
 	}
 
 
@@ -102,6 +105,66 @@ namespace Pixie
 					using std::placeholders::_1;
 					collector.SetOnPointsCollectedCallback(std::bind(&Player::CollectPoints, this, _1));
 				}
+			}
+		}
+	}
+
+	void Player::BindReticle(std::shared_ptr<Scene> scene, GameObject& hostObject)
+	{
+		// try to find a movement component in children or parent;
+		// this is specific to this spline game set up where the reticle is the only object with both a player input component and a movecomponent
+		entt::registry& registry = scene->GetRegistry();
+
+		for (auto&& [entity, inputComponent, movement] : registry.view<PlayerInputComponent, MovementComponent>().each())
+		{
+			m_Reticle = GameObject(entity, scene);
+			m_ReticleObjectID = m_Reticle.GetGUID();
+			break;
+		}
+	}
+
+	void Player::BindFollowers(std::shared_ptr<Scene> scene, GameObject& hostObject)
+	{
+		// try to find a follower component that follows the reticle object
+		// and the follower that follows the spline track itself
+		// this is specific to this spline game set up where there is only one follow component that follows the reticle
+		// going to use tags to filter out the track follower
+		if (!m_Reticle)
+			return; // no reticle object found. don't bother searching for follower
+
+		entt::registry& registry = scene->GetRegistry();
+
+		for (auto&& [entity, follower, idComponent, tagComponent] : registry.view<FollowComponent, IDComponent, TagComponent>().each())
+		{
+			if (follower.EntityToFollow == m_ReticleObjectID)
+			{
+				m_ReticleFollower = GameObject(entity, scene);
+				m_ReticleFollowerID = idComponent.ID;
+				m_BaseFollowZ = follower.Offset.z;
+			}
+			else if (tagComponent.Tag == m_TrackFollowerTag)
+			{
+				m_TrackFollowerID = idComponent.ID;
+				m_TrackFollower = GameObject(entity, scene);
+			}
+
+		}
+
+		if (m_ReticleFollower)
+		{
+			MovementComponent* followMover = m_ReticleFollower.TryGetComponent<MovementComponent>();
+			if (followMover)
+			{
+				m_BaseReticleFollowerSpeed = followMover->Speed;
+			}
+		}
+
+		if (m_TrackFollower)
+		{
+			MovementComponent* trackFollower = m_TrackFollower.TryGetComponent<MovementComponent>();
+			if (trackFollower)
+			{
+				m_BaseTrackSpeed = trackFollower->Speed;
 			}
 		}
 	}
@@ -152,7 +215,7 @@ namespace Pixie
 
 	void Player::OnUpdate(GameObject& caller, float deltaTime)
 	{
-
+		caller.GetComponent<Player>().Update(caller, deltaTime);
 	}
 	void Player::OnCollisionStart(GameObject& caller, CollisionEvent& collision)
 	{
@@ -264,14 +327,14 @@ namespace Pixie
 		Player& player = sourceObject.GetComponent<Player>();
 		stream->WriteObject<GUID>(player.m_PointCollectorID);
 		stream->WriteObject<GUID>(player.m_DamageableID);
-		stream->WriteObject<GUID>(player.m_AttackID);
+		stream->WriteObject<GUID>(player.m_ReticleObjectID);
 	}
 	bool Player::Deserialize(StreamReader* stream, GameObject& destinationObject)
 	{
 		Player& player = destinationObject.GetOrAddComponent<Player>();
 		stream->ReadObject<GUID>(player.m_PointCollectorID);
 		stream->ReadObject<GUID>(player.m_DamageableID);
-		stream->ReadObject<GUID>(player.m_AttackID);
+		stream->ReadObject<GUID>(player.m_ReticleObjectID);
 		return false;
 	}
 
@@ -287,6 +350,102 @@ namespace Pixie
 		game->OnPlayerReachedEnd(m_Data, levelIndex);// nextLevelPath);
 	}
 
+	void Player::StartBoosting()
+	{
+		m_AccumulatedBoostDecay = 0.0f;
+		m_IsBoosting = true;
+		m_IsBoostDecaying = false;
+		SetNewSpeeds(m_BoostMultiplier);
+	}
+
+	void Player::StopBoosting()
+	{
+		m_IsBoosting = false;
+		m_IsBoostDecaying = true;
+		SetNewSpeeds(1.0f);
+	}
+
+	void Player::StartBreaking()
+	{
+		m_AccumulatedBreakDecay = 0.0f;
+		m_IsBreaking = true;
+		m_IsBreakDecaying = false;
+		SetNewSpeeds(m_BreakSpeedMultiplier);
+	}
+
+	void Player::StopBreaking()
+	{
+		m_IsBreaking = false;
+		m_IsBreakDecaying = true;
+		SetNewSpeeds(1.0f);
+	}
+
+	void Player::Update(GameObject& hostObject, float deltaTime)
+	{
+		/*float newSpeedMult = 1.0f;
+		if (m_IsBreakDecaying)
+		{
+			if (m_AccumulatedBreakDecay >= m_BreakDecayTime)
+			{
+				m_IsBreakDecaying = false;
+				m_AccumulatedBreakDecay = 0.0f;
+			}
+			else
+			{
+				float timerPercent = m_AccumulatedBreakDecay / m_BreakDecayTime;
+				newSpeedMult = glm::mix<float>(m_BreakSpeedMultiplier, 1.0f, timerPercent);
+				SetNewSpeeds(newSpeedMult);
+				if (m_IsBoosting)
+				{
+					m_AccumulatedBreakDecay += deltaTime * m_BoostMultiplier;
+				}
+				else
+				{
+					m_AccumulatedBreakDecay += deltaTime;
+				}
+			}
+		}
+		else if (m_IsBoostDecaying)
+		{
+			if (m_AccumulatedBreakDecay >= m_BreakDecayTime)
+			{
+				m_IsBreakDecaying = false;
+				m_AccumulatedBreakDecay = 0.0f;
+			}
+			else
+			{
+				float timerPercent = m_AccumulatedBreakDecay / m_BreakDecayTime;
+				newSpeedMult = glm::mix<float>(m_BreakSpeedMultiplier, 1.0f, timerPercent);
+				SetNewSpeeds(newSpeedMult);
+				if (m_IsBoosting)
+				{
+					m_AccumulatedBreakDecay += deltaTime * m_BoostMultiplier;
+				}
+				else
+				{
+					m_AccumulatedBreakDecay += deltaTime;
+				}
+			}
+		}*/
+	}
+
+	void Player::SetNewSpeeds(float speedMult)
+	{
+		//MovementComponent* reticleMover = m_Reticle ? m_Reticle.TryGetComponent<MovementComponent>() : nullptr;
+		MovementComponent* trackMover = m_TrackFollower ? m_TrackFollower.TryGetComponent<MovementComponent>() : nullptr;
+		MovementComponent* followMover = m_ReticleFollower ? m_ReticleFollower.TryGetComponent<MovementComponent>() : nullptr;
+
+		if (trackMover)
+		{
+			trackMover->Speed = m_BaseTrackSpeed * speedMult;
+		}
+
+		if (followMover)
+		{
+			followMover->Speed = m_BaseReticleFollowerSpeed * speedMult;
+		}
+	}
+
 	void Player::OnDeath(GUID killerID)
 	{
 		std::shared_ptr<ExampleGame> game = std::dynamic_pointer_cast<ExampleGame>(EngineContext::GetGame());
@@ -298,5 +457,6 @@ namespace Pixie
 
 		game->OnPlayerReachedEnd(m_Data);
 	}
+
 
 }

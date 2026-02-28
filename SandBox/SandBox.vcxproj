@@ -99,7 +99,7 @@
     <ClCompile Include="Source\Game\UI\EndMenu.cpp" />
     <ClCompile Include="Source\Editor\Panels\DrawExampleGameEditor.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\PointCollector.cpp" />
-    <ClCompile Include="Source\Game\Player.cpp" />
+    <ClCompile Include="Source\Game\Player\Player.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\Damageable.cpp" />
     <ClCompile Include="Source\Editor\Panels\GameDetailsEditor.cpp" />
     <ClCompile Include="Source\Game\CombatComponents.cpp" />
@@ -114,6 +114,7 @@
     <ClCompile Include="Source\SandboxApp.cpp" />
     <ClCompile Include="Source\Game\CollisionBehavior\TriggerNextScene.cpp" />
     <ClCompile Include="Source\Game\UI\StartMenu.cpp" />
+    <ClCompile Include="Source\Game\Player\SplinePlayerInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
@@ -124,7 +125,7 @@
     <ClInclude Include="Source\Game\RuntimeLayer.h" />
     <ClInclude Include="Source\Game\UI\EndMenu.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\PointCollector.h" />
-    <ClInclude Include="Source\Game\Player.h" />
+    <ClInclude Include="Source\Game\Player\Player.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\Damageable.h" />
     <ClInclude Include="Source\Editor\Panels\GameDetailsEditor.h" />
     <ClInclude Include="Source\Game\CombatComponents.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Source\Editor\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="Source\Game\CollisionBehavior\TriggerNextScene.h" />
     <ClInclude Include="Source\Game\UI\StartMenu.h" />
+    <ClInclude Include="Source\Game\Player\SplinePlayerInput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

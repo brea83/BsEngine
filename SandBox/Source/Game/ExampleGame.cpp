@@ -4,6 +4,8 @@
 #include "Scene/Components/Component.h"
 
 #include "../Game/StateMachine/GameStates.h"
+#include "Player/SplinePlayerInput.h"
+
 #include "CollisionBehavior/PointCollector.h"
 #include "../Game/CollisionBehavior/TriggerNextScene.h"
 #include "../Game/CollisionBehavior/Damageable.h"
@@ -42,7 +44,7 @@ namespace Pixie
 		//else
 			//m_GameStateMachine.SwitchState(PauseState::Type());
 
-		m_InputSystem = new PlayerInputSystem();
+		m_InputSystem = new SplinePlayerInput();
 
 		Player::RegisterToScriptManager();
 		PointCollector::RegisterToScriptManager();
@@ -86,12 +88,13 @@ namespace Pixie
 			return event.Handled;
 
 		entt::registry& registry = m_CurrentScene->GetRegistry();
-		auto view = registry.view<PlayerInputComponent>();
+		auto view = registry.view<Player>();
 		for (auto entity : view)
 		{
-			PlayerInputComponent& component = view.get<PlayerInputComponent>(entity);
+			//Player& component = view.get<PlayerInputComponent>(entity);
 			//TODO will need to do something to map a control surface to a particular player this only works for one player 
-			m_InputSystem->OnEvent(m_CurrentScene, component, event);
+			GameObject player{ entity, m_CurrentScene };
+			m_InputSystem->OnEvent(m_CurrentScene, player, event);
 		}
 
 		return event.Handled;

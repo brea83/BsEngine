@@ -2,7 +2,7 @@
 #include "ImGui/ImGuiPanel.h"
 #include "Scene/GameObject.h"
 #include "CollisionBehavior/Damageable.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 // Attack Component --------------

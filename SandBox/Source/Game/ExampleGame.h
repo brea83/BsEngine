@@ -1,7 +1,7 @@
 #pragma once
 #include "Source/Game.h"
 #include "Scene/Player/PlayerInput.h"
-#include "Player.h"
+#include "Player/Player.h"
 #include "Resources/FileStream.h"
 
 namespace Pixie

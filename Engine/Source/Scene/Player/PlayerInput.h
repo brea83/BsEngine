@@ -13,7 +13,7 @@ namespace Pixie
 	public:
 		PlayerInputSystem() = default;
 		PlayerInputSystem(PlayerInputSystem&) = default;
-		void OnEvent(std::shared_ptr<Scene> scene, PlayerInputComponent& component, Event& event);
+		virtual void OnEvent(std::shared_ptr<Scene> scene, GameObject& player, Event& event);
 	protected:
 		GameObject m_CurrentPlayer;
 		//PlayerInputComponent* m_InputComponent{ nullptr };

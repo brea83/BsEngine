@@ -57,40 +57,38 @@ namespace Pixie
         return m_Position;
     }
 
-    glm::vec3 TransformComponent::Forward() const
+    glm::vec3 TransformComponent::Forward(bool bInWorldSpace) const
     {
-        //glm::vec3 direction;
-
-        //direction.x = cos(m_EulerRotation.x) * sin(m_EulerRotation.y);
-        //direction.y = sin(m_EulerRotation.x);
-        //direction.z = cos(m_EulerRotation.x) * cos(m_EulerRotation.y);
-        //return glm::normalize(direction);
-        return -1.0f * glm::normalize(m_WorldMatrix[2]);//-1.0f * glm::normalize(m_LocalMatrix[2]);
+        if (bInWorldSpace)
+            return -1.0f * glm::normalize(m_WorldMatrix[2]);//-1.0f * glm::normalize(m_LocalMatrix[2]);
+        else
+            return glm::normalize(m_LocalMatrix[2]);
     }
 
-    glm::vec3 TransformComponent::Up() const
+    glm::vec3 TransformComponent::Up(bool bInWorldSpace) const
     {
-        return -1.0f * glm::normalize(m_WorldMatrix[1]);//glm::normalize(m_LocalMatrix[1]);//glm::normalize(glm::cross(Right(), Forward()));
+        if (bInWorldSpace)
+            return -1.0f * glm::normalize(m_WorldMatrix[1]);////glm::normalize(glm::cross(Right(), Forward()));
+        else
+            return -1.0f * glm::normalize(m_LocalMatrix[1]);
     }
 
-    glm::vec3 TransformComponent::Left() const
+    glm::vec3 TransformComponent::Left(bool bInWorldSpace) const
     {
-        return glm::normalize(m_WorldMatrix[0]);//glm::normalize(m_LocalMatrix[0]);
+        if(bInWorldSpace)
+            return glm::normalize(m_WorldMatrix[0]);//
+        else
+            return glm::normalize(m_LocalMatrix[0]);
     }
 
-    glm::vec3 TransformComponent::Right() const
+    glm::vec3 TransformComponent::Right(bool bInWorldSpace) const
     {
-
-        //glm::vec3 right;
-        //right.x = sin(m_EulerRotation.y - 3.14f / 2.0f);
-        //right.y = 0;
-        //right.z = cos(m_EulerRotation.y - 3.14f / 2.0f);
-        return -1.0f * glm::normalize(m_WorldMatrix[0]);//-1.0f * glm::normalize(m_LocalMatrix[0]);//glm::normalize(glm::cross(Forward(), glm::vec3(0.0f, 1.0f, 0.0f)));
+        return Left(bInWorldSpace) * -1.0f;
     }
 
-    glm::vec3 TransformComponent::Down() const
+    glm::vec3 TransformComponent::Down(bool bInWorldSpace) const
     {
-        return Up() * -1.0f;
+        return Up(bInWorldSpace) * -1.0f;
     }
 
     void TransformComponent::Rotate(float angle, glm::vec3 axis, AngleType angleType)

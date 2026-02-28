@@ -45,11 +45,11 @@ namespace Pixie
 		glm::vec3 GetPosition();
 		const glm::vec3 ReadOnlyPosition() const { return m_Position; }
 
-		glm::vec3 Forward() const;
-		glm::vec3 Up() const;
-		glm::vec3 Left() const;
-		glm::vec3 Right() const;
-		glm::vec3 Down() const;
+		glm::vec3 Forward(bool bInWorldSpace = true) const;
+		glm::vec3 Up(bool bInWorldSpace = true) const;
+		glm::vec3 Left(bool bInWorldSpace = true) const;
+		glm::vec3 Right(bool bInWorldSpace = true) const;
+		glm::vec3 Down(bool bInWorldSpace = true) const;
 
 		// rotation in radians
 		static void Decompose(glm::mat4 const& modelMatrix, glm::vec3& scale, glm::quat& orientation, glm::vec3& translation);

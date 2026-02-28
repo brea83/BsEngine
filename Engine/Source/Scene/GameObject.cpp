@@ -107,11 +107,11 @@ namespace Pixie
 
 			// player needs to have movement flipped based on camera orientation
 			TransformComponent& camTransform = m_Scene->GetActiveCameraGameObject().GetTransform();
-			glm::vec3 right = camTransform.Left() * direction.x;
-			glm::vec3 up = transform.Up() * direction.y;
+			glm::vec3 left = transform.Left(false) * direction.x;
+			glm::vec3 up = transform.Up(false) * direction.y;
 			glm::vec3 forward = glm::cross(camTransform.Left(), transform.Up()) * direction.z;
 
-			result.Position = (velocity * (forward + right + up));
+			result.Position = (velocity * ( forward + left + up));
 			return result;
 		}
 		 else if (follow && orbit)

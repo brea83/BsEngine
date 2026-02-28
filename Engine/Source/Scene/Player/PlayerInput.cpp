@@ -14,14 +14,12 @@ namespace Pixie
 	//}
 
 
-	void PlayerInputSystem::OnEvent(std::shared_ptr<Scene> scene, PlayerInputComponent& component, Event& event)
+	void PlayerInputSystem::OnEvent(std::shared_ptr<Scene> scene, GameObject& player, Event& event)
 	{
-		if (!component.BIsActive)
+		
+		if (!player)
 			return;
-
-		m_CurrentPlayer = scene->FindGameObjectByGUID(component.PlayerGUID);
-		if (!m_CurrentPlayer)
-			return;
+		m_CurrentPlayer = player;//scene->FindGameObjectByGUID(component.PlayerGUID);
 
 		//m_InputComponent = &component;
 

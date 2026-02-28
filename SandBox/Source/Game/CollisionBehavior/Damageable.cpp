@@ -1,7 +1,7 @@
 #include "Damageable.h"
 #include "ScriptManager.h"
 #include "ImGui/ImGuiPanel.h"
-#include "../Player.h"
+#include "../Player/Player.h"
 
 namespace Pixie
 {

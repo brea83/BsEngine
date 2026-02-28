@@ -318,4 +318,28 @@ namespace Pixie
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 		ImGui::Text(text.c_str());
 	}
+
+	bool ImGuiPanel::CheckBox(const std::string& label, bool* value, bool bDiamondStyle)
+	{
+		if (bDiamondStyle)
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		}
+		ImGui::Text(label.c_str());
+		ImGui::SameLine();
+		if (ImGui::Checkbox((label + "checkbox").c_str(), value))
+		{
+			if (bDiamondStyle)
+			{
+				ImGui::PopStyleVar();
+			}
+			return true;
+		}
+
+		if(bDiamondStyle)
+		{
+			ImGui::PopStyleVar();
+		}
+		return false;
+	}
 }

@@ -13,6 +13,8 @@ namespace Pixie
 		int PointsCollected{ 0 };
 		int EnemiesDestroyed{ 0 };
 
+		void Draw();
+
 		static void Serialize(StreamWriter* stream, const PlayerData& data)
 		{
 			stream->WriteRaw<int>(data.Score);
@@ -44,7 +46,8 @@ namespace Pixie
 		static void OnUpdate(GameObject& caller, float deltaTime);
 		static void OnCollisionStart(GameObject& caller, CollisionEvent& collision);
 		static void OnCollisionOngoing(GameObject& caller, CollisionEvent& collision, float deltaTime);
-		static void Draw(GameObject& selected);
+		static void StaticDraw(GameObject& selected);
+		void Draw(GameObject& selected);
 
 		static void Serialize(StreamWriter* stream, const GameObject& sourceObject);
 		static bool Deserialize(StreamReader* stream, GameObject& destinationObject);
@@ -69,7 +72,7 @@ namespace Pixie
 
 	private:
 		static const std::string m_Name;
-		
+		bool m_ShowPlayerDataInDetailsView{ false };
 		PlayerData m_Data{};
 
 		// point collector component
@@ -89,6 +92,9 @@ namespace Pixie
 		// movement Component unused in editor just now, going to find these in children on begin play
 		GUID m_ReticleObjectID{ 0 };
 		GameObject m_Reticle{};
+		float m_BaseReticlePosZ{ 0.0f };
+		float m_ReticleBoostPosZ{ 0.0f };
+		float m_ReticleBreakPosZ{ 0.0f };
 
 		void BindReticle(std::shared_ptr<Scene> scene, GameObject& hostObject);
 
@@ -113,7 +119,8 @@ namespace Pixie
 		float m_BoostDecayTime{ 1.0f };
 		float m_BoostedFollowZ{ -0.5f };
 
-		float m_AccumulatedBoostDecay{ 0.0f };
+		float m_AccumulatedBoostTime{ 0.0f };
+		//float m_AccumulatedBoostDecay{ 0.0f };
 		
 		bool m_IsBreaking{ false };
 		bool m_IsBreakDecaying{ false };
@@ -121,7 +128,8 @@ namespace Pixie
 		float m_BreakDecayTime{ 2.0f };
 		float m_BreakingFollowZ{ -1.5f };
 
-		float m_AccumulatedBreakDecay{ 0.0f };
+		float m_AccumulatedBreakTime{ 0.0f };
+		//float m_AccumulatedBreakDecay{ 0.0f };
 
 		void Update(GameObject& hostObject, float deltaTime);
 

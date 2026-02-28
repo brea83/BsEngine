@@ -35,5 +35,8 @@ namespace Pixie
 		static ImVec2 GetTextSizePadded(const std::string& label = "X");
 
 		static void CenteredText(const std::string& text);
+
+		//returns true if value is modified
+		static bool CheckBox(const std::string& label, bool* value, bool bDiamondStyle = true);
 	};
 }

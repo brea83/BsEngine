@@ -27,7 +27,7 @@ namespace Pixie
 		newScript.RemoveComponent = std::bind(&Player::Remove, _1);
 		newScript.Serialize = std::bind(&Player::Serialize, _1, _2);
 		newScript.Deserialize = std::bind(&Player::Deserialize, _1, _2);
-		newScript.Draw = std::bind(&Player::Draw, _1);
+		newScript.Draw = std::bind(&Player::StaticDraw, _1);
 
 		newScript.OnBeginPlay = std::bind(&Player::OnBeginPlay, _1);
 
@@ -115,10 +115,13 @@ namespace Pixie
 		// this is specific to this spline game set up where the reticle is the only object with both a player input component and a movecomponent
 		entt::registry& registry = scene->GetRegistry();
 
-		for (auto&& [entity, inputComponent, movement] : registry.view<PlayerInputComponent, MovementComponent>().each())
+		for (auto&& [entity, inputComponent, movement, transform] : registry.view<PlayerInputComponent, MovementComponent, TransformComponent>().each())
 		{
 			m_Reticle = GameObject(entity, scene);
 			m_ReticleObjectID = m_Reticle.GetGUID();
+			m_BaseReticlePosZ = transform.GetPosition().z;
+			m_ReticleBoostPosZ = m_BaseReticlePosZ + (m_BoostedFollowZ * -1.0f);
+			m_ReticleBreakPosZ = m_BaseReticlePosZ + (m_BreakingFollowZ * 0.5f);
 			break;
 		}
 	}
@@ -226,39 +229,53 @@ namespace Pixie
 	{
 
 	}
-	void Player::Draw(GameObject& selected)
-	{
-		Player& player = selected.GetComponent<Player>();
-		ImGui::BeginDisabled();
 
+	void PlayerData::Draw()
+	{
+		ImGui::BeginDisabled();
 		ImGui::Text("Score");
 		ImGui::SameLine();
-		ImGui::DragInt("##scoreValue", &player.m_Data.Score);
+		ImGui::DragInt("##scoreValue", &Score);
 
 		ImGui::Text("Enemies Defeated");
 		ImGui::SameLine();
-		ImGui::DragInt("##defeatedEnemies", &player.m_Data.EnemiesDestroyed);
+		ImGui::DragInt("##defeatedEnemies", &EnemiesDestroyed);
 
 		ImGui::Text("Points Collected");
 		ImGui::SameLine();
-		ImGui::DragInt("##points", &player.m_Data.PointsCollected);
+		ImGui::DragInt("##points", &PointsCollected);
+		ImGui::EndDisabled();
+	}
+	void Player::StaticDraw(GameObject& selected)
+	{
+		Player& player = selected.GetComponent<Player>();
+		player.Draw(selected);
+	}
+	void Player::Draw(GameObject& selected)
+	{
+		ImGuiPanel::CheckBox("Show Debug Score", &m_ShowPlayerDataInDetailsView);
+		if (m_ShowPlayerDataInDetailsView)
+		{
+			m_Data.Draw();
+		}
 
 		ImGui::Separator();
 		// point collector property ---------------------//
 		std::string name = "";
-		if (player.m_ObjectWithPointCollector)
-			name = player.m_ObjectWithPointCollector.GetName();
-		else if (player.m_PointCollectorID != 0)
+		if (m_ObjectWithPointCollector)
+			name = m_ObjectWithPointCollector.GetName();
+		else if (m_PointCollectorID != 0)
 		{
 			std::shared_ptr<Scene> scene = selected.GetScene();
-			GameObject collectorObject = scene->FindGameObjectByGUID(player.m_PointCollectorID);
+			GameObject collectorObject = scene->FindGameObjectByGUID(m_PointCollectorID);
 			if (collectorObject)
 			{
-				player.m_ObjectWithPointCollector = collectorObject;
-				name = player.m_ObjectWithPointCollector.GetName();
+				m_ObjectWithPointCollector = collectorObject;
+				name = m_ObjectWithPointCollector.GetName();
 			}
 		}
 
+		ImGui::BeginDisabled();
 		ImGuiPanel::DrawStringProperty("Point Collector", name, name);
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -269,31 +286,31 @@ namespace Pixie
 
 				if (droppedObject.HasCompoenent<PointCollector>())
 				{
-					player.m_ObjectWithPointCollector = droppedObject;
-					player.m_PointCollectorID = droppedObject.GetGUID();
+					m_ObjectWithPointCollector = droppedObject;
+					m_PointCollectorID = droppedObject.GetGUID();
 				}
 			}
 			ImGui::EndDragDropTarget();
 		}
 		if (ImGui::BeginItemTooltip())
 		{
-			ImGui::Text("Drag object with a Damageable Component from Heirarchy here to connect");
+			ImGui::Text("Drag object with a Point Collector Component from Heirarchy here to connect");
 			ImGui::EndTooltip();
 		}
 
 		// Damageable property ---------------------//
 
 		std::string damagableName = "";
-		if (player.m_ObjectWithDamageable)
-			damagableName = player.m_ObjectWithDamageable.GetName();
-		else if (player.m_DamageableID != 0)
+		if (m_ObjectWithDamageable)
+			damagableName = m_ObjectWithDamageable.GetName();
+		else if (m_DamageableID != 0)
 		{
 			std::shared_ptr<Scene> scene = selected.GetScene();
-			GameObject damageableObject = scene->FindGameObjectByGUID(player.m_DamageableID);
+			GameObject damageableObject = scene->FindGameObjectByGUID(m_DamageableID);
 			if (damageableObject)
 			{
-				player.m_ObjectWithDamageable = damageableObject;
-				damagableName = player.m_ObjectWithDamageable.GetName();
+				m_ObjectWithDamageable = damageableObject;
+				damagableName = m_ObjectWithDamageable.GetName();
 			}
 		}
 
@@ -307,8 +324,8 @@ namespace Pixie
 
 				if (droppedObject.HasCompoenent<Damageable>())
 				{
-					player.m_ObjectWithDamageable = droppedObject;
-					player.m_DamageableID = droppedObject.GetGUID();
+					m_ObjectWithDamageable = droppedObject;
+					m_DamageableID = droppedObject.GetGUID();
 				}
 			}
 			ImGui::EndDragDropTarget();
@@ -320,7 +337,44 @@ namespace Pixie
 		}
 
 		ImGui::EndDisabled();
-	}
+
+		// Movement stuff
+		ImGui::SeparatorText("Boosting");
+		ImGuiPanel::SliderParams params;
+		params.ResetValue = 1.0f;
+		params.Speed = 0.01f;
+		params.Min = 0.0f;
+		params.Max = 5.0f;
+		
+		// using inverse because editor side iteas easier to think of it as a distance behind the target in absolute value rather than signed.
+		// this does mean negative values in editor will lead to trying to get ahead of the target
+		float inverseBoostedOffset = -1.0f * m_BoostedFollowZ;
+		if (ImGuiPanel::DrawFloatControl("Boosted Follow Depth", inverseBoostedOffset, params))
+		{
+			m_BoostedFollowZ = -1.0f * inverseBoostedOffset;
+		}
+
+		params.ResetValue = 2.0f;
+		//speedParams.Min = 1.25f;
+		//speedParams.Max = 5.0f;
+		ImGuiPanel::DrawFloatControl("Boost Speed Multiplier", m_BoostMultiplier, params);
+
+		//ImGuiPanel::DrawFloatControl("Decay Time after Boost Released", m_BoostDecayTime, params);
+		
+		ImGui::SeparatorText("Breaking");
+		// using inverse because editor side iteas easier to think of it as a distance behind the target in absolute value rather than signed.
+		// this does mean negative values in editor will lead to trying to get ahead of the target
+		params.ResetValue = 1.0f;
+		float inverseBreakingOffset = -1.0f * m_BreakingFollowZ;
+		if (ImGuiPanel::DrawFloatControl("Breaking Follow Depth", inverseBreakingOffset, params))
+		{
+			m_BreakingFollowZ = -1.0f * inverseBreakingOffset;
+		}
+
+		params.ResetValue = 0.25f;
+		ImGuiPanel::DrawFloatControl("Break Speed Multiplier", m_BreakSpeedMultiplier, params);
+
+}
 
 	void Player::Serialize(StreamWriter* stream, const GameObject& sourceObject)
 	{
@@ -328,6 +382,14 @@ namespace Pixie
 		stream->WriteObject<GUID>(player.m_PointCollectorID);
 		stream->WriteObject<GUID>(player.m_DamageableID);
 		stream->WriteObject<GUID>(player.m_ReticleObjectID);
+
+		stream->WriteRaw<float>(player.m_BoostMultiplier);
+		stream->WriteRaw<float>(player.m_BoostDecayTime);
+		stream->WriteRaw<float>(player.m_BoostedFollowZ);
+
+		stream->WriteRaw<float>(player.m_BreakSpeedMultiplier);
+		stream->WriteRaw<float>(player.m_BreakDecayTime);
+		stream->WriteRaw<float>(player.m_BreakingFollowZ);
 	}
 	bool Player::Deserialize(StreamReader* stream, GameObject& destinationObject)
 	{
@@ -335,6 +397,14 @@ namespace Pixie
 		stream->ReadObject<GUID>(player.m_PointCollectorID);
 		stream->ReadObject<GUID>(player.m_DamageableID);
 		stream->ReadObject<GUID>(player.m_ReticleObjectID);
+
+		stream->ReadRaw<float>(player.m_BoostMultiplier);
+		stream->ReadRaw<float>(player.m_BoostDecayTime);
+		stream->ReadRaw<float>(player.m_BoostedFollowZ);
+
+		stream->ReadRaw<float>(player.m_BreakSpeedMultiplier);
+		stream->ReadRaw<float>(player.m_BreakDecayTime);
+		stream->ReadRaw<float>(player.m_BreakingFollowZ);
 		return false;
 	}
 
@@ -352,81 +422,97 @@ namespace Pixie
 
 	void Player::StartBoosting()
 	{
-		m_AccumulatedBoostDecay = 0.0f;
+		//m_AccumulatedBoostDecay = 0.0f;
+		m_AccumulatedBoostTime = 0.0f;
 		m_IsBoosting = true;
 		m_IsBoostDecaying = false;
 		SetNewSpeeds(m_BoostMultiplier);
+
+		m_ReticleFollower.GetComponent<FollowComponent>().Offset.z = m_BoostedFollowZ;
 	}
 
 	void Player::StopBoosting()
 	{
+		m_AccumulatedBoostTime = 0.0f;
 		m_IsBoosting = false;
 		m_IsBoostDecaying = true;
 		SetNewSpeeds(1.0f);
+		m_ReticleFollower.GetComponent<FollowComponent>().Offset.z = m_BaseFollowZ;
 	}
 
 	void Player::StartBreaking()
 	{
-		m_AccumulatedBreakDecay = 0.0f;
+		m_AccumulatedBreakTime = 0.0f;
+		//m_AccumulatedBreakDecay = 0.0f;
 		m_IsBreaking = true;
 		m_IsBreakDecaying = false;
 		SetNewSpeeds(m_BreakSpeedMultiplier);
+		m_ReticleFollower.GetComponent<FollowComponent>().Offset.z = m_BreakingFollowZ;
 	}
 
 	void Player::StopBreaking()
 	{
+		m_AccumulatedBreakTime = 0.0f;
 		m_IsBreaking = false;
 		m_IsBreakDecaying = true;
 		SetNewSpeeds(1.0f);
+		m_ReticleFollower.GetComponent<FollowComponent>().Offset.z = m_BaseFollowZ;
 	}
 
 	void Player::Update(GameObject& hostObject, float deltaTime)
 	{
-		/*float newSpeedMult = 1.0f;
-		if (m_IsBreakDecaying)
+		if (m_IsBreaking && m_Reticle)
 		{
-			if (m_AccumulatedBreakDecay >= m_BreakDecayTime)
+			if (m_AccumulatedBreakTime < 0.0f)
 			{
-				m_IsBreakDecaying = false;
-				m_AccumulatedBreakDecay = 0.0f;
+				// don't do nything the timeer is over
 			}
-			else
+			else if (m_AccumulatedBreakTime < m_BoostDecayTime)
 			{
-				float timerPercent = m_AccumulatedBreakDecay / m_BreakDecayTime;
-				newSpeedMult = glm::mix<float>(m_BreakSpeedMultiplier, 1.0f, timerPercent);
-				SetNewSpeeds(newSpeedMult);
-				if (m_IsBoosting)
-				{
-					m_AccumulatedBreakDecay += deltaTime * m_BoostMultiplier;
-				}
-				else
-				{
-					m_AccumulatedBreakDecay += deltaTime;
-				}
+				TransformComponent& transform = m_Reticle.GetTransform();
+				glm::vec3 position = transform.GetPosition();
+
+				float timePercent = m_AccumulatedBreakTime / m_BoostDecayTime;
+				float newOffset = glm::mix<float>(m_BaseReticlePosZ, m_ReticleBreakPosZ, timePercent);
+
+				transform.SetPosition(glm::vec3(position.x, position.y,  newOffset));
+				m_AccumulatedBreakTime += deltaTime;
+			}
+			else if (m_AccumulatedBreakTime >= m_BoostDecayTime)
+			{
+
+				TransformComponent& transform = m_Reticle.GetTransform();
+				glm::vec3 position = transform.GetPosition();
+				transform.SetPosition(glm::vec3(position.x, position.y, m_BaseReticlePosZ ));
+				m_AccumulatedBreakTime = -1.0f;
 			}
 		}
-		else if (m_IsBoostDecaying)
+		else if (m_IsBreakDecaying && m_Reticle)
 		{
-			if (m_AccumulatedBreakDecay >= m_BreakDecayTime)
+			if (m_AccumulatedBreakTime < 0.0f)
 			{
-				m_IsBreakDecaying = false;
-				m_AccumulatedBreakDecay = 0.0f;
+				// don't do nything the timeer is over
 			}
-			else
+			else if (m_AccumulatedBreakTime < m_BreakDecayTime)
 			{
-				float timerPercent = m_AccumulatedBreakDecay / m_BreakDecayTime;
-				newSpeedMult = glm::mix<float>(m_BreakSpeedMultiplier, 1.0f, timerPercent);
-				SetNewSpeeds(newSpeedMult);
-				if (m_IsBoosting)
-				{
-					m_AccumulatedBreakDecay += deltaTime * m_BoostMultiplier;
-				}
-				else
-				{
-					m_AccumulatedBreakDecay += deltaTime;
-				}
+				TransformComponent& transform = m_Reticle.GetTransform();
+				glm::vec3 position = transform.GetPosition();
+
+				float timePercent = m_AccumulatedBreakTime / m_BoostDecayTime;
+				float newOffset = glm::mix<float>(m_BaseReticlePosZ, m_ReticleBreakPosZ, timePercent);
+
+				transform.SetPosition(glm::vec3(position.x, position.y,  newOffset));
+				m_AccumulatedBreakTime += deltaTime;
 			}
-		}*/
+			else if (m_AccumulatedBreakTime >= m_BreakDecayTime)
+			{
+
+				TransformComponent& transform = m_Reticle.GetTransform();
+				glm::vec3 position = transform.GetPosition();
+				transform.SetPosition(glm::vec3(position.x, position.y,  m_BaseReticlePosZ));
+				m_AccumulatedBreakTime = -1.0f;
+			}
+		}
 	}
 
 	void Player::SetNewSpeeds(float speedMult)
@@ -440,10 +526,10 @@ namespace Pixie
 			trackMover->Speed = m_BaseTrackSpeed * speedMult;
 		}
 
-		if (followMover)
-		{
-			followMover->Speed = m_BaseReticleFollowerSpeed * speedMult;
-		}
+		//if (followMover)
+		//{
+		//	followMover->Speed = m_BaseReticleFollowerSpeed * speedMult;
+		//}
 	}
 
 	void Player::OnDeath(GUID killerID)

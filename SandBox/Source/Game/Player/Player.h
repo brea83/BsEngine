@@ -133,6 +133,9 @@ namespace Pixie
 
 		void Update(GameObject& hostObject, float deltaTime);
 
+		void LerpReticle(float deltaTime);
+		void OrientTowardsReticle(float deltaTime);
+
 		void SetNewSpeeds(float speedMult);
 
 		friend class SplinePlayerInput;

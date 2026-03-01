@@ -429,7 +429,13 @@ namespace Pixie
             }
             ImGui::EndDragDropTarget();
         }
+        if (ImGui::BeginItemTooltip())
+        {
+            ImGui::Text("Can DragDrop from heirarchy to copy a transform pos to origin");
+            ImGui::EndTooltip();
+        }
         ImGuiPanel::DrawFloatControl("Radius", Radius, params);
+        ImGuiPanel::DrawFloatControl("Start Angle Offset", StartingAngle, params);
     } 
 
     // Spline Component -----------------------

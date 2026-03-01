@@ -335,7 +335,7 @@ namespace Pixie
         glm::vec3 HandleFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition);
         glm::vec3 HandleSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition);
         
-        InterpolatedTransform AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition);
+        InterpolatedTransform AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, TransformComponent& followerTransform);// glm::vec3 currentPosition);
         InterpolatedTransform AltSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition);
 
         static const char* TypeNames[(unsigned long long)SplineEndBehavior::END];
@@ -373,6 +373,8 @@ namespace Pixie
         float Radius{ 1.0f };
         //in radians
         float AccumulatedAngle{ 0.0f };
+        float StartingAngle{ 0.0f };
+        bool BHasStarted{ false };
 
         static void on_construct(entt::registry& registry, const entt::entity entt);
 
@@ -380,11 +382,13 @@ namespace Pixie
         {
             stream->WriteRaw<glm::vec3>(component.Origin);
             stream->WriteRaw<float>(component.Radius);
+            stream->WriteRaw<float>(component.StartingAngle);
         }
         static bool Deserialize(StreamReader* stream, OrbitComponent& component)
         {
             stream->ReadRaw<glm::vec3>(component.Origin);
             stream->ReadRaw<float>(component.Radius);
+            stream->ReadRaw<float>(component.StartingAngle);
             return true;
         }
     };

@@ -77,6 +77,28 @@ namespace Pixie
         }
     }
 
+    // Assumes startDirection and endDirection are unit vectors (length 1)
+    glm::quat QuaternionFromToRotation(glm::vec3 startDirection, glm::vec3  endDirection)
+    {
+
+        glm::vec3 crossProduct = glm::cross(startDirection, endDirection);
+
+        float sineOfAngle = glm::length(crossProduct);
+
+        float angle = glm::asin(sineOfAngle);
+        glm::vec3 axis = crossProduct / sineOfAngle;
+
+        glm::vec3 imaginary = glm::sin(angle / 2.0f) * axis;
+
+        glm::quat result;
+        result.w = glm::cos(angle / 2.0f);
+        result.x = imaginary.x;
+        result.y = imaginary.y;
+        result.z = imaginary.z;
+
+        return result;
+    }
+
     // Todo: get other end behaviors implemented
     glm::vec3 FollowComponent::HandleSplineFollowing(float deltaTime, SplineComponent& spline, MovementComponent& moveComponent, glm::vec3 currentPosition)
     {
@@ -129,9 +151,10 @@ namespace Pixie
         return glm::vec3(0.0f);
     }
 
-    InterpolatedTransform FollowComponent::AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, glm::vec3 currentPosition)
+    InterpolatedTransform FollowComponent::AltFollowing(float deltaTime, std::shared_ptr<Scene> scene, MovementComponent& moveComponent, TransformComponent& followerTransform)//glm::vec3 currentPosition)
     {
         InterpolatedTransform result = InterpolatedTransform();
+        glm::vec3 currentPosition = followerTransform.GetPosition();
 
         GameObject target = scene->FindGameObjectByGUID(EntityToFollow);
         if (!target)
@@ -160,6 +183,29 @@ namespace Pixie
             }
             moveComponent.Direction = glm::normalize(targetPos - currentPosition);
             result.Position = moveComponent.Speed * deltaTime * moveComponent.Direction;
+
+            //orientation stuff
+
+            //glm::vec3 followedObjectsPosition = currentPosition + result.Position;
+            //glm::vec3 forward = followerTransform.Forward(false);
+            //glm::vec3 newForward = followedObjectsPosition - currentPosition;
+            //newForward = glm::normalize(newForward);
+
+            //glm::vec3 WorldUp(0.0f, 1.0f, 0.0f);
+
+            //glm::vec3 newRight = glm::cross(newForward, WorldUp);
+            //glm::vec3 newUp = glm::cross(newRight, newForward);
+
+            //glm::mat3 newTransform;
+            //newTransform[0] = newRight;
+            //newTransform[1] = newUp;
+            //newTransform[2] = newForward;
+
+            //glm::vec3 scale;
+            ////glm::quat orientation;
+            //glm::vec3 translation;
+            //TransformComponent::Decompose(newTransform, scale, result.Orientation, translation);
+
             return result;
         }
     }

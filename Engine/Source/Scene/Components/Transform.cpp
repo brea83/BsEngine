@@ -127,6 +127,7 @@ namespace Pixie
         m_RotationDirty = true;
     }
 
+    //TODO: I suspect that how I set rotations is part of why a lot of things are fucked
     void TransformComponent::SetRotationQuaternion(glm::quat orientation, AngleType angleType)
     {
         if (angleType == AngleType::Degrees)

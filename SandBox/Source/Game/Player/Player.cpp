@@ -13,7 +13,6 @@
 namespace Pixie
 {
 	const std::string Player::m_Name = "Player Component";
-
 	void Player::RegisterToScriptManager()
 	{
 		Pixie::ScriptManager* scripts = Pixie::ScriptManager::GetInstance();
@@ -30,6 +29,7 @@ namespace Pixie
 		newScript.Draw = std::bind(&Player::StaticDraw, _1);
 
 		newScript.OnBeginPlay = std::bind(&Player::OnBeginPlay, _1);
+		newScript.OnUpdate = std::bind(&Player::OnUpdate, _1, _2);
 
 		scripts->TryStoreScript(m_Name, newScript);
 	}
@@ -356,7 +356,6 @@ namespace Pixie
 
 		params.ResetValue = 2.0f;
 		//speedParams.Min = 1.25f;
-		//speedParams.Max = 5.0f;
 		ImGuiPanel::DrawFloatControl("Boost Speed Multiplier", m_BoostMultiplier, params);
 
 		//ImGuiPanel::DrawFloatControl("Decay Time after Boost Released", m_BoostDecayTime, params);
@@ -461,63 +460,23 @@ namespace Pixie
 
 	void Player::Update(GameObject& hostObject, float deltaTime)
 	{
-		if (m_IsBreaking && m_Reticle)
-		{
-			if (m_AccumulatedBreakTime < 0.0f)
-			{
-				// don't do nything the timeer is over
-			}
-			else if (m_AccumulatedBreakTime < m_BoostDecayTime)
-			{
-				TransformComponent& transform = m_Reticle.GetTransform();
-				glm::vec3 position = transform.GetPosition();
-
-				float timePercent = m_AccumulatedBreakTime / m_BoostDecayTime;
-				float newOffset = glm::mix<float>(m_BaseReticlePosZ, m_ReticleBreakPosZ, timePercent);
-
-				transform.SetPosition(glm::vec3(position.x, position.y,  newOffset));
-				m_AccumulatedBreakTime += deltaTime;
-			}
-			else if (m_AccumulatedBreakTime >= m_BoostDecayTime)
-			{
-
-				TransformComponent& transform = m_Reticle.GetTransform();
-				glm::vec3 position = transform.GetPosition();
-				transform.SetPosition(glm::vec3(position.x, position.y, m_BaseReticlePosZ ));
-				m_AccumulatedBreakTime = -1.0f;
-			}
-		}
-		else if (m_IsBreakDecaying && m_Reticle)
-		{
-			if (m_AccumulatedBreakTime < 0.0f)
-			{
-				// don't do nything the timeer is over
-			}
-			else if (m_AccumulatedBreakTime < m_BreakDecayTime)
-			{
-				TransformComponent& transform = m_Reticle.GetTransform();
-				glm::vec3 position = transform.GetPosition();
-
-				float timePercent = m_AccumulatedBreakTime / m_BoostDecayTime;
-				float newOffset = glm::mix<float>(m_BaseReticlePosZ, m_ReticleBreakPosZ, timePercent);
-
-				transform.SetPosition(glm::vec3(position.x, position.y,  newOffset));
-				m_AccumulatedBreakTime += deltaTime;
-			}
-			else if (m_AccumulatedBreakTime >= m_BreakDecayTime)
-			{
-
-				TransformComponent& transform = m_Reticle.GetTransform();
-				glm::vec3 position = transform.GetPosition();
-				transform.SetPosition(glm::vec3(position.x, position.y,  m_BaseReticlePosZ));
-				m_AccumulatedBreakTime = -1.0f;
-			}
-		}
+		
 	}
+
+	void Player::LerpReticle(float deltaTime)
+	{
+		//TODO Move playermovement out of game object and into a player class either this or another
+	}
+
+	void Player::OrientTowardsReticle(float deltaTime)
+	{
+		//TODO figure out why rotation to face a point is broken but rotate axis X degrees is working
+	}
+
+	
 
 	void Player::SetNewSpeeds(float speedMult)
 	{
-		//MovementComponent* reticleMover = m_Reticle ? m_Reticle.TryGetComponent<MovementComponent>() : nullptr;
 		MovementComponent* trackMover = m_TrackFollower ? m_TrackFollower.TryGetComponent<MovementComponent>() : nullptr;
 		MovementComponent* followMover = m_ReticleFollower ? m_ReticleFollower.TryGetComponent<MovementComponent>() : nullptr;
 
@@ -525,11 +484,6 @@ namespace Pixie
 		{
 			trackMover->Speed = m_BaseTrackSpeed * speedMult;
 		}
-
-		//if (followMover)
-		//{
-		//	followMover->Speed = m_BaseReticleFollowerSpeed * speedMult;
-		//}
 	}
 
 	void Player::OnDeath(GUID killerID)

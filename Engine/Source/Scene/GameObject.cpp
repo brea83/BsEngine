@@ -120,27 +120,38 @@ namespace Pixie
 			GameObject target = m_Scene->FindGameObjectByGUID(follow->EntityToFollow);
 			glm::vec3 targetPos = target.GetTransform().GetPosition();
 
-			orbit->AccumulatedAngle += deltaTime * moveComponent.Speed;
+			if (!orbit->BHasStarted)
+			{
+				orbit->AccumulatedAngle = glm::radians(orbit->StartingAngle);
+				orbit->BHasStarted = true;
+			}
+
 			glm::vec3 newPosition = targetPos;
 			newPosition.x += orbit->Radius * glm::cos(orbit->AccumulatedAngle);
 			newPosition.y += orbit->Radius * glm::sin(orbit->AccumulatedAngle);
 
+			orbit->AccumulatedAngle += deltaTime * moveComponent.Speed;
 			result.Position = newPosition - currentPosition;
 			return result;
 		}
 		else if (orbit)
 		{
-			orbit->AccumulatedAngle += deltaTime * moveComponent.Speed;
+			if (!orbit->BHasStarted)
+			{
+				orbit->AccumulatedAngle = glm::radians(orbit->StartingAngle);
+				orbit->BHasStarted = true;
+			}
 			glm::vec3 newPosition = orbit->Origin;
 			newPosition.x += orbit->Radius * glm::cos(orbit->AccumulatedAngle);
 			newPosition.y += orbit->Radius * glm::sin(orbit->AccumulatedAngle);
 			
 			result.Position = newPosition - currentPosition;
+			orbit->AccumulatedAngle += deltaTime * moveComponent.Speed;
 			return result;
 		}
 		else if (follow)
 		{
-			return follow->AltFollowing(deltaTime, m_Scene, moveComponent, currentPosition);
+			return follow->AltFollowing(deltaTime, m_Scene, moveComponent, transform);// currentPosition);
 			/*GameObject target = m_Scene->FindGameObjectByGUID(follow->EntityToFollow);
 			if (!target)
 				return glm::vec3(0.0f);

@@ -48,6 +48,8 @@ namespace Pixie
         std::vector<entt::entity> PointEnttIds;
         std::vector<uint64_t> PointIDs;
 
+        bool BDrawFrustumOnPreviewPoint{ false };
+
         static const char* TypeNames[(unsigned long long)SplineType::END];
 
         void AddSegment(GameObject& splineObject);

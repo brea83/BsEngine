@@ -187,7 +187,8 @@ namespace Pixie
 
             
             // render preview point
-            glm::vec3 position = spline.GetPostionT(spline.PreviewTime);
+            //glm::vec3 position = spline.GetPostionT(spline.PreviewTime);
+            glm::vec3 position = spline.GetTransformAtT(spline.PreviewTime)[3];
             glm::mat4 inverseView = inverseViewBase;
             inverseView[3] = glm::vec4(position, 1.0f);
             glm::mat4 modelViewMat = viewMatrix * inverseView * pathScale;

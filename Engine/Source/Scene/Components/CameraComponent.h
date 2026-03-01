@@ -30,6 +30,7 @@ namespace Pixie
 
 		void OnCameraMoved(glm::mat4 transform);
 
+		bool UseAsPreviewFrustum{ false };
 		static void Serialize(StreamWriter* stream, const CameraComponent& component)
 		{
 			//stream->WriteString(component.Name);

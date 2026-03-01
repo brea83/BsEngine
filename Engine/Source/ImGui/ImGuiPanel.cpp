@@ -327,7 +327,7 @@ namespace Pixie
 		}
 		ImGui::Text(label.c_str());
 		ImGui::SameLine();
-		if (ImGui::Checkbox((label + "checkbox").c_str(), value))
+		if (ImGui::Checkbox(("##" + label + "checkbox").c_str(), value))
 		{
 			if (bDiamondStyle)
 			{

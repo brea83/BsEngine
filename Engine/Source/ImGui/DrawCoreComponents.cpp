@@ -468,6 +468,8 @@ namespace Pixie
         ImGui::SameLine();
         ImGui::ColorEdit3("##Color", glm::value_ptr(DebugColor));
 
+        ImGuiPanel::CheckBox("Draw Frustum", &BDrawFrustumOnPreviewPoint);
+
         ImGui::Text("Segments ");
         ImGui::SameLine();
         int oldSegmentCount = GetNumSegments();

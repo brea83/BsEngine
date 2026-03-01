@@ -151,7 +151,7 @@ namespace Pixie
 
 		levelNames.push_back("END GAME");
 
-		static int selectedLevel = 0;
+		int selectedLevel = m_NextLevelIndex;
 		std::string previewValue;
 		if (selectedLevel < 1)
 			previewValue = "select level";

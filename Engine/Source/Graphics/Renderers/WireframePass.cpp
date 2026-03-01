@@ -46,20 +46,55 @@ namespace Pixie
 		auto group = registry.group<CameraComponent>(entt::get<TransformComponent>);
 
 		m_Shader->SetUniformBool("BIsDrawingFrustum", true);
-		m_Shader->SetUniformVec4("BaseColor", m_FrustumColor);
+		bool bSplinesDrawn = false;
 
+		auto splineView = registry.view<SplineComponent>();
 
 		for (auto entity : group)
 		{
 			CameraComponent& camera = group.get<CameraComponent>(entity);
-			if (camera.IsActive)
-				continue;
-			glm::mat4 viewMatrix = glm::inverse(group.get<TransformComponent>(entity).GetModelMatrix());
-			//m_Shader->SetUniformMat4("Transform", transformMatrix);
-			glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
-			m_Shader->SetUniformMat4("Transform", frustMatrix);
+			if (!camera.IsActive || camera.UseAsPreviewFrustum)
+			{
+				TransformComponent& camTransform = group.get<TransformComponent>(entity);
+				glm::mat4 viewMatrix = glm::inverse(camTransform.GetModelMatrix());
+				//m_Shader->SetUniformMat4("Transform", transformMatrix);
+				
+				if ( !bSplinesDrawn && camera.UseAsPreviewFrustum && camera.IsDefault)
+				{
+					for (auto entity : splineView)
+					{
+						SplineComponent& spline = splineView.get<SplineComponent>(entity);
+						if (!spline.BDrawFrustumOnPreviewPoint)
+							continue;
 
-			m_CubeNDC->Render(*m_Shader);
+						// render preview point
+						glm::mat4 splineMatrix = spline.GetTransformAtT(spline.PreviewTime);
+						glm::mat4 cameraLocal = camTransform.GetLocal();
+						glm::mat4 viewMatrix = glm::inverse(splineMatrix * cameraLocal);//fakeTransform.GetModelMatrix());
+						glm::vec4 previewColor{ 1.0f, 0.75f, 0.0f, 1.0f };
+
+						m_Shader->SetUniformVec4("BaseColor", previewColor);
+
+						glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
+						m_Shader->SetUniformMat4("Transform", frustMatrix);
+
+						m_CubeNDC->Render(*m_Shader);
+						bSplinesDrawn = true;
+					}
+				}
+				
+
+				//the actual camera pos
+				if(!camera.IsActive)
+				{
+					m_Shader->SetUniformVec4("BaseColor", m_FrustumColor);
+					glm::mat4 frustMatrix = glm::inverse(camera.Cam.ProjectionMatrix() * viewMatrix);
+					m_Shader->SetUniformMat4("Transform", frustMatrix);
+
+					m_CubeNDC->Render(*m_Shader);
+				}
+			}
+			
 		}
 	}
 

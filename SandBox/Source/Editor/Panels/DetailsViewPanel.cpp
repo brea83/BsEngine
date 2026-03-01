@@ -426,27 +426,29 @@ namespace Pixie
 				ImGui::EndDisabled();
 			}
 
-			ImGui::SeparatorText("ShadowMap Debug");
+			ImGuiPanel::CheckBox("Use As Spline Preview", &component.UseAsPreviewFrustum);
 
-			if (ImGui::Button("Try Match Light Position"))
-			{
-				TransformComponent& transform = selected.GetTransform();
-				GameObject mainLight = selected.GetScene()->GetMainLight();
-				LightComponent* light = mainLight.TryGetComponent<LightComponent>();
+			//ImGui::SeparatorText("ShadowMap Debug");
 
-				if (light != nullptr)
-				{
-					TransformComponent& lightTransform = mainLight.GetTransform();
-					glm::vec3 forward = lightTransform.Forward();
-					glm::vec3 forwardDegrees = glm::degrees(forward);
+			//if (ImGui::Button("Try Match Light Position"))
+			//{
+			//	TransformComponent& transform = selected.GetTransform();
+			//	GameObject mainLight = selected.GetScene()->GetMainLight();
+			//	LightComponent* light = mainLight.TryGetComponent<LightComponent>();
 
-					transform.SetPosition(forward * -1.0f);
-					transform.SetRotationEuler(lightTransform.GetRotationEuler());
+			//	if (light != nullptr)
+			//	{
+			//		TransformComponent& lightTransform = mainLight.GetTransform();
+			//		glm::vec3 forward = lightTransform.Forward();
+			//		glm::vec3 forwardDegrees = glm::degrees(forward);
 
-					//glm::vec3 rotationDegrees = transform.GetRotationEuler();
-				}
+			//		transform.SetPosition(forward * -1.0f);
+			//		transform.SetRotationEuler(lightTransform.GetRotationEuler());
 
-			}
+			//		//glm::vec3 rotationDegrees = transform.GetRotationEuler();
+			//	}
+
+			//}
 
 			ImGui::Separator();
 

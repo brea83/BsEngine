@@ -172,7 +172,8 @@ namespace Pixie
     {
         EngineContext* engine = Pixie::EngineContext::GetEngine();
 
-        engine->RequestSceneChange(m_Game->GetScenePaths()[m_CurrentLevel]);
+       
+        engine->RequestSceneChange(m_Game->GetScenePaths()[m_Game->GetAllLevelData()[m_CurrentLevel].FilePathIndex]);
 
         Pixie::GameStateChangeRequestEvent event{ Pixie::PlayingState::Type(), "End level Menu, Restart Button" };
         engine->OnEvent(event);

@@ -25,11 +25,14 @@ namespace Pixie
 
 		virtual void OnImGuiRender() override;
 
+		virtual glm::vec2 GetGameplayWindowPos() override { return m_GameplayWindowPos; }
+
 	protected:
 		virtual bool OnSceneChangedEvent(SceneChangedEvent& event) override;
 	private:
 		bool m_GameSelected{ false };
 
+		glm::vec2 m_GameplayWindowPos{ 0.0f };
 		std::shared_ptr<ExampleGame> m_Game;
 
 		std::shared_ptr<Scene> m_CurrentScene{ nullptr };

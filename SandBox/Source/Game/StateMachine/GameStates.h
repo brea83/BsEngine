@@ -3,6 +3,7 @@
 #include "../UI/PauseMenu.h"
 #include "../UI/EndMenu.h"
 #include "../UI/StartMenu.h"
+#include "../UI/HUD.h"
 
 namespace Pixie
 {
@@ -78,10 +79,13 @@ namespace Pixie
 		void ExitState(GameState* nextState) override;
 		void UpdateState(float deltaTime) override;
 
-		void OnImGuiRender() override { }
+		void OnImGuiRender() override;
+
+		void InitHUD(glm::vec2 windowPosition, glm::vec2 windowSize);
 
 	private:
 		static const std::string m_Type;
+		HUD m_HUD;
 	};
 
 	class EditState : public GameState

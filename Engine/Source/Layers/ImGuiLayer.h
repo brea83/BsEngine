@@ -27,6 +27,8 @@ namespace Pixie
 		virtual std::shared_ptr<Game> GetGame() { return nullptr; }
 
 		glm::vec2 GetViewportSize() const { return m_ViewportPanelSize; }
+
+		virtual glm::vec2 GetGameplayWindowPos() { return glm::vec2(0.0f); }
 	protected:
 		float m_Time{ 0.0f };
 

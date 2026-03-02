@@ -346,6 +346,10 @@ namespace Pixie
 		m_Game->OnImGuiRender();
 	}
 
+	glm::vec2 EditorLayer::GetGameplayWindowPos()
+	{
+		return m_GameplayWindowPos;
+	}
 
 
 	void EditorLayer::DrawMainMenu(EngineContext* engine)
@@ -628,6 +632,11 @@ namespace Pixie
 	void EditorLayer::DrawViewport(EngineContext& engine)
 	{
 		ImGui::Begin("Viewport", NULL, ImGuiWindowFlags_MenuBar);
+
+		ImVec2 windowPosition = ImGui::GetWindowPos();
+		m_GameplayWindowPos.x = windowPosition.x;
+		m_GameplayWindowPos.y = windowPosition.y;
+
 		if (m_CurrentScene == nullptr)
 		{
 			ImGui::Text("No Scene Loaded.");

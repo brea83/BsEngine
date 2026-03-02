@@ -75,6 +75,9 @@
     <ClCompile Include="Source\Game\Player\SplinePlayerInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\UI\HUD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Editor\EditorLayer.h">
@@ -119,9 +122,6 @@
     <ClInclude Include="Source\Game\CombatComponents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\CollisionBehavior\PointCollector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -135,6 +135,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Player\SplinePlayerInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\UI\HUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

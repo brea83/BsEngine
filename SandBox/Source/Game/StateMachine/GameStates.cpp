@@ -2,6 +2,7 @@
 #include "EngineContext.h"
 #include "Scene/Scene.h"
 #include "../ExampleGame.h"
+#include "Layers/ImGuiLayer.h"
 
 namespace Pixie
 {
@@ -50,6 +51,13 @@ namespace Pixie
 			scene->BeginPlayMode();
 		else
 			scene->UnPause();
+
+		ImGuiLayer* imguiLayer = EngineContext::GetImGuiLayer();
+		if (imguiLayer)
+		{
+			InitHUD(imguiLayer->GetGameplayWindowPos(), imguiLayer->GetViewportSize());
+			
+		}
 	}
 
 	void PlayingState::ExitState(GameState* nextState)
@@ -70,6 +78,20 @@ namespace Pixie
 
 		if (scene == nullptr) return;
 		scene->OnUpdate(deltaTime);
+	}
+
+	void PlayingState::OnImGuiRender()
+	{
+		m_HUD.Draw();
+	}
+
+	void PlayingState::InitHUD(glm::vec2 windowPosition, glm::vec2 windowSize)
+	{
+		m_HUD.work_pos.x = windowPosition.x;
+		m_HUD.work_pos.y = windowPosition.y;
+
+		m_HUD.work_size.x = windowSize.x;
+		m_HUD.work_size.y = windowSize.y;
 	}
 
 	//==========================

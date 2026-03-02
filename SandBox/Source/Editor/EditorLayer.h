@@ -46,6 +46,8 @@ namespace Pixie
 
 		virtual void OnImGuiRender() override;
 
+		virtual glm::vec2 GetGameplayWindowPos() override;
+
 	protected:
 		// this should never consume the event, all layers need to know a new scene is active
 		virtual bool OnSceneChangedEvent(SceneChangedEvent& event) override;
@@ -57,6 +59,8 @@ namespace Pixie
 
 		bool m_DrawGameDetailEditor{ false };
 		bool m_GameSelected{ false };
+
+		glm::vec3 m_GameplayWindowPos{ 0.0f };
 
 		std::shared_ptr<ExampleGame> m_Game;
 

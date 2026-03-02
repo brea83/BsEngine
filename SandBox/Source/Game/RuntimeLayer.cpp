@@ -115,6 +115,11 @@ namespace Pixie
 		ImGui::Begin("SplineGame", NULL, ImGuiWindowFlags_MenuBar);
 		
 
+		ImVec2 windowPosition = ImGui::GetWindowPos();
+		m_GameplayWindowPos.x = windowPosition.x;
+		m_GameplayWindowPos.y = windowPosition.y;
+
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			std::string_view currentState = m_Game->GetCurrentState()->GetType();

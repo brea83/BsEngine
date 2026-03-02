@@ -49,6 +49,7 @@ namespace Pixie
 
 		static PhysicsEngine* GetPhysics() { if (m_Engine != nullptr) { return m_Engine->m_Physics; } else { return nullptr; } }
 
+		static ImGuiLayer* GetImGuiLayer() { if (m_Engine != nullptr) { return m_Engine->m_ImGuiLayer; } else { return nullptr; } }
 		void SetImGuiLayer(ImGuiLayer* layer) { m_ImGuiLayer = layer; }
 
 		// methods

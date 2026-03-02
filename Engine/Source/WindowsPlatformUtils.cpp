@@ -12,6 +12,9 @@ namespace Pixie
 {
 	bool PathParsing::IsPathProjectRelative(const std::filesystem::path& inPath, std::filesystem::path& outPath)
 	{
+		if (inPath == "")
+			return false;
+
 		bool bIsInAssetsFolderPath{ false };
 		outPath = "../";
 

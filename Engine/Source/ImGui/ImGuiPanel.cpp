@@ -9,6 +9,7 @@ namespace Pixie
 {
 	bool ImGuiPanel::DrawVec3Control(const std::string& label, glm::vec3& values, SliderParams params, float columnWidth)
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 		bool bValueChanged = false;
 
 		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
@@ -83,11 +84,13 @@ namespace Pixie
 			ImGui::EndTable();
 		}
 
+		ImGui::PopStyleVar();
 		return bValueChanged;
 	}
 
 	bool ImGuiPanel::DrawVec2Control(const std::string& label, glm::vec2& values, SliderParams params, float columnWidth)
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 		bool bValueChanged = false;
 
 		if (ImGui::BeginTable(label.c_str(), 2, ImGuiTableFlags_Resizable))
@@ -144,6 +147,7 @@ namespace Pixie
 			ImGui::EndTable();
 		}
 
+		ImGui::PopStyleVar();
 		return bValueChanged;
 	}
 

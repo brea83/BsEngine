@@ -50,6 +50,10 @@ namespace Pixie
 
         if (ImGuiPanel::FileProperty("Mesh File", m_FilePath, "All Formats (*.fbx, *.obj)\0*.fbx;*.obj\0FBX Model (*.fbx)\0*.fbx\0OBJ Mesh(*.obj)\0*.obj\0"))
         {
+            std::filesystem::path relativePath = "";
+            PathParsing::IsPathProjectRelative(m_FilePath, relativePath);
+            m_FilePath = relativePath.string();
+
             if (!AssetLoader::LoadMesh(selected, *this, m_FilePath))
             {
                 Logger::Core(LOG_WARNING, "DetailsViewPanel::DrawComponents() MESH FILE There was an error loading mesh file, reverting to old mesh path");

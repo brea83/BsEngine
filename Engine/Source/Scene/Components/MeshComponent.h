@@ -7,6 +7,7 @@
 #include "MaterialInstance.h"
 #include "Graphics/Primitives/Mesh.h"
 #include "Graphics/Texture.h"
+#include "PlatformUtils.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -62,10 +63,19 @@ namespace Pixie
 
 			std::string oldPath = component.m_FilePath;
 			stream->ReadString(component.m_FilePath);
+			std::filesystem::path relativePath;
+			PathParsing::IsPathProjectRelative(component.m_FilePath, relativePath);
+			component.m_FilePath = relativePath.string();
 
 			std::string oldTexture = component.m_MaterialInstance.BaseMapPath;
 			std::string oldMetalPath = component.m_MaterialInstance.MetallicMapPath;
 			stream->ReadObject<MaterialInstance>(component.m_MaterialInstance);
+
+			PathParsing::IsPathProjectRelative(component.m_MaterialInstance.BaseMapPath, relativePath);
+			component.m_MaterialInstance.BaseMapPath = relativePath.string();
+
+			PathParsing::IsPathProjectRelative(component.m_MaterialInstance.MetallicMapPath, relativePath);
+			component.m_MaterialInstance.MetallicMapPath = relativePath.string();
 
 			if (oldPath != component.m_FilePath 
 				|| oldTexture != component.m_MaterialInstance.BaseMapPath

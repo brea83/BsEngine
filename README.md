@@ -5,15 +5,15 @@ The goal is to have a simple engine that will support the creation of a basic sp
 
 Right now Pixie Engine is only compatible for Windows platforms that support openGL 4.5+.
 this repository has some external library dependancies that are not in the uploaded includes.
-TODO: write clear instalation instructions and move as many include files as possible into the repository.
+You should be able to open this and build on most modern windows machines with visual studio 2022 and the latest c++ packages.
 
-At the moment the Solution is set up so that there is a core Engine project, and then a SandBox template that holds editor code. I believe I am going to end up transfering to a three project set up where the game project is separated out from the editor and engine, but can use them as libraries.   
+At the moment the Solution is set up so that there is a core Engine project, and then a SandBox template that holds editor and game code. If you run the .exe on its own it will run in gameplay mode, if you run it with the command arg Editor it will run as an editor.
 
 Pixie Engine is currently single threaded, though I hope to transition it to having audio, physics / object updating, and rendering on different threads.
 
 ## About the Editor
 - Can only have one scene open at a time
-- play and stop buttons in scene viewport are planned to allow simulating gameplay in editor.
+- play and stop buttons in scene viewport allow simulating gameplay of the open scene file.
 
 Keyboard commands:
 * ctrl + s         saves the current scene in place or opens the save as dialogue if the scene has never been saved before.

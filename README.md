@@ -1,7 +1,7 @@
 This Readme is as much a work in progress as the Engine itself
 # Pixie Engine
 Pixie Engie started as a project for my Engine and Tools specialization course.
-The goal is to have a simple engine that will support the creation of a basic spline game (such as classic Star Fox) by the end of February 2026.
+The goal is to have a simple engine that will support the creation of a basic spline game (such as classic Star Fox) by the end of four months.
 
 Right now Pixie Engine is only compatible for Windows platforms that support openGL 4.5+.
 this repository has some external library dependancies that are not in the uploaded includes.

@@ -62,7 +62,17 @@ namespace Pixie
 
             float center = ImGui::GetContentRegionAvail().x * 0.5f;
 
-            ImGui::SetCursorPosX(center - buttonOffset1);
+            
+
+            if (!m_PlayerDied && !m_IsEndOfGame)
+            {
+                ImGui::SetCursorPosX(center - buttonOffset1);
+            }
+            else
+            {
+                ImGui::SetCursorPosX(center - 60.0f);
+            }
+
             if (ImGui::Button("Try Again", ImVec2(120.0f, 50.0f)))
             {
                 OnRestartButtonPressed();
@@ -77,14 +87,20 @@ namespace Pixie
                     OnContinueButtonPressed(); 
                     ImGui::CloseCurrentPopup();
                 }
-                ImGui::SetCursorPosX(center - 60.0f);
-            }
-            else
-            {
-                ImGui::SameLine();
+                
             }
 
+
             ImGui::SetItemDefaultFocus();
+            ImGui::SetCursorPosX(center - buttonOffset1);
+            if (ImGui::Button("Title Menu", ImVec2(120.0f, 50.0f)))
+            {
+                EngineContext* engine = Pixie::EngineContext::GetEngine();
+                Pixie::GameStateChangeRequestEvent event{ Pixie::TitleState::Type(), "End level Menu, Title Menu Button" };
+                engine->OnEvent(event);
+            }
+
+            ImGui::SameLine();
 
             if (ImGui::Button("Exit", ImVec2(120.0f, 50.0f)))
             {
@@ -154,11 +170,11 @@ namespace Pixie
             ImGui::TableNextRow();
             // the label
             ImGui::TableSetColumnIndex(0);
-            ImGui::Text("  Enemies Destroyed");
+            ImGui::Text(" ");// Enemies Destroyed");
 
             // the values
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text(std::to_string(scores.EnemiesDestroyed).c_str());
+            ImGui::Text("");// std::to_string(scores.EnemiesDestroyed).c_str());
             ImGui::PopFont();
 
             // TODO add damage taken to player data
